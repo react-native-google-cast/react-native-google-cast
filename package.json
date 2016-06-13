@@ -17,6 +17,11 @@
     "type": "git",
     "url": "git@github.com:charliesbox/react-native-google-cast.git"
   },
+  "files": [
+    "android/",
+    "ios/",
+    "GoogleCast.js"
+  ],
   "devDependencies": {
     "react-native": "*"
   }
