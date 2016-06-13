@@ -14,7 +14,6 @@ build/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata
-/example/node_modules
 *.xccheckout
 *.moved-aside
 DerivedData
@@ -28,6 +27,9 @@ project.xcworkspace
 .idea
 .gradle
 local.properties
+*.iml
+android/gradle
+android/build
 
 # node.js
 #
@@ -39,3 +41,5 @@ buck-out/
 \.buckd/
 android/app/libs
 android/keystores/debug.keystore
+android/gradlew
+android/gradlew.bat
