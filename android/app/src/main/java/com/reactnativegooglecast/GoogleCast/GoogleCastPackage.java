@@ -1,4 +1,4 @@
-package com.reactnativegooglecast.ChromecastManager;
+package com.reactnativegooglecast.GoogleCast;
 
 import android.app.Activity;
 
@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by Charlie on 5/29/16.
  */
-public class ChromecastManager implements ReactPackage {
+public class GoogleCastPackage implements ReactPackage {
 
     private Activity mCurrentActivity;
 
-    public ChromecastManager(Activity activity) {
+    public GoogleCastPackage(Activity activity) {
         mCurrentActivity = activity;
     }
 
@@ -27,7 +27,7 @@ public class ChromecastManager implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new ChromecastModule(reactContext, mCurrentActivity));
+        modules.add(new GoogleCastModule(reactContext, mCurrentActivity));
 
         return modules;
     }

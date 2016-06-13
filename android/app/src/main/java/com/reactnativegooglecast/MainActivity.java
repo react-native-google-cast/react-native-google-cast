@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.reactnativegooglecast.ChromecastManager.ChromecastManager;
+import com.reactnativegooglecast.GoogleCast.GoogleCastPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +44,7 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
                 new MainReactPackage(),
-                new ChromecastManager(this)
+                new GoogleCastPackage(this)
         );
     }
 }

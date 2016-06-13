@@ -1,4 +1,4 @@
-package com.reactnativegooglecast.ChromecastManager;
+package com.reactnativegooglecast.GoogleCast;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * Created by Charlie on 5/29/16.
  */
-public class ChromecastModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class GoogleCastModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     private Activity mCurrentActivity;
     private VideoCastManager mCastManager;
     private VideoCastConsumer mCastConsumer;
@@ -43,13 +43,13 @@ public class ChromecastModule extends ReactContextBaseJavaModule implements Life
 
 
     @VisibleForTesting
-    public static final String REACT_CLASS = "ChromecastModule";
+    public static final String REACT_CLASS = "GoogleCastModule";
 
     private static final String DEVICE_CHANGED = "GoogleCast:DeviceListChanged";
     private static final String DEVICE_AVAILABLE = "GoogleCast:DeviceAvailable";
     private static final String DEVICE_CONNECTED = "GoogleCast:DeviceConnected";
 
-    public ChromecastModule(ReactApplicationContext reactContext, Activity activity) {
+    public GoogleCastModule(ReactApplicationContext reactContext, Activity activity) {
         super(reactContext);
         getReactApplicationContext().addLifecycleEventListener(this);
         mCurrentActivity = activity;
@@ -57,7 +57,7 @@ public class ChromecastModule extends ReactContextBaseJavaModule implements Life
 
     @Override
     public String getName() {
-        return "ChromecastManager";
+        return "GoogleCast";
     }
 
     @Override
@@ -69,11 +69,7 @@ public class ChromecastModule extends ReactContextBaseJavaModule implements Life
 
 //    RCT_EXTERN_METHOD(startScan)
 //    RCT_EXTERN_METHOD(stopScan)
-//
-//    RCT_EXTERN_METHOD(connectToDevice: (NSString *) deviceName)
 //    RCT_EXTERN_METHOD(disconnect)
-//
-//    RCT_EXTERN_METHOD(castVideo: (NSString *) videoUrl title: (NSString *) title description: (NSString *) description imageUrl: (NSString *) imageUrl)
 //
 //    RCT_EXTERN_METHOD(play)
 //    RCT_EXTERN_METHOD(pause)
@@ -114,8 +110,8 @@ public class ChromecastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void castMedia(String mediaUrl, String title, String description, String imageUrl) {
         Log.e(REACT_CLASS, "Casting media... ");
-        MediaInfo mediaInfo = ChromecastService.getMediaInfo("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "A video");
-        //MediaInfo mediaInfo = ChromecastService.getMediaInfo(mediaUrl, title);
+        MediaInfo mediaInfo = GoogleCastService.getMediaInfo("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "A video");
+        //MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title);
         try {
             mCastManager.loadMedia(mediaInfo, true, 0);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
@@ -145,7 +141,7 @@ public class ChromecastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void startScan() {
         Log.e(REACT_CLASS, "start scanning... ");
-        final CastConfiguration options = ChromecastService.getCastConfig();
+        final CastConfiguration options = GoogleCastService.getCastConfig();
         UiThreadUtil.runOnUiThread(new Runnable() {
             public void run() {
                 VideoCastManager.initialize(getCurrentActivity(), options);

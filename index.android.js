@@ -10,11 +10,10 @@ import {
   Text,
   View,
   DeviceEventEmitter,
-  NativeModules,
   TouchableOpacity
 } from 'react-native';
 
-var chromecast = NativeModules.ChromecastManager;
+import chromecast from "./GoogleCast";
 
 class ReactNativeGoogleCast extends Component {
   constructor(props) {
@@ -27,7 +26,6 @@ class ReactNativeGoogleCast extends Component {
 
   componentDidMount() {
     DeviceEventEmitter.addListener("GoogleCast:DeviceAvailable", (existance) => {
-      console.log("test test ", existance.device_available);
       this.setState({chromecastAvailable: existance.device_available});
     });
     DeviceEventEmitter.addListener("GoogleCast:DeviceConnected", () => {

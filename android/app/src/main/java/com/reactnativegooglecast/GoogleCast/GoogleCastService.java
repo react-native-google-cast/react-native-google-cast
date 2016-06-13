@@ -1,4 +1,4 @@
-package com.reactnativegooglecast.ChromecastManager;
+package com.reactnativegooglecast.GoogleCast;
 
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.MediaInfo;
@@ -10,10 +10,8 @@ import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCa
 /**
  * Created by Charlie on 6/9/16.
  */
-public class ChromecastService {
-    private VideoCastManager mCastManager;
-    private VideoCastConsumer mCastConsumer;
-    public static final String REACT_CLASS = "ChromecastModule";
+public class GoogleCastService {
+    public static final String REACT_CLASS = "GoogleCastModule";
 
     public static MediaInfo getMediaInfo(String filmUrl, String filmTitle) {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
