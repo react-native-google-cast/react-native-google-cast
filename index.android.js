@@ -43,10 +43,6 @@ class ReactNativeGoogleCast extends Component {
     console.log("test test ", dev);
   };
 
-  connect = () => {
-    chromecast.connectToDevice("Chromecast7191");
-  };
-
   sendMedia = () => {
     chromecast.castMedia("", "", "", "");
   };
