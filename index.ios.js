@@ -4,15 +4,22 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  NativeModules
 } from 'react-native';
 
+var CalendarManager = NativeModules.CalendarManager;
+
 class ReactNativeGoogleCast extends Component {
+  componentDidMount() {
+    CalendarManager.addEvent('Birthday Party', '4 Privet Drive, Surrey');
+  }
+
   render() {
     return (
       <View style={styles.container}>
