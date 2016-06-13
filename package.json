@@ -13,10 +13,7 @@
     "chromecast"
   ],
   "main": "GoogleCast.js",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:charliesbox/react-native-google-cast.git"
-  },
+  "repository": "git@github.com:charliesbox/react-native-google-cast.git",
   "files": [
     "android/",
     "ios/",
