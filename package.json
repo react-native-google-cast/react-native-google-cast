@@ -16,5 +16,8 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:charliesbox/react-native-google-cast.git"
+  },
+  "devDependencies": {
+    "react-native": "*"
   }
 }
