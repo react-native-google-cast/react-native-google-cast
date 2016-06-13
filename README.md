@@ -9,6 +9,33 @@ npm i react-native-google-cast --save
 
 ##Linking library
 WIP - RNPM is coming!
+#### Android
+
+**android/settings.gradle**
+```
+include ':react-native-google-cast'
+project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
+```
+
+**android/app/build.gradle**
+```
+dependencies {
+   ...
+   compile project(':react-native-google-cast')
+}
+```
+
+**MainActivity.java**
+
+On top, where imports are:
+```java
+import com.brentvatne.react.ReactVideoPackage;
+```
+
+Under `.addPackage(new MainReactPackage())`:
+```java
+.addPackage(new ReactVideoPackage())
+```
 
 ##Methods
 **startScan()** -  *Starts the discovery process*
