@@ -1,12 +1,20 @@
 {
   "name": "reac-native-google-cast",
+  "description": "Chromecast library for iOS and Android",
   "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+  "author": {
+    "name": "Charlie L",
+    "email": "carlyeah@me.com"
   },
-  "dependencies": {
-    "react": "^15.0.2",
-    "react-native": "^0.26.1"
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "chromecast"
+  ],
+  "main": "GoogleCast.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:charliesbox/react-native-google-cast.git"
   }
 }
