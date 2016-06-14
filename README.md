@@ -32,9 +32,8 @@ On top, where imports are:
 import com.googlecast.GoogleCastPackage;;
 ```
 
-Under `.addPackage(new MainReactPackage())`:
-```java
-.addPackage(new ReactVideoPackage())
+Under `new MainReactPackage()`:
+```new GoogleCastPackage(this)
 ```
 
 ##Methods
