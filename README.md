@@ -29,7 +29,7 @@ dependencies {
 
 On top, where imports are:
 ```java
-import com.brentvatne.react.ReactVideoPackage;
+import com.googlecast.GoogleCastPackage;;
 ```
 
 Under `.addPackage(new MainReactPackage())`:
