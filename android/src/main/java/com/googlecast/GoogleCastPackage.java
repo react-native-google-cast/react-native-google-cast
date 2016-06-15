@@ -17,17 +17,11 @@ import java.util.List;
  */
 public class GoogleCastPackage implements ReactPackage {
 
-    private Activity mCurrentActivity;
-
-    public GoogleCastPackage(Activity activity) {
-        mCurrentActivity = activity;
-    }
-
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new GoogleCastModule(reactContext, mCurrentActivity));
+        modules.add(new GoogleCastModule(reactContext));
 
         return modules;
     }

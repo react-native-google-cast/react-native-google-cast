@@ -1,6 +1,5 @@
 package com.googlecast;
 
-import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.support.v7.media.MediaRouter;
 import android.util.Log;
@@ -35,7 +34,6 @@ import java.util.Map;
  * Created by Charlie on 5/29/16.
  */
 public class GoogleCastModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
-    private Activity mCurrentActivity;
     private VideoCastManager mCastManager;
     private VideoCastConsumer mCastConsumer;
     Map<String, MediaRouter.RouteInfo> currentDevices = new HashMap<>();
@@ -49,10 +47,9 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     private static final String DEVICE_AVAILABLE = "GoogleCast:DeviceAvailable";
     private static final String DEVICE_CONNECTED = "GoogleCast:DeviceConnected";
 
-    public GoogleCastModule(ReactApplicationContext reactContext, Activity activity) {
+    public GoogleCastModule(ReactApplicationContext reactContext) {
         super(reactContext);
         getReactApplicationContext().addLifecycleEventListener(this);
-        mCurrentActivity = activity;
     }
 
     @Override
