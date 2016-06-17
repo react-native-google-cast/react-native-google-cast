@@ -150,6 +150,8 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
         Log.e(REACT_CLASS, "init Chromecast ");
         if(mCastManager != null){
             mCastManager = VideoCastManager.getInstance();
+            mCastManager.incrementUiCounter();
+            Log.e(REACT_CLASS, "Chromecast Initialized by getting instance");
         } else {
             final CastConfiguration options = GoogleCastService.getCastConfig();
             UiThreadUtil.runOnUiThread(new Runnable() {
@@ -197,6 +199,8 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
                     };
                     mCastManager.addVideoCastConsumer(mCastConsumer);
+                    mCastManager.incrementUiCounter();
+                    Log.e(REACT_CLASS, "Chromecast Initialized for the first time!");
                 }
             });
         }
