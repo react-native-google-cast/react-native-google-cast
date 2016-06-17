@@ -88,6 +88,16 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
+    public void startScan() {
+        mCastManager.incrementUiCounter();
+    }
+
+    @ReactMethod
+    public void stopScan() {
+        mCastManager.decrementUiCounter();
+    }
+
+    @ReactMethod
     public void getDevices(Promise promise) {
         WritableArray devicesList = Arguments.createArray();
         WritableMap singleDevice = Arguments.createMap();
@@ -118,8 +128,8 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public boolean isConnected() {
-        return VideoCastManager.getInstance().isConnected();
+    public void isConnected(Promise promise) {
+        promise.resolve(VideoCastManager.getInstance().isConnected());
     }
 
     @ReactMethod
@@ -136,56 +146,60 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void startScan() {
-        Log.e(REACT_CLASS, "start scanning... ");
-        final CastConfiguration options = GoogleCastService.getCastConfig();
-        UiThreadUtil.runOnUiThread(new Runnable() {
-            public void run() {
-                VideoCastManager.initialize(getCurrentActivity(), options);
-                mCastManager = VideoCastManager.getInstance();
+    public void initChromecast() {
+        Log.e(REACT_CLASS, "init Chromecast ");
+        if(mCastManager != null){
+            mCastManager = VideoCastManager.getInstance();
+        } else {
+            final CastConfiguration options = GoogleCastService.getCastConfig();
+            UiThreadUtil.runOnUiThread(new Runnable() {
+                public void run() {
+                    VideoCastManager.initialize(getCurrentActivity(), options);
+                    mCastManager = VideoCastManager.getInstance();
+                    mCastConsumer = new VideoCastConsumerImpl() {
 
-                mCastConsumer = new VideoCastConsumerImpl() {
-                    @Override
-                    public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {
-                        super.onApplicationConnected(appMetadata, sessionId, wasLaunched);
-                        Log.e(REACT_CLASS, "I am connected dudeeeeee ");
-                        emitMessageToRN(getReactApplicationContext(), DEVICE_CONNECTED, null);
-                    }
+                        @Override
+                        public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {
+                            super.onApplicationConnected(appMetadata, sessionId, wasLaunched);
+                            Log.e(REACT_CLASS, "I am connected dudeeeeee ");
+                            emitMessageToRN(getReactApplicationContext(), DEVICE_CONNECTED, null);
+                        }
 
-                    @Override
-                    public void onRouteRemoved(MediaRouter.RouteInfo info) {
-                        super.onRouteRemoved(info);
-                        removeDevice(info);
-                    }
+                        @Override
+                        public void onRouteRemoved(MediaRouter.RouteInfo info) {
+                            super.onRouteRemoved(info);
+                            removeDevice(info);
+                        }
 
-                    @Override
-                    public void onCastDeviceDetected(MediaRouter.RouteInfo info) {
-                        super.onCastDeviceDetected(info);
-                        Log.e(REACT_CLASS, info.getName());
-                        addDevice(info);
-                    }
+                        @Override
+                        public void onCastDeviceDetected(MediaRouter.RouteInfo info) {
+                            super.onCastDeviceDetected(info);
+                            Log.e(REACT_CLASS, info.getName());
+                            addDevice(info);
+                        }
 
-                    @Override
-                    public void onApplicationConnectionFailed(int errorCode) {
-                        Log.e(REACT_CLASS, "I failed :( with error code ");
-                    }
+                        @Override
+                        public void onApplicationConnectionFailed(int errorCode) {
+                            Log.e(REACT_CLASS, "I failed :( with error code ");
+                        }
 
-                    @Override
-                    public void onFailed(int resourceId, int statusCode) {
-                        Log.e(REACT_CLASS, "I failed :(");
-                    }
+                        @Override
+                        public void onFailed(int resourceId, int statusCode) {
+                            Log.e(REACT_CLASS, "I failed :(");
+                        }
 
-                    @Override
-                    public void onCastAvailabilityChanged(boolean castPresent) {
-                        Log.e(REACT_CLASS, "onCastAvailabilityChanged: exists? " + Boolean.toString(castPresent));
-                        deviceAvailableParams.putBoolean("device_available", castPresent);
-                        emitMessageToRN(getReactApplicationContext(), DEVICE_AVAILABLE, deviceAvailableParams);
-                    }
+                        @Override
+                        public void onCastAvailabilityChanged(boolean castPresent) {
+                            Log.e(REACT_CLASS, "onCastAvailabilityChanged: exists? " + Boolean.toString(castPresent));
+                            deviceAvailableParams.putBoolean("device_available", castPresent);
+                            emitMessageToRN(getReactApplicationContext(), DEVICE_AVAILABLE, deviceAvailableParams);
+                        }
 
-                };
-                mCastManager.addVideoCastConsumer(mCastConsumer);
-            }
-        });
+                    };
+                    mCastManager.addVideoCastConsumer(mCastConsumer);
+                }
+            });
+        }
     }
 
     @Override

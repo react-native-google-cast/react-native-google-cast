@@ -4,8 +4,17 @@ const {GoogleCast} = NativeModules;
 
 export default {
 
+  initChromecast: function () {
+    GoogleCast.initChromecast();
+  },
   startScan: function () {
     GoogleCast.startScan();
+  },
+  stopScan: function () {
+    GoogleCast.stopScan();
+  },
+  isConnected: function () {
+    GoogleCast.isConnected();
   },
   getDevices: function () {
     return GoogleCast.getDevices();
