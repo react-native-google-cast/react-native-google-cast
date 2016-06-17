@@ -1,8 +1,11 @@
 package com.googlecast;
 
+import android.net.Uri;
+
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.common.images.WebImage;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
 
 /**
@@ -11,9 +14,10 @@ import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
 public class GoogleCastService {
     public static final String REACT_CLASS = "GoogleCastModule";
 
-    public static MediaInfo getMediaInfo(String filmUrl, String filmTitle) {
+    public static MediaInfo getMediaInfo(String filmUrl, String filmTitle, String imageUrl) {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE, filmTitle);
+        mediaMetadata.addImage(new WebImage(Uri.parse(imageUrl)));
 
         MediaInfo mediaInfo = new MediaInfo.Builder(filmUrl)
                 .setContentType("video/mp4")

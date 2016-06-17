@@ -105,10 +105,10 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void castMedia(String mediaUrl, String title, String description, String imageUrl) {
+    public void castMedia(String mediaUrl, String title, String imageUrl) {
         Log.e(REACT_CLASS, "Casting media... ");
-        MediaInfo mediaInfo = GoogleCastService.getMediaInfo("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "A video");
-        //MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title);
+        //MediaInfo mediaInfo = GoogleCastService.getMediaInfo("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "A video");
+        MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
         try {
             mCastManager.loadMedia(mediaInfo, true, 0);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
