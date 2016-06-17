@@ -37,7 +37,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     private VideoCastManager mCastManager;
     private VideoCastConsumer mCastConsumer;
     Map<String, MediaRouter.RouteInfo> currentDevices = new HashMap<>();
-    private WritableMap deviceAvailableParams = Arguments.createMap();
+    private WritableMap deviceAvailableParams;
 
 
     @VisibleForTesting
@@ -89,11 +89,13 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
     @ReactMethod
     public void startScan() {
+        Log.e(REACT_CLASS, "Starting scan");
         mCastManager.incrementUiCounter();
     }
 
     @ReactMethod
     public void stopScan() {
+        Log.e(REACT_CLASS, "Stopping Scan");
         mCastManager.decrementUiCounter();
     }
 
@@ -117,7 +119,17 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void castMedia(String mediaUrl, String title, String imageUrl) {
         Log.e(REACT_CLASS, "Casting media... ");
-        //MediaInfo mediaInfo = GoogleCastService.getMediaInfo("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", "A video");
+        MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
+        try {
+            mCastManager.loadMedia(mediaInfo, true, 0);
+        } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
+            Log.e(REACT_CLASS, "falle ");
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
+    public void connectAndCast(String mediaUrl, String title, String imageUrl) {
         MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
         try {
             mCastManager.loadMedia(mediaInfo, true, 0);
@@ -129,7 +141,9 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
     @ReactMethod
     public void isConnected(Promise promise) {
-        promise.resolve(VideoCastManager.getInstance().isConnected());
+        boolean isConnected = VideoCastManager.getInstance().isConnected();
+        Log.e(REACT_CLASS, "Am I connected ? " + isConnected);
+        promise.resolve(isConnected);
     }
 
     @ReactMethod
@@ -176,7 +190,10 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                         @Override
                         public void onCastDeviceDetected(MediaRouter.RouteInfo info) {
                             super.onCastDeviceDetected(info);
-                            Log.e(REACT_CLASS, info.getName());
+                            deviceAvailableParams = Arguments.createMap();
+                            Log.e(REACT_CLASS, "detecting devices " + info.getName());
+                            deviceAvailableParams.putBoolean("device_available", true);
+                            emitMessageToRN(getReactApplicationContext(), DEVICE_AVAILABLE, deviceAvailableParams);
                             addDevice(info);
                         }
 
@@ -187,11 +204,12 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
                         @Override
                         public void onFailed(int resourceId, int statusCode) {
-                            Log.e(REACT_CLASS, "I failed :(");
+                            Log.e(REACT_CLASS, "I failed :( " + statusCode);
                         }
 
                         @Override
                         public void onCastAvailabilityChanged(boolean castPresent) {
+                            deviceAvailableParams = Arguments.createMap();
                             Log.e(REACT_CLASS, "onCastAvailabilityChanged: exists? " + Boolean.toString(castPresent));
                             deviceAvailableParams.putBoolean("device_available", castPresent);
                             emitMessageToRN(getReactApplicationContext(), DEVICE_AVAILABLE, deviceAvailableParams);
@@ -208,7 +226,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
     @Override
     public void onHostResume() {
-
     }
 
     @Override

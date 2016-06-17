@@ -14,7 +14,7 @@ export default {
     GoogleCast.stopScan();
   },
   isConnected: function () {
-    GoogleCast.isConnected();
+    return GoogleCast.isConnected();
   },
   getDevices: function () {
     return GoogleCast.getDevices();
