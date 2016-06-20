@@ -24,6 +24,7 @@ import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumer;
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.android.libraries.cast.companionlibrary.cast.exceptions.CastException;
 import com.google.android.libraries.cast.companionlibrary.cast.exceptions.NoConnectionException;
 import com.google.android.libraries.cast.companionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 
@@ -46,6 +47,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     private static final String DEVICE_CHANGED = "GoogleCast:DeviceListChanged";
     private static final String DEVICE_AVAILABLE = "GoogleCast:DeviceAvailable";
     private static final String DEVICE_CONNECTED = "GoogleCast:DeviceConnected";
+    private static final String MEDIA_LOADED = "GoogleCast:MediaLoaded";
 
     public GoogleCastModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -63,15 +65,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
         constants.put(DEVICE_CHANGED, DEVICE_CHANGED);
         return constants;
     }
-
-//    RCT_EXTERN_METHOD(startScan)
-//    RCT_EXTERN_METHOD(stopScan)
-//    RCT_EXTERN_METHOD(disconnect)
-//
-//    RCT_EXTERN_METHOD(play)
-//    RCT_EXTERN_METHOD(pause)
-//
-//    RCT_EXTERN_METHOD(getStreamPosition: (RCTResponseSenderBlock *) successCallback)
 
     private void emitMessageToRN(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
         reactContext
@@ -117,11 +110,14 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void castMedia(String mediaUrl, String title, String imageUrl) {
+    public void castMedia(String mediaUrl, String title, String imageUrl, @Nullable Integer milliseconds) {
+        if (milliseconds == null) {
+            milliseconds = 0;
+        }
         Log.e(REACT_CLASS, "Casting media... ");
         MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
         try {
-            mCastManager.loadMedia(mediaInfo, true, 0);
+            mCastManager.loadMedia(mediaInfo, true, milliseconds);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
             Log.e(REACT_CLASS, "falle ");
             e.printStackTrace();
@@ -129,12 +125,21 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void connectAndCast(String mediaUrl, String title, String imageUrl) {
-        MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
+    public void connectAndCast(String mediaUrl, String title, String imageUrl, @Nullable Integer milliseconds, @Nullable String deviceId) {
+        if (milliseconds == null) {
+            milliseconds = 0;
+        }
         try {
-            mCastManager.loadMedia(mediaInfo, true, 0);
-        } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
-            Log.e(REACT_CLASS, "falle ");
+            Log.e(REACT_CLASS, "connect and cast ");
+            if (mCastManager.isConnected()) {
+                MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
+                mCastManager.loadMedia(mediaInfo, true, milliseconds);
+            } else {
+                MediaRouter.RouteInfo info = currentDevices.get(deviceId);
+                CastDevice device = CastDevice.getFromBundle(info.getExtras());
+                mCastManager.onDeviceSelected(device, info);
+            }
+        } catch (IllegalViewOperationException | TransientNetworkDisconnectionException | NoConnectionException e) {
             e.printStackTrace();
         }
     }
@@ -147,7 +152,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void connectToDevice(String deviceId) {
+    public void connectToDevice(@Nullable String deviceId) { // if id is null, disconnect method will be call internally
         Log.e(REACT_CLASS, "received deviceName " + deviceId);
         try {
             Log.e(REACT_CLASS, "devices size " + currentDevices.size());
@@ -160,9 +165,37 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
+    public void disconnectFromDevice() {
+        Log.e(REACT_CLASS, "disconnecting...");
+        mCastManager.disconnect();
+    }
+
+    @ReactMethod
+    public void togglePauseCast() {
+        try {
+            if (mCastManager.isRemoteMediaPaused()) {
+                mCastManager.play();
+            } else {
+                mCastManager.pause();
+            }
+        } catch (CastException | TransientNetworkDisconnectionException | NoConnectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
+    public void seekCast(int milliseconds) {
+        try {
+            mCastManager.seek(milliseconds);
+        } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
     public void initChromecast() {
         Log.e(REACT_CLASS, "init Chromecast ");
-        if(mCastManager != null){
+        if (mCastManager != null) {
             mCastManager = VideoCastManager.getInstance();
             mCastManager.incrementUiCounter();
             Log.e(REACT_CLASS, "Chromecast Initialized by getting instance");
@@ -173,6 +206,11 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                     VideoCastManager.initialize(getCurrentActivity(), options);
                     mCastManager = VideoCastManager.getInstance();
                     mCastConsumer = new VideoCastConsumerImpl() {
+                        @Override
+                        public void onMediaLoadResult(int statusCode) {
+                            super.onMediaLoadResult(statusCode);
+                            emitMessageToRN(getReactApplicationContext(), MEDIA_LOADED, null);
+                        }
 
                         @Override
                         public void onApplicationConnected(ApplicationMetadata appMetadata, String sessionId, boolean wasLaunched) {

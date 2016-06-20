@@ -22,7 +22,16 @@ export default {
   connectToDevice: function (deviceId:string) {
     GoogleCast.connectToDevice(deviceId);
   },
-  castMedia: function (mediaUrl:string, title:string, imageUrl:string) {
-    GoogleCast.castMedia(mediaUrl, title, imageUrl);
-  }
+  castMedia: function (mediaUrl:string, title:string, imageUrl:string, milliseconds:number) {
+    GoogleCast.castMedia(mediaUrl, title, imageUrl, milliseconds);
+  },
+  connectAndCast: function (mediaUrl:string, title:string, imageUrl:string, milliseconds:number, deviceId:string) {
+    GoogleCast.connectAndCast(mediaUrl, title, imageUrl, milliseconds, deviceId);
+  },
+  seekCast: function (milliseconds:number) {
+    GoogleCast.seekCast(milliseconds);
+  },
+  togglePauseCast: function () {
+    GoogleCast.togglePauseCast();
+  },
 };
