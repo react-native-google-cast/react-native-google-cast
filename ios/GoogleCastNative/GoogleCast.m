@@ -82,10 +82,10 @@ RCT_EXPORT_METHOD(castMedia
                   :(NSString *)mediaUrl
                   :(NSString *) title
                   :(NSString *)imageUrl
-                  :(NSTimeInterval *)milliseconds)
+                  :(double)seconds)
 {
   RCTLogInfo(@"casting media");
-  milliseconds = !milliseconds ? 0 : milliseconds;
+  seconds = !seconds ? 0 : seconds;
   
   GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
   
@@ -105,7 +105,7 @@ RCT_EXPORT_METHOD(castMedia
                                       customData: nil];
   
   // Cast the video.
-  [self.mediaControlChannel loadMedia:mediaInformation autoplay:YES playPosition: *milliseconds];
+  [self.mediaControlChannel loadMedia:mediaInformation autoplay:YES playPosition: seconds];
 }
 
 RCT_EXPORT_METHOD(togglePauseCast)
@@ -114,9 +114,8 @@ RCT_EXPORT_METHOD(togglePauseCast)
   isPlaying ? [self.mediaControlChannel pause] : [self.mediaControlChannel play];
 }
 
-//seekCast milliseconds:number
-RCT_EXPORT_METHOD(seekCast:(NSTimeInterval *) milliseconds){
-  [self.mediaControlChannel seekToTimeInterval: *milliseconds];
+RCT_EXPORT_METHOD(seekCast:(double) seconds){
+  [self.mediaControlChannel seekToTimeInterval: seconds];
 }
 
 RCT_REMAP_METHOD(getDevices,

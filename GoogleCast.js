@@ -22,8 +22,8 @@ export default {
   connectToDevice: function (deviceId:string) {
     GoogleCast.connectToDevice(deviceId);
   },
-  castMedia: function (mediaUrl:string, title:string, imageUrl:string, milliseconds:number) {
-    GoogleCast.castMedia(mediaUrl, title, imageUrl, milliseconds);
+  castMedia: function (mediaUrl:string, title:string, imageUrl:string, seconds:number) {
+    GoogleCast.castMedia(mediaUrl, title, imageUrl, seconds);
   },
   seekCast: function (milliseconds:number) {
     GoogleCast.seekCast(milliseconds);

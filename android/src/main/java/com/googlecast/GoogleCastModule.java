@@ -110,14 +110,14 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void castMedia(String mediaUrl, String title, String imageUrl, @Nullable Integer milliseconds) {
-        if (milliseconds == null) {
-            milliseconds = 0;
+    public void castMedia(String mediaUrl, String title, String imageUrl, @Nullable Integer seconds) {
+        if (seconds == null) {
+            seconds = 0;
         }
         Log.e(REACT_CLASS, "Casting media... ");
         MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
         try {
-            mCastManager.loadMedia(mediaInfo, true, milliseconds);
+            mCastManager.loadMedia(mediaInfo, true, seconds * 1000);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
             Log.e(REACT_CLASS, "falle ");
             e.printStackTrace();
@@ -164,9 +164,9 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void seekCast(int milliseconds) {
+    public void seekCast(int seconds) {
         try {
-            mCastManager.seek(milliseconds);
+            mCastManager.seek(seconds * 1000);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
             e.printStackTrace();
         }
