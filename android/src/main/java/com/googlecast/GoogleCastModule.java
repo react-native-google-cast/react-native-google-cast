@@ -125,26 +125,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void connectAndCast(String mediaUrl, String title, String imageUrl, @Nullable Integer milliseconds, @Nullable String deviceId) {
-        if (milliseconds == null) {
-            milliseconds = 0;
-        }
-        try {
-            Log.e(REACT_CLASS, "connect and cast ");
-            if (mCastManager.isConnected()) {
-                MediaInfo mediaInfo = GoogleCastService.getMediaInfo(mediaUrl, title, imageUrl);
-                mCastManager.loadMedia(mediaInfo, true, milliseconds);
-            } else {
-                MediaRouter.RouteInfo info = currentDevices.get(deviceId);
-                CastDevice device = CastDevice.getFromBundle(info.getExtras());
-                mCastManager.onDeviceSelected(device, info);
-            }
-        } catch (IllegalViewOperationException | TransientNetworkDisconnectionException | NoConnectionException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @ReactMethod
     public void isConnected(Promise promise) {
         boolean isConnected = VideoCastManager.getInstance().isConnected();
         Log.e(REACT_CLASS, "Am I connected ? " + isConnected);

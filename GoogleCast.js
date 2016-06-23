@@ -25,9 +25,6 @@ export default {
   castMedia: function (mediaUrl:string, title:string, imageUrl:string, milliseconds:number) {
     GoogleCast.castMedia(mediaUrl, title, imageUrl, milliseconds);
   },
-  connectAndCast: function (mediaUrl:string, title:string, imageUrl:string, milliseconds:number, deviceId:string) {
-    GoogleCast.connectAndCast(mediaUrl, title, imageUrl, milliseconds, deviceId);
-  },
   seekCast: function (milliseconds:number) {
     GoogleCast.seekCast(milliseconds);
   },
