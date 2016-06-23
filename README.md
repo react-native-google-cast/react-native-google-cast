@@ -7,8 +7,9 @@ A library that unifies both android and iOS chromecast sdk
 ##Installation
 npm i react-native-google-cast --save
 
-##Linking library
-WIP - RNPM is coming!
+#### iOS
+
+
 #### Android
 
 **android/settings.gradle**
