@@ -33,7 +33,7 @@ import com.googlecast.GoogleCastPackage;;
 ```
 
 Under `new MainReactPackage()`:
-```new GoogleCastPackage(this)
+```new GoogleCastPackage()
 ```
 
 ##Methods
