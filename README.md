@@ -29,12 +29,11 @@ dependencies {
 
 On top, where imports are:
 ```java
-import com.googlecast.GoogleCastPackage;;
+import com.googlecast.GoogleCastPackage;
 ```
 
 Under `new MainReactPackage()`:
-```new GoogleCastPackage()
-```
+`new GoogleCastPackage()`
 
 ##Methods
 **startScan()** -  *Starts the discovery process*
