@@ -10,6 +10,5 @@
 @property(nonatomic, strong) GCKDeviceManager* deviceManager;
 @property(nonatomic, strong) GCKMediaInformation* mediaInformation;
 @property(nonatomic, strong) NSMutableDictionary *currentDevices;
-//Map<String, MediaRouter.RouteInfo> currentDevices = new HashMap<>();
 
 @end
