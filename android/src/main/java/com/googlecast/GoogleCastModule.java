@@ -166,11 +166,25 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void seekCast(int seconds) {
         try {
+            //mCastManager receives milliseconds
             mCastManager.seek(seconds * 1000);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
             e.printStackTrace();
         }
     }
+
+    @ReactMethod
+    public void getStreamPosition(Promise promise) {
+        try {
+            //Returns the current (approximate) position of the current media, in milliseconds.
+            long time = mCastManager.getCurrentMediaPosition();
+            //Our react native approach handles everything in seconds
+            promise.resolve(time / 1000);
+        } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @ReactMethod
     public void initChromecast() {
