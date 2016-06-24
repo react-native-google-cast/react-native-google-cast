@@ -133,6 +133,14 @@ RCT_REMAP_METHOD(getDevices,
   resolve(devicesList);
 }
 
+RCT_REMAP_METHOD(getStreamPosition,
+                 resolved:(RCTPromiseResolveBlock)resolve
+                 rejected:(RCTPromiseRejectBlock)reject)
+{
+  double time = [self.mediaControlChannel approximateStreamPosition];
+  resolve(@(time));
+}
+
 
 #pragma mark - GCKDeviceScannerListener
 - (void)deviceDidComeOnline:(GCKDevice *)device {
