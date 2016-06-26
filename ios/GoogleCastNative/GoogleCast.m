@@ -25,9 +25,9 @@ RCT_EXPORT_MODULE();
 }
 
 
-RCT_EXPORT_METHOD(initChromecast)
+RCT_EXPORT_METHOD(startScan)
 {
-  RCTLogInfo(@"init chromecast!");
+  RCTLogInfo(@"start scan chromecast!");
   
   self.currentDevices = [[NSMutableDictionary alloc] init];
   // Initialize device scanner.

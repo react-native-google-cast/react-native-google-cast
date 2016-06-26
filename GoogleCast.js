@@ -3,10 +3,6 @@ import {NativeModules} from 'react-native';
 const {GoogleCast} = NativeModules;
 
 export default {
-
-  initChromecast: function () {
-    GoogleCast.initChromecast();
-  },
   startScan: function () {
     GoogleCast.startScan();
   },

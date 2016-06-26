@@ -187,8 +187,8 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
 
     @ReactMethod
-    public void initChromecast() {
-        Log.e(REACT_CLASS, "init Chromecast ");
+    public void startScan() {
+        Log.e(REACT_CLASS, "start scan Chromecast ");
         if (mCastManager != null) {
             mCastManager = VideoCastManager.getInstance();
             mCastManager.incrementUiCounter();
