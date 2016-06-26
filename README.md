@@ -69,3 +69,16 @@ Chromecast.togglePauseCast();
 // Get the current streaming time frame. It can be use to sync the chromecast to
 // your visual media controllers
 Chromecast.getStreamPosition();
+
+```
+##Events##
+Chromecast uses events to let you know when you should start playing with the service, like streaming the media.
+```js
+// To know if there are chromecasts around
+DeviceEventEmitter.addListener("GoogleCast:DeviceAvailable", (existance) => console.log(existance.device_available));
+
+// To know if the connection attempt was successful
+DeviceEventEmitter.addListener("GoogleCast:DeviceConnected", () => { /* callback */ });
+
+// If chromecast started to stream the media succesfully, it will send this event
+DeviceEventEmitter.addListener("GoogleCast:MediaLoaded", () => { /* callback */ });
