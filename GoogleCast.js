@@ -18,11 +18,11 @@ export default {
   connectToDevice: function (deviceId:string) {
     GoogleCast.connectToDevice(deviceId);
   },
-  castMedia: function (mediaUrl:string, title:string, imageUrl:string, seconds:number) {
+  castMedia: function (mediaUrl:string, title:string, imageUrl:string, seconds:number = 0) {
     GoogleCast.castMedia(mediaUrl, title, imageUrl, seconds);
   },
-  seekCast: function (milliseconds:number) {
-    GoogleCast.seekCast(milliseconds);
+  seekCast: function (seconds:number) {
+    GoogleCast.seekCast(seconds);
   },
   togglePauseCast: function () {
     GoogleCast.togglePauseCast();
