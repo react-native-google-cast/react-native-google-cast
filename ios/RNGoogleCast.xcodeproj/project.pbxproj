@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CB9F124B1D20DC2B002FAD15 /* GoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9F124A1D20DC2B002FAD15 /* GoogleCast.m */; };
+		CB9F12B41D21A5AE002FAD15 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9F12B31D21A5AE002FAD15 /* RNGoogleCast.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1DAE2D1C1D086CD600D3FE06 /* CopyFiles */ = {
+		3245CDEB1BFEE35C00EABF68 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -23,13 +23,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1DAE2D1E1D086CD600D3FE06 /* libGoogleCastNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGoogleCastNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB9F12491D20DC2B002FAD15 /* GoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleCast.h; sourceTree = "<group>"; };
-		CB9F124A1D20DC2B002FAD15 /* GoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleCast.m; sourceTree = "<group>"; };
+		3245CDED1BFEE35C00EABF68 /* libRNGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB9F12B21D21A5AE002FAD15 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
+		CB9F12B31D21A5AE002FAD15 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1DAE2D1B1D086CD600D3FE06 /* Frameworks */ = {
+		3245CDEA1BFEE35C00EABF68 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -39,99 +39,98 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1DAE2D151D086CD600D3FE06 = {
+		3245CDE41BFEE35C00EABF68 = {
 			isa = PBXGroup;
 			children = (
-				CB9F12481D20DC2B002FAD15 /* GoogleCastNative */,
-				1DAE2D1F1D086CD600D3FE06 /* Products */,
+				CB9F12B11D21A4A4002FAD15 /* GoogleCastNative */,
+				3245CDEE1BFEE35C00EABF68 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		1DAE2D1F1D086CD600D3FE06 /* Products */ = {
+		3245CDEE1BFEE35C00EABF68 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1DAE2D1E1D086CD600D3FE06 /* libGoogleCastNative.a */,
+				3245CDED1BFEE35C00EABF68 /* libRNGoogleCast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CB9F12481D20DC2B002FAD15 /* GoogleCastNative */ = {
+		CB9F12B11D21A4A4002FAD15 /* GoogleCastNative */ = {
 			isa = PBXGroup;
 			children = (
-				CB9F12491D20DC2B002FAD15 /* GoogleCast.h */,
-				CB9F124A1D20DC2B002FAD15 /* GoogleCast.m */,
+				CB9F12B21D21A5AE002FAD15 /* RNGoogleCast.h */,
+				CB9F12B31D21A5AE002FAD15 /* RNGoogleCast.m */,
 			);
-			path = GoogleCastNative;
+			name = GoogleCastNative;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1DAE2D1D1D086CD600D3FE06 /* GoogleCastNative */ = {
+		3245CDEC1BFEE35C00EABF68 /* RNGoogleCast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DAE2D271D086CD600D3FE06 /* Build configuration list for PBXNativeTarget "GoogleCastNative" */;
+			buildConfigurationList = 3245CE011BFEE35C00EABF68 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */;
 			buildPhases = (
-				1DAE2D1A1D086CD600D3FE06 /* Sources */,
-				1DAE2D1B1D086CD600D3FE06 /* Frameworks */,
-				1DAE2D1C1D086CD600D3FE06 /* CopyFiles */,
+				3245CDE91BFEE35C00EABF68 /* Sources */,
+				3245CDEA1BFEE35C00EABF68 /* Frameworks */,
+				3245CDEB1BFEE35C00EABF68 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = GoogleCastNative;
-			productName = RCTTwilioIPMessaging;
-			productReference = 1DAE2D1E1D086CD600D3FE06 /* libGoogleCastNative.a */;
+			name = RNGoogleCast;
+			productName = RCTOneSignal;
+			productReference = 3245CDED1BFEE35C00EABF68 /* libRNGoogleCast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		1DAE2D161D086CD600D3FE06 /* Project object */ = {
+		3245CDE51BFEE35C00EABF68 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0730;
-				ORGANIZATIONNAME = "Brad Bumbalough";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
-					1DAE2D1D1D086CD600D3FE06 = {
-						CreatedOnToolsVersion = 7.3.1;
+					3245CDEC1BFEE35C00EABF68 = {
+						CreatedOnToolsVersion = 6.4;
 					};
 				};
 			};
-			buildConfigurationList = 1DAE2D191D086CD600D3FE06 /* Build configuration list for PBXProject "GoogleCastNative" */;
+			buildConfigurationList = 3245CDE81BFEE35C00EABF68 /* Build configuration list for PBXProject "RNGoogleCast" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 1DAE2D151D086CD600D3FE06;
-			productRefGroup = 1DAE2D1F1D086CD600D3FE06 /* Products */;
+			mainGroup = 3245CDE41BFEE35C00EABF68;
+			productRefGroup = 3245CDEE1BFEE35C00EABF68 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1DAE2D1D1D086CD600D3FE06 /* GoogleCastNative */,
+				3245CDEC1BFEE35C00EABF68 /* RNGoogleCast */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1DAE2D1A1D086CD600D3FE06 /* Sources */ = {
+		3245CDE91BFEE35C00EABF68 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB9F124B1D20DC2B002FAD15 /* GoogleCast.m in Sources */,
+				CB9F12B41D21A5AE002FAD15 /* RNGoogleCast.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		1DAE2D251D086CD600D3FE06 /* Debug */ = {
+		3245CDFF1BFEE35C00EABF68 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -145,11 +144,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -158,24 +157,25 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
-		1DAE2D261D086CD600D3FE06 /* Release */ = {
+		3245CE001BFEE35C00EABF68 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -189,11 +189,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -202,53 +202,40 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				HEADER_SEARCH_PATHS = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		1DAE2D281D086CD600D3FE06 /* Debug */ = {
+		3245CE021BFEE35C00EABF68 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../../ios/Pods/**",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks/**";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../React/**",
-					"$(SRCROOT)/../../node_modules/react-native/React/**",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../react-native/React/**",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
-				PODS_ROOT = "${SRCROOT}/../../ios/Pods";
-				PRODUCT_NAME = GoogleCastNative;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		1DAE2D291D086CD600D3FE06 /* Release */ = {
+		3245CE031BFEE35C00EABF68 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../../ios/Pods/**",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks/**";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../React/**",
-					"$(SRCROOT)/../../node_modules/react-native/React/**",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../react-native/React/**",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
-				PODS_ROOT = "${SRCROOT}/../../ios/Pods";
-				PRODUCT_NAME = GoogleCastNative;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -256,25 +243,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DAE2D191D086CD600D3FE06 /* Build configuration list for PBXProject "GoogleCastNative" */ = {
+		3245CDE81BFEE35C00EABF68 /* Build configuration list for PBXProject "RNGoogleCast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DAE2D251D086CD600D3FE06 /* Debug */,
-				1DAE2D261D086CD600D3FE06 /* Release */,
+				3245CDFF1BFEE35C00EABF68 /* Debug */,
+				3245CE001BFEE35C00EABF68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DAE2D271D086CD600D3FE06 /* Build configuration list for PBXNativeTarget "GoogleCastNative" */ = {
+		3245CE011BFEE35C00EABF68 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DAE2D281D086CD600D3FE06 /* Debug */,
-				1DAE2D291D086CD600D3FE06 /* Release */,
+				3245CE021BFEE35C00EABF68 /* Debug */,
+				3245CE031BFEE35C00EABF68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 1DAE2D161D086CD600D3FE06 /* Project object */;
+	rootObject = 3245CDE51BFEE35C00EABF68 /* Project object */;
 }

@@ -1,4 +1,4 @@
-#import "GoogleCast.h"
+#import "RNGoogleCast.h"
 #import "RCTLog.h"
 #import "RCTBridge.h"
 #import "RCTEventDispatcher.h"
