@@ -42,11 +42,6 @@ RCT_EXPORT_METHOD(startScan)
   });
 }
 
-RCT_EXPORT_METHOD(startScan)
-{
-    RCTLogInfo(@"start chromecast!");
-}
-
 RCT_EXPORT_METHOD(stopScan)
 {
   RCTLogInfo(@"stop chromecast!");
