@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CB9F12B41D21A5AE002FAD15 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9F12B31D21A5AE002FAD15 /* RNGoogleCast.m */; };
+		CB445CFA1D21CDBB007E7F90 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = CB445CF91D21CDBB007E7F90 /* RNGoogleCast.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		3245CDEB1BFEE35C00EABF68 /* CopyFiles */ = {
+		58B511D91A9E6C8500147676 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -23,13 +23,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3245CDED1BFEE35C00EABF68 /* libRNGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB9F12B21D21A5AE002FAD15 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
-		CB9F12B31D21A5AE002FAD15 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
+		134814201AA4EA6300B7C361 /* libRNGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB445CF81D21CDBB007E7F90 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
+		CB445CF91D21CDBB007E7F90 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		3245CDEA1BFEE35C00EABF68 /* Frameworks */ = {
+		58B511D81A9E6C8500147676 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -39,95 +39,89 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3245CDE41BFEE35C00EABF68 = {
+		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CB9F12B11D21A4A4002FAD15 /* GoogleCastNative */,
-				3245CDEE1BFEE35C00EABF68 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		3245CDEE1BFEE35C00EABF68 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3245CDED1BFEE35C00EABF68 /* libRNGoogleCast.a */,
+				134814201AA4EA6300B7C361 /* libRNGoogleCast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CB9F12B11D21A4A4002FAD15 /* GoogleCastNative */ = {
+		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				CB9F12B21D21A5AE002FAD15 /* RNGoogleCast.h */,
-				CB9F12B31D21A5AE002FAD15 /* RNGoogleCast.m */,
+				CB445CF81D21CDBB007E7F90 /* RNGoogleCast.h */,
+				CB445CF91D21CDBB007E7F90 /* RNGoogleCast.m */,
+				134814211AA4EA7D00B7C361 /* Products */,
 			);
-			name = GoogleCastNative;
+			indentWidth = 2;
 			sourceTree = "<group>";
+			tabWidth = 2;
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3245CDEC1BFEE35C00EABF68 /* RNGoogleCast */ = {
+		58B511DA1A9E6C8500147676 /* RNGoogleCast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3245CE011BFEE35C00EABF68 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */;
 			buildPhases = (
-				3245CDE91BFEE35C00EABF68 /* Sources */,
-				3245CDEA1BFEE35C00EABF68 /* Frameworks */,
-				3245CDEB1BFEE35C00EABF68 /* CopyFiles */,
+				58B511D71A9E6C8500147676 /* Sources */,
+				58B511D81A9E6C8500147676 /* Frameworks */,
+				58B511D91A9E6C8500147676 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = RNGoogleCast;
-			productName = RCTOneSignal;
-			productReference = 3245CDED1BFEE35C00EABF68 /* libRNGoogleCast.a */;
+			productName = RCTDataManager;
+			productReference = 134814201AA4EA6300B7C361 /* libRNGoogleCast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		3245CDE51BFEE35C00EABF68 /* Project object */ = {
+		58B511D31A9E6C8500147676 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
-					3245CDEC1BFEE35C00EABF68 = {
-						CreatedOnToolsVersion = 6.4;
+					58B511DA1A9E6C8500147676 = {
+						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
 			};
-			buildConfigurationList = 3245CDE81BFEE35C00EABF68 /* Build configuration list for PBXProject "RNGoogleCast" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNGoogleCast" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 3245CDE41BFEE35C00EABF68;
-			productRefGroup = 3245CDEE1BFEE35C00EABF68 /* Products */;
+			mainGroup = 58B511D21A9E6C8500147676;
+			productRefGroup = 58B511D21A9E6C8500147676;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3245CDEC1BFEE35C00EABF68 /* RNGoogleCast */,
+				58B511DA1A9E6C8500147676 /* RNGoogleCast */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3245CDE91BFEE35C00EABF68 /* Sources */ = {
+		58B511D71A9E6C8500147676 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB9F12B41D21A5AE002FAD15 /* RNGoogleCast.m in Sources */,
+				CB445CFA1D21CDBB007E7F90 /* RNGoogleCast.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		3245CDFF1BFEE35C00EABF68 /* Debug */ = {
+		58B511ED1A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -145,34 +139,32 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				WARNING_CFLAGS = (
+					"-Wextra",
+					"-Wall",
+				);
 			};
 			name = Debug;
 		};
-		3245CE001BFEE35C00EABF68 /* Release */ = {
+		58B511EE1A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -189,51 +181,56 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"-Wextra",
+					"-Wall",
+				);
 			};
 			name = Release;
 		};
-		3245CE021BFEE35C00EABF68 /* Debug */ = {
+		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks/**";
+				CLANG_STATIC_ANALYZER_MODE = deep;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/../../../ios/Pods/**",
 				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNGoogleCast;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		3245CE031BFEE35C00EABF68 /* Release */ = {
+		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks/**";
+				CLANG_STATIC_ANALYZER_MODE = deep;
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/../../../ios/Pods/**",
 				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
@@ -243,25 +240,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3245CDE81BFEE35C00EABF68 /* Build configuration list for PBXProject "RNGoogleCast" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNGoogleCast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3245CDFF1BFEE35C00EABF68 /* Debug */,
-				3245CE001BFEE35C00EABF68 /* Release */,
+				58B511ED1A9E6C8500147676 /* Debug */,
+				58B511EE1A9E6C8500147676 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3245CE011BFEE35C00EABF68 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3245CE021BFEE35C00EABF68 /* Debug */,
-				3245CE031BFEE35C00EABF68 /* Release */,
+				58B511F01A9E6C8500147676 /* Debug */,
+				58B511F11A9E6C8500147676 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 3245CDE51BFEE35C00EABF68 /* Project object */;
+	rootObject = 58B511D31A9E6C8500147676 /* Project object */;
 }
