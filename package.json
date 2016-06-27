@@ -6,6 +6,7 @@
     "name": "Charlie L",
     "email": "carlyeah@me.com"
   },
+  "license": "MIT",
   "keywords": [
     "react-native",
     "ios",
@@ -13,13 +14,13 @@
     "chromecast"
   ],
   "main": "GoogleCast.js",
-  "repository": "git@github.com:charliesbox/react-native-google-cast.git",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:charliesbox/react-native-google-cast.git"
+  },
   "files": [
     "android/",
     "ios/",
     "GoogleCast.js"
-  ],
-  "devDependencies": {
-    "react-native": "*"
-  }
+  ]
 }
