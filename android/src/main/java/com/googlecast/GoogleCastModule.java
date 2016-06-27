@@ -81,12 +81,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void startScan() {
-        Log.e(REACT_CLASS, "Starting scan");
-        mCastManager.incrementUiCounter();
-    }
-
-    @ReactMethod
     public void stopScan() {
         Log.e(REACT_CLASS, "Stopping Scan");
         mCastManager.decrementUiCounter();
@@ -179,7 +173,8 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
             //Returns the current (approximate) position of the current media, in milliseconds.
             long time = mCastManager.getCurrentMediaPosition();
             //Our react native approach handles everything in seconds
-            promise.resolve(time / 1000);
+            int seconds = (int) (time / 1000);
+            promise.resolve(seconds);
         } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
             e.printStackTrace();
         }
