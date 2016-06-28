@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.author         = { package_json["author"] => package_json["author"]["name"] }
   s.platform       = :ios, "9.0"
   s.source         = { :git => package_json["repository"]["url"] }
-  s.source_files   = 'ios/*.{h,m}'
+  s.source_files   = 'ios/RNGoogleCast/*.{h,m}'
   s.dependency 'React'
   s.dependency 'google-cast-sdk'
 
