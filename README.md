@@ -9,6 +9,12 @@ npm i react-native-google-cast --save
 
 #### iOS
 
+  - Open you Xcode IDE
+  - In `Libraries` choose `Add files...` and add the folder `ios/RNGoogleCast` from the `node_modules/react-native-google-cast/ios` folder
+  - Go to the [Google Cast Developer site](https://developers.google.com/cast/docs/developers#libraries) and download the iOS sender library
+  - Extract the GoogleCast.framework bundle from the downloaded zip file
+  - Move the framework bundle into your framework directory in your project
+  - Rebuild your project. iOS is ready for the battle!
 
 #### Android
 
