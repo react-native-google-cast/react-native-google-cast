@@ -1,7 +1,7 @@
 {
   "name": "react-native-google-cast",
   "description": "Chromecast library for iOS and Android",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Charlie L",
     "email": "carlyeah@me.com"
