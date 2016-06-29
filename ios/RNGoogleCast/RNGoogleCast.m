@@ -6,6 +6,7 @@
 static NSString *const DEVICE_CHANGED = @"GoogleCast:DeviceListChanged";
 static NSString *const DEVICE_AVAILABLE = @"GoogleCast:DeviceAvailable";
 static NSString *const DEVICE_CONNECTED = @"GoogleCast:DeviceConnected";
+static NSString *const DEVICE_DISCONNECTED = @"GoogleCast:DeviceDisconnected";
 static NSString *const MEDIA_LOADED = @"GoogleCast:MediaLoaded";
 
 
@@ -28,7 +29,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(startScan)
 {
   RCTLogInfo(@"start scan chromecast!");
-  
+
   self.currentDevices = [[NSMutableDictionary alloc] init];
   // Initialize device scanner.
   dispatch_async(dispatch_get_main_queue(), ^{
@@ -73,6 +74,14 @@ RCT_EXPORT_METHOD(connectToDevice:(NSString *)deviceId)
   });
 }
 
+RCT_EXPORT_METHOD(disconnect)
+{
+  if(self.deviceManager == nil) return;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.deviceManager disconnectWithLeave:YES];
+  });
+}
+
 RCT_EXPORT_METHOD(castMedia
                   :(NSString *)mediaUrl
                   :(NSString *) title
@@ -81,16 +90,16 @@ RCT_EXPORT_METHOD(castMedia
 {
   RCTLogInfo(@"casting media");
   seconds = !seconds ? 0 : seconds;
-  
+
   GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc] init];
-  
+
   [metadata setString:title forKey:kGCKMetadataKeyTitle];
-  
+
   [metadata addImage:[[GCKImage alloc]
                       initWithURL:[[NSURL alloc] initWithString: imageUrl]
                       width:480
                       height:360]];
-  
+
   GCKMediaInformation *mediaInformation =
   [[GCKMediaInformation alloc] initWithContentID: mediaUrl
                                       streamType: GCKMediaStreamTypeNone
@@ -98,7 +107,7 @@ RCT_EXPORT_METHOD(castMedia
                                         metadata: metadata
                                   streamDuration: 0
                                       customData: nil];
-  
+
   // Cast the video.
   [self.mediaControlChannel loadMedia:mediaInformation autoplay:YES playPosition: seconds];
 }
@@ -159,6 +168,11 @@ RCT_REMAP_METHOD(getStreamPosition,
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
   // Launch application after getting connected.
   [_deviceManager launchApplication: kGCKMediaDefaultReceiverApplicationID];
+}
+
+-(void)deviceManagerDidStopApplication:(GCKDeviceManager *)deviceManager {
+  [self emitMessageToRN:DEVICE_DISCONNECTED
+                       :nil];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didConnectToCastApplication

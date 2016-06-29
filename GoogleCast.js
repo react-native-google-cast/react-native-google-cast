@@ -18,6 +18,9 @@ export default {
   connectToDevice: function (deviceId:string) {
     GoogleCast.connectToDevice(deviceId);
   },
+  disconnect: function(){
+    GoogleCast.disconnect();
+  },
   castMedia: function (mediaUrl:string, title:string, imageUrl:string, seconds:number = 0) {
     GoogleCast.castMedia(mediaUrl, title, imageUrl, seconds);
   },
@@ -30,4 +33,9 @@ export default {
   getStreamPosition: function (){
     return GoogleCast.getStreamPosition();
   },
+  DEVICE_CHANGED: GoogleCast.DEVICE_CHANGED,
+  DEVICE_AVAILABLE: GoogleCast.DEVICE_AVAILABLE,
+  DEVICE_CONNECTED: GoogleCast.DEVICE_CONNECTED,
+  DEVICE_DISCONNECTED: GoogleCast.DEVICE_DISCONNECTED,
+  MEDIA_LOADED: GoogleCast.MEDIA_LOADED,
 };
