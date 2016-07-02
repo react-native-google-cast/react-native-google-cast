@@ -21,6 +21,7 @@
   "files": [
     "android/",
     "ios/",
-    "GoogleCast.js"
+    "GoogleCast.js",
+    "*.podspec"
   ]
 }
