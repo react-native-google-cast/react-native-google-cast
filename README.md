@@ -61,6 +61,9 @@ Chromecast.getDevices();
 // Gets the device id, and connects to it. If it is successful, will send a broadcast
 Chromecast.connectToDevice(DEVICE_ID);
 
+// Closes the connection to the current Chromecast
+Chromecast.disconnect();
+
 // Streams the media to the connected chromecast. Time parameter let you choose
 // in which time frame the media should start streaming
 Chromecast.castMedia(MEDIA_URL, MEDIA_TITLE, MEDIA_IMAGE, TIME_IN_SECONDS);
