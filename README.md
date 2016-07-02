@@ -3,7 +3,7 @@
 A library that unifies both android and iOS chromecast sdk
 
 ##Installation
-npm i react-native-google-cast --save
+`npm i react-native-google-cast --save`
 
 #### iOS
 
@@ -80,10 +80,20 @@ Chromecast.getStreamPosition();
 Chromecast uses events to let you know when you should start playing with the service, like streaming the media.
 ```js
 // To know if there are chromecasts around
-DeviceEventEmitter.addListener("GoogleCast:DeviceAvailable", (existance) => console.log(existance.device_available));
+DeviceEventEmitter.addListener(Chromecast.DEVICE_AVAILABLE, (existance) => console.log(existance.device_available));
 
 // To know if the connection attempt was successful
-DeviceEventEmitter.addListener("GoogleCast:DeviceConnected", () => { /* callback */ });
+DeviceEventEmitter.addListener(Chromecast.DEVICE_CONNECTED, () => { /* callback */ });
 
 // If chromecast started to stream the media succesfully, it will send this event
-DeviceEventEmitter.addListener("GoogleCast:MediaLoaded", () => { /* callback */ });
+DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ });
+
+```
+##Constants##
+```js
+
+  DEVICE_CHANGED,
+  DEVICE_AVAILABLE,
+  DEVICE_CONNECTED,
+  DEVICE_DISCONNECTED,
+  MEDIA_LOADED,
