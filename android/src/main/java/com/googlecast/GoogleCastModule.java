@@ -63,7 +63,11 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @Override
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
-        constants.put(DEVICE_CHANGED, DEVICE_CHANGED);
+        constants.put("DEVICE_CHANGED", DEVICE_CHANGED);
+        constants.put("DEVICE_AVAILABLE", DEVICE_AVAILABLE);
+        constants.put("DEVICE_CONNECTED", DEVICE_CONNECTED);
+        constants.put("DEVICE_DISCONNECTED", DEVICE_DISCONNECTED);
+        constants.put("MEDIA_LOADED", MEDIA_LOADED);
         return constants;
     }
 
