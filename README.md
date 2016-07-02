@@ -2,8 +2,6 @@
 
 A library that unifies both android and iOS chromecast sdk
 
-## Documentation - WIP !
-
 ##Installation
 npm i react-native-google-cast --save
 
