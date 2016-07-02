@@ -22,6 +22,6 @@
     "android/",
     "ios/",
     "GoogleCast.js",
-    "react-native-google-cast.podspec"
+    "*.podspec"
   ]
 }
