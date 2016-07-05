@@ -171,9 +171,9 @@ RCT_REMAP_METHOD(getStreamPosition,
   [_deviceManager launchApplication: kGCKMediaDefaultReceiverApplicationID];
 }
 
--(void)deviceManagerDidStopApplication:(GCKDeviceManager *)deviceManager {
-  [self emitMessageToRN:DEVICE_DISCONNECTED
-                       :nil];
+- (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectWithError:(NSError *)error {
+    [self emitMessageToRN:DEVICE_DISCONNECTED
+                         :nil];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didConnectToCastApplication
