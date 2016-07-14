@@ -1,3 +1,4 @@
+[![npm version](https://badge.fury.io/js/react-native-google-cast.svg)](https://badge.fury.io/js/react-native-google-cast)
 # react-native-google-cast
 
 A library that unifies both android and iOS chromecast sdk
