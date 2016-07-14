@@ -31,8 +31,7 @@ dependencies {
    compile project(':react-native-google-cast')
 }
 ```
-
-**MainActivity.java**
+**If you're on RN > 29 apply these changes in `MainApplication.java`, otherwise in `MainActivity.java`**
 
 On top, where imports are:
 ```java
