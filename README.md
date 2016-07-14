@@ -100,3 +100,6 @@ DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ }
   DEVICE_AVAILABLE,
   DEVICE_CONNECTED,
   MEDIA_LOADED,
+```  
+##Example##
+Refer to [my example repo](https://github.com/charliesbox/react-native-google-cast-example) too see an implementation of this library
