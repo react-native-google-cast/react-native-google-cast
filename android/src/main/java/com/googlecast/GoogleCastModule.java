@@ -47,7 +47,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     private static final String DEVICE_CHANGED = "GoogleCast:DeviceListChanged";
     private static final String DEVICE_AVAILABLE = "GoogleCast:DeviceAvailable";
     private static final String DEVICE_CONNECTED = "GoogleCast:DeviceConnected";
-    private static final String DEVICE_DISCONNECTED = "GoogleCast:DeviceDisconnected";
     private static final String MEDIA_LOADED = "GoogleCast:MediaLoaded";
 
     public GoogleCastModule(ReactApplicationContext reactContext) {
@@ -66,7 +65,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
         constants.put("DEVICE_CHANGED", DEVICE_CHANGED);
         constants.put("DEVICE_AVAILABLE", DEVICE_AVAILABLE);
         constants.put("DEVICE_CONNECTED", DEVICE_CONNECTED);
-        constants.put("DEVICE_DISCONNECTED", DEVICE_DISCONNECTED);
         constants.put("MEDIA_LOADED", MEDIA_LOADED);
         return constants;
     }
@@ -145,13 +143,16 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
     @ReactMethod
     public void disconnect() {
-        try {
-            mCastManager.stopApplication();
-            mCastManager.disconnect();
-        } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
-            e.printStackTrace();
-        }
-
+        UiThreadUtil.runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    mCastManager.stopApplication();
+                    mCastManager.disconnect();
+                } catch (TransientNetworkDisconnectionException | NoConnectionException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @ReactMethod
@@ -205,7 +206,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                     VideoCastManager.initialize(getCurrentActivity(), options);
                     mCastManager = VideoCastManager.getInstance();
                     mCastConsumer = new VideoCastConsumerImpl() {
-                        
+
                         @Override
                         public void onMediaLoadResult(int statusCode) {
                             super.onMediaLoadResult(statusCode);
