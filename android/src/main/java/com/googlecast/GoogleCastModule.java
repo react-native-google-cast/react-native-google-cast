@@ -155,12 +155,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     }
 
     @ReactMethod
-    public void disconnectFromDevice() {
-        Log.e(REACT_CLASS, "disconnecting...");
-        mCastManager.disconnect();
-    }
-
-    @ReactMethod
     public void togglePauseCast() {
         try {
             if (mCastManager.isRemoteMediaPaused()) {
@@ -211,12 +205,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                     VideoCastManager.initialize(getCurrentActivity(), options);
                     mCastManager = VideoCastManager.getInstance();
                     mCastConsumer = new VideoCastConsumerImpl() {
-                        @Override
-                        public void onApplicationDisconnected(int errorCode) {
-                            super.onApplicationDisconnected(errorCode);
-                            emitMessageToRN(getReactApplicationContext(), DEVICE_DISCONNECTED, null);
-                        }
-
+                        
                         @Override
                         public void onMediaLoadResult(int statusCode) {
                             super.onMediaLoadResult(statusCode);
