@@ -1,104 +1,53 @@
-[![npm version](https://badge.fury.io/js/react-native-google-cast.svg)](https://badge.fury.io/js/react-native-google-cast)
+
 # react-native-google-cast
 
-A library that unifies both android and iOS chromecast sdk
+## Getting started
 
-##Installation
-`npm i react-native-google-cast --save`
+`$ npm install react-native-google-cast --save`
+
+### Mostly automatic installation
+
+`$ react-native link react-native-google-cast`
+
+### Manual installation
+
 
 #### iOS
 
-  - Open your Xcode project
-  - In `Libraries` choose `Add files...` and add the folder `ios/RNGoogleCast` from the `node_modules/react-native-google-cast/ios` folder. Be sure that the option `copy if needed` is unchecked.
-  - Add `pod 'google-cast-sdk'` to your Podfile. This is the easier way to have the sdk up to date.
-  - If you get an error after building the project, be sure that `$(inherited)` was added to `Other Linker Flags` in `Build Settings` 
-  
-       <img width="508" alt="screen shot 2016-07-01 at 11 05 32 pm" src="https://cloud.githubusercontent.com/assets/10927770/16538156/8cb11522-3fe0-11e6-98dd-4f5acbebefb9.png">
-  - Rebuild your project. iOS is ready for the battle!
+1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
+2. Go to `node_modules` ➜ `react-native-google-cast` and add `GoogleCast.xcodeproj`
+3. In XCode, in the project navigator, select your project. Add `libGoogleCast.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
+4. Run your project (`Cmd+R`)<
 
 #### Android
 
-**android/settings.gradle**
+1. Open up `android/app/src/main/java/[...]/MainActivity.java`
+  - Add `import com.googlecast.GoogleCastPackage;` to the imports at the top of the file
+  - Add `new GoogleCastPackage()` to the list returned by the `getPackages()` method
+2. Append the following lines to `android/settings.gradle`:
+  	```
+  	include ':react-native-google-cast'
+  	project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-google-cast/android')
+  	```
+3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
+  	```
+      compile project(':react-native-google-cast')
+  	```
+
+#### Windows
+[Read it! :D](https://github.com/ReactWindows/react-native)
+
+1. In Visual Studio add the `GoogleCast.sln` in `node_modules/react-native-google-cast/windows/GoogleCast.sln` folder to their solution, reference from their app.
+2. Open up your `MainPage.cs` app
+  - Add `using Cl.Json.GoogleCast;` to the usings at the top of the file
+  - Add `new GoogleCastPackage()` to the `List<IReactPackage>` returned by the `Packages` method
+
+
+## Usage
+```javascript
+import GoogleCast from 'react-native-google-cast';
+
+// TODO: What do with the module?
+GoogleCast;
 ```
-include ':react-native-google-cast'
-project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
-```
-
-**android/app/build.gradle**
-```
-dependencies {
-   ...
-   compile project(':react-native-google-cast')
-}
-```
-**If you're on RN > 29 apply these changes in `MainApplication.java`, otherwise in `MainActivity.java`**
-
-On top, where imports are:
-```java
-import com.googlecast.GoogleCastPackage;
-```
-
-Under `new MainReactPackage()`:
-`new GoogleCastPackage()`
-
-##Usage##
-```js
-// Require the module
-import Chromecast from 'react-native-google-cast';
-
-// Init Chromecast SDK and starts looking for devices
-Chromecast.startScan();
-
-// Does what the method says. It saves resources, use it when leaving your current view
-Chromecast.stopScan();
-
-// Returns a boolean with the result
-Chromecast.isConnected();
-
-// Return an array of devices' names and ids
-Chromecast.getDevices();
-
-// Gets the device id, and connects to it. If it is successful, will send a broadcast
-Chromecast.connectToDevice(DEVICE_ID);
-
-// Closes the connection to the current Chromecast
-Chromecast.disconnect();
-
-// Streams the media to the connected chromecast. Time parameter let you choose
-// in which time frame the media should start streaming
-Chromecast.castMedia(MEDIA_URL, MEDIA_TITLE, MEDIA_IMAGE, TIME_IN_SECONDS);
-
-// Move the streaming media to the selected time frame
-Chromecast.seekCast(TIME_IN_SECONDS);
-
-// Toggle Chromecast between pause or play state
-Chromecast.togglePauseCast();
-
-// Get the current streaming time frame. It can be use to sync the chromecast to
-// your visual media controllers
-Chromecast.getStreamPosition();
-
-```
-##Events##
-Chromecast uses events to let you know when you should start playing with the service, like streaming the media.
-```js
-// To know if there are chromecasts around
-DeviceEventEmitter.addListener(Chromecast.DEVICE_AVAILABLE, (existance) => console.log(existance.device_available));
-
-// To know if the connection attempt was successful
-DeviceEventEmitter.addListener(Chromecast.DEVICE_CONNECTED, () => { /* callback */ });
-
-// If chromecast started to stream the media succesfully, it will send this event
-DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ });
-
-```
-##Constants##
-```js
-
-  DEVICE_CHANGED,
-  DEVICE_AVAILABLE,
-  DEVICE_CONNECTED,
-  MEDIA_LOADED,
-```  
-##Example##
-Refer to [my example repo](https://github.com/charliesbox/react-native-google-cast-example) too see an implementation of this library
+  
