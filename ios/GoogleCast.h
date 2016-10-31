@@ -1,5 +1,5 @@
-
 #import "RCTBridgeModule.h"
+#import <GoogleCast/GoogleCast.h>
 
 @interface GoogleCast : NSObject <RCTBridgeModule, GCKDeviceScannerListener, GCKDeviceManagerDelegate,GCKMediaControlChannelDelegate>
 
