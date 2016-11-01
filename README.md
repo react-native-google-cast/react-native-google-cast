@@ -1,5 +1,8 @@
 
+[![npm version](https://badge.fury.io/js/react-native-google-cast.svg)](https://badge.fury.io/js/react-native-google-cast)
 # react-native-google-cast
+
+A library that unifies both android and iOS chromecast sdk
 
 ## Getting started
 
@@ -9,8 +12,9 @@
 
 `$ react-native link react-native-google-cast`
 
-### iOS Headsup
-  - Add `pod 'google-cast-sdk'` to your Podfile. This is the easier way to have the sdk up to date.
+### iOS Heads Up
+  - This library requires Cocoapods to manage Chromecast SDK.
+  - Add `pod 'google-cast-sdk'` to your Podfile. This is the easier way to have the SDK up to date.
 
 ##Usage##
 ```js
