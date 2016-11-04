@@ -33,8 +33,8 @@ export default {
   getStreamPosition: function () {
 	return GoogleCast.getStreamPosition();
   },
-  DEVICE_CHANGED: GoogleCast.DEVICE_CHANGED,
   DEVICE_AVAILABLE: GoogleCast.DEVICE_AVAILABLE,
   DEVICE_CONNECTED: GoogleCast.DEVICE_CONNECTED,
+  DEVICE_DISCONNECTED: GoogleCast.DEVICE_DISCONNECTED,
   MEDIA_LOADED: GoogleCast.MEDIA_LOADED,
 };

@@ -44,9 +44,9 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @VisibleForTesting
     public static final String REACT_CLASS = "GoogleCastModule";
 
-    private static final String DEVICE_CHANGED = "GoogleCast:DeviceListChanged";
     private static final String DEVICE_AVAILABLE = "GoogleCast:DeviceAvailable";
     private static final String DEVICE_CONNECTED = "GoogleCast:DeviceConnected";
+    private static final String DEVICE_DISCONNECTED = "GoogleCast:DEVICE_DISCONNECTED";
     private static final String MEDIA_LOADED = "GoogleCast:MediaLoaded";
 
     public GoogleCastModule(ReactApplicationContext reactContext) {
@@ -65,6 +65,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
         constants.put("DEVICE_CHANGED", DEVICE_CHANGED);
         constants.put("DEVICE_AVAILABLE", DEVICE_AVAILABLE);
         constants.put("DEVICE_CONNECTED", DEVICE_CONNECTED);
+        constants.put("DEVICE_DISCONNECTED", DEVICE_DISCONNECTED);
         constants.put("MEDIA_LOADED", MEDIA_LOADED);
         return constants;
     }
@@ -86,7 +87,9 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void stopScan() {
         Log.e(REACT_CLASS, "Stopping Scan");
-        mCastManager.decrementUiCounter();
+        if (mCastManager != null) {
+            mCastManager.decrementUiCounter();
+        }
     }
 
     @ReactMethod
@@ -197,7 +200,13 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
         Log.e(REACT_CLASS, "start scan Chromecast ");
         if (mCastManager != null) {
             mCastManager = VideoCastManager.getInstance();
-            mCastManager.incrementUiCounter();
+            UiThreadUtil.runOnUiThread(new Runnable() {
+                public void run() {
+                    mCastManager.incrementUiCounter();
+                    mCastManager.startCastDiscovery();
+                }
+            });
+
             Log.e(REACT_CLASS, "Chromecast Initialized by getting instance");
         } else {
             final CastConfiguration options = GoogleCastService.getCastConfig();
@@ -219,6 +228,13 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                             Log.e(REACT_CLASS, "I am connected dudeeeeee ");
                             emitMessageToRN(getReactApplicationContext(), DEVICE_CONNECTED, null);
                         }
+
+                        @Override
+                        public void onApplicationDisconnected(int errorCode) {
+                            Log.e(REACT_CLASS, "Device Disconnected")
+                            emitMessageToRN(getReactApplicationContext(), DEVICE_DISCONNECTED, null);
+                        }
+
 
                         @Override
                         public void onRouteRemoved(MediaRouter.RouteInfo info) {
@@ -257,6 +273,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                     };
                     mCastManager.addVideoCastConsumer(mCastConsumer);
                     mCastManager.incrementUiCounter();
+                    mCastManager.startCastDiscovery();
                     Log.e(REACT_CLASS, "Chromecast Initialized for the first time!");
                 }
             });

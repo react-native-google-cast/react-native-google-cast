@@ -3,7 +3,7 @@
 #import "RCTBridge.h"
 #import "RCTEventDispatcher.h"
 
-static NSString *const DEVICE_CHANGED = @"GoogleCast:DeviceListChanged";
+
 static NSString *const DEVICE_AVAILABLE = @"GoogleCast:DeviceAvailable";
 static NSString *const DEVICE_CONNECTED = @"GoogleCast:DeviceConnected";
 static NSString *const DEVICE_DISCONNECTED = @"GoogleCast:DeviceDisconnected";
@@ -18,7 +18,7 @@ RCT_EXPORT_MODULE();
 - (NSDictionary *)constantsToExport
 {
   return @{
-           @"DEVICE_CHANGED": DEVICE_CHANGED,
+           
            @"DEVICE_AVAILABLE": DEVICE_AVAILABLE,
            @"DEVICE_CONNECTED": DEVICE_CONNECTED,
            @"DEVICE_DISCONNECTED": DEVICE_DISCONNECTED,
@@ -128,14 +128,15 @@ RCT_REMAP_METHOD(getDevices,
                  reject:(RCTPromiseRejectBlock)reject)
 {
   NSMutableArray *devicesList = [[NSMutableArray alloc] init];
-  NSMutableDictionary *singleDevice= [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *singleDevice
   for (NSString *key in [self.currentDevices allKeys]) {
-    GCKDevice *device = self.currentDevices[key];
-    singleDevice[@"id"] = key;
-    singleDevice[@"name"] = device.friendlyName;
-    [devicesList addObject:singleDevice];
+      singleDevice = [[NSMutableDictionary alloc] init];
+      GCKDevice *device = self.currentDevices[key];
+      singleDevice[@"id"] = key;
+      singleDevice[@"name"] = device.friendlyName;
+      [devicesList addObject:singleDevice];
   }
-  resolve(devicesList);
+    resolve(devicesList);
 }
 
 RCT_REMAP_METHOD(getStreamPosition,
@@ -164,6 +165,7 @@ RCT_REMAP_METHOD(getStreamPosition,
   }
 }
 
+
 #pragma mark - GCKDeviceManagerDelegate
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
@@ -188,6 +190,11 @@ RCT_REMAP_METHOD(getStreamPosition,
   //send message to react native
   [self emitMessageToRN:DEVICE_CONNECTED
                        :nil];
+}
+
+- (void) deviceManager:(GCKDeviceManager *)deviceManager didDisconnectFromApplicationWithError:(NSError *__nullable)error {
+    [self emitMessageToRN:DEVICE_DISCONNECTED
+                         :nil];
 }
 
 - (void) mediaControlChannel:(GCKMediaControlChannel *)mediaControlChannel didCompleteLoadWithSessionID:(NSInteger)sessionID {
