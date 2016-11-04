@@ -73,7 +73,6 @@ DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ }
   DEVICE_CONNECTED,
   DEVICE_DISCONNECTED,
   MEDIA_LOADED,
-  APPLICATION_DISCONNECTED
 ```
 ##Example##
 Refer to the example folder to find an implementation of this project

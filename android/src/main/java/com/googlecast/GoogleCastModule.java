@@ -46,7 +46,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
     private static final String DEVICE_AVAILABLE = "GoogleCast:DeviceAvailable";
     private static final String DEVICE_CONNECTED = "GoogleCast:DeviceConnected";
-    private static final String DEVICE_DISCONNECTED = "GoogleCast:DEVICE_DISCONNECTED";
+    private static final String DEVICE_DISCONNECTED = "GoogleCast:DeviceDisconnected";
     private static final String MEDIA_LOADED = "GoogleCast:MediaLoaded";
 
     public GoogleCastModule(ReactApplicationContext reactContext) {
@@ -62,7 +62,6 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @Override
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
-        constants.put("DEVICE_CHANGED", DEVICE_CHANGED);
         constants.put("DEVICE_AVAILABLE", DEVICE_AVAILABLE);
         constants.put("DEVICE_CONNECTED", DEVICE_CONNECTED);
         constants.put("DEVICE_DISCONNECTED", DEVICE_DISCONNECTED);
@@ -230,11 +229,11 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
                         }
 
                         @Override
-                        public void onApplicationDisconnected(int errorCode) {
-                            Log.e(REACT_CLASS, "Device Disconnected")
+                        public void onDisconnected() {
+                            super.onDisconnected();
+                            Log.e(REACT_CLASS, "Device Disconnected");
                             emitMessageToRN(getReactApplicationContext(), DEVICE_DISCONNECTED, null);
                         }
-
 
                         @Override
                         public void onRouteRemoved(MediaRouter.RouteInfo info) {

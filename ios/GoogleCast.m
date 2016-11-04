@@ -128,7 +128,7 @@ RCT_REMAP_METHOD(getDevices,
                  reject:(RCTPromiseRejectBlock)reject)
 {
   NSMutableArray *devicesList = [[NSMutableArray alloc] init];
-    NSMutableDictionary *singleDevice
+    NSMutableDictionary *singleDevice;
   for (NSString *key in [self.currentDevices allKeys]) {
       singleDevice = [[NSMutableDictionary alloc] init];
       GCKDevice *device = self.currentDevices[key];

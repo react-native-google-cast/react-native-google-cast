@@ -33,6 +33,7 @@ class Main extends Component {
     DeviceEventEmitter.addListener(Chromecast.DEVICE_AVAILABLE, (existance) => this.setState({chromecastAround: existance.device_available}));
     DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => {});
     DeviceEventEmitter.addListener(Chromecast.DEVICE_CONNECTED, () => {this.chromecastCastMedia()});
+    DeviceEventEmitter.addListener(Chromecast.DEVICE_DISCONNECTED, () => alert('Device disconnected!'));
   }
 
   disconnectChromecast(){
