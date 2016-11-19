@@ -19,8 +19,5 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:charliesbox/react-native-google-cast.git"
-  },
-  "peerDependencies": {
-    "react-native": "^0.29.0"
   }
 }
