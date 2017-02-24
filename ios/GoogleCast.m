@@ -1,7 +1,7 @@
 #import "GoogleCast.h"
-#import "RCTLog.h"
-#import "RCTBridge.h"
-#import "RCTEventDispatcher.h"
+#import <React/RCTLog.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
 
 
 static NSString *const DEVICE_AVAILABLE = @"GoogleCast:DeviceAvailable";
@@ -18,7 +18,7 @@ RCT_EXPORT_MODULE();
 - (NSDictionary *)constantsToExport
 {
   return @{
-           
+
            @"DEVICE_AVAILABLE": DEVICE_AVAILABLE,
            @"DEVICE_CONNECTED": DEVICE_CONNECTED,
            @"DEVICE_DISCONNECTED": DEVICE_DISCONNECTED,
@@ -182,11 +182,11 @@ RCT_REMAP_METHOD(getStreamPosition,
                      :(GCKApplicationMetadata *)applicationMetadata
             sessionID:(NSString *)sessionID
   launchedApplication:(BOOL)launchedApplication {
-  
+
   self.mediaControlChannel = [[GCKMediaControlChannel alloc] init];
   self.mediaControlChannel.delegate = self;
   [_deviceManager addChannel:self.mediaControlChannel];
-  
+
   //send message to react native
   [self emitMessageToRN:DEVICE_CONNECTED
                        :nil];
