@@ -94,10 +94,10 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void getDevices(Promise promise) {
         WritableArray devicesList = Arguments.createArray();
-        WritableMap singleDevice = Arguments.createMap();
         try {
             Log.e(REACT_CLASS, "devices size " + currentDevices.size());
             for (MediaRouter.RouteInfo existingChromecasts : currentDevices.values()) {
+                WritableMap singleDevice = Arguments.createMap();
                 singleDevice.putString("id", existingChromecasts.getId());
                 singleDevice.putString("name", existingChromecasts.getName());
                 devicesList.pushMap(singleDevice);
