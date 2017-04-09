@@ -76,7 +76,12 @@ DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ }
 ```
 ## Example
 Refer to the example folder to find an implementation of this project.
-Remember to use `pod install` and `react-native link react-native-google-cast` to try it!
+Remember to use 
+
+* `pod install`
+* `react-native link react-native-google-cast` 
+
+to try it!
 
 ## Contribution
 Contributions are welcome !
