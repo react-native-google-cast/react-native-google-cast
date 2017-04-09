@@ -1,5 +1,5 @@
 rootProject.name = 'example'
-
-include ':app'
 include ':react-native-google-cast'
 project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
+
+include ':app'
