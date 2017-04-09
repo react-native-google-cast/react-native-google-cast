@@ -16,7 +16,7 @@ A library that unifies both android and iOS chromecast sdk
   - This library requires Cocoapods to manage Chromecast SDK.
   - Add `pod 'google-cast-sdk'` to your Podfile. This is the easier way to have the SDK up to date.
 
-##Usage##
+## Usage
 ```js
 // Require the module
 import Chromecast from 'react-native-google-cast';
@@ -54,7 +54,7 @@ Chromecast.togglePauseCast();
 Chromecast.getStreamPosition();
 
 ```
-##Events##
+## Events
 Chromecast uses events to let you know when you should start playing with the service, like streaming the media.
 ```js
 // To know if there are chromecasts around
@@ -67,15 +67,16 @@ DeviceEventEmitter.addListener(Chromecast.DEVICE_CONNECTED, () => { /* callback 
 DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ });
 
 ```
-##Constants##
+## Constants
 ```js
   DEVICE_AVAILABLE,
   DEVICE_CONNECTED,
   DEVICE_DISCONNECTED,
   MEDIA_LOADED,
 ```
-##Example##
-Refer to the example folder to find an implementation of this project
+## Example
+Refer to the example folder to find an implementation of this project.
+Remember to use `pod install` and `react-native link react-native-google-cast` to try it!
 
 ## Contribution
 Contributions are welcome !
