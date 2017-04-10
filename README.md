@@ -16,6 +16,15 @@ A library that unifies both android and iOS chromecast sdk
   - This library requires Cocoapods to manage Chromecast SDK.
   - Add `pod 'google-cast-sdk'` to your Podfile. This is the easier way to have the SDK up to date.
 
+### Android Heads Up
+  - This library requires Google Play Services, Media Router and Google Cast dependencies to manage Chromecast SDK.
+  - Add 
+  ``` 
+  compile 'com.google.android.gms:play-services-cast:9.4.0'
+  compile 'com.android.support:mediarouter-v7:23.0.1'
+  ```
+into your your app's `build.gradle` dependencies. `mediarouter`version must match with your `appcompat` version.
+
 ## Usage
 ```js
 // Require the module
