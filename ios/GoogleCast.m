@@ -26,16 +26,22 @@ RCT_EXPORT_MODULE();
            };
 }
 
-
-RCT_EXPORT_METHOD(startScan)
+RCT_EXPORT_METHOD(startDefaultScan)
 {
-  RCTLogInfo(@"start scan chromecast!");
+    RCTLogInfo(@"start defaultApp scan chromecast! ");
+    [self startScan:kGCKMediaDefaultReceiverApplicationID];
+}
+
+RCT_EXPORT_METHOD(startScan:(NSString *)appID)
+{
+  RCTLogInfo(@"start scan chromecast for app %@", self.kReceiverAppID);
+  self.kReceiverAppID = appID;
 
   self.currentDevices = [[NSMutableDictionary alloc] init];
   // Initialize device scanner.
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKFilterCriteria *filterCriteria =
-    [GCKFilterCriteria criteriaForAvailableApplicationWithID: kGCKMediaDefaultReceiverApplicationID];
+    [GCKFilterCriteria criteriaForAvailableApplicationWithID: kReceiverAppID];
     self.deviceScanner = [[GCKDeviceScanner alloc] initWithFilterCriteria:filterCriteria];
     [_deviceScanner addListener:self];
     [_deviceScanner startScan];
@@ -170,7 +176,7 @@ RCT_REMAP_METHOD(getStreamPosition,
 
 - (void)deviceManagerDidConnect:(GCKDeviceManager *)deviceManager {
   // Launch application after getting connected.
-  [_deviceManager launchApplication: kGCKMediaDefaultReceiverApplicationID];
+  [_deviceManager launchApplication: self.kReceiverAppID];
 }
 
 - (void)deviceManager:(GCKDeviceManager *)deviceManager didDisconnectWithError:(NSError *)error {

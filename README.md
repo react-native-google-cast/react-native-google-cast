@@ -30,8 +30,11 @@ into your your app's `build.gradle` dependencies. `mediarouter`version must matc
 // Require the module
 import Chromecast from 'react-native-google-cast';
 
-// Init Chromecast SDK and starts looking for devices
-Chromecast.startScan();
+// Init Chromecast SDK and starts looking for devices (uses DEFAULT APP ID)
+Chromecast.startDefaultScan();
+
+// Init Chromecast SDK and starts looking for devices using registered APP ID
+Chromecast.startScan(APP_ID);
 
 // Does what the method says. It saves resources, use it when leaving your current view
 Chromecast.stopScan();
