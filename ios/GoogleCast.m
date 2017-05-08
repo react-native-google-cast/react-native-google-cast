@@ -26,21 +26,21 @@ RCT_EXPORT_MODULE();
            };
 }
 
-RCT_EXPORT_METHOD(startScan)
-{
-    [self startScan:kGCKMediaDefaultReceiverApplicationID];
-}
-
 RCT_EXPORT_METHOD(startScan:(NSString *)appID)
 {
-  RCTLogInfo(@"start scan chromecast!");
-  self.kReceiverAppID = appID;
+  if (appID == (id)[NSNull null] || appID.length == 0 ) {
+      self.kReceiverAppID = kGCKMediaDefaultReceiverApplicationID;
+      RCTLogInfo(@"start defaultApp scan chromecast!");
+  } else {
+      self.kReceiverAppID = appID;
+      RCTLogInfo(@"start scan chromecast for app %@", self.kReceiverAppID);
+  }
 
   self.currentDevices = [[NSMutableDictionary alloc] init];
   // Initialize device scanner.
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKFilterCriteria *filterCriteria =
-    [GCKFilterCriteria criteriaForAvailableApplicationWithID: kReceiverAppID];
+    [GCKFilterCriteria criteriaForAvailableApplicationWithID: self.kReceiverAppID];
     self.deviceScanner = [[GCKDeviceScanner alloc] initWithFilterCriteria:filterCriteria];
     [_deviceScanner addListener:self];
     [_deviceScanner startScan];
