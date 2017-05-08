@@ -26,15 +26,14 @@ RCT_EXPORT_MODULE();
            };
 }
 
-RCT_EXPORT_METHOD(startDefaultScan)
+RCT_EXPORT_METHOD(startScan)
 {
-    RCTLogInfo(@"start defaultApp scan chromecast! ");
     [self startScan:kGCKMediaDefaultReceiverApplicationID];
 }
 
 RCT_EXPORT_METHOD(startScan:(NSString *)appID)
 {
-  RCTLogInfo(@"start scan chromecast for app %@", self.kReceiverAppID);
+  RCTLogInfo(@"start scan chromecast!");
   self.kReceiverAppID = appID;
 
   self.currentDevices = [[NSMutableDictionary alloc] init];

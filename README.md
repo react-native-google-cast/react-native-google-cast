@@ -31,7 +31,7 @@ into your your app's `build.gradle` dependencies. `mediarouter`version must matc
 import Chromecast from 'react-native-google-cast';
 
 // Init Chromecast SDK and starts looking for devices (uses DEFAULT APP ID)
-Chromecast.startDefaultScan();
+Chromecast.startScan();
 
 // Init Chromecast SDK and starts looking for devices using registered APP ID
 Chromecast.startScan(APP_ID);

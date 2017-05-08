@@ -20,6 +20,7 @@ import com.facebook.react.uimanager.IllegalViewOperationException;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumer;
@@ -208,7 +209,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
             Log.e(REACT_CLASS, "Chromecast Initialized by getting instance");
         } else {
-            final CastConfiguration options = GoogleCastService.getCastConfig(appId);
+            final CastConfiguration options = GoogleCastService.getCastConfig((appId != null ? appId : CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID ));
             UiThreadUtil.runOnUiThread(new Runnable() {
                 public void run() {
                     VideoCastManager.initialize(getCurrentActivity(), options);
