@@ -10,5 +10,5 @@
 @property(nonatomic, strong) GCKDeviceManager* deviceManager;
 @property(nonatomic, strong) GCKMediaInformation* mediaInformation;
 @property(nonatomic, strong) NSMutableDictionary *currentDevices;
-
+@property(nonatomic, strong) NSString *kReceiverAppID;
 @end

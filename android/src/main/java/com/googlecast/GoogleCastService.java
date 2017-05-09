@@ -7,6 +7,7 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
+import android.support.annotation.Nullable;
 
 /**
  * Created by Charlie on 6/9/16.
@@ -26,8 +27,8 @@ public class GoogleCastService {
         return mediaInfo;
     }
 
-    public static CastConfiguration getCastConfig(){
-        CastConfiguration options = new CastConfiguration.Builder(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
+    public static CastConfiguration getCastConfig(@Nullable String appId){
+        CastConfiguration options = new CastConfiguration.Builder(appId)
                 .enableAutoReconnect()
                 .enableNotification()
                 .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_SKIP_PREVIOUS, false)

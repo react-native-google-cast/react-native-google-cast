@@ -3,8 +3,8 @@ import { NativeModules } from 'react-native';
 const { GoogleCast } = NativeModules;
 
 export default {
-  startScan: function () {
-	GoogleCast.startScan();
+  startScan: function (appId: ?string) {
+	GoogleCast.startScan(appId);
   },
   stopScan: function () {
 	GoogleCast.stopScan();
