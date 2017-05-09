@@ -7,7 +7,7 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
-import com.sun.istack.internal.Nullable;
+import android.support.annotation.Nullable;
 
 /**
  * Created by Charlie on 6/9/16.
