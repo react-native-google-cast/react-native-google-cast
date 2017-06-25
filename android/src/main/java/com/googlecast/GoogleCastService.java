@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
  * Created by Charlie on 6/9/16.
  */
 public class GoogleCastService {
-    public static final String REACT_CLASS = "GoogleCastModule";
 
     public static MediaInfo getMediaInfo(String filmUrl, String filmTitle, String imageUrl) {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
@@ -28,7 +27,8 @@ public class GoogleCastService {
     }
 
     public static CastConfiguration getCastConfig(@Nullable String appId){
-        CastConfiguration options = new CastConfiguration.Builder(appId)
+        String actualId = appId != null ? appId : CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID;
+        CastConfiguration options = new CastConfiguration.Builder(actualId)
                 .enableAutoReconnect()
                 .enableNotification()
                 .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_SKIP_PREVIOUS, false)
