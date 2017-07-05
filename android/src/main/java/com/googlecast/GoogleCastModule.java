@@ -20,7 +20,6 @@ import com.facebook.react.uimanager.IllegalViewOperationException;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
 import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumer;
@@ -95,10 +94,11 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     @ReactMethod
     public void getDevices(Promise promise) {
         WritableArray devicesList = Arguments.createArray();
+        WritableMap singleDevice = Arguments.createMap();
         try {
             Log.e(REACT_CLASS, "devices size " + currentDevices.size());
+
             for (MediaRouter.RouteInfo existingChromecasts : currentDevices.values()) {
-                WritableMap singleDevice = Arguments.createMap();
                 singleDevice.putString("id", existingChromecasts.getId());
                 singleDevice.putString("name", existingChromecasts.getName());
                 devicesList.pushMap(singleDevice);
@@ -209,7 +209,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
             Log.e(REACT_CLASS, "Chromecast Initialized by getting instance");
         } else {
-            final CastConfiguration options = GoogleCastService.getCastConfig((appId != null ? appId : CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID ));
+            final CastConfiguration options = GoogleCastService.getCastConfig(appId);
             UiThreadUtil.runOnUiThread(new Runnable() {
                 public void run() {
                     VideoCastManager.initialize(getCurrentActivity(), options);
