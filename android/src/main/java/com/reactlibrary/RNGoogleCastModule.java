@@ -57,7 +57,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
 
     @Override
     public String getName() {
-        return "GoogleCast";
+        return "RNGoogleCast";
     }
 
     @Override
