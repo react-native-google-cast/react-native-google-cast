@@ -1,7 +1,5 @@
 package com.reactlibrary;
 
-import android.app.Activity;
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -16,13 +14,13 @@ import java.util.List;
  * Created by Charlie on 5/29/16.
  */
 
-public class GoogleCastPackage implements ReactPackage {
+public class RNGoogleCastPackage implements ReactPackage {
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new GoogleCastModule(reactContext));
+        modules.add(new RNGoogleCastModule(reactContext));
 
         return modules;
     }

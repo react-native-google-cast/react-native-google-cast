@@ -35,7 +35,7 @@ import java.util.Map;
  * Created by Charlie on 5/29/16.
  */
 
-public class GoogleCastModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class RNGoogleCastModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     private VideoCastManager mCastManager;
     private VideoCastConsumer mCastConsumer;
     Map<String, MediaRouter.RouteInfo> currentDevices = new HashMap<>();
@@ -50,7 +50,7 @@ public class GoogleCastModule extends ReactContextBaseJavaModule implements Life
     private static final String DEVICE_DISCONNECTED = "GoogleCast:DeviceDisconnected";
     private static final String MEDIA_LOADED = "GoogleCast:MediaLoaded";
 
-    public GoogleCastModule(ReactApplicationContext reactContext) {
+    public RNGoogleCastModule(ReactApplicationContext reactContext) {
         super(reactContext);
         getReactApplicationContext().addLifecycleEventListener(this);
     }
