@@ -1,31 +1,24 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-apply plugin: 'com.android.library'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
 
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url "$rootDir/../node_modules/react-native/android"
         }
     }
-    lintOptions {
-       warning 'InvalidPackage'
-    }
-}
-
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
-dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.libraries.cast.companionlibrary:ccl:+'
 }
