@@ -1,20 +1,29 @@
-
 {
   "name": "react-native-google-cast",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.4.0",
+  "description": "Chromecast library for iOS and Android",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": {
+    "name": "Charlie L",
+    "email": "carlyeah@me.com"
+  },
+  "license": "MIT",
   "keywords": [
-    "react-native"
+    "react-native",
+    "ios",
+    "android",
+    "chromecast",
+    "google",
+    "cast"
   ],
-  "author": "",
-  "license": "",
-  "peerDependencies": {
-    "react-native": "^0.41.2",
-    "react-native-windows": "0.41.0-rc.1"
-
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:charliesbox/react-native-google-cast.git"
+  },
+    "peerDependencies": {
+    "react-native": "^0.41.2"
   }
 }
