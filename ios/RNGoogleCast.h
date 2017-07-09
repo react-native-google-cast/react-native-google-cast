@@ -3,6 +3,7 @@
 #else
 #import <React/RCTBridgeModule.h>
 #endif
+#import <GoogleCast/GoogleCast.h>
 
 @interface RNGoogleCast : NSObject <RCTBridgeModule, GCKDeviceScannerListener, GCKDeviceManagerDelegate,GCKMediaControlChannelDelegate>
 
