@@ -29,7 +29,6 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-      
 
 # Android/IntelliJ
 #
@@ -43,4 +42,21 @@ local.properties
 buck-out/
 \.buckd/
 *.keystore
-      
+
+# EXAMPLE
+# Android/IJ
+#
+example/android/gradle
+example/android/build
+
+# node.js
+#
+example/node_modules/
+example/npm-debug.log
+
+# BUCK
+example/android/app/libs
+example/android/keystores/debug.keystore
+example/android/gradlew
+example/android/gradlew.bat
+/example/ios/Pods/
