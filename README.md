@@ -1,99 +1,65 @@
-
 [![npm version](https://badge.fury.io/js/react-native-google-cast.svg)](https://badge.fury.io/js/react-native-google-cast)
 # react-native-google-cast
 
-A library that unifies both android and iOS chromecast sdk
+Supports Google Cast SDK v3 for Android and iOS.
+
+> Migration to v3 is a WIP. More functionality will become available as implemented.
 
 ## Getting started
 
-`$ npm install react-native-google-cast --save`
+```
+$ npm install react-native-google-cast --save
+$ react-native link react-native-google-cast
+```
 
-### Installation
+### iOS Setup
 
-`$ react-native link react-native-google-cast`
+- This library requires CocoaPods to manage Google Cast SDK.
+- Add `pod 'google-cast-sdk', '~> 3.3'` to your `Podfile`.
+- In `AppDelegate.m` add
+  ```obj-c
+  #import <GoogleCast/GoogleCast.h>
+  ```
+  and in the `didFinishLaunchingWithOptions` method add:
+  ```obj-c
+  GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
+  [GCKCastContext setSharedInstanceWithOptions:options];
+  ```
 
-### iOS Heads Up
-  - This library requires Cocoapods to manage Chromecast SDK.
-  - Add `pod 'google-cast-sdk', '2.10.4.1'` to your Podfile. This is the easier way to have the SDK up to date.
+### Android Setup
 
-### Android Heads Up
-  - This library requires Google Play Services, Media Router and Google Cast dependencies to manage Chromecast SDK.
-  - Add 
-  ``` 
+- This library requires Google Play Services, Media Router and Google Cast dependencies to manage Google Cast SDK.
+- Add into your app's `build.gradle` dependencies
+  ```
   compile 'com.google.android.gms:play-services-cast:9.4.0'
   compile 'com.android.support:mediarouter-v7:23.0.1'
   ```
-into your your app's `build.gradle` dependencies. `mediarouter`version must match with your `appcompat` version.
+  `mediarouter` version must match with your `appcompat` version.
 
 ## Usage
+
 ```js
 // Require the module
-import Chromecast from 'react-native-google-cast';
+import GoogleCast, { CastButton } from 'react-native-google-cast';
 
-// Init Chromecast SDK and starts looking for devices (uses DEFAULT APP ID)
-Chromecast.startScan();
+// Renders the Cast button which enables to connect to Chromecast
+<CastButton />
 
-// Init Chromecast SDK and starts looking for devices using registered APP ID
-Chromecast.startScan(APP_ID);
-
-// Does what the method says. It saves resources, use it when leaving your current view
-Chromecast.stopScan();
-
-// Returns a boolean with the result
-Chromecast.isConnected();
-
-// Return an array of devices' names and ids
-Chromecast.getDevices();
-
-// Gets the device id, and connects to it. If it is successful, will send a broadcast
-Chromecast.connectToDevice(DEVICE_ID);
-
-// Closes the connection to the current Chromecast
-Chromecast.disconnect();
-
-// Streams the media to the connected chromecast. Time parameter let you choose
-// in which time frame the media should start streaming
-Chromecast.castMedia(MEDIA_URL, MEDIA_TITLE, MEDIA_IMAGE, TIME_IN_SECONDS);
-
-// Move the streaming media to the selected time frame
-Chromecast.seekCast(TIME_IN_SECONDS);
-
-// Toggle Chromecast between pause or play state
-Chromecast.togglePauseCast();
-
-// Get the current streaming time frame. It can be use to sync the chromecast to
-// your visual media controllers
-Chromecast.getStreamPosition();
-
+// Streams the media to the connected Chromecast
+GoogleCast.castMedia({
+  mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp',
+  imageUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/BigBuckBunny.jpg',
+  title: 'Big Buck Bunny',
+  subtitle: 'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
+  studio: 'Blender Foundation',
+  duration: 596,
+});
 ```
-## Events
-Chromecast uses events to let you know when you should start playing with the service, like streaming the media.
-```js
-// To know if there are chromecasts around
-DeviceEventEmitter.addListener(Chromecast.DEVICE_AVAILABLE, (existance) => console.log(existance.device_available));
 
-// To know if the connection attempt was successful
-DeviceEventEmitter.addListener(Chromecast.DEVICE_CONNECTED, () => { /* callback */ });
-
-// If chromecast started to stream the media succesfully, it will send this event
-DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, () => { /* callback */ });
-
-```
-## Constants
-```js
-  DEVICE_AVAILABLE,
-  DEVICE_CONNECTED,
-  DEVICE_DISCONNECTED,
-  MEDIA_LOADED,
-```
 ## Example
-Refer to the example folder to find an implementation of this project.
-Remember to use 
 
-* `pod install`
-* `react-native link react-native-google-cast` 
-
-to try it!
+Refer to the [example](example/) folder to find an implementation of this project.
 
 ## Contribution
-Contributions are welcome !
+
+Contributions are welcome!

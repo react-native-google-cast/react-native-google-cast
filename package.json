@@ -19,5 +19,16 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:charliesbox/react-native-google-cast.git"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=15.1 || >=16.0.0",
+    "react-native": ">=0.40"
+  },
+  "devDependencies": {
+    "react": "^16.2.0",
+    "react-native": "^0.52.0"
   }
 }

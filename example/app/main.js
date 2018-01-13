@@ -1,137 +1,97 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+/* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import {
+  FlatList,
+  Image,
   StyleSheet,
   Text,
   View,
   DeviceEventEmitter,
-  TouchableOpacity,
+  TouchableOpacity
 } from 'react-native';
 import styles from './main.style';
-import Chromecast from 'react-native-google-cast';
+import GoogleCast, { CastButton } from 'react-native-google-cast';
 
-type State = {
-  chromecastAround: boolean,
-  connected: boolean,
-  chromecastList: Array<Object>,
-};
-
-const noop = () => {};
-
-class Main extends Component {
-  state: State = {
-    chromecastAround: false,
-    connected: false,
-    chromecastList: [],
-  };
+class Main extends React.Component {
   constructor(props) {
     super(props);
-    this.getChromecasts = this.getChromecasts.bind(this);
+
+    this.cast = this.cast.bind(this)
+    this.renderVideo = this.renderVideo.bind(this)
+
+    this.state = {
+      videos: [],
+    }
   }
 
   componentDidMount() {
-    Chromecast.startScan();
-    DeviceEventEmitter.addListener(Chromecast.DEVICE_AVAILABLE, (existance) =>
-      this.setState({ chromecastAround: existance.device_available })
-    );
-    DeviceEventEmitter.addListener(Chromecast.MEDIA_LOADED, noop);
-    DeviceEventEmitter.addListener(Chromecast.DEVICE_CONNECTED, () => {
-      this.chromecastCastMedia();
-    });
-    DeviceEventEmitter.addListener(Chromecast.DEVICE_DISCONNECTED, () =>
-      alert('Device disconnected!')
-    );
+    // DeviceEventEmitter.addListener(GoogleCast.DEVICE_AVAILABLE, existance =>
+    //   this.setState({ chromecastAround: existance.device_available })
+    // );
+    // DeviceEventEmitter.addListener(GoogleCast.MEDIA_LOADED, () => {});
+    // DeviceEventEmitter.addListener(GoogleCast.DEVICE_CONNECTED, () => {
+    //   this.chromecastCastMedia();
+    // });
+    // DeviceEventEmitter.addListener(GoogleCast.DEVICE_DISCONNECTED, () =>
+    //   alert('Device disconnected!')
+    // );
+
+    const CAST_VIDEOS_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json'
+    fetch(CAST_VIDEOS_URL).then(response => response.json()).then(data => {
+      const mp4Url = data.categories[0].mp4
+      const imagesUrl = data.categories[0].images
+
+      this.setState({
+        videos: data.categories[0].videos.map(video => ({
+          title: video.title,
+          subtitle: video.subtitle,
+          studio: video.studio,
+          duration: video.duration,
+          mediaUrl: mp4Url + video.sources[2].url,
+          imageUrl: imagesUrl + video['image-480x270'],
+          posterUrl: imagesUrl + video['image-780x1200']
+        }))
+      });
+    }).catch(console.error)
   }
 
-  disconnectChromecast = () => {
-    Chromecast.disconnect();
-    this.setState({ connected: false });
+  cast(video) {
+    GoogleCast.castMedia(video);
   };
-
-  async getChromecasts() {
-    let chromecastDevices = await Chromecast.getDevices();
-    this.setState({ chromecastList: chromecastDevices });
-  }
-
-  chromecastCastMedia = () => {
-    this.setState({ connected: true });
-    Chromecast.castMedia(
-      'http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4',
-      'Video Test',
-      'http://camendesign.com/code/video_for_everybody/poster.jpg',
-      0
-    );
-  };
-
-  async connectToChromecast(id) {
-    const isConnected = await Chromecast.isConnected();
-    isConnected ? this.chromecastCastMedia() : Chromecast.connectToDevice(id);
-  }
-
-  renderChromecastList(chromecast) {
-    return (
-      <TouchableOpacity
-        style={[styles.button, styles.chromecastButton]}
-        onPress={() => this.connectToChromecast(chromecast.id)}
-        key={chromecast.id}
-      >
-        <Text style={styles.textButton}>
-          {chromecast.name}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-
-  renderDisconnect = () => {
-    if (!this.state.connected) return null;
-    return (
-      <TouchableOpacity
-        onPress={this.disconnectChromecast}
-        style={[styles.button, styles.disconnectButton]}
-      >
-        <Text style={styles.textButton}>
-          Disconnect
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
-  renderControl() {
-    if (!this.state.connected) return null;
-    return (
-      <TouchableOpacity
-        onPress={Chromecast.togglePauseCast}
-        style={[styles.button, styles.backgroundColor]}
-      >
-        <Text style={styles.textButton}>Play/Pause</Text>
-      </TouchableOpacity>
-    );
-  }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>Is there any chromecast around?</Text>
-        <Text style={styles.chromecastAround}>
-          {this.state.chromecastAround ? 'YES' : 'NO'}
-        </Text>
-        <TouchableOpacity onPress={this.getChromecasts} style={[styles.button]}>
-          <Text>
-            Show chromecasts
-          </Text>
-        </TouchableOpacity>
-        {this.state.chromecastList.map((item, index) =>
-          this.renderChromecastList(item, index)
-        )}
-        {this.renderDisconnect()}
-        {this.renderControl()}
+        <CastButton style={{ height: 24, width: 24, marginTop: 20 }} />
+        <FlatList
+          data={this.state.videos}
+          keyExtractor={(item, index) => index}
+          renderItem={this.renderVideo}
+          style={{alignSelf: 'stretch'}}
+        />
       </View>
     );
+  }
+
+  renderVideo({item}) {
+    const video = item
+
+    return (
+      <TouchableOpacity
+        key={video.title}
+        onPress={() => this.cast(video)}
+        style={{flexDirection: 'row', padding: 10}}>
+        <Image
+          source={{uri: video.imageUrl}}
+          style={{width: 160, height: 90}}
+        />
+        <View>
+          <Text style={{}}>{ video.title }</Text>
+          <Text style={{color: 'gray'}}>{ video.studio }</Text>
+        </View>
+      </TouchableOpacity>
+    )
   }
 }
 
