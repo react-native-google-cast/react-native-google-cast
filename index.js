@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 
 const { GoogleCast } = NativeModules;
 
@@ -17,4 +17,11 @@ export default {
   }) {
     GoogleCast.castMedia(params);
   },
+  launchExpandedControls: GoogleCast.launchExpandedControls,
+  showIntroductoryOverlay: GoogleCast.showIntroductoryOverlay,
+
+  EventEmitter: new NativeEventEmitter(GoogleCast),
+
+  SESSION_STARTED: GoogleCast.SESSION_STARTED,
+  SESSION_ENDED: GoogleCast.SESSION_ENDED,
 };

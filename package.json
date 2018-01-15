@@ -1,12 +1,18 @@
 {
   "name": "react-native-google-cast",
-  "version": "1.3.0",
+  "version": "3.0.0-beta.1",
   "description": "Chromecast library for iOS and Android",
   "main": "index.js",
   "author": {
     "name": "Charlie L",
     "email": "carlyeah@me.com"
   },
+  "contributors": [
+    {
+      "name": "Petr Bela",
+      "email": "github@petrbela.com"
+    }
+  ],
   "license": "MIT",
   "keywords": [
     "react-native",

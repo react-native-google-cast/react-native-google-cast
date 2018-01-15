@@ -31,7 +31,8 @@
   GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
   [GCKCastContext setSharedInstanceWithOptions:options];
 
-  
+  [GCKCastContext sharedInstance].useDefaultExpandedMediaControls = YES;
+    
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;

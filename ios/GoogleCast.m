@@ -1,4 +1,5 @@
 #import "GoogleCast.h"
+
 #import <React/RCTBridge.h>
 #import <React/RCTConvert.h>
 #import <React/RCTEventDispatcher.h>
@@ -14,28 +15,41 @@ RCT_EXPORT_MODULE();
 
 - (NSDictionary *)constantsToExport {
   return @{
-    @"DEVICE_AVAILABLE" : DEVICE_AVAILABLE,
-    @"DEVICE_CONNECTED" : DEVICE_CONNECTED,
-    @"DEVICE_DISCONNECTED" : DEVICE_DISCONNECTED,
-    @"MEDIA_LOADED" : MEDIA_LOADED,
+    @"SESSION_STARTING" : SESSION_STARTING,
+    @"SESSION_STARTED" : SESSION_STARTED,
+    @"SESSION_START_FAILED" : SESSION_START_FAILED,
+    @"SESSION_SUSPENDED" : SESSION_SUSPENDED,
+    @"SESSION_RESUMING" : SESSION_RESUMING,
+    @"SESSION_RESUMED" : SESSION_RESUMED,
+    @"SESSION_ENDING" : SESSION_ENDING,
     @"SESSION_ENDED" : SESSION_ENDED,
   };
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-  return @[ DEVICE_CONNECTED, DEVICE_DISCONNECTED, SESSION_ENDED ];
+  return @[
+    SESSION_STARTING, SESSION_STARTED, SESSION_START_FAILED, SESSION_SUSPENDED,
+    SESSION_RESUMING, SESSION_RESUMED, SESSION_ENDING, SESSION_ENDED
+  ];
 }
 
 // Will be called when this module's first listener is added.
 - (void)startObserving {
   hasListeners = YES;
   // Set up any upstream listeners or background tasks as necessary
+  dispatch_async(dispatch_get_main_queue(), ^{
+    GCKCastContext *castContext = [GCKCastContext sharedInstance];
+    [castContext.sessionManager addListener:self];
+  });
 }
 
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
   // Remove upstream listeners, stop unnecessary background tasks
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[GCKCastContext sharedInstance].sessionManager removeListener:self];
+  });
 }
 
 RCT_EXPORT_METHOD(castMedia : (NSDictionary *)params) {
@@ -95,22 +109,62 @@ RCT_EXPORT_METHOD(castMedia : (NSDictionary *)params) {
   }
 }
 
-RCT_EXPORT_METHOD(togglePauseCast) {
-  BOOL isPlaying = self.mediaControlChannel.mediaStatus.playerState ==
-                   GCKMediaPlayerStatePlaying;
-  isPlaying ? [self.mediaControlChannel pause]
-            : [self.mediaControlChannel play];
+RCT_EXPORT_METHOD(launchExpandedControls) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[GCKCastContext sharedInstance] presentDefaultExpandedMediaControls];
+  });
 }
 
-RCT_EXPORT_METHOD(seekCast : (double)seconds) {
-  [self.mediaControlChannel seekToTimeInterval:seconds];
+RCT_EXPORT_METHOD(showIntroductoryOverlay) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[GCKCastContext sharedInstance] presentCastInstructionsViewControllerOnce];
+  });
 }
 
-RCT_REMAP_METHOD(getStreamPosition, resolved
-                 : (RCTPromiseResolveBlock)resolve rejected
-                 : (RCTPromiseRejectBlock)reject) {
-  double time = [self.mediaControlChannel approximateStreamPosition];
-  resolve(@(time));
+#pragma mark SessionManagerListener
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+      willStartSession:(GCKSession *)session {
+  [self sendEventWithName:SESSION_STARTING body:@"willStartSession"];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+       didStartSession:(GCKSession *)session {
+  [self sendEventWithName:SESSION_STARTED body:@"didStartSession"];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+        willEndSession:(GCKSession *)session {
+  [self sendEventWithName:SESSION_ENDING body:@"willEndSession"];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+         didEndSession:(GCKSession *)session
+             withError:(NSError *)error {
+  [self sendEventWithName:SESSION_ENDED body:[error localizedDescription]];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+    didFailToStartSession:(GCKSession *)session
+                withError:(NSError *)error {
+  [self sendEventWithName:SESSION_START_FAILED
+                     body:[error localizedDescription]];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+     didSuspendSession:(GCKSession *)session
+            withReason:(GCKConnectionSuspendReason)reason {
+  [self sendEventWithName:SESSION_SUSPENDED body:@"didSuspendSession"];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+     willResumeSession:(GCKSession *)session {
+  [self sendEventWithName:SESSION_RESUMING body:@"willResumeSession"];
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager
+      didResumeSession:(GCKSession *)session {
+  [self sendEventWithName:SESSION_RESUMED body:@"didResumeSession"];
 }
 
 @end
