@@ -160,6 +160,14 @@ GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_ENDED, (error) => { /* ca
 
 Refer to the [example](example/) folder to find an implementation of this project.
 
+## Troubleshooting
+
+- `com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.`
+
+  You don't have Google Play Services available on your device. Make sure to install them either from http://opengapps.org/ or follow tutorials online.
+
+  TODO: Handle gracefully and ignore the Cast library without crashing.
+
 ## Contribution
 
 1. Contributions are welcome!

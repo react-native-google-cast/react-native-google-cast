@@ -13,7 +13,7 @@ import { requireNativeComponent } from 'react-native';
  */
 class CastButton extends React.Component {
   render() {
-    return <GoogleCastButton triggersDefaultCastDialog={true} {...this.props} />;
+    return <GoogleCastButton {...this.props} />;
   }
 }
 
@@ -23,9 +23,20 @@ CastButton.propTypes = {
    *
    * By default this property is set to YES. If an application wishes to handle touch events itself, it should set the property to NO and register an appropriate target and action for the touch event.
    * */
-  triggersDefaultCastDialog: PropTypes.bool
+  // triggersDefaultCastDialog: PropTypes.bool
+  // accessibilityLabel: PropTypes.string
 };
 
-var GoogleCastButton = requireNativeComponent('GoogleCastButton', CastButton);
+var GoogleCastButton = requireNativeComponent('GoogleCastButton', CastButton, {
+  nativeOnly: {
+    accessibilityLabel: true,
+    accessibilityLiveRegion: true,
+    accessibilityComponentType: true,
+    testID: true,
+    importantForAccessibility: true,
+    renderToHardwareTextureAndroid: true,
+    onLayout: true,
+  }
+});
 
 export default CastButton;

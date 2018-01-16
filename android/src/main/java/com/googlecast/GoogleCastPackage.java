@@ -1,7 +1,5 @@
 package com.googlecast;
 
-import android.app.Activity;
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
@@ -12,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Charlie on 5/29/16.
- */
 public class GoogleCastPackage implements ReactPackage {
 
     @Override
@@ -26,13 +21,16 @@ public class GoogleCastPackage implements ReactPackage {
         return modules;
     }
 
-    @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Collections.emptyList();
+        List<ViewManager> managers = new ArrayList<>();
+
+        managers.add(new GoogleCastButtonManager());
+
+        return managers;
     }
 }

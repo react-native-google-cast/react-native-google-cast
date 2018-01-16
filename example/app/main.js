@@ -26,16 +26,15 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    // DeviceEventEmitter.addListener(GoogleCast.DEVICE_AVAILABLE, existance =>
-    //   this.setState({ chromecastAround: existance.device_available })
-    // );
-    // DeviceEventEmitter.addListener(GoogleCast.MEDIA_LOADED, () => {});
-    // DeviceEventEmitter.addListener(GoogleCast.DEVICE_CONNECTED, () => {
-    //   this.chromecastCastMedia();
-    // });
-    // DeviceEventEmitter.addListener(GoogleCast.DEVICE_DISCONNECTED, () =>
-    //   alert('Device disconnected!')
-    // );
+    GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_STARTED, () =>
+      console.log('Session started')
+    );
+
+    GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_ENDED, () =>
+      console.log('Session ended')
+    );
+
+    // GoogleCast.showIntroductoryOverlay();
 
     const CAST_VIDEOS_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json'
     fetch(CAST_VIDEOS_URL).then(response => response.json()).then(data => {
@@ -58,12 +57,13 @@ class Main extends React.Component {
 
   cast(video) {
     GoogleCast.castMedia(video);
+    GoogleCast.launchExpandedControls();
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <CastButton style={{ height: 24, width: 24, marginTop: 20 }} />
+        <CastButton style={{ height: 24, width: 24, marginVertical: 20 }} />
         <FlatList
           data={this.state.videos}
           keyExtractor={(item, index) => index}

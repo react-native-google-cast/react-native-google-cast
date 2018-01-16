@@ -27,5 +27,7 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.facebook.react:react-native:+'
-    compile 'com.google.android.libraries.cast.companionlibrary:ccl:+'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:mediarouter-v7:25.0.0'
+    compile 'com.google.android.gms:play-services-cast-framework:10.0.1'
 }
