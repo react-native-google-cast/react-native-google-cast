@@ -6,7 +6,7 @@
 
 @implementation GoogleCastButtonManager
 
-RCT_EXPORT_VIEW_PROPERTY(triggersDefaultCastDialog, BOOL)
+//RCT_EXPORT_VIEW_PROPERTY(triggersDefaultCastDialog, BOOL)
 
 RCT_EXPORT_MODULE()
 

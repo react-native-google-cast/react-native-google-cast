@@ -2,21 +2,21 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 
-static NSString *const DEVICE_AVAILABLE = @"GoogleCast:DeviceAvailable";
-static NSString *const DEVICE_CONNECTED = @"GoogleCast:DeviceConnected";
-static NSString *const DEVICE_DISCONNECTED = @"GoogleCast:DeviceDisconnected";
-static NSString *const MEDIA_LOADED = @"GoogleCast:MediaLoaded";
+static NSString *const SESSION_STARTING = @"GoogleCast:SessionStarting";
+static NSString *const SESSION_STARTED = @"GoogleCast:SessionStarted";
+static NSString *const SESSION_START_FAILED = @"GoogleCast:SessionStartFailed";
+static NSString *const SESSION_SUSPENDED = @"GoogleCast:SessionSuspended";
+static NSString *const SESSION_RESUMING = @"GoogleCast:SessionResuming";
+static NSString *const SESSION_RESUMED = @"GoogleCast:SessionResumed";
+static NSString *const SESSION_ENDING = @"GoogleCast:SessionEnding";
 static NSString *const SESSION_ENDED = @"GoogleCast:SessionEnded";
 
 @interface GoogleCast
     : RCTEventEmitter <RCTBridgeModule, GCKCastDeviceStatusListener,
                        GCKSessionManagerListener, GCKRemoteMediaClientListener>
 
-@property GCKMediaControlChannel *mediaControlChannel;
-@property(nonatomic, strong) GCKApplicationMetadata *applicationMetadata;
-//@property(nonatomic, strong) GCKDevice *selectedDevice;
-//@property(nonatomic, strong) GCKDeviceScanner* deviceScanner;
-@property(nonatomic, strong) GCKSessionManager *sessionManager;
+//@property GCKMediaControlChannel *mediaControlChannel;
+//@property(nonatomic, strong) GCKApplicationMetadata *applicationMetadata;
+//@property(nonatomic, strong) GCKSessionManager *sessionManager;
 //@property(nonatomic, strong) GCKMediaInformation* mediaInformation;
-//@property(nonatomic, strong) NSMutableDictionary *currentDevices;
 @end
