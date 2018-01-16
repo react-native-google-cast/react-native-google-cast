@@ -1,5 +1,6 @@
 package com.googlecast;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
@@ -75,39 +77,71 @@ public class GoogleCastModule
     }
 
     @ReactMethod
-    public void castMedia(ReadableMap params) {
+    public void castMedia(final ReadableMap params) {
         if (mCastSession == null) {
             return;
         }
-        RemoteMediaClient remoteMediaClient = mCastSession.getRemoteMediaClient();
-        if (remoteMediaClient == null) {
-            return;
-        }
 
-        Integer seconds = params.getInt("seconds");
-        if (seconds == null) {
-            seconds = 0;
-        }
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                RemoteMediaClient remoteMediaClient = mCastSession.getRemoteMediaClient();
+                if (remoteMediaClient == null) {
+                    return;
+                }
 
-        remoteMediaClient.load(buildMediaInfo(params), true, seconds * 1000);
+                Integer seconds = null;
+                if (params.hasKey("seconds")) {
+                    seconds = params.getInt("seconds");
+                }
+                if (seconds == null) {
+                    seconds = 0;
+                }
 
-        Log.e(REACT_CLASS, "Casting media... ");
+                remoteMediaClient.load(buildMediaInfo(params), true, seconds * 1000);
+
+                Log.e(REACT_CLASS, "Casting media... ");
+            }
+        });
     }
 
     private MediaInfo buildMediaInfo(ReadableMap params) {
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
 
-        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, params.getString("subtitle"));
-        movieMetadata.putString(MediaMetadata.KEY_TITLE, params.getString("title"));
-        movieMetadata.addImage(new WebImage(Uri.parse(params.getString("imageUrl"))));
-        movieMetadata.addImage(new WebImage(Uri.parse(params.getString("posterUrl"))));
+        if (params.hasKey("title") && params.getString("title") != null) {
+            movieMetadata.putString(MediaMetadata.KEY_TITLE, params.getString("title"));
+        }
 
-        return new MediaInfo.Builder(params.getString("mediaUrl"))
+        if (params.hasKey("subtitle") && params.getString("subtitle") != null) {
+            movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, params.getString("subtitle"));
+        }
+
+        if (params.hasKey("imageUrl") && params.getString("imageUrl") != null) {
+            movieMetadata.addImage(new WebImage(Uri.parse(params.getString("imageUrl"))));
+        }
+
+        if (params.hasKey("posterUrl") && params.getString("posterUrl") != null) {
+            movieMetadata.addImage(new WebImage(Uri.parse(params.getString("posterUrl"))));
+        }
+
+        MediaInfo.Builder builder = new MediaInfo.Builder(params.getString("mediaUrl"))
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setContentType("videos/mp4")
-                .setMetadata(movieMetadata)
-                .setStreamDuration(params.getInt("duration") * 1000)
-                .build();
+                .setMetadata(movieMetadata);
+
+        if (params.hasKey("duration")) {
+            builder = builder.setStreamDuration(params.getInt("duration"));
+        }
+
+        return builder.build();
+    }
+
+    @ReactMethod
+    public void launchExpandedControls() {
+        ReactApplicationContext context = getReactApplicationContext();
+        Intent intent = new Intent(context, GoogleCastExpandedControlsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     private void setupCastListener() {
@@ -175,10 +209,23 @@ public class GoogleCastModule
 
     @Override
     public void onHostResume() {
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager().addSessionManagerListener(mSessionManagerListener, CastSession.class);
+            }
+        });
     }
 
     @Override
     public void onHostPause() {
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager().removeSessionManagerListener(
+                        mSessionManagerListener, CastSession.class);
+            }
+        });
     }
 
     @Override

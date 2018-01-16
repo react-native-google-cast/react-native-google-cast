@@ -1,7 +1,7 @@
 [![npm version](https://badge.fury.io/js/react-native-google-cast.svg)](https://badge.fury.io/js/react-native-google-cast)
 # react-native-google-cast
 
-Supports Google Cast SDK v3 for Android and iOS.
+This library wraps the native Google Cast SDK v3 for Android and iOS, providing a unified JavaScript interface.
 
 > Migration to v3 is a WIP. More functionality will become available as implemented.
 
@@ -14,34 +14,50 @@ $ react-native link react-native-google-cast
 
 ### iOS Setup
 
-- This library requires [CocoaPods](https://cocoapods.org/) to manage Google Cast SDK.
-- Add `pod 'google-cast-sdk', '~> 3'` to your `Podfile`.
+- Install [CocoaPods](https://cocoapods.org/)
+
+- Add `pod 'google-cast-sdk', '~> 3'` to your `Podfile` and run `pod install`.
+
 - In `AppDelegate.m` add
+
   ```obj-c
   #import <GoogleCast/GoogleCast.h>
   ```
+
   and in the `didFinishLaunchingWithOptions` method add:
+
   ```obj-c
   GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
   [GCKCastContext setSharedInstanceWithOptions:options];
   ```
 
+  (or replace `kGCKMediaDefaultReceiverApplicationID` with your custom Cast app id).
+
 ### Android Setup
 
-- This library requires Google Play Services, Media Router and Google Cast dependencies to manage Google Cast SDK.
-- Add into your app's `build.gradle` dependencies
-  ```
-  compile 'com.google.android.gms:play-services-cast:9.4.0'
-  compile 'com.android.support:mediarouter-v7:23.0.1'
-  ```
-  `mediarouter` version must match with your `appcompat` version.
+- Make sure the device you're using (also applies to emulators) has Google Play Services installed.
+
 - Add to `AndroidManifest.xml`
+
   ```xml
   <meta-data
-    android:name=   "com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+    android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
     android:value="com.googlecast.GoogleCastOptionsProvider" />
   ```
-- Also make sure the device you're using (also applies to emulators) has Google Play Services installed.
+
+  Alternatively, you may provide your own `OptionsProvider` class.
+
+- Change your `MainActivity` to extend `GoogleCastActivity`.
+
+  ```java
+  import com.facebook.react.GoogleCastActivity;
+
+  public class MainActivity extends GoogleCastActivity {
+    // ..
+  }
+  ```
+
+  If you already extend other class than `ReactActivity` (e.g. if you use `react-native-navigation`) or integrate React Native in native app, make sure that the `Activity` is a descendant of `android.support.v7.app.AppCompatActivity`. Then add `CastContext.getSharedInstance(this);` to your `Activity`'s `onCreate` method (this lazy loads the Google Cast context).
 
 ## Usage
 
@@ -105,11 +121,18 @@ TODO
 
 The [expanded controller](https://developers.google.com/cast/docs/design_checklist/sender#sender-expanded-controller) is a full screen view which offers full control of the remote media playback. This view should allow a casting app to manage every manageable aspect of a cast session, with the exception of receiver volume control and session lifecycle (connect/stop casting). It also provides all the status information about the media session (artwork, title, subtitle, and so forth).
 
-To use the default expanded controller, enable it in the cast context.
+To use the default expanded controller:
 
-- iOS: in `AppDelegate.m`'s `didFinishLaunchingWithOptions` method add:
+- iOS: in `AppDelegate.m`'s `didFinishLaunchingWithOptions` method add
+
   ```obj-c
   [GCKCastContext sharedInstance].useDefaultExpandedMediaControls = YES;
+  ```
+
+- Android: in `AndroidManifest.xml` add
+
+  ```xml
+  <activity android:name="com.googlecast.GoogleCastExpandedControlsActivity" />
   ```
 
 Then, to load the expanded controller, call
@@ -172,7 +195,8 @@ Refer to the [example](example/) folder to find an implementation of this projec
 
 1. Contributions are welcome!
 2. Fork the repo.
-3. Implement your shiny new thing.
-4. Demonstrate how to use it in the example project.
-5. Document the functionality in the README (here).
-6. PR
+3. Make sure you're using npm >5.
+4. Implement your shiny new thing.
+5. Demonstrate how to use it in the example project.
+6. Document the functionality in the README (here).
+7. PR

@@ -3,9 +3,13 @@ import { StyleSheet } from 'react-native'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
     backgroundColor: '#F5FCFF',
+  },
+  toolbar: {
+    backgroundColor: '#E9EAED',
+    height: 56,
   },
   chromecastAround: {
     fontWeight: 'bold',

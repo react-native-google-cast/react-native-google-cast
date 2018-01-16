@@ -33,6 +33,7 @@ var GoogleCastButton = requireNativeComponent('GoogleCastButton', CastButton, {
     accessibilityLiveRegion: true,
     accessibilityComponentType: true,
     testID: true,
+    nativeID: true,
     importantForAccessibility: true,
     renderToHardwareTextureAndroid: true,
     onLayout: true,

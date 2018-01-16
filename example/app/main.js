@@ -8,7 +8,8 @@ import {
   Text,
   View,
   DeviceEventEmitter,
-  TouchableOpacity
+  ToolbarAndroid,
+  TouchableOpacity,
 } from 'react-native';
 import styles from './main.style';
 import GoogleCast, { CastButton } from 'react-native-google-cast';
@@ -63,7 +64,13 @@ class Main extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <CastButton style={{ height: 24, width: 24, marginVertical: 20 }} />
+        <ToolbarAndroid
+          title='Google Cast Example'
+          contentInsetStart={4}
+          actions={[{title: 'Log out', show: 'never'}]}
+          style={styles.toolbar}>
+          <CastButton style={{ height: 24, width: 24, alignSelf: 'flex-end' }} />
+        </ToolbarAndroid>
         <FlatList
           data={this.state.videos}
           keyExtractor={(item, index) => index}
