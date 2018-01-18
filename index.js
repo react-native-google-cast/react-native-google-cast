@@ -11,7 +11,7 @@ import CastButton from './CastButton';
 export { CastButton };
 
 export default {
-  castMedia: function(params: {
+  castMedia(params: {
     mediaUrl: string,
     title: string,
     subtitle: string,
@@ -21,6 +21,12 @@ export default {
     seconds: number
   }) {
     GoogleCast.castMedia(params);
+  },
+  play: GoogleCast.play,
+  pause: GoogleCast.pause,
+  stop: GoogleCast.stop,
+  seek(playPosition: number) {
+    GoogleCast.seek(playPosition)
   },
   launchExpandedControls: GoogleCast.launchExpandedControls,
   showIntroductoryOverlay: GoogleCast.showIntroductoryOverlay,

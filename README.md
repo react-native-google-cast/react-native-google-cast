@@ -75,9 +75,18 @@ GoogleCast.castMedia({
   title: 'Big Buck Bunny',
   subtitle: 'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
   studio: 'Blender Foundation',
-  duration: 596,
+  streamDuration: 596, // seconds
+  playPosition: 10, // seconds
 });
 ```
+
+## API
+
+- `GoogleCast.castMedia(options)`
+- `GoogleCast.play()`
+- `GoogleCast.pause()`
+- `GoogleCast.seek(playPosition)` - jump to position in seconds from the beginning of the stream
+- `GoogleCast.stop()`
 
 ## Components
 

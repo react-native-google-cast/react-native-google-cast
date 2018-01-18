@@ -47,9 +47,7 @@ RCT_EXPORT_MODULE();
 - (void)stopObserving {
   hasListeners = NO;
   // Remove upstream listeners, stop unnecessary background tasks
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [[GCKCastContext sharedInstance].sessionManager removeListener:self];
-  });
+// TODO [[GCKCastContext sharedInstance].sessionManager removeListener:self];
 }
 
 RCT_EXPORT_METHOD(castMedia : (NSDictionary *)params) {
@@ -59,19 +57,21 @@ RCT_EXPORT_METHOD(castMedia : (NSDictionary *)params) {
   NSString *studio = [RCTConvert NSString:params[@"studio"]];
   NSString *imageUrl = [RCTConvert NSString:params[@"imageUrl"]];
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
-  double duration = [RCTConvert double:params[@"duration"]];
-  double seconds = [RCTConvert double:params[@"seconds"]];
+  double streamDuration = [RCTConvert double:params[@"streamDuration"]];
+  double playPosition = [RCTConvert double:params[@"playPosition"]];
 
   RCTLogInfo(@"casting media");
 
-  seconds = !seconds ? 0 : seconds;
+  playPosition = !playPosition ? 0 : playPosition;
 
   GCKMediaMetadata *metadata =
       [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMovie];
 
-  [metadata setString:title forKey:kGCKMetadataKeyTitle];
+  if (title) {
+    [metadata setString:title forKey:kGCKMetadataKeyTitle];
+  }
   if (subtitle) {
-    //  [metadata setString:subtitle forKey:kMediaKeyDescription];
+    [metadata setString:subtitle forKey:kGCKMetadataKeySubtitle];
   }
   if (studio) {
     [metadata setString:studio forKey:kGCKMetadataKeyStudio];
@@ -93,26 +93,63 @@ RCT_EXPORT_METHOD(castMedia : (NSDictionary *)params) {
                                           streamType:GCKMediaStreamTypeBuffered
                                          contentType:@"video/mp4"
                                             metadata:metadata
-                                      streamDuration:duration
+                                      streamDuration:streamDuration
                                          mediaTracks:nil
                                       textTrackStyle:nil
                                           customData:nil];
 
   // Cast the video.
   GCKCastSession *castSession =
-      [GCKCastContext sharedInstance].sessionManager.currentCastSession;
+    [GCKCastContext sharedInstance].sessionManager.currentCastSession;
   if (castSession) {
-    [castSession.remoteMediaClient loadMedia:mediaInfo autoplay:YES];
-    //                                    playPosition:seconds];
+    [castSession.remoteMediaClient loadMedia:mediaInfo
+                                    autoplay:YES
+                                playPosition:playPosition];
   } else {
     NSLog(@"no castSession!");
   }
 }
 
+RCT_EXPORT_METHOD(play) {
+  GCKCastSession *castSession =
+    [GCKCastContext sharedInstance].sessionManager.currentCastSession;
+
+    if (castSession) {
+      [castSession.remoteMediaClient play];
+    }
+}
+
+RCT_EXPORT_METHOD(pause) {
+    GCKCastSession *castSession =
+    [GCKCastContext sharedInstance].sessionManager.currentCastSession;
+
+    if (castSession) {
+        [castSession.remoteMediaClient pause];
+    }
+}
+
+RCT_EXPORT_METHOD(stop) {
+    GCKCastSession *castSession =
+    [GCKCastContext sharedInstance].sessionManager.currentCastSession;
+
+    if (castSession) {
+        [castSession.remoteMediaClient stop];
+    }
+}
+
+RCT_EXPORT_METHOD(seek : (int)playPosition) {
+    GCKCastSession *castSession =
+    [GCKCastContext sharedInstance].sessionManager.currentCastSession;
+
+    if (castSession) {
+        [castSession.remoteMediaClient seekToTimeInterval:playPosition];
+    }
+}
+
 RCT_EXPORT_METHOD(launchExpandedControls) {
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [[GCKCastContext sharedInstance] presentDefaultExpandedMediaControls];
-  });
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [[GCKCastContext sharedInstance] presentDefaultExpandedMediaControls];
+    });
 }
 
 RCT_EXPORT_METHOD(showIntroductoryOverlay) {
