@@ -82,11 +82,14 @@ GoogleCast.castMedia({
 
 ## API
 
+- `GoogleCast.getCastState().then(state => {})`
 - `GoogleCast.castMedia(options)`
 - `GoogleCast.play()`
 - `GoogleCast.pause()`
 - `GoogleCast.seek(playPosition)` - jump to position in seconds from the beginning of the stream
 - `GoogleCast.stop()`
+- `GoogleCast.initChannel('urn:x-cast:...')` - initialize custom channel for communication with Cast receiver app. Once you do this, you can subscribe to `CHANNEL_*` events.
+- `GoogleCast.sendMessage('urn:x-cast:...', message)` - send message over the custom channel
 
 ## Components
 
@@ -186,6 +189,48 @@ GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_ENDING, () => { /* callba
 
 // Disconnected (error provides explanation if ended forcefully)
 GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_ENDED, (error) => { /* callback */ });
+```
+
+### Media Events
+
+Remote media client controls media playback on a Cast receiver.
+
+```js
+// Status of the media has changed. The `mediaStatus` object contains the new status.
+GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_STATUS_UPDATED, ({mediaStatus}) => {});
+```
+
+For convenience, the following events are triggered in addition to `MEDIA_STATUS_UPDATED` in these special cases (they're called after calling `MEDIA_STATUS_UPDATED`, if you're subscribed to both).
+
+```js
+// Media started playing
+// this doesn't work yet
+// GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_PLAYBACK_STARTED, ({mediaStatus}) => {});
+
+// Media finished playing
+GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_PLAYBACK_ENDED, ({mediaStatus}) => {});
+```
+
+### Channel Events
+
+A virtual communication channel for exchanging messages between a Cast sender (mobile app) and a Cast receiver (on Chromecast).
+
+Each channel is tagged with a unique namespace, so multiple channels may be multiplexed over a single network connection between a sender and a receiver.
+
+A channel must be registered by calling `GoogleCast.initChannel('urn:x-cast:...')` before it can be used. When the associated session is established, the channel will be connected automatically and can then send and receive messages.
+
+```js
+// Communication channel established
+GoogleCast.EventEmitter.addListener(GoogleCast.CHANNEL_CONNECTED, ({namespace}) => {});
+
+// Communication channel terminated
+GoogleCast.EventEmitter.addListener(GoogleCast.CHANNEL_DISCONNECTED, ({namespace}) => {});
+
+// Message received
+GoogleCast.EventEmitter.addListener(GoogleCast.CHANNEL_MESSAGE_RECEIVED, ({namespace, message}) => {});
+
+// Send message
+GoogleCast.sendMessage(namespace, message)
 ```
 
 ## Example

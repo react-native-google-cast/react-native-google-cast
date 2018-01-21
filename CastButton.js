@@ -9,7 +9,8 @@ import { requireNativeComponent } from 'react-native';
  *
  * By default, upon pressing the button it opens the native Cast dialog.
  *
- * Wraps [GCKUICastButton](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_u_i_cast_button) and
+ * @see [GCKUICastButton](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_u_i_cast_button) (iOS)
+ * @see [CastButtonFactory](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastButtonFactory) & [MediaRouteButton](https://developer.android.com/reference/android/support/v7/app/MediaRouteButton.html) (Android)
  */
 class CastButton extends React.Component {
   render() {
@@ -27,7 +28,7 @@ CastButton.propTypes = {
   // accessibilityLabel: PropTypes.string
 };
 
-var GoogleCastButton = requireNativeComponent('GoogleCastButton', CastButton, {
+var GoogleCastButton = requireNativeComponent('RNGoogleCastButton', CastButton, {
   nativeOnly: {
     accessibilityLabel: true,
     accessibilityLiveRegion: true,

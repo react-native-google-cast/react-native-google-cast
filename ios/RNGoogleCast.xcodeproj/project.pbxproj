@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		91FDDF37200BB7EC00219A3F /* GoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FDDF36200BB7EC00219A3F /* GoogleCastButtonManager.m */; };
-		B3E7B58A1CC2AC0600A0062D /* GoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* GoogleCast.m */; };
+		91B36778201491FF00A527A5 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B36776201491FF00A527A5 /* RNGoogleCast.m */; };
+		91B36779201491FF00A527A5 /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B36777201491FF00A527A5 /* RNGoogleCastButtonManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,10 +24,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		91FDDF36200BB7EC00219A3F /* GoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleCastButtonManager.m; sourceTree = "<group>"; };
-		B3E7B5881CC2AC0600A0062D /* GoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleCast.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* GoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleCast.m; sourceTree = "<group>"; };
+		134814201AA4EA6300B7C361 /* libRNGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		91B36775201491FF00A527A5 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
+		91B36776201491FF00A527A5 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
+		91B36777201491FF00A527A5 /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libGoogleCast.a */,
+				134814201AA4EA6300B7C361 /* libRNGoogleCast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -52,9 +52,9 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				91FDDF36200BB7EC00219A3F /* GoogleCastButtonManager.m */,
-				B3E7B5881CC2AC0600A0062D /* GoogleCast.h */,
-				B3E7B5891CC2AC0600A0062D /* GoogleCast.m */,
+				91B36775201491FF00A527A5 /* RNGoogleCast.h */,
+				91B36776201491FF00A527A5 /* RNGoogleCast.m */,
+				91B36777201491FF00A527A5 /* RNGoogleCastButtonManager.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,9 +62,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* GoogleCast */ = {
+		58B511DA1A9E6C8500147676 /* RNGoogleCast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "GoogleCast" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -74,9 +74,9 @@
 			);
 			dependencies = (
 			);
-			name = GoogleCast;
+			name = RNGoogleCast;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libGoogleCast.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libRNGoogleCast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -93,7 +93,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "GoogleCast" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNGoogleCast" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -105,7 +105,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* GoogleCast */,
+				58B511DA1A9E6C8500147676 /* RNGoogleCast */,
 			);
 		};
 /* End PBXProject section */
@@ -115,8 +115,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E7B58A1CC2AC0600A0062D /* GoogleCast.m in Sources */,
-				91FDDF37200BB7EC00219A3F /* GoogleCastButtonManager.m in Sources */,
+				91B36778201491FF00A527A5 /* RNGoogleCast.m in Sources */,
+				91B36779201491FF00A527A5 /* RNGoogleCastButtonManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,7 +208,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = GoogleCast;
+				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -224,7 +224,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = GoogleCast;
+				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -232,7 +232,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "GoogleCast" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNGoogleCast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -241,7 +241,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "GoogleCast" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNGoogleCast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,

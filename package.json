@@ -1,7 +1,7 @@
 {
   "name": "react-native-google-cast",
   "version": "3.0.0-beta.1",
-  "description": "Chromecast library for iOS and Android",
+  "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "index.js",
   "author": {
     "name": "Charlie L",
@@ -20,7 +20,8 @@
     "android",
     "chromecast",
     "google",
-    "cast"
+    "cast",
+    "google-cast"
   ],
   "repository": {
     "type": "git",

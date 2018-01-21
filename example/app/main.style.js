@@ -11,9 +11,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E9EAED',
     height: 56,
   },
-  chromecastAround: {
-    fontWeight: 'bold',
-  },
+  castButtonAndroid: { height: 24, width: 24, alignSelf: 'flex-end' },
+  castButtonIOS: { height: 24, width: 24, marginTop: 20, marginRight: 10, alignSelf: 'flex-end' },
+
   button: {
     paddingVertical: 5,
     paddingHorizontal: 10,

@@ -12,7 +12,7 @@ import com.google.android.gms.cast.framework.CastStateListener;
 
 public class GoogleCastButtonManager extends SimpleViewManager<MediaRouteButton> {
 
-    public static final String REACT_CLASS = "GoogleCastButton";
+    public static final String REACT_CLASS = "RNGoogleCastButton";
 
     @Override
     public String getName() {

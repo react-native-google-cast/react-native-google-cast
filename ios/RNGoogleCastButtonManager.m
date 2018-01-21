@@ -1,10 +1,10 @@
 #import <GoogleCast/GoogleCast.h>
 #import <React/RCTViewManager.h>
 
-@interface GoogleCastButtonManager : RCTViewManager
+@interface RNGoogleCastButtonManager : RCTViewManager
 @end
 
-@implementation GoogleCastButtonManager
+@implementation RNGoogleCastButtonManager
 
 //RCT_EXPORT_VIEW_PROPERTY(triggersDefaultCastDialog, BOOL)
 

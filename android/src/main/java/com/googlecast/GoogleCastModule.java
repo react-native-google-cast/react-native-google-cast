@@ -29,7 +29,7 @@ public class GoogleCastModule
         extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     @VisibleForTesting
-    public static final String REACT_CLASS = "GoogleCastModule";
+    public static final String REACT_CLASS = "RNGoogleCastModule";
 
     private static final String SESSION_STARTING = "GoogleCast:SessionStarting";
     private static final String SESSION_STARTED = "GoogleCast:SessionStarted";
