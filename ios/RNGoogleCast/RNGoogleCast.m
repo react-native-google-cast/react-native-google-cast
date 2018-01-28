@@ -67,7 +67,8 @@ RCT_EXPORT_MODULE();
 - (void)stopObserving {
   hasListeners = NO;
   // Remove upstream listeners, stop unnecessary background tasks
-  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+// FIXME: this crashes on (hot) reload
+//  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
 }
 
 # pragma mark - GCKCastContext methods

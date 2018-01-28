@@ -1,16 +1,21 @@
 ## react-native-google-cast example project
 
+Example project demonstrating the functionality of the `react-native-google-cast` library.
+
+Please note that this project uses `package.json` from the parent folder to simplify developing the library while testing it on this example project. If you use `react-native-google-cast` in your own project, please follow instructions in the main [README](../README.md), and understand that the project structure will be slightly different than in this example project.
+
 ### Setup
 
-* `cd ios && pod install`
-* `react-native link react-native-google-cast`
+* Run `yarn` (or `npm i`) from the root of `react-native-google-cast`
 
+iOS
+* `cd example/ios && pod install`
+* `open example/ios/example.xcworkspace` and Run from Xcode
+
+Android
+* in Android Studio open `example/android/` folder and run from there
 
 ## Troubleshooting
-
-- `#include <GoogleCast/GoogleCast.h> cannot be found`
-
-  XCode doesn't like symlinked projects. Make sure `node_modules/react-native-google-cast/` is copied over instead of symlinked (`npm install` should do this automatically).
 
 - `com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.`
 

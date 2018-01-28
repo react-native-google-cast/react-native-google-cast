@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		91B36778201491FF00A527A5 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B36776201491FF00A527A5 /* RNGoogleCast.m */; };
-		91B36779201491FF00A527A5 /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B36777201491FF00A527A5 /* RNGoogleCastButtonManager.m */; };
+		911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE484201C8E8200474413 /* RNGoogleCast.m */; };
+		911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,9 +25,9 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		91B36775201491FF00A527A5 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
-		91B36776201491FF00A527A5 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
-		91B36777201491FF00A527A5 /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
+		911BE483201C8E7C00474413 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
+		911BE484201C8E8200474413 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
+		911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,11 +52,19 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				91B36775201491FF00A527A5 /* RNGoogleCast.h */,
-				91B36776201491FF00A527A5 /* RNGoogleCast.m */,
-				91B36777201491FF00A527A5 /* RNGoogleCastButtonManager.m */,
+				911BE482201C8E5700474413 /* RNGoogleCast */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		911BE482201C8E5700474413 /* RNGoogleCast */ = {
+			isa = PBXGroup;
+			children = (
+				911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */,
+				911BE484201C8E8200474413 /* RNGoogleCast.m */,
+				911BE483201C8E7C00474413 /* RNGoogleCast.h */,
+			);
+			path = RNGoogleCast;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,8 +123,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91B36778201491FF00A527A5 /* RNGoogleCast.m in Sources */,
-				91B36779201491FF00A527A5 /* RNGoogleCastButtonManager.m in Sources */,
+				911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */,
+				911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

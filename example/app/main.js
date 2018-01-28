@@ -63,7 +63,7 @@ class Main extends React.Component {
     return (
       <View style={styles.container}>
         {
-          Platform.OS === 'Android' ?
+          Platform.OS === 'android' ?
             <ToolbarAndroid
               title="Google Cast Example"
               contentInsetStart={4}

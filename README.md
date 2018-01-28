@@ -248,9 +248,8 @@ Refer to the [example](example/) folder to find an implementation of this projec
 ## Contribution
 
 1. Contributions are welcome!
-2. Fork the repo.
-3. Make sure you're using npm >5.
-4. Implement your shiny new thing.
-5. Demonstrate how to use it in the example project.
-6. Document the functionality in the README (here).
-7. PR
+1. Fork the repo.
+1. Implement your shiny new thing.
+1. Demonstrate how to use it in the example project.
+1. Document the functionality in the README (here).
+1. PR

@@ -1,14 +1,96 @@
 PODS:
+  - boost (1.59.0):
+    - boost/graph-includes (= 1.59.0)
+    - boost/math-includes (= 1.59.0)
+    - boost/numeric-includes (= 1.59.0)
+    - boost/pointer_cast-includes (= 1.59.0)
+    - boost/preprocessor-includes (= 1.59.0)
+    - boost/shared_ptr-includes (= 1.59.0)
+    - boost/string_algorithms-includes (= 1.59.0)
+  - boost/graph-includes (1.59.0)
+  - boost/math-includes (1.59.0)
+  - boost/numeric-includes (1.59.0)
+  - boost/pointer_cast-includes (1.59.0)
+  - boost/preprocessor-includes (1.59.0)
+  - boost/shared_ptr-includes (1.59.0)
+  - boost/string_algorithms-includes (1.59.0)
+  - DoubleConversion (1.1.5)
+  - Folly (2016.09.26.00):
+    - boost
+    - DoubleConversion
+    - GLog
+  - GLog (0.3.4)
   - google-cast-sdk (3.5.6):
     - google-cast-sdk/Core (= 3.5.6)
   - google-cast-sdk/Core (3.5.6)
+  - React (0.52.2):
+    - React/Core (= 0.52.2)
+  - react-native-google-cast (3.0.0-beta.1):
+    - google-cast-sdk (>= 3)
+    - React
+  - React/Core (0.52.2):
+    - yoga (= 0.52.2.React)
+  - React/CxxBridge (0.52.2):
+    - Folly (= 2016.09.26.00)
+    - React/Core
+    - React/cxxreact
+  - React/cxxreact (0.52.2):
+    - boost
+    - Folly (= 2016.09.26.00)
+    - React/jschelpers
+    - React/jsinspector
+  - React/DevSupport (0.52.2):
+    - React/Core
+    - React/RCTWebSocket
+  - React/fishhook (0.52.2)
+  - React/jschelpers (0.52.2):
+    - Folly (= 2016.09.26.00)
+    - React/PrivateDatabase
+  - React/jsinspector (0.52.2)
+  - React/PrivateDatabase (0.52.2)
+  - React/RCTBlob (0.52.2):
+    - React/Core
+  - React/RCTWebSocket (0.52.2):
+    - React/Core
+    - React/fishhook
+    - React/RCTBlob
+  - yoga (0.52.2.React)
 
 DEPENDENCIES:
+  - DoubleConversion (from `../../node_modules/react-native/third-party-podspecs`)
+  - Folly (from `../../node_modules/react-native/third-party-podspecs`)
+  - GLog (from `../../node_modules/react-native/third-party-podspecs`)
   - google-cast-sdk (~> 3)
+  - react-native-google-cast (from `../../ios/`)
+  - React/Core (from `../../node_modules/react-native`)
+  - React/CxxBridge (from `../../node_modules/react-native`)
+  - React/DevSupport (from `../../node_modules/react-native`)
+  - yoga (from `../../node_modules/react-native/ReactCommon/yoga`)
+
+EXTERNAL SOURCES:
+  DoubleConversion:
+    :podspec: ../../node_modules/react-native/third-party-podspecs
+  Folly:
+    :podspec: ../../node_modules/react-native/third-party-podspecs
+  GLog:
+    :podspec: ../../node_modules/react-native/third-party-podspecs
+  React:
+    :path: ../../node_modules/react-native
+  react-native-google-cast:
+    :path: ../../ios/
+  yoga:
+    :path: ../../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
+  boost: 61736773165d41c9367246936c0db5cf9352fc7f
+  DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
+  Folly: b7255b29f1d693c375d642d0f04f0592181156d9
+  GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
   google-cast-sdk: 2736ac5f0c60d26a559f58c6bb37ced7465e9485
+  React: 43e97926f429d846050880666de1809e22dd5cc5
+  react-native-google-cast: de987ebfa0440790673d8214b5cc6ca800d23f77
+  yoga: 55da126afc384965b96bff46652464373b330add
 
-PODFILE CHECKSUM: c083059d624d14d94c6d46f5c74cb2fa7e60c7c2
+PODFILE CHECKSUM: c4bad29d34959a8a719ff6a80361fceb6eff66e3
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0

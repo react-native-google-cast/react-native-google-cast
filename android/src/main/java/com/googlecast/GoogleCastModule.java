@@ -29,7 +29,7 @@ public class GoogleCastModule
         extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
     @VisibleForTesting
-    public static final String REACT_CLASS = "RNGoogleCastModule";
+    public static final String REACT_CLASS = "RNGoogleCast";
 
     private static final String SESSION_STARTING = "GoogleCast:SessionStarting";
     private static final String SESSION_STARTED = "GoogleCast:SessionStarted";
@@ -52,7 +52,7 @@ public class GoogleCastModule
 
     @Override
     public String getName() {
-        return "GoogleCast";
+        return REACT_CLASS;
     }
 
     @Override
@@ -134,6 +134,34 @@ public class GoogleCastModule
         }
 
         return builder.build();
+    }
+
+    @ReactMethod
+    public void play() {
+        if (mCastSession != null) {
+            mCastSession.getRemoteMediaClient().play();
+        }
+    }
+
+    @ReactMethod
+    public void pause() {
+        if (mCastSession != null) {
+            mCastSession.getRemoteMediaClient().pause();
+        }
+    }
+
+    @ReactMethod
+    public void stop() {
+        if (mCastSession != null) {
+            mCastSession.getRemoteMediaClient().stop();
+        }
+    }
+
+    @ReactMethod
+    public void seek(final int position) {
+        if (mCastSession != null) {
+            mCastSession.getRemoteMediaClient().seek(position * 1000);
+        }
     }
 
     @ReactMethod
