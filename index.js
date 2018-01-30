@@ -29,6 +29,19 @@ export default {
     return GoogleCast.castMedia(params)
   },
   /**
+   * Ends the current session.
+   *
+   * This is an asynchronous operation.
+   *
+   * Resolves if the operation has been started successfully, rejects if there is no session currently established or if the operation could not be started.
+   *
+   * @param {Boolean} stopCasting Whether casting of content on the receiver should be stopped when the session is ended.
+   * @returns {Promise}
+   */
+  endSession(stopCasting: Boolean = false): Promise {
+    return GoogleCast.endSession(stopCasting)
+  },
+  /**
    * Begins (or resumes) playback of the current media item.
    */
   play: GoogleCast.play,

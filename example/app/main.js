@@ -2,6 +2,7 @@
 
 import React from 'react'
 import {
+  Button,
   FlatList,
   Image,
   StyleSheet,
@@ -29,6 +30,8 @@ class Main extends React.Component {
 
   componentDidMount() {
     this.registerListeners()
+
+    GoogleCast.getCastState().then(console.log)
     // GoogleCast.showIntroductoryOverlay();
 
     const CAST_VIDEOS_URL =
@@ -68,14 +71,18 @@ class Main extends React.Component {
               title="Google Cast Example"
               contentInsetStart={4}
               actions={[{ title: 'Log out', show: 'never' }]}
-              style={styles.toolbar}
+              style={styles.toolbarAndroid}
             >
               <CastButton
                 style={styles.castButtonAndroid}
               />
+              <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
             </ToolbarAndroid>
           :
-            <CastButton style={styles.castButtonIOS} />
+            <View style={styles.toolbarIOS}>
+              <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
+              <CastButton style={styles.castButtonIOS} />
+            </View>
         }
         <FlatList
           data={this.state.videos}

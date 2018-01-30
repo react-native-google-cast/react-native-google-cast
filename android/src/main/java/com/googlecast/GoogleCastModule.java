@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.facebook.react.bridge.LifecycleEventListener;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -18,6 +19,8 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.CastState;
+import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
@@ -137,6 +140,17 @@ public class GoogleCastModule
     }
 
     @ReactMethod
+    public void getCastState(final Promise promise) {
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                CastContext castContext = CastContext.getSharedInstance(getReactApplicationContext());
+                promise.resolve(castContext.getCastState() - 1);
+            }
+        });
+    }
+
+    @ReactMethod
     public void play() {
         if (mCastSession != null) {
             mCastSession.getRemoteMediaClient().play();
@@ -162,6 +176,18 @@ public class GoogleCastModule
         if (mCastSession != null) {
             mCastSession.getRemoteMediaClient().seek(position * 1000);
         }
+    }
+
+    @ReactMethod
+    public void endSession(final boolean stopCasting, final Promise promise) {
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager();
+                sessionManager.endCurrentSession(stopCasting);
+                promise.resolve(true);
+            }
+        });
     }
 
     @ReactMethod
@@ -240,7 +266,8 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager().addSessionManagerListener(mSessionManagerListener, CastSession.class);
+                SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager();
+                sessionManager.addSessionManagerListener(mSessionManagerListener, CastSession.class);
             }
         });
     }
@@ -250,7 +277,8 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager().removeSessionManagerListener(
+                SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager();
+                sessionManager.removeSessionManagerListener(
                         mSessionManagerListener, CastSession.class);
             }
         });

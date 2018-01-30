@@ -27,6 +27,7 @@
 		911BE527201D325D00474413 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 911BE4E0201D30C200474413 /* libRCTNetwork.a */; };
 		911BE528201D326500474413 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 911BE500201D316700474413 /* libRCTGeolocation.a */; };
 		911BE529201D326C00474413 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 911BE4F2201D313F00474413 /* libRCTLinking.a */; };
+		918B1EDB2020FF55003A5714 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918B1EB82020FF48003A5714 /* libRCTAnimation.a */; };
 		D9AB75D083819EFF30662CAF /* libPods-example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C2EBDD97C94D356C8692CE3 /* libPods-example.a */; };
 /* End PBXBuildFile section */
 
@@ -276,6 +277,20 @@
 			remoteGlobalIDString = 832C81801AAF6DEF007FA2F7;
 			remoteInfo = RCTVibration;
 		};
+		918B1EB72020FF48003A5714 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 918B1EB12020FF47003A5714 /* RCTAnimation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTAnimation;
+		};
+		918B1EB92020FF48003A5714 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 918B1EB12020FF47003A5714 /* RCTAnimation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
+			remoteInfo = "RCTAnimation-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -306,6 +321,7 @@
 		911BE501201D317E00474413 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		911BE50A201D319A00474413 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		911BE51C201D31F200474413 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
+		918B1EB12020FF47003A5714 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -321,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				911BE522201D323400474413 /* libRCTActionSheet.a in Frameworks */,
+				918B1EDB2020FF55003A5714 /* libRCTAnimation.a in Frameworks */,
 				911BE528201D326500474413 /* libRCTGeolocation.a in Frameworks */,
 				911BE525201D325100474413 /* libRCTImage.a in Frameworks */,
 				911BE529201D326C00474413 /* libRCTLinking.a in Frameworks */,
@@ -431,6 +448,7 @@
 			isa = PBXGroup;
 			children = (
 				911BE4F5201D315400474413 /* RCTActionSheet.xcodeproj */,
+				918B1EB12020FF47003A5714 /* RCTAnimation.xcodeproj */,
 				911BE4FB201D316700474413 /* RCTGeolocation.xcodeproj */,
 				911BE50A201D319A00474413 /* RCTImage.xcodeproj */,
 				911BE4EC201D313F00474413 /* RCTLinking.xcodeproj */,
@@ -543,6 +561,15 @@
 			isa = PBXGroup;
 			children = (
 				911BE521201D31F200474413 /* libRCTVibration.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		918B1EB22020FF47003A5714 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				918B1EB82020FF48003A5714 /* libRCTAnimation.a */,
+				918B1EBA2020FF48003A5714 /* libRCTAnimation.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -664,6 +691,10 @@
 				{
 					ProductGroup = 911BE4F6201D315400474413 /* Products */;
 					ProjectRef = 911BE4F5201D315400474413 /* RCTActionSheet.xcodeproj */;
+				},
+				{
+					ProductGroup = 918B1EB22020FF47003A5714 /* Products */;
+					ProjectRef = 918B1EB12020FF47003A5714 /* RCTAnimation.xcodeproj */;
 				},
 				{
 					ProductGroup = 911BE4FC201D316700474413 /* Products */;
@@ -944,6 +975,20 @@
 			remoteRef = 911BE520201D31F200474413 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		918B1EB82020FF48003A5714 /* libRCTAnimation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTAnimation.a;
+			remoteRef = 918B1EB72020FF48003A5714 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		918B1EBA2020FF48003A5714 /* libRCTAnimation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTAnimation.a;
+			remoteRef = 918B1EB92020FF48003A5714 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1196,6 +1241,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.googlecast.example;
 				PRODUCT_NAME = example;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1218,6 +1264,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.googlecast.example;
 				PRODUCT_NAME = example;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

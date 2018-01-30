@@ -7,12 +7,28 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     backgroundColor: '#F5FCFF',
   },
-  toolbar: {
+  toolbarAndroid: {
     backgroundColor: '#E9EAED',
     height: 56,
   },
-  castButtonAndroid: { height: 24, width: 24, alignSelf: 'flex-end' },
-  castButtonIOS: { height: 24, width: 24, marginTop: 20, marginRight: 10, alignSelf: 'flex-end' },
+  toolbarIOS: {
+    marginTop: 20,
+    height: 56,
+  },
+  castButtonAndroid: {
+    height: 24,
+    width: 24,
+    alignSelf: 'flex-end',
+  },
+  castButtonIOS: {
+    height: 24,
+    width: 24,
+    marginRight: 10,
+    alignSelf: 'flex-end',
+  },
+  stopButton: {
+    alignSelf: 'flex-end',
+  },
 
   button: {
     paddingVertical: 5,
@@ -36,6 +52,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: '#689F38',
   },
-});
+})
 
-export default styles;
+export default styles

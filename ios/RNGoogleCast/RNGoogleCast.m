@@ -73,7 +73,14 @@ RCT_EXPORT_MODULE();
 
 # pragma mark - GCKCastContext methods
 
-# pragma mark launchExpandedControls
+RCT_REMAP_METHOD(getCastState,
+                 getCastStateWithResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve(@([GCKCastContext.sharedInstance castState]));
+  });
+}
+
 RCT_EXPORT_METHOD(launchExpandedControls) {
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance presentDefaultExpandedMediaControls];
@@ -97,13 +104,28 @@ RCT_EXPORT_METHOD(initChannel: (NSString *)namespace) {
   });
 }
 
+# pragma mark - GCKCastSessionManager methods
+
+RCT_EXPORT_METHOD(endSession: (BOOL)stopCasting
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if ([GCKCastContext.sharedInstance.sessionManager endSessionAndStopCasting:stopCasting]) {
+      resolve(@(YES));
+    } else {
+      NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:GCKErrorCodeNoMediaSession userInfo:nil];
+      reject(@"no_session", @"No castSession!", error);
+    }
+  });
+}
+
 #pragma mark - GCKCastChannel methods
 
 RCT_EXPORT_METHOD(sendMessage: (NSString *)message toNamespace: (NSString *)namespace) {
-    GCKCastChannel *channel = channels[namespace];
-    if (channel) {
-        [channel sendTextMessage:message error:nil];
-    }
+  GCKCastChannel *channel = channels[namespace];
+  if (channel) {
+    [channel sendTextMessage:message error:nil];
+  }
 }
 
 # pragma mark - GCKRemoteMediaClient methods
