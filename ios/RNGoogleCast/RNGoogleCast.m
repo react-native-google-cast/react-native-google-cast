@@ -9,7 +9,9 @@
   bool hasListeners;
   NSMutableDictionary *channels;
   GCKCastSession *castSession;
-  GCKMediaStatus *prevStatus;
+  bool playbackStarted;
+  bool playbackEnded;
+  NSUInteger currentItemID;
 }
 
 @synthesize bridge = _bridge;
@@ -265,6 +267,13 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
 
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client didUpdateMediaStatus:(GCKMediaStatus *)mediaStatus {
 
+  if (currentItemID != mediaStatus.currentItemID) {
+    // reset item status
+    currentItemID = mediaStatus.currentItemID;
+    playbackStarted = false;
+    playbackEnded = false;
+  }
+    
   NSDictionary *status = @{
     @"playerState": @(mediaStatus.playerState),
     @"idleReason": @(mediaStatus.idleReason),
@@ -274,16 +283,15 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
 
   [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus":status}];
 
-// TODO
-//  if (prevStatus && (prevStatus.playerState == GCKMediaPlayerStateUnknown || prevStatus.playerState == GCKMediaPlayerStateBuffering) && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
-//    [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
-//  }
-
-  if (prevStatus && prevStatus.playerState == GCKMediaPlayerStatePlaying && mediaStatus.playerState == GCKMediaPlayerStateIdle && mediaStatus.idleReason == GCKMediaPlayerIdleReasonFinished) {
-    [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
+  if (!playbackStarted && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
+    [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
+    playbackStarted = true;
   }
 
-  prevStatus = mediaStatus;
+  if (!playbackEnded && mediaStatus.idleReason == GCKMediaPlayerIdleReasonFinished) {
+    [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
+    playbackEnded = true;
+  }
 }
 
 #pragma mark - GCKGenericChannelDelegate events

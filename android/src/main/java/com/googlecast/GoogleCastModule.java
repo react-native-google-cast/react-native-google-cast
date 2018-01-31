@@ -34,15 +34,19 @@ public class GoogleCastModule
     @VisibleForTesting
     public static final String REACT_CLASS = "RNGoogleCast";
 
-    private static final String SESSION_STARTING = "GoogleCast:SessionStarting";
-    private static final String SESSION_STARTED = "GoogleCast:SessionStarted";
-    private static final String SESSION_START_FAILED =
+    protected static final String SESSION_STARTING = "GoogleCast:SessionStarting";
+    protected static final String SESSION_STARTED = "GoogleCast:SessionStarted";
+    protected static final String SESSION_START_FAILED =
             "GoogleCast:SessionStartFailed";
-    private static final String SESSION_SUSPENDED = "GoogleCast:SessionSuspended";
-    private static final String SESSION_RESUMING = "GoogleCast:SessionResuming";
-    private static final String SESSION_RESUMED = "GoogleCast:SessionResumed";
-    private static final String SESSION_ENDING = "GoogleCast:SessionEnding";
-    private static final String SESSION_ENDED = "GoogleCast:SessionEnded";
+    protected static final String SESSION_SUSPENDED = "GoogleCast:SessionSuspended";
+    protected static final String SESSION_RESUMING = "GoogleCast:SessionResuming";
+    protected static final String SESSION_RESUMED = "GoogleCast:SessionResumed";
+    protected static final String SESSION_ENDING = "GoogleCast:SessionEnding";
+    protected static final String SESSION_ENDED = "GoogleCast:SessionEnded";
+
+    protected static final String MEDIA_STATUS_UPDATED = "GoogleCast:MediaStatusUpdated";
+    protected static final String MEDIA_PLAYBACK_STARTED= "GoogleCast:MediaPlaybackStarted";
+    protected static final String MEDIA_PLAYBACK_ENDED = "GoogleCast:MediaPlaybackEnded";
 
     private CastSession mCastSession;
     private SessionManagerListener<CastSession> mSessionManagerListener;
@@ -61,6 +65,7 @@ public class GoogleCastModule
     @Override
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
+
         constants.put("SESSION_STARTING", SESSION_STARTING);
         constants.put("SESSION_STARTED", SESSION_STARTED);
         constants.put("SESSION_START_FAILED", SESSION_START_FAILED);
@@ -69,10 +74,15 @@ public class GoogleCastModule
         constants.put("SESSION_RESUMED", SESSION_RESUMED);
         constants.put("SESSION_ENDING", SESSION_ENDING);
         constants.put("SESSION_ENDED", SESSION_ENDED);
+
+        constants.put("MEDIA_STATUS_UPDATED", MEDIA_STATUS_UPDATED);
+        constants.put("MEDIA_PLAYBACK_STARTED", MEDIA_PLAYBACK_STARTED);
+        constants.put("MEDIA_PLAYBACK_ENDED", MEDIA_PLAYBACK_ENDED);
+
         return constants;
     }
 
-    private void emitMessageToRN(String eventName,
+    protected void emitMessageToRN(String eventName,
                                  @Nullable WritableMap params) {
         getReactApplicationContext()
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
@@ -199,66 +209,7 @@ public class GoogleCastModule
     }
 
     private void setupCastListener() {
-        mSessionManagerListener = new SessionManagerListener<CastSession>() {
-
-            @Override
-            public void onSessionEnded(CastSession session, int error) {
-                onApplicationDisconnected();
-                emitMessageToRN(SESSION_ENDED, null);
-            }
-
-            @Override
-            public void onSessionResumed(CastSession session, boolean wasSuspended) {
-                onApplicationConnected(session);
-                emitMessageToRN(SESSION_RESUMED, null);
-            }
-
-            @Override
-            public void onSessionResumeFailed(CastSession session, int error) {
-                onApplicationDisconnected();
-                // TODO: find corresponding iOS event
-            }
-
-            @Override
-            public void onSessionStarted(CastSession session, String sessionId) {
-                onApplicationConnected(session);
-                emitMessageToRN(SESSION_STARTED, null);
-            }
-
-            @Override
-            public void onSessionStartFailed(CastSession session, int error) {
-                onApplicationDisconnected();
-                emitMessageToRN(SESSION_START_FAILED, null);
-            }
-
-            @Override
-            public void onSessionStarting(CastSession session) {
-                emitMessageToRN(SESSION_STARTING, null);
-            }
-
-            @Override
-            public void onSessionEnding(CastSession session) {
-                emitMessageToRN(SESSION_ENDING, null);
-            }
-
-            @Override
-            public void onSessionResuming(CastSession session, String sessionId) {
-                emitMessageToRN(SESSION_RESUMING, null);
-            }
-
-            @Override
-            public void onSessionSuspended(CastSession session, int reason) {
-                emitMessageToRN(SESSION_SUSPENDED, null);
-            }
-
-            private void onApplicationConnected(CastSession castSession) {
-                mCastSession = castSession;
-            }
-
-            private void onApplicationDisconnected() {
-                mCastSession = null;
-            }
-        };
+        mSessionManagerListener = new GoogleCastSessionManagerListener(this);
     }
 
     @Override
@@ -286,5 +237,17 @@ public class GoogleCastModule
 
     @Override
     public void onHostDestroy() {
+    }
+
+    protected void setCastSession(CastSession castSession) {
+        this.mCastSession = castSession;
+    }
+
+    protected CastSession getCastSession() {
+        return mCastSession;
+    }
+
+    protected void runOnUiQueueThread(Runnable runnable) {
+        getReactApplicationContext().runOnUiQueueThread(runnable);
     }
 }
