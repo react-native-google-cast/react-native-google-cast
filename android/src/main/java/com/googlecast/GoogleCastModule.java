@@ -163,28 +163,48 @@ public class GoogleCastModule
     @ReactMethod
     public void play() {
         if (mCastSession != null) {
-            mCastSession.getRemoteMediaClient().play();
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCastSession.getRemoteMediaClient().play();
+                }
+            });
         }
     }
 
     @ReactMethod
     public void pause() {
         if (mCastSession != null) {
-            mCastSession.getRemoteMediaClient().pause();
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCastSession.getRemoteMediaClient().pause();
+                }
+            });
         }
     }
 
     @ReactMethod
     public void stop() {
         if (mCastSession != null) {
-            mCastSession.getRemoteMediaClient().stop();
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCastSession.getRemoteMediaClient().stop();
+                }
+            });
         }
     }
 
     @ReactMethod
     public void seek(final int position) {
         if (mCastSession != null) {
-            mCastSession.getRemoteMediaClient().seek(position * 1000);
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCastSession.getRemoteMediaClient().seek(position * 1000);
+                }
+            });
         }
     }
 
