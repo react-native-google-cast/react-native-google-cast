@@ -245,6 +245,15 @@ Refer to the [example](example/) folder to find an implementation of this projec
 
   TODO: Handle gracefully and ignore the Cast library without crashing.
 
+- If you're having version conflict with another library that also uses the appcompat (or google play services) package, the simplest solution is to add to `build.gradle`:
+
+  ```gradle
+  compile 'com.android.support:appcompat-v7:25.0.0'
+  compile 'com.android.support:mediarouter-v7:25.0.0'
+  ```
+
+  You can use any version >=25. This will force all libraries to use this specific version.
+
 ## Contribution
 
 1. Contributions are welcome!

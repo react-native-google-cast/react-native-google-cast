@@ -101,7 +101,7 @@ android {
     defaultConfig {
         applicationId "org.reactjs.native.googlecast.example"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         ndk {
