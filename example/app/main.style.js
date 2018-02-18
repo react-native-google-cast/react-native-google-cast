@@ -19,12 +19,14 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     alignSelf: 'flex-end',
+    tintColor: 'black',
   },
   castButtonIOS: {
     height: 24,
     width: 24,
     marginRight: 10,
     alignSelf: 'flex-end',
+    tintColor: 'black',
   },
   stopButton: {
     alignSelf: 'flex-end',

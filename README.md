@@ -108,7 +108,7 @@ import { CastButton } from 'react-native-google-cast'
 // ...
   render() {
     // ...
-    <CastButton style={{width: 24, height: 24}} />
+    <CastButton style={{width: 24, height: 24, tintColor: 'black'}} />
   }
 ```
 
