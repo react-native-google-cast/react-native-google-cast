@@ -76,6 +76,8 @@ class Main extends React.Component {
               <CastButton
                 style={styles.castButtonAndroid}
               />
+              <Button title="Play" onPress={() => GoogleCast.play()} style={styles.stopButton} />
+              <Button title="Pause" onPress={() => GoogleCast.pause()} style={styles.stopButton} />
               <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
             </ToolbarAndroid>
           :

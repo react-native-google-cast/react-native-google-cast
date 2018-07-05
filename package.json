@@ -3,16 +3,16 @@
   "version": "3.0.0-beta.1",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "index.js",
-  "author": {
+  "scripts": {
+    "start": "react-native start"
+  },
+  "contributors": [{
+    "name": "Petr Bela",
+    "email": "github@petrbela.com"
+  }, {
     "name": "Charlie L",
     "email": "carlyeah@me.com"
-  },
-  "contributors": [
-    {
-      "name": "Petr Bela",
-      "email": "github@petrbela.com"
-    }
-  ],
+  }],
   "license": "MIT",
   "keywords": [
     "react-native",
@@ -35,7 +35,7 @@
     "react-native": ">=0.40"
   },
   "devDependencies": {
-    "react": "^16.2.0",
-    "react-native": "^0.52.2"
+    "react": "16.3.1",
+    "react-native": "0.55.4"
   }
 }

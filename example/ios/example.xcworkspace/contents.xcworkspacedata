@@ -2,9 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:example.xcodeproj">
+      location = "group:/Users/petrbela/code/flex/react-native-google-cast/example/ios/example.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:example.xcodeproj">
    </FileRef>
 </Workspace>
