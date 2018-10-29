@@ -104,8 +104,8 @@ public class GoogleCastModule
                 }
 
                 Integer seconds = null;
-                if (params.hasKey("seconds")) {
-                    seconds = params.getInt("seconds");
+                if (params.hasKey("playPosition")) {
+                    seconds = params.getInt("playPosition");
                 }
                 if (seconds == null) {
                     seconds = 0;
