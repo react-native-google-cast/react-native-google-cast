@@ -203,7 +203,7 @@ Remote media client controls media playback on a Cast receiver.
 GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_STATUS_UPDATED, ({mediaStatus}) => {});
 ```
 
-For convenience, the following events are triggered in addition to `MEDIA_STATUS_UPDATED` in these special cases (they're called after  `MEDIA_STATUS_UPDATED`, if you're subscribed to both).
+For convenience, the following events are triggered in addition to `MEDIA_STATUS_UPDATED` in these special cases (they're called after  `MEDIA_STATUS_UPDATED`, if you're subscribed to them).
 
 ```js
 // Media started playing
@@ -211,6 +211,9 @@ GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_PLAYBACK_STARTED, ({mediaSt
 
 // Media finished playing
 GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_PLAYBACK_ENDED, ({mediaStatus}) => {});
+
+// Playing progress of the media has changed. The `mediaProgress` object contains the duration and new progress.
+GoogleCast.EventEmitter.addListener(GoogleCast.MEDIA_PROGRESS_UPDATED, ({mediaProgress}) => {});
 ```
 
 ### Channel Events

@@ -47,6 +47,7 @@ public class GoogleCastModule
     protected static final String MEDIA_STATUS_UPDATED = "GoogleCast:MediaStatusUpdated";
     protected static final String MEDIA_PLAYBACK_STARTED= "GoogleCast:MediaPlaybackStarted";
     protected static final String MEDIA_PLAYBACK_ENDED = "GoogleCast:MediaPlaybackEnded";
+    protected static final String MEDIA_PROGRESS_UPDATED = "GoogleCast:MediaProgressUpdated";
 
     private CastSession mCastSession;
     private SessionManagerListener<CastSession> mSessionManagerListener;
@@ -78,6 +79,7 @@ public class GoogleCastModule
         constants.put("MEDIA_STATUS_UPDATED", MEDIA_STATUS_UPDATED);
         constants.put("MEDIA_PLAYBACK_STARTED", MEDIA_PLAYBACK_STARTED);
         constants.put("MEDIA_PLAYBACK_ENDED", MEDIA_PLAYBACK_ENDED);
+        constants.put("MEDIA_PROGRESS_UPDATED", MEDIA_PROGRESS_UPDATED);
 
         return constants;
     }

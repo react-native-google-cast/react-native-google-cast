@@ -12,6 +12,7 @@
   bool playbackStarted;
   bool playbackEnded;
   NSUInteger currentItemID;
+  NSTimer *progressTimer;
 }
 
 @synthesize bridge = _bridge;
@@ -38,6 +39,7 @@ RCT_EXPORT_MODULE();
     @"MEDIA_STATUS_UPDATED" : MEDIA_STATUS_UPDATED,
     @"MEDIA_PLAYBACK_STARTED" : MEDIA_PLAYBACK_STARTED,
     @"MEDIA_PLAYBACK_ENDED" : MEDIA_PLAYBACK_ENDED,
+    @"MEDIA_PROGRESS_UPDATED" : MEDIA_PROGRESS_UPDATED,
 
     @"CHANNEL_CONNECTED" : CHANNEL_CONNECTED,
     @"CHANNEL_MESSAGE_RECEIVED" : CHANNEL_MESSAGE_RECEIVED,
@@ -48,7 +50,7 @@ RCT_EXPORT_MODULE();
 - (NSArray<NSString *> *)supportedEvents {
   return @[
     SESSION_STARTING, SESSION_STARTED, SESSION_START_FAILED, SESSION_SUSPENDED,
-    SESSION_RESUMING, SESSION_RESUMED, SESSION_ENDING, SESSION_ENDED,
+    SESSION_RESUMING, SESSION_RESUMED, SESSION_ENDING, SESSION_ENDED, MEDIA_PROGRESS_UPDATED,
 
     MEDIA_STATUS_UPDATED, MEDIA_PLAYBACK_STARTED, MEDIA_PLAYBACK_ENDED,
 
@@ -279,9 +281,23 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     @"idleReason": @(mediaStatus.idleReason),
     @"muted": @(mediaStatus.isMuted),
     @"streamPosition": @(mediaStatus.streamPosition),
+    @"streamDuration": @(mediaStatus.mediaInformation.streamDuration),
   };
 
   [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus":status}];
+
+  if (mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
+    if (!progressTimer) {
+      progressTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 
+                                target:self
+                                selector:@selector(progressUpdated:)
+                                userInfo:@(mediaStatus.mediaInformation.streamDuration)
+                                repeats:YES];
+    }
+  } else {
+    [progressTimer invalidate];
+    progressTimer = nil;
+  }
 
   if (!playbackStarted && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
     [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
@@ -292,6 +308,14 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
     playbackEnded = true;
   }
+}
+
+-(void) progressUpdated:(NSTimer*)theTimer {
+  NSDictionary *progress = @{
+    @"progress": @([castSession.remoteMediaClient approximateStreamPosition]),
+    @"duration": [theTimer userInfo],
+  };
+  [self sendEventWithName:MEDIA_PROGRESS_UPDATED body:@{@"mediaProgress":progress}];
 }
 
 #pragma mark - GCKGenericChannelDelegate events

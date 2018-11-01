@@ -68,6 +68,7 @@ public class GoogleCastSessionManagerListener implements SessionManagerListener<
             public void run() {
                 remoteMediaClientListener = new GoogleCastRemoteMediaClientListener(module);
                 castSession.getRemoteMediaClient().addListener(remoteMediaClientListener);
+                castSession.getRemoteMediaClient().addProgressListener(remoteMediaClientListener, 1000);
             }
         });
     }
