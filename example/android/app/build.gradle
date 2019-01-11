@@ -73,8 +73,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    // the entry file for bundle generation
-    entryFile: "example/index.js",
+    entryFile: "example/index.js"
 ]
 
 apply from: "../../../node_modules/react-native/react.gradle"
@@ -95,13 +94,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "org.reactjs.native.googlecast.example"
-        minSdkVersion 16
-        targetSdkVersion 25
+        applicationId "com.reactnative.googlecast.example"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         ndk {
@@ -138,9 +137,9 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-google-cast')
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.facebook.react:react-native:+'  // From node_modules
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(':react-native-google-cast')
+    implementation "com.facebook.react:react-native:+"  // From node_modules
 }
 
 // Run this once to be able to run the application with BUCK

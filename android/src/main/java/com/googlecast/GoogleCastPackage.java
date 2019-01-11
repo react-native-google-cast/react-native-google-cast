@@ -12,25 +12,27 @@ import java.util.List;
 
 public class GoogleCastPackage implements ReactPackage {
 
-    @Override
-    public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-        List<NativeModule> modules = new ArrayList<>();
+  @Override
+  public List<NativeModule>
+  createNativeModules(ReactApplicationContext reactContext) {
+    List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new GoogleCastModule(reactContext));
+    modules.add(new GoogleCastModule(reactContext));
 
-        return modules;
-    }
+    return modules;
+  }
 
-    public List<Class<? extends JavaScriptModule>> createJSModules() {
-        return Collections.emptyList();
-    }
+  public List<Class<? extends JavaScriptModule>> createJSModules() {
+    return Collections.emptyList();
+  }
 
-    @Override
-    public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        List<ViewManager> managers = new ArrayList<>();
+  @Override
+  public List<ViewManager>
+  createViewManagers(ReactApplicationContext reactContext) {
+    List<ViewManager> managers = new ArrayList<>();
 
-        managers.add(new GoogleCastButtonManager());
+    managers.add(new GoogleCastButtonManager());
 
-        return managers;
-    }
+    return managers;
+  }
 }

@@ -1,8 +1,8 @@
-/* @flow */
+// @flow
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import { requireNativeComponent } from 'react-native';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { requireNativeComponent } from 'react-native'
 
 /**
  * Button that presents the Cast icon.
@@ -14,7 +14,7 @@ import { requireNativeComponent } from 'react-native';
  */
 class CastButton extends React.Component {
   render() {
-    return <GoogleCastButton {...this.props} />;
+    return <GoogleCastButton {...this.props} />
   }
 }
 
@@ -26,19 +26,23 @@ CastButton.propTypes = {
    * */
   // triggersDefaultCastDialog: PropTypes.bool
   // accessibilityLabel: PropTypes.string
-};
+}
 
-var GoogleCastButton = requireNativeComponent('RNGoogleCastButton', CastButton, {
-  nativeOnly: {
-    accessibilityLabel: true,
-    accessibilityLiveRegion: true,
-    accessibilityComponentType: true,
-    testID: true,
-    nativeID: true,
-    importantForAccessibility: true,
-    renderToHardwareTextureAndroid: true,
-    onLayout: true,
-  }
-});
+var GoogleCastButton = requireNativeComponent(
+  'RNGoogleCastButton',
+  CastButton,
+  {
+    nativeOnly: {
+      accessibilityLabel: true,
+      accessibilityLiveRegion: true,
+      accessibilityComponentType: true,
+      testID: true,
+      nativeID: true,
+      importantForAccessibility: true,
+      renderToHardwareTextureAndroid: true,
+      onLayout: true,
+    },
+  },
+)
 
-export default CastButton;
+export default CastButton

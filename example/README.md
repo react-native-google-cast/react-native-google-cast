@@ -6,14 +6,16 @@ Please note that this project uses `package.json` from the parent folder to simp
 
 ### Setup
 
-* Run `yarn` (or `npm i`) from the root of `react-native-google-cast`
+- Run `yarn` (or `npm i`) from the root of `react-native-google-cast`
 
 iOS
-* `cd example/ios && pod install`
-* `open example/ios/example.xcworkspace` and Run from Xcode
+
+- `cd example/ios && pod install`
+- `open example/ios/RNGoogleCastExample.xcworkspace` and Run from Xcode
 
 Android
-* in Android Studio open `example/android/` folder and run from there
+
+- in Android Studio open `example/android/` folder and run from there
 
 ## Troubleshooting
 

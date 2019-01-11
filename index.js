@@ -1,3 +1,5 @@
+// @flow
+
 import {
   DeviceEventEmitter,
   NativeEventEmitter,
@@ -10,11 +12,20 @@ const { RNGoogleCast: GoogleCast } = NativeModules
 import CastButton from './CastButton'
 export { CastButton }
 
-type CastState = 'NoDevicesAvailable' | 'NotConnected' | 'Connecting' | 'Connected';
+type CastState =
+  | 'NoDevicesAvailable'
+  | 'NotConnected'
+  | 'Connecting'
+  | 'Connected'
 
 export default {
   getCastState(): Promise<CastState> {
-    return GoogleCast.getCastState().then(state => ['NoDevicesAvailable', 'NotConnected', 'Connecting', 'Connected'][state])
+    return GoogleCast.getCastState().then(
+      state =>
+        ['NoDevicesAvailable', 'NotConnected', 'Connecting', 'Connected'][
+          state
+        ],
+    )
   },
   castMedia(params: {
     mediaUrl: string,

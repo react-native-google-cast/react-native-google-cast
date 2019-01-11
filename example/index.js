@@ -1,13 +1,13 @@
 /* @flow */
 
-import React from 'react';
-import { AppRegistry } from 'react-native';
-import Main from './app/main';
+import React from 'react'
+import { AppRegistry } from 'react-native'
+import Main from './src/main'
 
 class Index extends React.Component {
   render() {
-    return <Main />;
+    return <Main />
   }
 }
 
-AppRegistry.registerComponent('example', () => Index);
+AppRegistry.registerComponent('RNGoogleCastExample', () => Index)
