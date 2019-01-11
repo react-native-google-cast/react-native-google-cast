@@ -1,40 +1,107 @@
-import { NativeModules } from 'react-native';
+// @flow
 
-const { GoogleCast } = NativeModules;
+import {
+  DeviceEventEmitter,
+  NativeEventEmitter,
+  NativeModules,
+  Platform,
+} from 'react-native'
+
+const { RNGoogleCast: GoogleCast } = NativeModules
+
+import CastButton from './CastButton'
+export { CastButton }
+
+type CastState =
+  | 'NoDevicesAvailable'
+  | 'NotConnected'
+  | 'Connecting'
+  | 'Connected'
 
 export default {
-  startScan: function (appId: ?string) {
-	GoogleCast.startScan(appId);
+  getCastState(): Promise<CastState> {
+    return GoogleCast.getCastState().then(
+      state =>
+        ['NoDevicesAvailable', 'NotConnected', 'Connecting', 'Connected'][
+          state
+        ],
+    )
   },
-  stopScan: function () {
-	GoogleCast.stopScan();
+  castMedia(params: {
+    mediaUrl: string,
+    title: string,
+    subtitle: string,
+    studio: string,
+    imageUrl: string,
+    posterUrl: string,
+    streamDuration: number,
+    playPosition: number,
+  }) {
+    return GoogleCast.castMedia(params)
   },
-  isConnected: function () {
-	return GoogleCast.isConnected();
+  /**
+   * Ends the current session.
+   *
+   * This is an asynchronous operation.
+   *
+   * Resolves if the operation has been started successfully, rejects if there is no session currently established or if the operation could not be started.
+   *
+   * @param {Boolean} stopCasting Whether casting of content on the receiver should be stopped when the session is ended.
+   * @returns {Promise}
+   */
+  endSession(stopCasting: Boolean = false): Promise {
+    return GoogleCast.endSession(stopCasting)
   },
-  getDevices: function () {
-	return GoogleCast.getDevices();
+  /**
+   * Begins (or resumes) playback of the current media item.
+   */
+  play: GoogleCast.play,
+  /**
+   * Pauses playback of the current media item.
+   */
+  pause: GoogleCast.pause,
+  /**
+   * Stops playback of the current media item.
+   */
+  stop: GoogleCast.stop,
+  /**
+   * Seeks to a new position within the current media item.
+   *
+   * @param {number} playPosition
+   */
+  seek(playPosition: number) {
+    return GoogleCast.seek(playPosition)
   },
-  connectToDevice: function (deviceId: string) {
-	GoogleCast.connectToDevice(deviceId);
+  launchExpandedControls: GoogleCast.launchExpandedControls,
+  showIntroductoryOverlay: GoogleCast.showIntroductoryOverlay,
+
+  initChannel(namespace: string) {
+    return GoogleCast.initChannel(namespace)
   },
-  disconnect: function () {
-	GoogleCast.disconnect();
+  sendMessage(namespace: string, message: string) {
+    return GoogleCast.sendMessage(message, namespace)
   },
-  castMedia: function (mediaUrl: string, title: string, imageUrl: string, seconds: number = 0) {
-	GoogleCast.castMedia(mediaUrl, title, imageUrl, seconds);
-  },
-  seekCast: function (seconds: number) {
-	GoogleCast.seekCast(seconds);
-  },
-  togglePauseCast: function () {
-	GoogleCast.togglePauseCast();
-  },
-  getStreamPosition: function () {
-	return GoogleCast.getStreamPosition();
-  },
-  DEVICE_AVAILABLE: GoogleCast.DEVICE_AVAILABLE,
-  DEVICE_CONNECTED: GoogleCast.DEVICE_CONNECTED,
-  DEVICE_DISCONNECTED: GoogleCast.DEVICE_DISCONNECTED,
-  MEDIA_LOADED: GoogleCast.MEDIA_LOADED,
-};
+
+  // TODO use the same native event interface instead of hacking it here
+  EventEmitter:
+    Platform.OS === 'ios'
+      ? new NativeEventEmitter(GoogleCast)
+      : DeviceEventEmitter,
+
+  SESSION_STARTING: GoogleCast.SESSION_STARTING,
+  SESSION_STARTED: GoogleCast.SESSION_STARTED,
+  SESSION_START_FAILED: GoogleCast.SESSION_START_FAILED,
+  SESSION_SUSPENDED: GoogleCast.SESSION_SUSPENDED,
+  SESSION_RESUMING: GoogleCast.SESSION_RESUMING,
+  SESSION_RESUMED: GoogleCast.SESSION_RESUMED,
+  SESSION_ENDING: GoogleCast.SESSION_ENDING,
+  SESSION_ENDED: GoogleCast.SESSION_ENDED,
+
+  MEDIA_STATUS_UPDATED: GoogleCast.MEDIA_STATUS_UPDATED,
+  MEDIA_PLAYBACK_STARTED: GoogleCast.MEDIA_PLAYBACK_STARTED,
+  MEDIA_PLAYBACK_ENDED: GoogleCast.MEDIA_PLAYBACK_ENDED,
+
+  CHANNEL_CONNECTED: GoogleCast.CHANNEL_CONNECTED,
+  CHANNEL_DISCONNECTED: GoogleCast.CHANNEL_DISCONNECTED,
+  CHANNEL_MESSAGE_RECEIVED: GoogleCast.CHANNEL_MESSAGE_RECEIVED,
+}
