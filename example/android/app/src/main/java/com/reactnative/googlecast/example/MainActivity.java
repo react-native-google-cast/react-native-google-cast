@@ -1,4 +1,4 @@
-package com.example;
+package com.reactnative.googlecast.example;
 
 import com.facebook.react.GoogleCastActivity;
 

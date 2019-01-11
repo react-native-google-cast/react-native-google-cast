@@ -1,4 +1,4 @@
-package com.googlecast;
+package com.reactnative.googlecast;
 
 import android.support.annotation.NonNull;
 

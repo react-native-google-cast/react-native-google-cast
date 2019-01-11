@@ -1,4 +1,4 @@
-package com.googlecast;
+package com.reactnative.googlecast;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;

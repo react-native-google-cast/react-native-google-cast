@@ -1,4 +1,4 @@
-package com.googlecast;
+package com.reactnative.googlecast;
 
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;

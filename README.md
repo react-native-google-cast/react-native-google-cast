@@ -326,6 +326,10 @@ Refer to the [example](example/) folder to find an implementation of this projec
   }
   ```
 
+- _Android\*_ `java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity`
+
+  Make sure your `MainActivity` extends `GoogleCastActivity`, `AppCompatActivity`, or some other descendant of `FragmentActivity`.
+
 ## Contribution
 
 1. Contributions are welcome!
