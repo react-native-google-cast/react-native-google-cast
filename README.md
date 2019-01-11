@@ -48,7 +48,32 @@ $ react-native link react-native-google-cast
     android:value="com.reactnative.googlecast.GoogleCastOptionsProvider" />
   ```
 
-  Alternatively, you may provide your own `OptionsProvider` class.
+  Alternatively, you may provide your own `OptionsProvider` class. For example, to use a custom receiver app:
+
+  ```java
+  // assuming this is in package com.foo
+  package com.foo;
+
+  import com.reactnative.googlecast.GoogleCastOptionsProvider;
+
+  public class CastOptionsProvider extends GoogleCastOptionsProvider {
+    @Override
+    public CastOptions getCastOptions(Context context) {
+      CastOptions castOptions = new CastOptions.Builder()
+          .setReceiverApplicationId(context.getString(R.string.app_id))
+          .build();
+      return castOptions;
+    }
+  }
+  ```
+
+  and don't forget to set your `AndroidManifest.xml`:
+
+  ```xml
+  <meta-data
+    android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+    android:value="com.foo.GoogleCastOptionsProvider" />
+  ```
 
 - Change your `MainActivity` to extend `GoogleCastActivity`.
 
