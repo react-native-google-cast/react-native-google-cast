@@ -1,12 +1,21 @@
 {
   "name": "react-native-google-cast",
-  "version": "1.3.0",
-  "description": "Chromecast library for iOS and Android",
+  "version": "3.0.0",
+  "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "index.js",
-  "author": {
-    "name": "Charlie L",
-    "email": "carlyeah@me.com"
+  "scripts": {
+    "start": "react-native start"
   },
+  "contributors": [
+    {
+      "name": "Petr Bela",
+      "email": "github@petrbela.com"
+    },
+    {
+      "name": "Charlie L",
+      "email": "carlyeah@me.com"
+    }
+  ],
   "license": "MIT",
   "keywords": [
     "react-native",
@@ -14,10 +23,26 @@
     "android",
     "chromecast",
     "google",
-    "cast"
+    "cast",
+    "google-cast"
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:charliesbox/react-native-google-cast.git"
+    "url": "git@github.com:react-native-google-cast/react-native-google-cast.git"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=15.1 || >=16.0.0",
+    "react-native": ">=0.40"
+  },
+  "devDependencies": {
+    "react": "16.6.3",
+    "react-native": "0.57.8",
+    "babel-jest": "23.6.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.51.1",
+    "react-test-renderer": "16.6.3"
   }
 }
