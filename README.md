@@ -188,6 +188,20 @@ GoogleCast.launchExpandedControls()
 
 The expanded controller will also be launched automatically when the user taps the mini controller.
 
+### Volume Control
+
+The Cast framework automatically manages the volume for the sender app and synchronizes the sender and receiver apps so that the sender UI always reports the volume specified by the receiver.
+
+Physical button volume control is automatically enabled on Android. On iOS, you need to enable it when initializing the cast context:
+
+```obj-c
+GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
+options.physicalVolumeButtonsWillControlDeviceVolume = YES;
+[GCKCastContext setSharedInstanceWithOptions:options];
+```
+
+Programmatic access to the volume will be added in a future version.
+
 ## Events
 
 The library emits events to inform you about current state.
