@@ -107,6 +107,7 @@ GoogleCast.castMedia({
     'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
   studio: 'Blender Foundation',
   streamDuration: 596, // seconds
+  contentType: "video/mp4", // Optional, default is "video/mp4"
   playPosition: 10, // seconds
 })
 ```

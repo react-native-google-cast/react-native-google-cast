@@ -141,6 +141,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSString *studio = [RCTConvert NSString:params[@"studio"]];
   NSString *imageUrl = [RCTConvert NSString:params[@"imageUrl"]];
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
+  NSString *contentType = [RCTConvert NSString:params[@"contentType"]];
   double streamDuration = [RCTConvert double:params[@"streamDuration"]];
   double playPosition = [RCTConvert double:params[@"playPosition"]];
 
@@ -158,6 +159,9 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   if (studio) {
     [metadata setString:studio forKey:kGCKMetadataKeyStudio];
   }
+  if (!contentType) {
+    contentType = @"video/mp4"
+  }
 
   [metadata addImage:[[GCKImage alloc]
                          initWithURL:[[NSURL alloc] initWithString:imageUrl]
@@ -173,7 +177,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   GCKMediaInformation *mediaInfo =
       [[GCKMediaInformation alloc] initWithContentID:mediaUrl
                                           streamType:GCKMediaStreamTypeBuffered
-                                         contentType:@"video/mp4"
+                                         contentType:contentType
                                             metadata:metadata
                                       streamDuration:streamDuration
                                          mediaTracks:nil
