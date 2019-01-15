@@ -65,27 +65,40 @@ class Main extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        {
-          Platform.OS === 'android' ?
-            <ToolbarAndroid
-              title="Google Cast Example"
-              contentInsetStart={4}
-              actions={[{ title: 'Log out', show: 'never' }]}
-              style={styles.toolbarAndroid}
-            >
-              <CastButton
-                style={styles.castButtonAndroid}
-              />
-              <Button title="Play" onPress={() => GoogleCast.play()} style={styles.stopButton} />
-              <Button title="Pause" onPress={() => GoogleCast.pause()} style={styles.stopButton} />
-              <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
-            </ToolbarAndroid>
-          :
-            <View style={styles.toolbarIOS}>
-              <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
-              <CastButton style={styles.castButtonIOS} />
-            </View>
-        }
+        {Platform.OS === 'android' ? (
+          <ToolbarAndroid
+            title="Google Cast Example"
+            contentInsetStart={4}
+            actions={[{ title: 'Log out', show: 'never' }]}
+            style={styles.toolbarAndroid}
+          >
+            <CastButton style={styles.castButtonAndroid} />
+            <Button
+              title="Play"
+              onPress={() => GoogleCast.play()}
+              style={styles.stopButton}
+            />
+            <Button
+              title="Pause"
+              onPress={() => GoogleCast.pause()}
+              style={styles.stopButton}
+            />
+            <Button
+              title="Stop"
+              onPress={() => GoogleCast.endSession()}
+              style={styles.stopButton}
+            />
+          </ToolbarAndroid>
+        ) : (
+          <View style={styles.toolbarIOS}>
+            <Button
+              title="Stop"
+              onPress={() => GoogleCast.endSession()}
+              style={styles.stopButton}
+            />
+            <CastButton style={styles.castButtonIOS} />
+          </View>
+        )}
         <FlatList
           data={this.state.videos}
           keyExtractor={(item, index) => index}
@@ -122,8 +135,10 @@ class Main extends React.Component {
       SESSION_STARTING SESSION_STARTED SESSION_START_FAILED SESSION_SUSPENDED
       SESSION_RESUMING SESSION_RESUMED SESSION_ENDING SESSION_ENDED
 
-      MEDIA_STATUS_UPDATED MEDIA_PLAYBACK_STARTED MEDIA_PLAYBACK_ENDED
-    `.trim().split(/\s+/)
+      MEDIA_STATUS_UPDATED MEDIA_PLAYBACK_STARTED MEDIA_PLAYBACK_ENDED MEDIA_PROGRESS_UPDATED
+    `
+      .trim()
+      .split(/\s+/)
     console.log(events)
 
     events.forEach(event => {
