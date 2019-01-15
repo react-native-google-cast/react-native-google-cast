@@ -29,13 +29,14 @@ export default {
   },
   castMedia(params: {
     mediaUrl: string,
-    title: string,
-    subtitle: string,
-    studio: string,
-    imageUrl: string,
-    posterUrl: string,
-    streamDuration: number,
-    playPosition: number,
+    title?: string,
+    subtitle?: string,
+    studio?: string,
+    imageUrl?: string,
+    posterUrl?: string,
+    contentType?: string,
+    streamDuration?: number,
+    playPosition?: number,
   }) {
     return GoogleCast.castMedia(params)
   },

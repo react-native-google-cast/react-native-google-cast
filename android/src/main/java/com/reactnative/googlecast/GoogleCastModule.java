@@ -106,8 +106,8 @@ public class GoogleCastModule
         }
 
         Integer seconds = null;
-        if (params.hasKey("seconds")) {
-          seconds = params.getInt("seconds");
+        if (params.hasKey("playPosition")) {
+          seconds = params.getInt("playPosition");
         }
         if (seconds == null) {
           seconds = 0;
@@ -134,6 +134,11 @@ public class GoogleCastModule
                               params.getString("subtitle"));
     }
 
+    if (params.hasKey("studio") && params.getString("studio") != null) {
+      movieMetadata.putString(MediaMetadata.KEY_STUDIO,
+                              params.getString("studio"));
+    }
+
     if (params.hasKey("imageUrl") && params.getString("imageUrl") != null) {
       movieMetadata.addImage(
           new WebImage(Uri.parse(params.getString("imageUrl"))));
@@ -149,14 +154,15 @@ public class GoogleCastModule
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
             .setMetadata(movieMetadata);
 
-    if (params.hasKey("contentType") && params.getString("contentType") != null) {
+    if (params.hasKey("contentType") &&
+        params.getString("contentType") != null) {
       builder = builder.setContentType(params.getString("contentType"));
     } else {
       builder = builder.setContentType("video/mp4");
     }
 
-    if (params.hasKey("duration")) {
-      builder = builder.setStreamDuration(params.getInt("duration"));
+    if (params.hasKey("streamDuration")) {
+      builder = builder.setStreamDuration(params.getInt("streamDuration"));
     }
 
     return builder.build();
