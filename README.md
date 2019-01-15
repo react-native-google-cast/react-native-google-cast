@@ -86,7 +86,28 @@ $ react-native link react-native-google-cast
   ```
 
   If you already extend other class than `ReactActivity` (e.g. if you use `react-native-navigation`) or integrate React Native in native app, make sure that the `Activity` is a descendant of `android.support.v7.app.AppCompatActivity`. Then add `CastContext.getSharedInstance(this);` to your `Activity`'s `onCreate` method (this lazy loads the Google Cast context).
+  
+- Add `GoogleCastPackage` to `MainApplication`
+```java
+  import com.reactnative.googlecast.GoogleCastPackage;
 
+  public class MainApplication extends Application implements ReactApplication {
+
+    private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+
+      @Override
+      protected List<ReactPackage> getPackages() {
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            new GoogleCastPackage() // <-- Add here
+        );
+      }
+
+    };
+
+  }
+  ```
+  
 ## Usage
 
 ```js
