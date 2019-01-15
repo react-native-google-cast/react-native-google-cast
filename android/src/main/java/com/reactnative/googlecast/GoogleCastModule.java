@@ -147,8 +147,13 @@ public class GoogleCastModule
     MediaInfo.Builder builder =
         new MediaInfo.Builder(params.getString("mediaUrl"))
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setContentType("videos/mp4")
             .setMetadata(movieMetadata);
+
+    if (params.hasKey("contentType") && params.getString("contentType") != null) {
+      builder = builder.setContentType(params.getString("contentType"));
+    } else {
+      builder = builder.setContentType("video/mp4");
+    }
 
     if (params.hasKey("duration")) {
       builder = builder.setStreamDuration(params.getInt("duration"));
