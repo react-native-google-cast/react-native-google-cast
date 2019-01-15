@@ -107,7 +107,7 @@ GoogleCast.castMedia({
     'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
   studio: 'Blender Foundation',
   streamDuration: 596, // seconds
-  contentType: "video/mp4", // Optional, default is "video/mp4"
+  contentType: 'video/mp4', // Optional, default is "video/mp4"
   playPosition: 10, // seconds
 })
 ```
@@ -266,7 +266,7 @@ GoogleCast.EventEmitter.addListener(
 )
 ```
 
-For convenience, the following events are triggered in addition to `MEDIA_STATUS_UPDATED` in these special cases (they're called after `MEDIA_STATUS_UPDATED`, if you're subscribed to both).
+For convenience, the following events are triggered in addition to `MEDIA_STATUS_UPDATED` in these special cases (they're called after `MEDIA_STATUS_UPDATED`, if you're subscribed to them).
 
 ```js
 // Media started playing
@@ -279,6 +279,12 @@ GoogleCast.EventEmitter.addListener(
 GoogleCast.EventEmitter.addListener(
   GoogleCast.MEDIA_PLAYBACK_ENDED,
   ({ mediaStatus }) => {},
+)
+
+// Playing progress of the media has changed. The `mediaProgress` object contains the duration and new progress.
+GoogleCast.EventEmitter.addListener(
+  GoogleCast.MEDIA_PROGRESS_UPDATED,
+  ({ mediaProgress }) => {},
 )
 ```
 

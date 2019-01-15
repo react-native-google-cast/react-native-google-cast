@@ -12,6 +12,7 @@
   bool playbackStarted;
   bool playbackEnded;
   NSUInteger currentItemID;
+  NSTimer *progressTimer;
 }
 
 @synthesize bridge = _bridge;
@@ -38,6 +39,7 @@ RCT_EXPORT_MODULE();
     @"MEDIA_STATUS_UPDATED" : MEDIA_STATUS_UPDATED,
     @"MEDIA_PLAYBACK_STARTED" : MEDIA_PLAYBACK_STARTED,
     @"MEDIA_PLAYBACK_ENDED" : MEDIA_PLAYBACK_ENDED,
+    @"MEDIA_PROGRESS_UPDATED" : MEDIA_PROGRESS_UPDATED,
 
     @"CHANNEL_CONNECTED" : CHANNEL_CONNECTED,
     @"CHANNEL_MESSAGE_RECEIVED" : CHANNEL_MESSAGE_RECEIVED,
@@ -50,7 +52,7 @@ RCT_EXPORT_MODULE();
     SESSION_STARTING, SESSION_STARTED, SESSION_START_FAILED, SESSION_SUSPENDED,
     SESSION_RESUMING, SESSION_RESUMED, SESSION_ENDING, SESSION_ENDED,
 
-    MEDIA_STATUS_UPDATED, MEDIA_PLAYBACK_STARTED, MEDIA_PLAYBACK_ENDED,
+    MEDIA_STATUS_UPDATED, MEDIA_PLAYBACK_STARTED, MEDIA_PLAYBACK_ENDED, MEDIA_PROGRESS_UPDATED,
 
     CHANNEL_CONNECTED, CHANNEL_MESSAGE_RECEIVED, CHANNEL_DISCONNECTED
   ];
@@ -160,7 +162,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
     [metadata setString:studio forKey:kGCKMetadataKeyStudio];
   }
   if (!contentType) {
-    contentType = @"video/mp4"
+    contentType = @"video/mp4";
   }
 
   [metadata addImage:[[GCKImage alloc]
@@ -277,16 +279,35 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     playbackStarted = false;
     playbackEnded = false;
   }
-    
+  
+  double position = mediaStatus.streamPosition;
+  double duration = mediaStatus.mediaInformation.streamDuration;
+  
   NSDictionary *status = @{
     @"playerState": @(mediaStatus.playerState),
     @"idleReason": @(mediaStatus.idleReason),
     @"muted": @(mediaStatus.isMuted),
-    @"streamPosition": @(mediaStatus.streamPosition),
+    @"streamPosition": isinf(position) || isnan(position) ? [NSNull null] : @(position),
+    @"streamDuration": isinf(duration) || isnan(duration) ? [NSNull null] : @(duration),
   };
 
   [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus":status}];
 
+  if (mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
+    if (!progressTimer) {
+      progressTimer = [NSTimer
+        scheduledTimerWithTimeInterval:1.0
+                                target:self
+                              selector:@selector(progressUpdated:)
+                              userInfo:@(mediaStatus.mediaInformation.streamDuration)
+                               repeats:YES
+      ];
+    }
+  } else {
+    [progressTimer invalidate];
+    progressTimer = nil;
+  }
+  
   if (!playbackStarted && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
     [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
     playbackStarted = true;
@@ -296,6 +317,16 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
     playbackEnded = true;
   }
+}
+
+-(void) progressUpdated:(NSTimer*)theTimer {
+  double progress = [castSession.remoteMediaClient approximateStreamPosition];
+  if (!progress || progress == INFINITY || progress == NAN) { return; }
+  NSDictionary *mediaProgress = @{
+    @"progress": @(progress),
+    @"duration": [theTimer userInfo],
+  };
+  [self sendEventWithName:MEDIA_PROGRESS_UPDATED body:@{@"mediaProgress":mediaProgress}];
 }
 
 #pragma mark - GCKGenericChannelDelegate events
