@@ -8,20 +8,12 @@ import android.view.MenuItem;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
 
-public class GoogleCastExpandedControlsActivity
-    extends ExpandedControllerActivity {
-
-  //   private static final int MENU_CAST = Menu.FIRST;
-
-  //   @Override
-  //   public boolean onCreateOptionsMenu(Menu menu) {
-  //     super.onCreateOptionsMenu(menu);
-  //     menu.add(0, MENU_CAST, Menu.NONE, "Cast");
-  //     MenuItem item = menu.findItem(MENU_CAST);
-  //     MenuItemCompat.setActionProvider(
-  //         item, new MediaRouteActionProvider(getApplicationContext()));
-  //     // getMenuInflater().inflate(R.menu.expanded_controller, menu);
-  //     CastButtonFactory.setUpMediaRouteButton(this, menu, MENU_CAST);
-  //     return true;
-  //   }
+public class GoogleCastExpandedControlsActivity extends ExpandedControllerActivity {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.cast_expanded_controller_menu, menu);
+        CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.media_route_menu_item);
+        return true;
+    }
 }
