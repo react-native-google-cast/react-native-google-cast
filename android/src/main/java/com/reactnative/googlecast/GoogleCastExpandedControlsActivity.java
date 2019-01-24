@@ -8,8 +8,7 @@ import android.view.MenuItem;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
 
-public class GoogleCastExpandedControlsActivity
-    extends ExpandedControllerActivity {
+public class GoogleCastExpandedControlsActivity extends ExpandedControllerActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
