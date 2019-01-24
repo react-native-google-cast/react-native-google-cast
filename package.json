@@ -1,6 +1,6 @@
 {
   "name": "react-native-google-cast",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "index.js",
   "scripts": {

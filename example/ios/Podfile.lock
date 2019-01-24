@@ -11,7 +11,7 @@ PODS:
   - google-cast-sdk/Core (3.5.6)
   - React (0.57.8):
     - React/Core (= 0.57.8)
-  - react-native-google-cast (3.0.4):
+  - react-native-google-cast (3.0.5):
     - google-cast-sdk (~> 3)
     - React
   - React/Core (0.57.8):
