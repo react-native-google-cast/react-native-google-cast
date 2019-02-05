@@ -5,6 +5,7 @@ import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
+import com.reactnative.googlecast.api.RNGCRemoteMediaClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,7 @@ public class GoogleCastPackage implements ReactPackage {
     List<NativeModule> modules = new ArrayList<>();
 
     modules.add(new GoogleCastModule(reactContext));
+    modules.add(new RNGCRemoteMediaClient(reactContext));
 
     return modules;
   }

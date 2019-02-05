@@ -6,13 +6,13 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - google-cast-sdk (3.5.6):
-    - google-cast-sdk/Core (= 3.5.6)
-  - google-cast-sdk/Core (3.5.6)
+  - google-cast-sdk (4.3.0):
+    - google-cast-sdk/Core (= 4.3.0)
+  - google-cast-sdk/Core (4.3.0)
   - React (0.57.8):
     - React/Core (= 0.57.8)
-  - react-native-google-cast (3.0.3):
-    - google-cast-sdk (~> 3)
+  - react-native-google-cast (4.0.0-pre):
+    - google-cast-sdk (= 4.3.0)
     - React
   - React/Core (0.57.8):
     - yoga (= 0.57.8.React)
@@ -55,7 +55,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../../node_modules/react-native/third-party-podspecs`)
   - Folly (from `../../node_modules/react-native/third-party-podspecs`)
   - glog (from `../../node_modules/react-native/third-party-podspecs`)
-  - google-cast-sdk (~> 3)
+  - google-cast-sdk (= 4.3.0)
   - react-native-google-cast (from `../../ios/`)
   - React/Core (from `../../node_modules/react-native`)
   - React/CxxBridge (from `../../node_modules/react-native`)
@@ -91,11 +91,11 @@ SPEC CHECKSUMS:
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
   glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
-  google-cast-sdk: 2736ac5f0c60d26a559f58c6bb37ced7465e9485
+  google-cast-sdk: 57cd67b4a0966802b2738fcbbc103125c98cc8a1
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
-  react-native-google-cast: 06480db14bce55523c4f1ca778ada2db2ec57e0f
+  react-native-google-cast: 64f68d8aba58c0197cd3826fc25e9e198b35be02
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: f94a0d6176d0223f69d8050306d173e9819a7431
+PODFILE CHECKSUM: a7029bbb40bd9d8dcaeca2e0c52773464158590b
 
 COCOAPODS: 1.5.3

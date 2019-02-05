@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE484201C8E8200474413 /* RNGoogleCast.m */; };
 		911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */; };
+		918B7BE921F0AAB100D669FF /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 918B7BE321F0AAB100D669FF /* RNGoogleCastButtonManager.m */; };
+		918B7BEA21F0AAB100D669FF /* RNGCMediaMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 918B7BE521F0AAB100D669FF /* RNGCMediaMetadata.m */; };
+		918B7BEB21F0AAB100D669FF /* RNGCRemoteMediaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 918B7BE621F0AAB100D669FF /* RNGCRemoteMediaClient.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +31,11 @@
 		911BE483201C8E7C00474413 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
 		911BE484201C8E8200474413 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
 		911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
+		918B7BE321F0AAB100D669FF /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
+		918B7BE521F0AAB100D669FF /* RNGCMediaMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGCMediaMetadata.m; sourceTree = "<group>"; };
+		918B7BE621F0AAB100D669FF /* RNGCRemoteMediaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGCRemoteMediaClient.m; sourceTree = "<group>"; };
+		918B7BE721F0AAB100D669FF /* RNGCMediaMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGCMediaMetadata.h; sourceTree = "<group>"; };
+		918B7BE821F0AAB100D669FF /* RNGCRemoteMediaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGCRemoteMediaClient.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +60,8 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				918B7BE421F0AAB100D669FF /* api */,
+				918B7BE221F0AAB100D669FF /* components */,
 				911BE482201C8E5700474413 /* RNGoogleCast */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
@@ -65,6 +75,25 @@
 				911BE483201C8E7C00474413 /* RNGoogleCast.h */,
 			);
 			path = RNGoogleCast;
+			sourceTree = "<group>";
+		};
+		918B7BE221F0AAB100D669FF /* components */ = {
+			isa = PBXGroup;
+			children = (
+				918B7BE321F0AAB100D669FF /* RNGoogleCastButtonManager.m */,
+			);
+			path = components;
+			sourceTree = "<group>";
+		};
+		918B7BE421F0AAB100D669FF /* api */ = {
+			isa = PBXGroup;
+			children = (
+				918B7BE521F0AAB100D669FF /* RNGCMediaMetadata.m */,
+				918B7BE721F0AAB100D669FF /* RNGCMediaMetadata.h */,
+				918B7BE821F0AAB100D669FF /* RNGCRemoteMediaClient.h */,
+				918B7BE621F0AAB100D669FF /* RNGCRemoteMediaClient.m */,
+			);
+			path = api;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -123,7 +152,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				918B7BE921F0AAB100D669FF /* RNGoogleCastButtonManager.m in Sources */,
+				918B7BEA21F0AAB100D669FF /* RNGCMediaMetadata.m in Sources */,
 				911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */,
+				918B7BEB21F0AAB100D669FF /* RNGCRemoteMediaClient.m in Sources */,
 				911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

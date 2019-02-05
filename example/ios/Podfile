@@ -20,7 +20,7 @@ target 'RNGoogleCastExample' do
   pod 'Folly', podspec: "#{rnpath}/third-party-podspecs"
 
   pod 'react-native-google-cast', path: '../../ios/'
-  pod 'google-cast-sdk', '~> 3'
+  pod 'google-cast-sdk', '4.3.0'
 end
 
 # post_install do |installer|

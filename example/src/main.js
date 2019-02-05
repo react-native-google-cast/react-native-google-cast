@@ -14,7 +14,15 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import styles from './main.style'
-import GoogleCast, { CastButton } from 'react-native-google-cast'
+
+import {
+  CastButton,
+  MediaInfo,
+  MediaLoadOptions,
+  MediaMetadata,
+  RemoteMediaClient,
+  WebImage,
+} from 'react-native-google-cast'
 
 class Main extends React.Component {
   constructor(props) {
@@ -31,7 +39,8 @@ class Main extends React.Component {
   componentDidMount() {
     this.registerListeners()
 
-    GoogleCast.getCastState().then(console.log)
+    // GoogleCast.getCastState().then(console.log)
+
     // GoogleCast.showIntroductoryOverlay();
 
     const CAST_VIDEOS_URL =
@@ -58,34 +67,63 @@ class Main extends React.Component {
   }
 
   cast(video) {
-    GoogleCast.castMedia(video)
-    GoogleCast.launchExpandedControls()
+    RemoteMediaClient.loadMedia(
+      new MediaInfo({
+        contentId: video.mediaUrl,
+        metadata: new MediaMetadata.Movie({
+          images: [
+            new WebImage({ url: video.imageUrl, width: 480, height: 270 }),
+            new WebImage({ url: video.posterUrl, width: 780, height: 1200 }),
+          ],
+          subtitle: video.subtitle,
+          title: video.title,
+        }),
+        streamDuration: video.duration,
+      }),
+      new MediaLoadOptions({ autoplay: true }),
+    )
+      .then(console.log)
+      .catch(console.warn)
+    // GoogleCast.launchExpandedControls()
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {
-          Platform.OS === 'android' ?
-            <ToolbarAndroid
-              title="Google Cast Example"
-              contentInsetStart={4}
-              actions={[{ title: 'Log out', show: 'never' }]}
-              style={styles.toolbarAndroid}
-            >
-              <CastButton
-                style={styles.castButtonAndroid}
-              />
-              <Button title="Play" onPress={() => GoogleCast.play()} style={styles.stopButton} />
-              <Button title="Pause" onPress={() => GoogleCast.pause()} style={styles.stopButton} />
-              <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
-            </ToolbarAndroid>
-          :
-            <View style={styles.toolbarIOS}>
-              <Button title="Stop" onPress={() => GoogleCast.endSession()} style={styles.stopButton} />
-              <CastButton style={styles.castButtonIOS} />
-            </View>
-        }
+        {Platform.OS === 'android' ? (
+          <ToolbarAndroid
+            title="Google Cast Example"
+            contentInsetStart={4}
+            actions={[{ title: 'Log out', show: 'never' }]}
+            style={styles.toolbarAndroid}
+          >
+            <CastButton style={styles.castButtonAndroid} />
+            <Button
+              title="Play"
+              onPress={() => GoogleCast.play()}
+              style={styles.stopButton}
+            />
+            <Button
+              title="Pause"
+              onPress={() => GoogleCast.pause()}
+              style={styles.stopButton}
+            />
+            <Button
+              title="Stop"
+              onPress={() => GoogleCast.endSession()}
+              style={styles.stopButton}
+            />
+          </ToolbarAndroid>
+        ) : (
+          <View style={styles.toolbarIOS}>
+            <Button
+              title="Stop"
+              onPress={() => GoogleCast.endSession()}
+              style={styles.stopButton}
+            />
+            <CastButton style={styles.castButtonIOS} />
+          </View>
+        )}
         <FlatList
           data={this.state.videos}
           keyExtractor={(item, index) => index}
@@ -118,19 +156,19 @@ class Main extends React.Component {
   }
 
   registerListeners() {
-    const events = `
-      SESSION_STARTING SESSION_STARTED SESSION_START_FAILED SESSION_SUSPENDED
-      SESSION_RESUMING SESSION_RESUMED SESSION_ENDING SESSION_ENDED
-
-      MEDIA_STATUS_UPDATED MEDIA_PLAYBACK_STARTED MEDIA_PLAYBACK_ENDED
-    `.trim().split(/\s+/)
-    console.log(events)
-
-    events.forEach(event => {
-      GoogleCast.EventEmitter.addListener(GoogleCast[event], function() {
-        console.log(event, arguments)
-      })
-    })
+    // const events = `
+    //   SESSION_STARTING SESSION_STARTED SESSION_START_FAILED SESSION_SUSPENDED
+    //   SESSION_RESUMING SESSION_RESUMED SESSION_ENDING SESSION_ENDED
+    //   MEDIA_STATUS_UPDATED MEDIA_PLAYBACK_STARTED MEDIA_PLAYBACK_ENDED
+    // `
+    //   .trim()
+    //   .split(/\s+/)
+    // console.log(events)
+    // events.forEach(event => {
+    //   GoogleCast.EventEmitter.addListener(GoogleCast[event], function() {
+    //     console.log(event, arguments)
+    //   })
+    // })
   }
 }
 
