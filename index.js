@@ -75,19 +75,18 @@ export default {
   },
   launchExpandedControls: GoogleCast.launchExpandedControls,
   showIntroductoryOverlay: GoogleCast.showIntroductoryOverlay,
-
   initChannel(namespace: string) {
     return GoogleCast.initChannel(namespace)
   },
   sendMessage(namespace: string, message: string) {
-    return GoogleCast.sendMessage(message, namespace)
-  },
-  sendMessage(namespace: string, message: string) {
-    return GoogleCast.sendMessage(namespace, message)
+    return message === undefined 
+      ? GoogleCast.sendMessage("", namespace) 
+      : GoogleCast.sendMessage(namespace, message);
   },
   getCurrentDevice() {
     return GoogleCast.getCurrentDevice()
   },
+  
   // TODO use the same native event interface instead of hacking it here
   EventEmitter:
     Platform.OS === 'ios'
@@ -102,6 +101,7 @@ export default {
   SESSION_RESUMED: GoogleCast.SESSION_RESUMED,
   SESSION_ENDING: GoogleCast.SESSION_ENDING,
   SESSION_ENDED: GoogleCast.SESSION_ENDED,
+  MESSAGE_RECEIVED: GoogleCast.MESSAGE_RECEIVED,
 
   MEDIA_STATUS_UPDATED: GoogleCast.MEDIA_STATUS_UPDATED,
   MEDIA_PLAYBACK_STARTED: GoogleCast.MEDIA_PLAYBACK_STARTED,

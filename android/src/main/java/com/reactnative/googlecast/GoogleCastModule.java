@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -22,42 +22,46 @@ import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
-
+import static com.reactnative.googlecast.GoogleCastPackage.NAMESPACE;
+import static com.reactnative.googlecast.GoogleCastPackage.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GoogleCastModule
-    extends ReactContextBaseJavaModule implements LifecycleEventListener {
+        extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
   @VisibleForTesting public static final String REACT_CLASS = "RNGoogleCast";
 
   protected static final String SESSION_STARTING = "GoogleCast:SessionStarting";
   protected static final String SESSION_STARTED = "GoogleCast:SessionStarted";
   protected static final String SESSION_START_FAILED =
-      "GoogleCast:SessionStartFailed";
+          "GoogleCast:SessionStartFailed";
   protected static final String SESSION_SUSPENDED =
-      "GoogleCast:SessionSuspended";
+          "GoogleCast:SessionSuspended";
   protected static final String SESSION_RESUMING = "GoogleCast:SessionResuming";
   protected static final String SESSION_RESUMED = "GoogleCast:SessionResumed";
   protected static final String SESSION_ENDING = "GoogleCast:SessionEnding";
   protected static final String SESSION_ENDED = "GoogleCast:SessionEnded";
+  protected static final String MESSAGE_RECEIVED = "GoogleCast:MessageReceived";
 
   protected static final String MEDIA_STATUS_UPDATED =
-      "GoogleCast:MediaStatusUpdated";
+          "GoogleCast:MediaStatusUpdated";
   protected static final String MEDIA_PLAYBACK_STARTED =
-      "GoogleCast:MediaPlaybackStarted";
+          "GoogleCast:MediaPlaybackStarted";
   protected static final String MEDIA_PLAYBACK_ENDED =
-      "GoogleCast:MediaPlaybackEnded";
+          "GoogleCast:MediaPlaybackEnded";
   protected static final String MEDIA_PROGRESS_UPDATED =
-      "GoogleCast:MediaProgressUpdated";
+          "GoogleCast:MediaProgressUpdated";
 
   private CastSession mCastSession;
   private SessionManagerListener<CastSession> mSessionManagerListener;
+  String namespace;
 
   public GoogleCastModule(ReactApplicationContext reactContext) {
     super(reactContext);
     reactContext.addLifecycleEventListener(this);
     setupCastListener();
+    namespace = metadata(NAMESPACE, "", reactContext);
   }
 
   @Override
@@ -77,6 +81,7 @@ public class GoogleCastModule
     constants.put("SESSION_RESUMED", SESSION_RESUMED);
     constants.put("SESSION_ENDING", SESSION_ENDING);
     constants.put("SESSION_ENDED", SESSION_ENDED);
+    constants.put("MESSAGE_RECEIVED", MESSAGE_RECEIVED);
 
     constants.put("MEDIA_STATUS_UPDATED", MEDIA_STATUS_UPDATED);
     constants.put("MEDIA_PLAYBACK_STARTED", MEDIA_PLAYBACK_STARTED);
@@ -89,8 +94,8 @@ public class GoogleCastModule
   protected void emitMessageToRN(String eventName,
                                  @Nullable WritableMap params) {
     getReactApplicationContext()
-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-        .emit(eventName, params);
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
   }
 
   @ReactMethod
@@ -103,7 +108,7 @@ public class GoogleCastModule
       @Override
       public void run() {
         RemoteMediaClient remoteMediaClient =
-            mCastSession.getRemoteMediaClient();
+                mCastSession.getRemoteMediaClient();
         if (remoteMediaClient == null) {
           return;
         }
@@ -125,40 +130,40 @@ public class GoogleCastModule
 
   private MediaInfo buildMediaInfo(ReadableMap params) {
     MediaMetadata movieMetadata =
-        new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+            new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
 
     if (params.hasKey("title") && params.getString("title") != null) {
       movieMetadata.putString(MediaMetadata.KEY_TITLE,
-                              params.getString("title"));
+              params.getString("title"));
     }
 
     if (params.hasKey("subtitle") && params.getString("subtitle") != null) {
       movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                              params.getString("subtitle"));
+              params.getString("subtitle"));
     }
 
     if (params.hasKey("studio") && params.getString("studio") != null) {
       movieMetadata.putString(MediaMetadata.KEY_STUDIO,
-                              params.getString("studio"));
+              params.getString("studio"));
     }
 
     if (params.hasKey("imageUrl") && params.getString("imageUrl") != null) {
       movieMetadata.addImage(
-          new WebImage(Uri.parse(params.getString("imageUrl"))));
+              new WebImage(Uri.parse(params.getString("imageUrl"))));
     }
 
     if (params.hasKey("posterUrl") && params.getString("posterUrl") != null) {
       movieMetadata.addImage(
-          new WebImage(Uri.parse(params.getString("posterUrl"))));
+              new WebImage(Uri.parse(params.getString("posterUrl"))));
     }
 
     MediaInfo.Builder builder =
-        new MediaInfo.Builder(params.getString("mediaUrl"))
-            .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setMetadata(movieMetadata);
+            new MediaInfo.Builder(params.getString("mediaUrl"))
+                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                    .setMetadata(movieMetadata);
 
     if (params.hasKey("contentType") &&
-        params.getString("contentType") != null) {
+            params.getString("contentType") != null) {
       builder = builder.setContentType(params.getString("contentType"));
     } else {
       builder = builder.setContentType("video/mp4");
@@ -177,7 +182,7 @@ public class GoogleCastModule
       @Override
       public void run() {
         CastContext castContext =
-            CastContext.getSharedInstance(getReactApplicationContext());
+                CastContext.getSharedInstance(getReactApplicationContext());
         promise.resolve(castContext.getCastState() - 1);
       }
     });
@@ -237,8 +242,8 @@ public class GoogleCastModule
       @Override
       public void run() {
         SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
+                CastContext.getSharedInstance(getReactApplicationContext())
+                        .getSessionManager();
         sessionManager.endCurrentSession(stopCasting);
         promise.resolve(true);
       }
@@ -249,7 +254,7 @@ public class GoogleCastModule
   public void launchExpandedControls() {
     ReactApplicationContext context = getReactApplicationContext();
     Intent intent =
-        new Intent(context, GoogleCastExpandedControlsActivity.class);
+            new Intent(context, GoogleCastExpandedControlsActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
   }
@@ -261,10 +266,15 @@ public class GoogleCastModule
   @ReactMethod
   public void sendMessage(final String namespace, final String message) {
     if (mCastSession != null) {
+      final String defaultNameSpace = this.namespace;
       getReactApplicationContext().runOnUiQueueThread(new Runnable() {
         @Override
         public void run() {
-          mCastSession.sendMessage(namespace, message);
+          if(namespace.isEmpty()){
+            mCastSession.sendMessage(defaultNameSpace, message);
+          }else{
+            mCastSession.sendMessage(namespace, message);
+          }
         }
       });
     }
@@ -291,10 +301,10 @@ public class GoogleCastModule
       @Override
       public void run() {
         SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
+                CastContext.getSharedInstance(getReactApplicationContext())
+                        .getSessionManager();
         sessionManager.addSessionManagerListener(mSessionManagerListener,
-                                                 CastSession.class);
+                CastSession.class);
       }
     });
   }
@@ -305,10 +315,10 @@ public class GoogleCastModule
       @Override
       public void run() {
         SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
+                CastContext.getSharedInstance(getReactApplicationContext())
+                        .getSessionManager();
         sessionManager.removeSessionManagerListener(mSessionManagerListener,
-                                                    CastSession.class);
+                CastSession.class);
       }
     });
   }
