@@ -288,6 +288,17 @@ GoogleCast.EventEmitter.addListener(
 )
 ```
 
+## Media Events
+
+About devices connected with chromecast.
+
+```js
+//Get information about the currently connected device
+GoogleCast.getCurrentDevice().then(device => {
+  //device : {id, model, name, version}
+})
+```
+
 ### Channel Events
 
 A virtual communication channel for exchanging messages between a Cast sender (mobile app) and a Cast receiver (on Chromecast).
@@ -321,14 +332,7 @@ GoogleCast.sendMessage(namespace, message)
 
 ## Device Connected
 
-About devices connected with chromecast...
 
- ```js
-//Get information about the currently connected device
-GoogleCast.getCurrentDevice().then(device => {
-  //device : {id, model, name, version}
-})
-```
 
 ## Example
 
