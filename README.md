@@ -299,7 +299,7 @@ GoogleCast.getCurrentDevice().then(device => {
 })
 ```
 
-### Channel Events
+### Device Connected
 
 A virtual communication channel for exchanging messages between a Cast sender (mobile app) and a Cast receiver (on Chromecast).
 
