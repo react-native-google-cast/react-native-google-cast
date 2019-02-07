@@ -318,7 +318,8 @@ GoogleCast.EventEmitter.addListener(
 // Send message
 GoogleCast.sendMessage(namespace, message)
 ```
-###Device Connected
+
+## Device Connected
 
 About devices connected with chromecast...
 
