@@ -82,7 +82,9 @@ export default {
   sendMessage(namespace: string, message: string) {
     return GoogleCast.sendMessage(message, namespace)
   },
-
+  getCurrentDevice() {
+    return GoogleCast.getCurrentDevice()
+  },
   // TODO use the same native event interface instead of hacking it here
   EventEmitter:
     Platform.OS === 'ios'

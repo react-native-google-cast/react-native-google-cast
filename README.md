@@ -319,6 +319,17 @@ GoogleCast.EventEmitter.addListener(
 GoogleCast.sendMessage(namespace, message)
 ```
 
+## Device Connected
+
+About to devices connected on chromecast.
+
+```js
+//Get information about the currently connected device
+GoogleCast.getCurrentDevice().then(device => {
+  //device : {id, model, name, version}
+})
+```
+
 ## Example
 
 Refer to the [example](example/) folder to find an implementation of this project.
