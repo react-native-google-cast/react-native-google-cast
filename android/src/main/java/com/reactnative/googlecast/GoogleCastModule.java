@@ -264,10 +264,10 @@ public class GoogleCastModule
       @Override
       public void run() {
         WritableMap map = Arguments.createMap();
-        map.putString("id:", mCastSession.getCastDevice().getDeviceId());
-        map.putString("version:", mCastSession.getCastDevice().getDeviceVersion());
-        map.putString("name:", mCastSession.getCastDevice().getFriendlyName());
-        map.putString("model:", mCastSession.getCastDevice().getModelName());
+        map.putString("id", mCastSession.getCastDevice().getDeviceId());
+        map.putString("version", mCastSession.getCastDevice().getDeviceVersion());
+        map.putString("name", mCastSession.getCastDevice().getFriendlyName());
+        map.putString("model", mCastSession.getCastDevice().getModelName());
         promise.resolve(map);
       }
     });
