@@ -59,7 +59,7 @@ public class GoogleCastModule
     protected static final String MEDIA_PROGRESS_UPDATED =
             "GoogleCast:MediaProgressUpdated";
 
-    protected static final  String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:Channel_message_received";
+    protected static final  String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:ChannelMessageReceived";
 
     private CastSession mCastSession;
     private SessionManagerListener<CastSession> mSessionManagerListener;
@@ -206,8 +206,8 @@ public class GoogleCastModule
                             @Override
                             public void onMessageReceived(CastDevice castDevice, String channelNameSpace, String message) {
                                 WritableMap map = Arguments.createMap();
-                                map.putString("getFriendlyName", castDevice.getFriendlyName());
-                                map.putString("nameSpace", channelNameSpace);
+                                map.putString("deviceName", castDevice.getFriendlyName());
+                                map.putString("channel", channelNameSpace);
                                 map.putString("message", message);
                                 emitMessageToRN(CHANNEL_MESSAGE_RECEIVED, map);
                             }
