@@ -23,6 +23,8 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,6 +158,10 @@ public class GoogleCastModule
         new MediaInfo.Builder(params.getString("mediaUrl"))
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
             .setMetadata(movieMetadata);
+
+    if (params.hasKey("customData") && params.getMap("customData") != null) {
+      builder = builder.setCustomData(new JSONObject(params.getMap("customData").toHashMap()));
+    }
 
     if (params.hasKey("contentType") &&
         params.getString("contentType") != null) {
