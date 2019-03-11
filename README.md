@@ -111,6 +111,10 @@ GoogleCast.castMedia({
   streamDuration: 596, // seconds
   contentType: 'video/mp4', // Optional, default is "video/mp4"
   playPosition: 10, // seconds
+  customData: {
+    // Optional, your custom object that will be passed to as customData to reciever
+    customKey: 'customValue',
+  },
 })
 ```
 

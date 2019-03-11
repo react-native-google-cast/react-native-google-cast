@@ -29,6 +29,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.WebImage;
 
+import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -173,6 +174,10 @@ public class GoogleCastModule
             builder = builder.setContentType(params.getString("contentType"));
         } else {
             builder = builder.setContentType("video/mp4");
+        }
+
+        if (params.hasKey("customData") && params.getMap("customData") != null) {
+            builder = builder.setCustomData(new JSONObject(params.getMap("customData").toHashMap()));
         }
 
         if (params.hasKey("streamDuration")) {
