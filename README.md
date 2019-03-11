@@ -12,22 +12,101 @@ This library wraps the native Google Cast SDK v3 for iOS and Android, providing 
 
 ```
 $ npm install react-native-google-cast
+```
+
+### Installation
+
+<details>
+  <summary>Linker</summary>
+
+```
 $ react-native link react-native-google-cast
 ```
 
-### iOS Setup
+Note: This will only link the react-native-google-cast library. You'll still need to add Google Cast SDK using the steps below.
+
+</details>
+
+<details>
+  <summary>iOS (CocoaPods)</summary>
 
 - Install [CocoaPods](https://cocoapods.org/)
 
-- Add `pod 'google-cast-sdk', '~> 3'` to your `Podfile` and run `pod install`.
+- Setup your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
+
+- Add `pod 'google-cast-sdk', '~> 3'` to your `Podfile`. Alternatively, you can try SDK v4 by using `pod 'google-cast-sdk', '4.3.0'` (see setup below).
+
+- Add `pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'` to your `Podfile`
+
+- Run `pod install`
+
+</details>
+
+<details>
+  <summary>iOS (Manually)</summary>
+
+- In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
+
+- Go to `node_modules` ➜ `react-native-google-cast` and add `RNGoogleCast.xcodeproj`
+
+- In XCode, in the project navigator, select your project. Add `libRNGoogleCast.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
+
+- Follow the [instructions](https://developers.google.com/cast/docs/ios_sender/#google_cast_sdk) to install the Google Cast SDK
+
+</details>
+
+<details>
+  <summary>Android</summary>
+
+1. Open up `android/app/src/main/java/[...]/MainActivity.java`
+
+   - Add `import com.reactlibrary.RNGoogleCastPackage;` to the imports at the top of the file
+   - Add `new RNGoogleCastPackage()` to the list returned by the `getPackages()` method
+
+2. Append the following lines to `android/settings.gradle`:
+
+   ```
+   include ':react-native-google-cast'
+   project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
+   ```
+
+3. Insert the following lines inside the `dependencies` block in `android/app/build.gradle`:
+
+   ```
+   dependencies {
+     implementation project(':react-native-google-cast')
+   }
+   ```
+
+4. By default, the react-native-google-cast package automatically loads the latest version (`+`) of the Cast SDK and support libraries as its dependencies. To use a specific version, set it in the root `android/build.gradle`:
+
+   ```
+   buildscript {
+     ext {
+       buildToolsVersion = "27.0.3"
+       minSdkVersion = 16
+       compileSdkVersion = 27
+       targetSdkVersion = 26
+       supportLibVersion = "26.1.0"
+       castFrameworkVersion = '16.1.2'
+     }
+   }
+   ```
+
+</details>
+
+### Setup
+
+<details>
+  <summary>iOS</summary>
 
 - In `AppDelegate.m` add
 
-  ```obj-c
-  #import <GoogleCast/GoogleCast.h>
-  ```
+```obj-c
+#import <GoogleCast/GoogleCast.h>
+```
 
-  and in the `didFinishLaunchingWithOptions` method add:
+- If you're using SDK v3, in `AppDelegate.m` in the `didFinishLaunchingWithOptions` method add:
 
   ```obj-c
   GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
@@ -36,9 +115,20 @@ $ react-native link react-native-google-cast
 
   (or replace `kGCKMediaDefaultReceiverApplicationID` with your custom Cast app id).
 
-- Enable [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `your target > capabilities`.
+- If you're using SDK v4, use this code instead:
 
-### Android Setup
+  ```obj-c
+  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
+  GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+  [GCKCastContext setSharedInstanceWithOptions:options];
+  ```
+
+  Currently, the only thing using SDK v4 will do is improve discoverability in iOS 12 / Xcode 10 by enabling [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `your target > capabilities`. New features of the SDK V4 are planned to be added in v4 of this library.
+
+</details>
+
+<details>
+  <summary>Android</summary>
 
 - Make sure the device you're using (also applies to emulators) has Google Play Services installed.
 
@@ -53,7 +143,6 @@ $ react-native link react-native-google-cast
   Alternatively, you may provide your own `OptionsProvider` class. For example, to use a custom receiver app:
 
   ```java
-  // assuming this is in package com.foo
   package com.foo;
 
   import com.reactnative.googlecast.GoogleCastOptionsProvider;
@@ -88,6 +177,8 @@ $ react-native link react-native-google-cast
   ```
 
   If you already extend other class than `ReactActivity` (e.g. if you use `react-native-navigation`) or integrate React Native in native app, make sure that the `Activity` is a descendant of `android.support.v7.app.AppCompatActivity`. Then add `CastContext.getSharedInstance(this);` to your `Activity`'s `onCreate` method (this lazy loads the Google Cast context).
+
+</details>
 
 ## Usage
 
@@ -336,22 +427,6 @@ Refer to the [example](example/) folder to find an implementation of this projec
   You don't have Google Play Services available on your device. Make sure to install them either from http://opengapps.org/ or follow tutorials online.
 
   TODO: Handle gracefully and ignore the Cast library without crashing.
-
-- _Android:_ If you're having version conflicts of the appcompat (or google play services) libraries, make sure you set versions globally in your project's top-level `build.gradle`:
-
-  ```gradle
-  buildscript {
-    ext {
-      buildToolsVersion = '27.0.3'
-      minSdkVersion = 16
-      compileSdkVersion = 27
-      targetSdkVersion = 26
-      supportLibVersion = '26.1.0'
-      castFrameworkVersion = '16.1.2'
-    }
-    ...
-  }
-  ```
 
 - _Android\*_ `java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity`
 
