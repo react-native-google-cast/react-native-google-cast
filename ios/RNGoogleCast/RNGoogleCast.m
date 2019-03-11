@@ -224,7 +224,7 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
 
 #pragma mark - GCKSessionManagerListener events
 
--(void)sessionManager:(GCKSessionManager *)sessionManager willStartCastSession:(GCKCastSession *)session {
+-(void)sessionManager:(GCKSessionManager *)sessionManager willStartSession:(GCKCastSession *)session {
   [self sendEventWithName:SESSION_STARTING body:@{}];
 }
 
