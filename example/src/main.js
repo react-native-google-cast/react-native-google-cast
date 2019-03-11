@@ -58,6 +58,7 @@ class Main extends React.Component {
   }
 
   cast(video) {
+    GoogleCast.getCastDevice().then(console.log)
     GoogleCast.castMedia(video)
     GoogleCast.launchExpandedControls()
   }

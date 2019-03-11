@@ -77,6 +77,20 @@ RCT_EXPORT_MODULE();
 
 # pragma mark - GCKCastContext methods
 
+RCT_REMAP_METHOD(getCastDevice,
+                 getCastDeviceWithResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    GCKDevice* device = [self->castSession device];
+    resolve(@{
+      @"id": device.deviceID,
+      @"version": device.deviceVersion,
+      @"name": device.friendlyName,
+      @"model": device.modelName,
+    });
+  });
+}
+
 RCT_REMAP_METHOD(getCastState,
                  getCastStateWithResolver: (RCTPromiseResolveBlock) resolve
                  rejecter: (RCTPromiseRejectBlock) reject) {
@@ -103,8 +117,8 @@ RCT_EXPORT_METHOD(initChannel: (NSString *)namespace) {
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKGenericChannel *channel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     channel.delegate = self;
-    channels[namespace] = channel;
-    [castSession addChannel:channel];
+    self->channels[namespace] = channel;
+    [self->castSession addChannel:channel];
   });
 }
 

@@ -10,8 +10,14 @@ This library wraps the native Google Cast SDK v3 for iOS and Android, providing 
 
 ## Getting started
 
-```
+```sh
 $ npm install react-native-google-cast
+```
+
+or
+
+```sh
+$ yarn add react-native-google-cast
 ```
 
 ### Installation
@@ -65,14 +71,14 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
 2. Append the following lines to `android/settings.gradle`:
 
-   ```
+   ```java
    include ':react-native-google-cast'
    project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
    ```
 
 3. Insert the following lines inside the `dependencies` block in `android/app/build.gradle`:
 
-   ```
+   ```java
    dependencies {
      implementation project(':react-native-google-cast')
    }
@@ -80,7 +86,7 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
 4. By default, the react-native-google-cast package automatically loads the latest version (`+`) of the Cast SDK and support libraries as its dependencies. To use a specific version, set it in the root `android/build.gradle`:
 
-   ```
+   ```java
    buildscript {
      ext {
        buildToolsVersion = "27.0.3"
@@ -211,7 +217,8 @@ GoogleCast.castMedia({
 
 ## API
 
-- `GoogleCast.getCastState().then(state => {})`
+- `GoogleCast.getCastState().then((state: 'NoDevicesAvailable' | 'NotConnected' | 'Connecting' | 'Connected' }) => { ... })`
+- `GoogleCast.getCastDevice().then((device: { id, model, name, version }) => { ... })`
 - `GoogleCast.castMedia(options)`
 - `GoogleCast.play()`
 - `GoogleCast.pause()`
@@ -414,6 +421,17 @@ GoogleCast.EventEmitter.addListener(
 
 // Send message
 GoogleCast.sendMessage(namespace, message)
+```
+
+## Device Connected
+
+About to devices connected on chromecast.
+
+```js
+//Get information about the currently connected device
+GoogleCast.getCurrentDevice().then(device => {
+  //device : {id, model, name, version}
+})
 ```
 
 ## Example

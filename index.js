@@ -12,6 +12,13 @@ const { RNGoogleCast: GoogleCast } = NativeModules
 import CastButton from './CastButton'
 export { CastButton }
 
+type CastDevice = {
+  id: string,
+  version: string,
+  name: string,
+  model: string,
+}
+
 type CastState =
   | 'NoDevicesAvailable'
   | 'NotConnected'
@@ -19,6 +26,9 @@ type CastState =
   | 'Connected'
 
 export default {
+  getCastDevice(): Promise<CastDevice> {
+    return GoogleCast.getCastDevice()
+  },
   getCastState(): Promise<CastState> {
     return GoogleCast.getCastState().then(
       state =>
