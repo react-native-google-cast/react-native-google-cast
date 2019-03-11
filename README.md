@@ -36,6 +36,8 @@ $ react-native link react-native-google-cast
 
   (or replace `kGCKMediaDefaultReceiverApplicationID` with your custom Cast app id).
 
+- Enable [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `your target > capabilities`.
+
 ### Android Setup
 
 - Make sure the device you're using (also applies to emulators) has Google Play Services installed.
