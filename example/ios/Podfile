@@ -2,7 +2,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '9.0'
 
-target 'RNGoogleCastExample' do
+target 'CastVideos' do
   rnpath = '../../node_modules/react-native'
   pod 'React', path: rnpath, subspecs: [
     'Core',
@@ -19,14 +19,8 @@ target 'RNGoogleCastExample' do
   pod 'glog', podspec: "#{rnpath}/third-party-podspecs"
   pod 'Folly', podspec: "#{rnpath}/third-party-podspecs"
 
-  pod 'react-native-google-cast', path: '../../ios/'
   pod 'google-cast-sdk', '4.3.0'
+  pod 'react-native-google-cast', path: '../../ios/'
+  pod 'ReactNativeNavigation', path: '../../node_modules/react-native-navigation/'
+  pod 'react-native-video', path: '../../node_modules/react-native-video/'
 end
-
-# post_install do |installer|
-#   installer.pods_project.targets.each do |target|
-#     if target.name == 'React'
-#       target.remove_from_project
-#     end
-#   end
-# end

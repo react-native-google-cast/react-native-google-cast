@@ -12,7 +12,11 @@ TODO link
 
 ## Example
 
-Refer to the [example](example/) folder to find an implementation of this project.
+Refer to the [example](example/) folder to find a React Native version of the CastVideos reference app.
+
+## Playground
+
+Refer to the [playground](playground/) folder to find a sample app demonstrating the available APIs provided by the library.
 
 ## Troubleshooting
 

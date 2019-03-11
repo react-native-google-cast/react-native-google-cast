@@ -1,6 +1,8 @@
-## react-native-google-cast example project
+## CastVideos-rn
 
-Example project demonstrating the functionality of the `react-native-google-cast` library.
+Reference React Native application shows how to cast videos from an iOS device that is fully compliant with the Cast Design Checklist.
+
+The aim of this app is to be analogous to the [CastVideos sample apps](https://developers.google.com/cast/docs/downloads).
 
 Please note that this project uses `package.json` from the parent folder to simplify developing the library while testing it on this example project. If you use `react-native-google-cast` in your own project, please follow instructions in the main [README](../README.md), and understand that the project structure will be slightly different than in this example project.
 
@@ -11,18 +13,8 @@ Please note that this project uses `package.json` from the parent folder to simp
 iOS
 
 - `cd example/ios && pod install`
-- `open example/ios/RNGoogleCastExample.xcworkspace` and Run from Xcode
+- `open example/ios/RNCastVideos.xcworkspace` and Run from Xcode
 
 Android
 
 - in Android Studio open `example/android/` folder and run from there
-
-## Troubleshooting
-
-- `com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.`
-
-  You don't have Google Play Services available on your device. Make sure to install them either from http://opengapps.org/ or follow tutorials online.
-
-- No Cast devices are available.
-
-  If you're using an emulator, make sure it's connected to the same network. For example, in Genymotion, change Configuration > Network mode to Bridge (if you do that, you'll need to explicitly set "Dev Settings" > "Debug Server Host and Port" in the React dev menu).

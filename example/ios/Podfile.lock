@@ -1,7 +1,7 @@
 PODS:
   - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.6)
-  - Folly (2016.10.31.00):
+  - Folly (2018.10.22.00):
     - boost-for-react-native
     - DoubleConversion
     - glog
@@ -9,47 +9,56 @@ PODS:
   - google-cast-sdk (4.3.0):
     - google-cast-sdk/Core (= 4.3.0)
   - google-cast-sdk/Core (4.3.0)
-  - React (0.57.8):
-    - React/Core (= 0.57.8)
+  - React (0.58.4):
+    - React/Core (= 0.58.4)
   - react-native-google-cast (4.0.0-pre):
     - google-cast-sdk (= 4.3.0)
     - React
-  - React/Core (0.57.8):
-    - yoga (= 0.57.8.React)
-  - React/CxxBridge (0.57.8):
-    - Folly (= 2016.10.31.00)
+  - react-native-video (4.3.1):
+    - React
+    - react-native-video/Video (= 4.3.1)
+  - react-native-video/Video (4.3.1):
+    - React
+  - React/Core (0.58.4):
+    - yoga (= 0.58.4.React)
+  - React/CxxBridge (0.58.4):
+    - Folly (= 2018.10.22.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.57.8):
+    - React/jsiexecutor
+  - React/cxxreact (0.58.4):
     - boost-for-react-native (= 1.63.0)
-    - Folly (= 2016.10.31.00)
-    - React/jschelpers
+    - Folly (= 2018.10.22.00)
     - React/jsinspector
-  - React/DevSupport (0.57.8):
+  - React/DevSupport (0.58.4):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.57.8)
-  - React/jschelpers (0.57.8):
-    - Folly (= 2016.10.31.00)
-    - React/PrivateDatabase
-  - React/jsinspector (0.57.8)
-  - React/PrivateDatabase (0.57.8)
-  - React/RCTAnimation (0.57.8):
+  - React/fishhook (0.58.4)
+  - React/jsi (0.58.4):
+    - Folly (= 2018.10.22.00)
+  - React/jsiexecutor (0.58.4):
+    - Folly (= 2018.10.22.00)
+    - React/cxxreact
+    - React/jsi
+  - React/jsinspector (0.58.4)
+  - React/RCTAnimation (0.58.4):
     - React/Core
-  - React/RCTBlob (0.57.8):
+  - React/RCTBlob (0.58.4):
     - React/Core
-  - React/RCTImage (0.57.8):
+  - React/RCTImage (0.58.4):
     - React/Core
     - React/RCTNetwork
-  - React/RCTNetwork (0.57.8):
+  - React/RCTNetwork (0.58.4):
     - React/Core
-  - React/RCTText (0.57.8):
+  - React/RCTText (0.58.4):
     - React/Core
-  - React/RCTWebSocket (0.57.8):
+  - React/RCTWebSocket (0.58.4):
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - yoga (0.57.8.React)
+  - ReactNativeNavigation (2.11.0):
+    - React
+  - yoga (0.58.4.React)
 
 DEPENDENCIES:
   - DoubleConversion (from `../../node_modules/react-native/third-party-podspecs`)
@@ -57,6 +66,7 @@ DEPENDENCIES:
   - glog (from `../../node_modules/react-native/third-party-podspecs`)
   - google-cast-sdk (= 4.3.0)
   - react-native-google-cast (from `../../ios/`)
+  - react-native-video (from `../../node_modules/react-native-video/`)
   - React/Core (from `../../node_modules/react-native`)
   - React/CxxBridge (from `../../node_modules/react-native`)
   - React/DevSupport (from `../../node_modules/react-native`)
@@ -65,6 +75,7 @@ DEPENDENCIES:
   - React/RCTNetwork (from `../../node_modules/react-native`)
   - React/RCTText (from `../../node_modules/react-native`)
   - React/RCTWebSocket (from `../../node_modules/react-native`)
+  - ReactNativeNavigation (from `../../node_modules/react-native-navigation/`)
   - yoga (from `../../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -83,19 +94,25 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native"
   react-native-google-cast:
     :path: "../../ios/"
+  react-native-video:
+    :path: "../../node_modules/react-native-video/"
+  ReactNativeNavigation:
+    :path: "../../node_modules/react-native-navigation/"
   yoga:
     :path: "../../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
-  Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
-  glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
+  Folly: de497beb10f102453a1afa9edbf8cf8a251890de
+  glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
   google-cast-sdk: 57cd67b4a0966802b2738fcbbc103125c98cc8a1
-  React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  React: 9b873b38b92ed8012d7cdf3b965477095ed364c4
   react-native-google-cast: 64f68d8aba58c0197cd3826fc25e9e198b35be02
-  yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
+  react-native-video: 44c6befbc1526283ca1919891fcebe4680feade4
+  ReactNativeNavigation: 20522060de61b1c293ec50681a6aa11488596286
+  yoga: 0885622311729a02c2bc02dca97167787a51488b
 
-PODFILE CHECKSUM: a7029bbb40bd9d8dcaeca2e0c52773464158590b
+PODFILE CHECKSUM: e0e62fdb87af703f7be50f395f7851565d68882e
 
 COCOAPODS: 1.5.3

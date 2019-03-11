@@ -1,0 +1,27 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+platform :ios, '9.0'
+
+target 'RNGCPlayground' do
+  rnpath = '../../node_modules/react-native'
+  pod 'React', path: rnpath, subspecs: [
+    'Core',
+    'CxxBridge', # Include this for RN >= 0.47
+    'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
+    'RCTText',
+    'RCTNetwork',
+    'RCTLinkingIOS',
+    'RCTWebSocket', # Needed for debugging
+    'RCTAnimation', # Needed for FlatList and animations running on native UI thread
+    'RCTImage',
+  ]
+  pod 'yoga', path: "#{rnpath}/ReactCommon/yoga"
+  pod 'DoubleConversion', podspec: "#{rnpath}/third-party-podspecs"
+  pod 'glog', podspec: "#{rnpath}/third-party-podspecs"
+  pod 'Folly', podspec: "#{rnpath}/third-party-podspecs"
+
+  pod 'google-cast-sdk', '4.3.0'
+  pod 'react-native-google-cast', path: '../../ios/'
+
+  pod 'RNGestureHandler', path: '../../node_modules/react-native-gesture-handler'
+end

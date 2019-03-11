@@ -1,13 +1,35 @@
-/* @flow */
+const { Navigation } = require('react-native-navigation')
+const { Platform } = require('react-native')
+const { registerComponents } = require('./src')
 
-import React from 'react'
-import { AppRegistry } from 'react-native'
-import Main from './src/main'
+registerComponents()
 
-class Index extends React.Component {
-  render() {
-    return <Main />
-  }
-}
-
-AppRegistry.registerComponent('RNGoogleCastExample', () => Index)
+Navigation.events().registerAppLaunchedListener(async () => {
+  Navigation.setRoot({
+    root: {
+      stack: {
+        id: 'main',
+        children: [
+          {
+            component: {
+              name: 'castvideos.Home',
+            },
+          },
+        ],
+        options: {
+          buttonColor: 'white',
+          title: {
+            alignment: 'center',
+            color: 'white',
+            text: 'CastVideos',
+          },
+          topBar: {
+            background: {
+              color: '#03A9F4',
+            },
+          },
+        },
+      },
+    },
+  })
+})

@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <script
+      type="text/javascript"
+      src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"
+    ></script>
+  </head>
+
+  <body>
+    <cast-media-player></cast-media-player>
+    <script>
+      ;(function() {
+        const context = cast.framework.CastReceiverContext.getInstance()
+
+        context.start()
+
+        const player = context.getPlayerManager()
+        console.log(player)
+        player.addEventListener(cast.framework.events.category.CORE, event => {
+          console.log(event)
+          if (socket.readyState !== WebSocket.OPEN) return
+          socket.send(JSON.stringify(event))
+        })
+        // player.addEventListener(
+        //   cast.framework.events.category.CORE,
+        //   console.debug,
+        // )
+
+        const socket = new WebSocket('ws://192.168.0.59:57685')
+        // const host = location.origin.replace(/^http/, 'ws')
+        // const socket = new WebSocket(host)
+        socket.onopen = event => {
+          socket.send('Hello world!')
+        }
+      })()
+    </script>
+  </body>
+</html>
