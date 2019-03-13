@@ -64,10 +64,10 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 <details>
   <summary>Android</summary>
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
+1. Open up `android/app/src/main/java/[...]/MainApplication.java`
 
-   - Add `import com.reactlibrary.RNGoogleCastPackage;` to the imports at the top of the file
-   - Add `new RNGoogleCastPackage()` to the list returned by the `getPackages()` method
+   - Add `import com.reactnative.googlecast.GoogleCastPackage;` to the imports at the top of the file
+   - Add `new GoogleCastPackage()` to the list returned by the `getPackages()` method
 
 2. Append the following lines to `android/settings.gradle`:
 
