@@ -82,7 +82,8 @@ RCT_REMAP_METHOD(getCastDevice,
                  rejecter: (RCTPromiseRejectBlock) reject) {
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKDevice* device = [self->castSession device];
-    resolve(@{
+    if (device == nil) { resolve(nil); }
+    else resolve(@{
       @"id": device.deviceID,
       @"version": device.deviceVersion,
       @"name": device.friendlyName,

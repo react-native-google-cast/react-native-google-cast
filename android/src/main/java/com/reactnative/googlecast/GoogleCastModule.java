@@ -192,12 +192,17 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                WritableMap map = Arguments.createMap();
-                map.putString("id", mCastSession.getCastDevice().getDeviceId());
-                map.putString("version", mCastSession.getCastDevice().getDeviceVersion());
-                map.putString("name", mCastSession.getCastDevice().getFriendlyName());
-                map.putString("model", mCastSession.getCastDevice().getModelName());
-                promise.resolve(map);
+              if (mCastSession == null) {
+                promise.resolve(null);
+                return;
+              }
+
+              WritableMap map = Arguments.createMap();
+              map.putString("id", mCastSession.getCastDevice().getDeviceId());
+              map.putString("version", mCastSession.getCastDevice().getDeviceVersion());
+              map.putString("name", mCastSession.getCastDevice().getFriendlyName());
+              map.putString("model", mCastSession.getCastDevice().getModelName());
+              promise.resolve(map);
             }
         });
     }
@@ -216,7 +221,7 @@ public class GoogleCastModule
 
 
     @ReactMethod
-    public void initChannel(final String namespace) {
+    public void initChannel(final String namespace, final Promise promise) {
         if (mCastSession != null) {
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
@@ -226,14 +231,15 @@ public class GoogleCastModule
                             @Override
                             public void onMessageReceived(CastDevice castDevice, String channelNameSpace, String message) {
                                 WritableMap map = Arguments.createMap();
-                                map.putString("deviceName", castDevice.getFriendlyName());
                                 map.putString("channel", channelNameSpace);
                                 map.putString("message", message);
                                 emitMessageToRN(CHANNEL_MESSAGE_RECEIVED, map);
                             }
                         });
+                        promise.resolve(true);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        promise.reject(e);
                     }
                 }
             });
@@ -241,20 +247,22 @@ public class GoogleCastModule
     }
 
     @ReactMethod
-    public void sendMessage(final String actionMessage, final String namespace){
+    public void sendMessage(final String message, final String namespace, final Promise promise) {
         if(mCastSession != null){
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        mCastSession.sendMessage(namespace, actionMessage)
+                        mCastSession.sendMessage(namespace, message)
                                 .setResultCallback(new ResultCallback<Status>() {
                                     @Override
                                     public void onResult(@NonNull Status status) {
                                         if (!status.isSuccess()) {
                                             Log.i(REACT_CLASS, "Error :> Sending message failed");
+                                            promise.reject(String.valueOf(status.getStatusCode()), status.getStatusMessage());
                                         } else {
                                             Log.i(REACT_CLASS, "Message sent Successfully");
+                                            promise.resolve(true);
                                         }
                                     }
                                 });
