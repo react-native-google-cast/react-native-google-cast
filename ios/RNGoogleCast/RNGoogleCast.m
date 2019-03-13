@@ -114,12 +114,15 @@ RCT_EXPORT_METHOD(showIntroductoryOverlay) {
 
 # pragma mark - GCKCastSession methods
 
-RCT_EXPORT_METHOD(initChannel: (NSString *)namespace) {
+RCT_EXPORT_METHOD(initChannel: (NSString *)namespace
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKGenericChannel *channel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     channel.delegate = self;
     self->channels[namespace] = channel;
     [self->castSession addChannel:channel];
+    resolve(@(YES));
   });
 }
 
@@ -140,10 +143,23 @@ RCT_EXPORT_METHOD(endSession: (BOOL)stopCasting
 
 #pragma mark - GCKCastChannel methods
 
-RCT_EXPORT_METHOD(sendMessage: (NSString *)message toNamespace: (NSString *)namespace) {
+RCT_EXPORT_METHOD(sendMessage: (NSString *)message
+                  toNamespace: (NSString *)namespace
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
   GCKCastChannel *channel = channels[namespace];
-  if (channel) {
-    [channel sendTextMessage:message error:nil];
+  
+  if (!channel) {
+    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:GCKErrorCodeChannelNotConnected userInfo:nil];
+    return reject(@"no_channel", [NSString stringWithFormat:@"Channel for namespace %@ does not exist. Did you forget to call initChannel?", namespace], error);
+  }
+  
+  NSError *error;
+  [channel sendTextMessage:message error:&error];
+  if (error != nil) {
+    reject(error.localizedFailureReason, error.localizedDescription, error);
+  } else {
+    resolve(@(YES));
   }
 }
 

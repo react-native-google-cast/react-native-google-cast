@@ -400,37 +400,41 @@ Each channel is tagged with a unique namespace, so multiple channels may be mult
 
 A channel must be registered by calling `GoogleCast.initChannel('urn:x-cast:...')` before it can be used. When the associated session is established, the channel will be connected automatically and can then send and receive messages.
 
+⚠️ To process custom events, you will need to create a custom receiver (CAF) as demonstrated in the [example project](example/receiver/index.html). Please note that, by default, CAF tries to parse the message as JSON (only the receiver does this, not the sender). More information in [this issue, specifically #7](https://issuetracker.google.com/issues/117136854#comment7).
+
 ```js
 // Communication channel established
+// ⚠️ iOS only
 GoogleCast.EventEmitter.addListener(
   GoogleCast.CHANNEL_CONNECTED,
-  ({ namespace }) => {},
+  ({ channel }) => {},
 )
 
 // Communication channel terminated
+// ⚠️ iOS only
 GoogleCast.EventEmitter.addListener(
   GoogleCast.CHANNEL_DISCONNECTED,
-  ({ namespace }) => {},
+  ({ channel }) => {},
 )
 
 // Message received
 GoogleCast.EventEmitter.addListener(
   GoogleCast.CHANNEL_MESSAGE_RECEIVED,
-  ({ namespace, message }) => {},
+  ({ channel, message }) => {},
 )
 
 // Send message
-GoogleCast.sendMessage(namespace, message)
+GoogleCast.sendMessage(channel, message)
 ```
 
-## Device Connected
+## Device
 
-About to devices connected on chromecast.
+Information about connected Chromecast devices.
 
 ```js
-//Get information about the currently connected device
+// Get information about the currently connected device
 GoogleCast.getCurrentDevice().then(device => {
-  //device : {id, model, name, version}
+  // device : {id, model, name, version}
 })
 ```
 
@@ -456,5 +460,14 @@ Refer to the [example](example/) folder to find an implementation of this projec
 2. Fork the repo.
 3. Implement your shiny new thing.
 4. Demonstrate how to use it in the example project.
-5. Document the functionality in the README (here).
-6. PR
+5. Make sure to manually test that the example project works as intended.\*
+6. Document the functionality in the README (here).
+7. PR
+
+\* To test with a custom receiver:
+
+- create a new custom app in [Cast Publish](https://cast.google.com/publish)
+- `npm i -g serve`
+- `serve -l PORT -s example/receiver/`
+- set the app id in `example/ios/RNGCE/AppDelegate.m` (iOS) and `OptionsProvider` (Android)
+- you can debug the receiver in Chrome by navigating to <chrome://inspect>
