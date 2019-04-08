@@ -1,5 +1,6 @@
 package com.reactnative.googlecast;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -62,13 +63,24 @@ public class GoogleCastModule
 
     protected static final  String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:ChannelMessageReceived";
 
+    protected static final String E_CAST_NOT_AVAILABLE = "E_CAST_NOT_AVAILABLE";
+    protected static final String GOOGLE_CAST_NOT_AVAILABLE_MESSAGE = "Google Cast not available";
+
     private CastSession mCastSession;
     private SessionManagerListener<CastSession> mSessionManagerListener;
 
+    /*
+    'CAST_AVAILABLE' is volatile because 'initializeCast' is called on the main thread, but
+    react-native modules may be initialized on any thread.
+    */
+    private static volatile boolean CAST_AVAILABLE = true;
+
     public GoogleCastModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        reactContext.addLifecycleEventListener(this);
-        setupCastListener();
+        if (CAST_AVAILABLE) {
+            reactContext.addLifecycleEventListener(this);
+            setupCastListener();
+        }
     }
 
     @Override
@@ -93,6 +105,8 @@ public class GoogleCastModule
         constants.put("MEDIA_PLAYBACK_STARTED", MEDIA_PLAYBACK_STARTED);
         constants.put("MEDIA_PLAYBACK_ENDED", MEDIA_PLAYBACK_ENDED);
         constants.put("MEDIA_PROGRESS_UPDATED", MEDIA_PROGRESS_UPDATED);
+
+        constants.put("CAST_AVAILABLE", CAST_AVAILABLE);
 
         constants.put("CHANNEL_MESSAGE_RECEIVED", CHANNEL_MESSAGE_RECEIVED);
         return constants;
@@ -133,6 +147,14 @@ public class GoogleCastModule
                 Log.e(REACT_CLASS, "Casting media... ");
             }
         });
+    }
+
+    public static void initializeCast(Context context){
+        try {
+            CastContext.getSharedInstance(context);
+        } catch(RuntimeException e) {
+            CAST_AVAILABLE = false;
+        }
     }
 
     private MediaInfo buildMediaInfo(ReadableMap params) {
@@ -212,9 +234,13 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                CastContext castContext =
+                if (CAST_AVAILABLE) {
+                    CastContext castContext =
                         CastContext.getSharedInstance(getReactApplicationContext());
-                promise.resolve(castContext.getCastState() - 1);
+                    promise.resolve(castContext.getCastState() - 1);
+                } else {
+                    promise.reject(E_CAST_NOT_AVAILABLE, GOOGLE_CAST_NOT_AVAILABLE_MESSAGE);
+                }
             }
         });
     }
@@ -327,22 +353,30 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
+                if (CAST_AVAILABLE) {
+                    SessionManager sessionManager =
                         CastContext.getSharedInstance(getReactApplicationContext())
                                 .getSessionManager();
-                sessionManager.endCurrentSession(stopCasting);
-                promise.resolve(true);
+                    sessionManager.endCurrentSession(stopCasting);
+                    promise.resolve(true);
+                } else {
+                    promise.reject(E_CAST_NOT_AVAILABLE, GOOGLE_CAST_NOT_AVAILABLE_MESSAGE);
+                }
             }
         });
     }
 
     @ReactMethod
     public void launchExpandedControls() {
-        ReactApplicationContext context = getReactApplicationContext();
-        Intent intent =
-                new Intent(context, GoogleCastExpandedControlsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        if (CAST_AVAILABLE) {
+            ReactApplicationContext context = getReactApplicationContext();
+            Intent intent = new Intent(context, GoogleCastExpandedControlsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } else {
+            Log.i(REACT_CLASS, "Error :> " + GOOGLE_CAST_NOT_AVAILABLE_MESSAGE);
+        }
+
     }
 
     private void setupCastListener() {
