@@ -85,7 +85,7 @@ RCT_REMAP_METHOD(getCastDevice,
     if (device == nil) { resolve(nil); }
     else resolve(@{
       @"id": device.deviceID,
-      @"version": device.deviceVersion,
+      @"version": ([device.deviceVersion isKindOfClass:[NSNull class]]? @"" : (device.deviceVersion ? device.deviceVersion : @"")),
       @"name": device.friendlyName,
       @"model": device.modelName,
     });

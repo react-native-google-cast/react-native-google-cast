@@ -19,7 +19,7 @@ public class GoogleCastButtonManager
     extends SimpleViewManager<MediaRouteButton> {
 
   public static final String REACT_CLASS = "RNGoogleCastButton";
-  private Integer mColor = null;
+  private Integer mColor = -12829637;
 
   @Override
   public String getName() {
