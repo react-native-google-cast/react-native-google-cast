@@ -120,6 +120,7 @@ RCT_EXPORT_METHOD(initChannel: (NSString *)namespace
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKGenericChannel *channel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     channel.delegate = self;
+    [self->castSession removeChannel:channels[namespace]];
     self->channels[namespace] = channel;
     [self->castSession addChannel:channel];
     resolve(@(YES));
