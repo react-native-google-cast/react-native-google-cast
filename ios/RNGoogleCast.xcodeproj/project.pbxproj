@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE484201C8E8200474413 /* RNGoogleCast.m */; };
 		911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */; };
+		91B564E22278EF3000ECA9FE /* RNGoogleCastButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B564E12278EF3000ECA9FE /* RNGoogleCastButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,8 @@
 		911BE483201C8E7C00474413 /* RNGoogleCast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCast.h; sourceTree = "<group>"; };
 		911BE484201C8E8200474413 /* RNGoogleCast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCast.m; sourceTree = "<group>"; };
 		911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
+		91B564E02278EF3000ECA9FE /* RNGoogleCastButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCastButton.h; sourceTree = "<group>"; };
+		91B564E12278EF3000ECA9FE /* RNGoogleCastButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,9 +63,11 @@
 		911BE482201C8E5700474413 /* RNGoogleCast */ = {
 			isa = PBXGroup;
 			children = (
-				911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */,
-				911BE484201C8E8200474413 /* RNGoogleCast.m */,
 				911BE483201C8E7C00474413 /* RNGoogleCast.h */,
+				911BE484201C8E8200474413 /* RNGoogleCast.m */,
+				91B564E02278EF3000ECA9FE /* RNGoogleCastButton.h */,
+				91B564E12278EF3000ECA9FE /* RNGoogleCastButton.m */,
+				911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */,
 			);
 			path = RNGoogleCast;
 			sourceTree = "<group>";
@@ -106,6 +111,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -125,6 +131,7 @@
 			files = (
 				911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */,
 				911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */,
+				91B564E22278EF3000ECA9FE /* RNGoogleCastButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,7 +222,6 @@
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../../../ios/Pods/google-cast-sdk/**",
 				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
@@ -232,7 +238,6 @@
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../../../ios/Pods/google-cast-sdk/**",
 				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNGoogleCast;
 				SKIP_INSTALL = YES;
