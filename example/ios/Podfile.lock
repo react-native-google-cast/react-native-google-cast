@@ -11,8 +11,8 @@ PODS:
   - google-cast-sdk/Core (3.5.6)
   - React (0.57.8):
     - React/Core (= 0.57.8)
-  - react-native-google-cast (3.1.1):
-    - google-cast-sdk (~> 3)
+  - react-native-google-cast (3.1.2):
+    - google-cast-sdk (>= 3)
     - React
   - React/Core (0.57.8):
     - yoga (= 0.57.8.React)
@@ -93,7 +93,7 @@ SPEC CHECKSUMS:
   glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
   google-cast-sdk: 2736ac5f0c60d26a559f58c6bb37ced7465e9485
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
-  react-native-google-cast: 06480db14bce55523c4f1ca778ada2db2ec57e0f
+  react-native-google-cast: 7a46ba17eefbdb416cd92c06ed4c14bc19f92def
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
 PODFILE CHECKSUM: f94a0d6176d0223f69d8050306d173e9819a7431
