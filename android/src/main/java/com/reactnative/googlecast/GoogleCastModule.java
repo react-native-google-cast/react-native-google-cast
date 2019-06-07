@@ -22,6 +22,7 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
@@ -368,17 +369,32 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
+                int castState =
+                        CastContext.getSharedInstance(getReactApplicationContext()).getCastState();
+                if(mCastSession == null || castState == CastState.NO_DEVICES_AVAILABLE  || castState == CastState.NOT_CONNECTED ){
+                    SessionManager sessionManager =
                         CastContext.getSharedInstance(getReactApplicationContext())
                                 .getSessionManager();
                 sessionManager.removeSessionManagerListener(mSessionManagerListener,
                         CastSession.class);
+                }
+
             }
         });
     }
 
     @Override
     public void onHostDestroy() {
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.removeSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+            }
+        });
     }
 
     protected void setCastSession(CastSession castSession) {
