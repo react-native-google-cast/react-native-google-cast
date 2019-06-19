@@ -258,6 +258,11 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     [castSession.remoteMediaClient seekToTimeInterval:playPosition];
   }
 }
+RCT_EXPORT_METHOD(setVolume : (float)volume) {
+    if (castSession) {
+        [castSession.remoteMediaClient setStreamVolume:volume];
+    }
+}
 
 #pragma mark - GCKSessionManagerListener events
 
