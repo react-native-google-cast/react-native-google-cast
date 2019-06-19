@@ -32,5 +32,5 @@ dependencies {
     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
     implementation "com.android.support:appcompat-v7:${safeExtGet('supportLibVersion', '+')}"
     implementation "com.android.support:mediarouter-v7:${safeExtGet('supportLibVersion', '+')}"
-    implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
+    implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '16.2.0')}"
 }
