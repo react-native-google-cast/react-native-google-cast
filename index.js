@@ -85,7 +85,9 @@ export default {
   },
   launchExpandedControls: GoogleCast.launchExpandedControls,
   showIntroductoryOverlay: GoogleCast.showIntroductoryOverlay,
-
+  setVolume(volume: number) {
+    return GoogleCast.setVolume(volume)
+  },
   initChannel(namespace: string) {
     return GoogleCast.initChannel(namespace)
   },
