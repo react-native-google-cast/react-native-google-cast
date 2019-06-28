@@ -2,7 +2,6 @@ package com.reactnative.googlecast;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -20,8 +19,8 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
@@ -29,11 +28,11 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.images.WebImage;
 
-import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class GoogleCastModule
@@ -66,6 +65,7 @@ public class GoogleCastModule
 
     protected static final String E_CAST_NOT_AVAILABLE = "E_CAST_NOT_AVAILABLE";
     protected static final String GOOGLE_CAST_NOT_AVAILABLE_MESSAGE = "Google Cast not available";
+    protected static final String DEFAULT_SUBTITLES_LANGUAGE = Locale.ENGLISH.getLanguage();
 
     private CastSession mCastSession;
     private SessionManagerListener<CastSession> mSessionManagerListener;
@@ -142,7 +142,8 @@ public class GoogleCastModule
                     seconds = 0;
                 }
 
-                remoteMediaClient.load(buildMediaInfo(params), true, seconds * 1000);
+                MediaInfo mediaInfo = MediaInfoBuilder.buildMediaInfo(params);
+                remoteMediaClient.load(mediaInfo, true, seconds * 1000);
 
                 Log.e(REACT_CLASS, "Casting media... ");
             }
@@ -155,58 +156,6 @@ public class GoogleCastModule
         } catch(RuntimeException e) {
             CAST_AVAILABLE = false;
         }
-    }
-
-    private MediaInfo buildMediaInfo(ReadableMap params) {
-        MediaMetadata movieMetadata =
-                new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-
-        if (params.hasKey("title") && params.getString("title") != null) {
-            movieMetadata.putString(MediaMetadata.KEY_TITLE,
-                    params.getString("title"));
-        }
-
-        if (params.hasKey("subtitle") && params.getString("subtitle") != null) {
-            movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                    params.getString("subtitle"));
-        }
-
-        if (params.hasKey("studio") && params.getString("studio") != null) {
-            movieMetadata.putString(MediaMetadata.KEY_STUDIO,
-                    params.getString("studio"));
-        }
-
-        if (params.hasKey("imageUrl") && params.getString("imageUrl") != null) {
-            movieMetadata.addImage(
-                    new WebImage(Uri.parse(params.getString("imageUrl"))));
-        }
-
-        if (params.hasKey("posterUrl") && params.getString("posterUrl") != null) {
-            movieMetadata.addImage(
-                    new WebImage(Uri.parse(params.getString("posterUrl"))));
-        }
-
-        MediaInfo.Builder builder =
-                new MediaInfo.Builder(params.getString("mediaUrl"))
-                        .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                        .setMetadata(movieMetadata);
-
-        if (params.hasKey("contentType") &&
-                params.getString("contentType") != null) {
-            builder = builder.setContentType(params.getString("contentType"));
-        } else {
-            builder = builder.setContentType("video/mp4");
-        }
-
-        if (params.hasKey("customData") && params.getMap("customData") != null) {
-            builder = builder.setCustomData(new JSONObject(params.getMap("customData").toHashMap()));
-        }
-
-        if (params.hasKey("streamDuration")) {
-            builder = builder.setStreamDuration(params.getInt("streamDuration"));
-        }
-
-        return builder.build();
     }
 
     @ReactMethod
@@ -416,6 +365,60 @@ public class GoogleCastModule
 
     }
 
+    @ReactMethod
+    public void toggleSubtitles(final boolean enabled, final String languageCode) {
+        if (mCastSession == null) {
+            return;
+        }
+
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mCastSession == null) {
+                    return;
+                }
+
+                RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+                if (client == null) {
+                    return;
+                }
+
+                if (!enabled) {
+                    client.setActiveMediaTracks(new long[] {});
+                    return;
+                }
+
+                MediaInfo mediaInfo = client.getMediaInfo();
+                if (mediaInfo == null) {
+                    return;
+                }
+
+
+                List<MediaTrack> tracks = mediaInfo.getMediaTracks();
+                if (tracks == null || tracks.isEmpty()) {
+                    return;
+                }
+
+                String languageToSelect = languageCode != null ? languageCode : DEFAULT_SUBTITLES_LANGUAGE;
+                for (MediaTrack track : tracks) {
+                    if (
+                        track != null &&
+                        track.getType() == MediaTrack.TYPE_TEXT &&
+                        (
+                            track.getSubtype() == MediaTrack.SUBTYPE_NONE || // Sometimes not provided.
+                            track.getSubtype() == MediaTrack.SUBTYPE_SUBTITLES ||
+                            track.getSubtype() == MediaTrack.SUBTYPE_CAPTIONS
+                        ) &&
+                        track.getLanguage().equals(languageToSelect)
+                    ) {
+                        client.setActiveMediaTracks(new long[]{ track.getId() });
+                        return;
+                    }
+                }
+            }
+        });
+    }
+
     private void setupCastListener() {
         mSessionManagerListener = new GoogleCastSessionManagerListener(this);
     }
@@ -459,7 +462,7 @@ public class GoogleCastModule
     protected CastSession getCastSession() {
         return mCastSession;
     }
-    
+
     protected @Nullable MediaStatus getMediaStatus() {
         if (mCastSession == null) {
             return null;
