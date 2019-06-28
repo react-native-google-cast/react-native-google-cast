@@ -20,6 +20,7 @@ import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
@@ -114,8 +115,7 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                RemoteMediaClient remoteMediaClient =
-                        mCastSession.getRemoteMediaClient();
+                RemoteMediaClient remoteMediaClient = mCastSession.getRemoteMediaClient();
                 if (remoteMediaClient == null) {
                     return;
                 }
@@ -280,7 +280,12 @@ public class GoogleCastModule
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCastSession.getRemoteMediaClient().play();
+                    RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+                    if (client == null) {
+                        return;
+                    }
+
+                    client.play();
                 }
             });
         }
@@ -292,7 +297,12 @@ public class GoogleCastModule
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCastSession.getRemoteMediaClient().pause();
+                    RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+                    if (client == null) {
+                        return;
+                    }
+
+                    client.pause();
                 }
             });
         }
@@ -304,7 +314,12 @@ public class GoogleCastModule
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCastSession.getRemoteMediaClient().stop();
+                    RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+                    if (client == null) {
+                        return;
+                    }
+
+                    client.stop();
                 }
             });
         }
@@ -316,7 +331,12 @@ public class GoogleCastModule
             getReactApplicationContext().runOnUiQueueThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCastSession.getRemoteMediaClient().seek(position * 1000);
+                    RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+                    if (client == null) {
+                        return;
+                    }
+
+                    client.seek(position * 1000);
                 }
             });
         }
@@ -387,6 +407,19 @@ public class GoogleCastModule
 
     protected CastSession getCastSession() {
         return mCastSession;
+    }
+    
+    protected @Nullable MediaStatus getMediaStatus() {
+        if (mCastSession == null) {
+            return null;
+        }
+
+        RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+        if (client == null) {
+            return null;
+        }
+
+        return client.getMediaStatus();
     }
 
     protected void runOnUiQueueThread(Runnable runnable) {
