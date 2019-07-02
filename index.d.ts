@@ -15,26 +15,26 @@ declare module 'react-native-google-cast' {
     | 'Connecting'
     | 'Connected'
 
-  export type CastOptions = {
-    title?: string
-    subtitle?: string
-    studio?: string
-    imageUrl?: string
-    posterUrl?: string
-    isLive?: boolean
-    mediaUrl?: string
-    contentType?: string
-    customData?: any
-    streamDuration?: number
-    textTrackStyle?: TextTrackStyle
-  }
+  export type CastOptions = Partial<{
+    title: string
+    subtitle: string
+    studio: string
+    imageUrl: string
+    posterUrl: string
+    isLive: boolean
+    mediaUrl: string
+    contentType: string
+    customData: any
+    streamDuration: number
+    textTrackStyle: TextTrackStyle
+  }>
 
-  export type TextTrackStyle = {
-    backgroundColor?: string
-    edgeColor?: string
-    edgeType?: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised'
-    fontFamily?: string
-    fontGenericFamily?:
+  export type TextTrackStyle = Partial<{
+    backgroundColor: string
+    edgeColor: string
+    edgeType: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised'
+    fontFamily: string
+    fontGenericFamily:
       | 'casual'
       | 'cursive'
       | 'monoSansSerif'
@@ -42,13 +42,13 @@ declare module 'react-native-google-cast' {
       | 'sansSerif'
       | 'serif'
       | 'smallCaps'
-    fontScale?: number
-    fontStyle?: 'bold' | 'boldItalic' | 'italic' | 'normal'
-    foregroundColor?: string
-    windowColor?: string
-    windowCornerRadius?: number
-    windowType?: 'none' | 'normal' | 'rounded'
-  }
+    fontScale: number
+    fontStyle: 'bold' | 'boldItalic' | 'italic' | 'normal'
+    foregroundColor: string
+    windowColor: string
+    windowCornerRadius: number
+    windowType: 'none' | 'normal' | 'rounded'
+  }>
 
   const GoogleCast: {
     getCastDevice(): Promise<CastDevice>
