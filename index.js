@@ -68,7 +68,7 @@ export default {
     contentType?: string,
     streamDuration?: number,
     playPosition?: number,
-    isLive?: Boolean,
+    isLive?: boolean,
     customData?: Object,
     textTrackStyle?: TextTrackStyle,
   }) {
@@ -125,7 +125,7 @@ export default {
    * @param {boolean} enabled
    * @param {boolean} languageCode
    */
-  toggleSubtitles(enabled: Boolean, languageCode?: string) {
+  toggleSubtitles(enabled: boolean, languageCode?: string) {
     return GoogleCast.toggleSubtitles(enabled, languageCode)
   },
 
