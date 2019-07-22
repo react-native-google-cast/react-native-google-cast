@@ -19,6 +19,10 @@
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
 - (instancetype)init {
   self = [super init];
   channels = [[NSMutableDictionary alloc] init];
