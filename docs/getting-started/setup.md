@@ -6,9 +6,9 @@ sidebar_label: Setup
 
 ## iOS
 
-- Follow [iOS Setup Guide](https://developers.google.com/cast/docs/ios_sender/) to add the SDK to your project
-
 - ⚠️ Make sure you're using Google Cast SDK version `4.3.0` until the [duplicate symbol issue](https://issuetracker.google.com/issues/113069508) is fixed
+
+- ⚠️ If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, enable the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note: "Wireless Accessory Configuration" is unrelated. You need to be a member of the Apple Developer Program to see the "Access WiFi Information" setting.
 
 - In `AppDelegate.m` add
 
@@ -19,15 +19,14 @@ sidebar_label: Setup
   and in the `didFinishLaunchingWithOptions` method add:
 
   ```obj-c
-  GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKDefaultMediaReceiverApplicationID];
+  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
+  GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
   [GCKCastContext setSharedInstanceWithOptions:options];
   ```
 
   (or replace `kGCKDefaultMediaReceiverApplicationID` with your custom receiver app id).
 
 ## Android
-
-- Follow [Android Setup Guide](https://developers.google.com/cast/docs/android_sender/)
 
 - Make sure the device you're using (also applies to emulators) has Google Play Services installed.
 

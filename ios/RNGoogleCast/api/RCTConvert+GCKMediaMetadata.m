@@ -1,5 +1,6 @@
 #import "RCTConvert+GCKMediaMetadataType.m"
 #import "RCTConvert+GCKImage.m"
+#import "RCTConvert+ISO8601Date.m"
 #import <GoogleCast/GoogleCast.h>
 #import <React/RCTConvert.h>
 
@@ -23,15 +24,15 @@
   }
 
   if (json[@"creationDate"]) {
-    [metadata setDate:[RCTConvert NSDate:json[@"creationDate"]]
+    [metadata setDate:[RCTConvert ISO8601Date:json[@"creationDate"]]
                forKey:kGCKMetadataKeyCreationDate];
   }
   if (json[@"releaseDate"]) {
-    [metadata setDate:[RCTConvert NSDate:json[@"releaseDate"]]
+    [metadata setDate:[RCTConvert ISO8601Date:json[@"releaseDate"]]
                forKey:kGCKMetadataKeyReleaseDate];
   }
   if (json[@"broadcastDate"]) {
-    [metadata setDate:[RCTConvert NSDate:json[@"broadcastDate"]]
+    [metadata setDate:[RCTConvert ISO8601Date:json[@"broadcastDate"]]
                forKey:kGCKMetadataKeyBroadcastDate];
   }
   if (json[@"title"]) {

@@ -1,4 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
+#import "RNGoogleCastButton.h"
 #import <React/RCTViewManager.h>
 
 @interface RNGoogleCastButtonManager : RCTViewManager
@@ -6,13 +6,12 @@
 
 @implementation RNGoogleCastButtonManager
 
-RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
-
 RCT_EXPORT_MODULE()
 
 - (UIView *)view {
-  GCKUICastButton *castButton = [[GCKUICastButton alloc] init];
-  return castButton;
+  return [[RNGoogleCastButton alloc] init];
 }
+
+RCT_EXPORT_VIEW_PROPERTY(tintColor, UIColor)
 
 @end

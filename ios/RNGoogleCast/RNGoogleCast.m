@@ -19,13 +19,18 @@
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
 - (NSArray<NSString *> *)supportedEvents {
   return @[];
 }
 
 - (instancetype)init {
-  self = [super init];
-  channels = [[NSMutableDictionary alloc] init];
+  if (self = [super init]) {
+    channels = [[NSMutableDictionary alloc] init];
+  }
   return self;
 }
 

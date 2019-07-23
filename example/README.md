@@ -8,13 +8,16 @@ Please note that this project uses `package.json` from the parent folder to simp
 
 ### Setup
 
-- Run `yarn` (or `npm i`) from the root of `react-native-google-cast`
+From the root of `react-native-google-cast`:
 
-iOS
+- Run `yarn` (or `npm i`) to install dependencies
+- Run `yarn start` (or `npm run start`) to start Metro Bundler
+
+#### iOS
 
 - `cd example/ios && pod install`
 - `open example/ios/RNCastVideos.xcworkspace` and Run from Xcode
 
-Android
+#### Android
 
 - in Android Studio open `example/android/` folder and run from there

@@ -12,13 +12,13 @@
   GCKMediaInformationBuilder *builder =
       [[GCKMediaInformationBuilder alloc] initWithContentID:json[@"contentId"]];
 
-  if (json[@"adBreakClips"]) {
-    NSMutableArray<GCKAdBreakClipInfo *> *adBreakClips;
-    for (id clip in json[@"adBreakClips"]) {
-      [adBreakClips addObject:[RCTConvert GCKAdBreakClipInfo:clip]];
-    }
-    builder.adBreakClips = adBreakClips;
-  }
+//  if (json[@"adBreakClips"]) {
+//    NSMutableArray<GCKAdBreakClipInfo *> *adBreakClips;
+//    for (id clip in json[@"adBreakClips"]) {
+//      [adBreakClips addObject:[RCTConvert GCKAdBreakClipInfo:clip]];
+//    }
+//    builder.adBreakClips = adBreakClips;
+//  }
   
   if (json[@"adBreaks"]) {
     NSMutableArray<GCKAdBreakInfo *> *adBreaks;

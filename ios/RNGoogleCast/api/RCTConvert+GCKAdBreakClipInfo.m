@@ -4,13 +4,15 @@
 
 @implementation RCTConvert (GCKAdBreakClipInfo)
 
-+ (GCKAdBreakClipInfo *)GCKAdBreakClipInfo:(id)json {
-  GCKAdBreakClipInfo *info = [[GCKAdBreakClipInfo alloc] init];
-
-  // TODO use builder in 4.3.4
-
-  return info;
-}
+//+ (GCKAdBreakClipInfo *)GCKAdBreakClipInfo:(id)json {
+//  GCKAdBreakInfoBuilder *builder = [[GCKAdBreakInfoBuilder alloc] init];
+////  GCKAdBreakClipInfo *info = [[GCKAdBreakClipInfo alloc] init];
+//
+//  // TODO use builder in 4.3.4
+//
+////  return info;
+//  return [builder ]
+//}
 
 + (id)fromGCKAdBreakClipInfo:(GCKAdBreakClipInfo *)info {
   return @{

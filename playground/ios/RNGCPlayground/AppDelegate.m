@@ -32,7 +32,7 @@
 
   // Initialize Google Cast
   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc]
-                                    initWithApplicationID:@"EA48D3FC"];
+                                    initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
   GCKCastOptions *options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
   [GCKCastContext setSharedInstanceWithOptions:options];
 

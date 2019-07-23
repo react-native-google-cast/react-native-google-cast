@@ -4,20 +4,30 @@ title: Usage
 sidebar_label: Usage
 ---
 
+First, require the module
+
 ```js
-// Require the module
 import { CastButton, RemoteMediaClient } from 'react-native-google-cast'
+```
 
-// Render the Cast button which enables to connect to Chromecast
-;<CastButton style={{ width: 24, height: 24 }} />
+Render the Cast button which enables to connect to Chromecast
 
-// Stream the media to the connected Chromecast
+```js
+<CastButton style={{ width: 24, height: 24 }} />
+```
+
+Stream the media to the connected Chromecast
+
+```js
 GoogleCast.load({
   contentId:
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
 })
+```
 
-// or a slighly more complex example
+or a slighly more complex example
+
+```js
 GoogleCast.load(
   {
     contentUrl:
