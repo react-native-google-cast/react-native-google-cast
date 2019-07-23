@@ -2,11 +2,18 @@
   "name": "react-native-google-cast",
   "version": "4.0.0-pre",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
-  "main": "index.js",
+  "types": "./lib/index",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "start": "react-native start",
-    "docs": "node scripts/docs.js && cd docs-website && yarn start",
-    "docs:build": "node scripts/docs.js && cd docs-website && yarn build"
+    "prepublishOnly": "tsc",
+    "postpublish": "rm lib/**/*.js",
+    "docs": "node scripts/docs.js && concurrently \"cd docs-website && yarn start\" \"node scripts/docsWatch.js\"",
+    "docs:build": "node scripts/docs.js && cd docs-website && yarn build",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
   },
   "contributors": [
     {
@@ -40,21 +47,31 @@
     "react-native": ">=0.40"
   },
   "devDependencies": {
+    "@types/react": "^16.8.16",
+    "@types/react-native": "^0.57.65",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "24.1.0",
-    "detox": "^10.0.7",
+    "concurrently": "^4.1.0",
+    "detox": "^12.6.1",
     "jest": "24.1.0",
     "jest-websocket-mock": "^1.1.1",
     "jsdoc-to-markdown": "^4.0.1",
     "metro-react-native-babel-preset": "0.51.1",
     "mock-socket": "^8.0.5",
+    "prettier": "^1.18.2",
     "react": "16.6.3",
     "react-native": "0.58.4",
-    "react-native-gesture-handler": "^1.0.15",
-    "react-native-navigation": "^2.11.0",
+    "react-native-gesture-handler": "^1.2.1",
+    "react-native-navigation": "^2.18.4",
     "react-native-video": "^4.3.1",
-    "react-navigation": "^3.3.0",
-    "react-test-renderer": "16.6.3"
+    "react-navigation": "^3.9.1",
+    "react-test-renderer": "16.6.3",
+    "rimraf": "^2.6.3",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^1.2.0",
+    "typescript": "^3.5.3"
   },
   "detox": {
     "configurations": {

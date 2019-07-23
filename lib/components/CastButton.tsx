@@ -1,8 +1,7 @@
-/* @flow */
-
 import React from 'react'
-import PropTypes from 'prop-types'
-import { requireNativeComponent } from 'react-native'
+import { ButtonProps, requireNativeComponent } from 'react-native'
+
+export interface Props extends ButtonProps {}
 
 /**
  * Button that presents the Cast icon.
@@ -12,10 +11,8 @@ import { requireNativeComponent } from 'react-native'
  * @see [GCKUICastButton](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_u_i_cast_button) (iOS)
  * @see [CastButtonFactory](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastButtonFactory) & [MediaRouteButton](https://developer.android.com/reference/android/support/v7/app/MediaRouteButton.html) (Android)
  */
-class CastButton extends React.Component {
-  render() {
-    return <GoogleCastButton {...this.props} />
-  }
+export default function CastButton(props: Props) {
+  return <GoogleCastButton {...props} />
 }
 
 CastButton.propTypes = {
@@ -28,7 +25,7 @@ CastButton.propTypes = {
   // accessibilityLabel: PropTypes.string
 }
 
-var GoogleCastButton = requireNativeComponent(
+const GoogleCastButton = requireNativeComponent(
   'RNGoogleCastButton',
   CastButton,
   {
@@ -42,7 +39,5 @@ var GoogleCastButton = requireNativeComponent(
       renderToHardwareTextureAndroid: true,
       onLayout: true,
     },
-  },
+  }
 )
-
-export default CastButton

@@ -63,4 +63,6 @@ example/android/gradlew.bat
 
 # Project specific
 #
+/lib/**/*.js
 docs/api/
+docs-website/

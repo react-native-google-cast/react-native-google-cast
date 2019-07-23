@@ -1,2 +1,6 @@
+android/build/
+docs-website/
 example/
+project.xcworkspace
+xcuserdata
 *.iml
