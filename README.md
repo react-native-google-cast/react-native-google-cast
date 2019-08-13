@@ -40,8 +40,6 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
 - Setup your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
-- Add `pod 'google-cast-sdk', '~> 3'` to your `Podfile`. Alternatively, you can try SDK v4 by using `pod 'google-cast-sdk', '4.3.0'` (see setup below).
-
 - Add `pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'` to your `Podfile`
 
 - Run `pod install`
