@@ -1,7 +1,10 @@
 import React from 'react'
-import { ButtonProps, requireNativeComponent } from 'react-native'
+import { requireNativeComponent, ViewProps } from 'react-native'
 
-export interface Props extends ButtonProps {}
+export interface Props extends ViewProps {
+  style?: ViewProps['style'] & { tintColor?: string }
+  tintColor?: string
+}
 
 /**
  * Button that presents the Cast icon.
@@ -20,7 +23,7 @@ CastButton.propTypes = {
    * A flag that indicates whether a touch event on this button will trigger the display of the Cast dialog that is provided by the framework.
    *
    * By default this property is set to YES. If an application wishes to handle touch events itself, it should set the property to NO and register an appropriate target and action for the touch event.
-   * */
+   */
   // triggersDefaultCastDialog: PropTypes.bool
   // accessibilityLabel: PropTypes.string
 }

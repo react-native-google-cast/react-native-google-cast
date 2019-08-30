@@ -2,25 +2,39 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '9.0'
 
+# require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
 target 'CastVideos' do
   rnpath = '../../node_modules/react-native'
-  pod 'React', path: rnpath, subspecs: [
-    'Core',
-    'CxxBridge', # Include this for RN >= 0.47
-    'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
-    'RCTText',
-    'RCTNetwork',
-    'RCTWebSocket', # Needed for debugging
-    'RCTAnimation', # Needed for FlatList and animations running on native UI thread
-    'RCTImage',
-  ]
-  pod 'yoga', path: "#{rnpath}/ReactCommon/yoga"
-  pod 'DoubleConversion', podspec: "#{rnpath}/third-party-podspecs"
-  pod 'glog', podspec: "#{rnpath}/third-party-podspecs"
-  pod 'Folly', podspec: "#{rnpath}/third-party-podspecs"
+
+  pod 'React', :path => rnpath
+  pod 'React-Core', :path => "#{rnpath}/React"
+  pod 'React-DevSupport', :path => "#{rnpath}/React"
+  pod 'React-RCTActionSheet', :path => "#{rnpath}/Libraries/ActionSheetIOS"
+  pod 'React-RCTAnimation', :path => "#{rnpath}/Libraries/NativeAnimation"
+  pod 'React-RCTBlob', :path => "#{rnpath}/Libraries/Blob"
+  pod 'React-RCTImage', :path => "#{rnpath}/Libraries/Image"
+  pod 'React-RCTLinking', :path => "#{rnpath}/Libraries/LinkingIOS"
+  pod 'React-RCTNetwork', :path => "#{rnpath}/Libraries/Network"
+  pod 'React-RCTSettings', :path => "#{rnpath}/Libraries/Settings"
+  pod 'React-RCTText', :path => "#{rnpath}/Libraries/Text"
+  pod 'React-RCTVibration', :path => "#{rnpath}/Libraries/Vibration"
+  pod 'React-RCTWebSocket', :path => "#{rnpath}/Libraries/WebSocket"
+
+  pod 'React-cxxreact', :path => "#{rnpath}/ReactCommon/cxxreact"
+  pod 'React-jsi', :path => "#{rnpath}/ReactCommon/jsi"
+  pod 'React-jsiexecutor', :path => "#{rnpath}/ReactCommon/jsiexecutor"
+  pod 'React-jsinspector', :path => "#{rnpath}/ReactCommon/jsinspector"
+  pod 'yoga', :path => "#{rnpath}/ReactCommon/yoga"
+
+  pod 'DoubleConversion', :podspec => "#{rnpath}/third-party-podspecs/DoubleConversion.podspec"
+  pod 'glog', :podspec => "#{rnpath}/third-party-podspecs/glog.podspec"
+  pod 'Folly', :podspec => "#{rnpath}/third-party-podspecs/Folly.podspec"
 
   pod 'google-cast-sdk', '4.3.0'
   pod 'react-native-google-cast', path: '../../ios/'
   pod 'ReactNativeNavigation', path: '../../node_modules/react-native-navigation/'
   pod 'react-native-video', path: '../../node_modules/react-native-video/'
+
+  # use_native_modules!
 end

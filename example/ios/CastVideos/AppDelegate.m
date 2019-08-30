@@ -15,16 +15,20 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+- (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   NSURL *jsCodeLocation;
 
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"example/index" fallbackResource:nil];
-  
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings]
+      jsBundleURLForBundleRoot:@"example/index"
+              fallbackResource:nil];
+
   [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
-  
-  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc]                               initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
-  GCKCastOptions *options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+
+  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc]
+      initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
+  GCKCastOptions *options =
+      [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
   [GCKCastContext setSharedInstanceWithOptions:options];
 
   return YES;

@@ -5,14 +5,14 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 27)
-    buildToolsVersion safeExtGet('buildToolsVersion', '27.0.3')
+    compileSdkVersion safeExtGet('compileSdkVersion', 28)
+    buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
 
     defaultConfig {
         minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 27)
+        targetSdkVersion safeExtGet('targetSdkVersion', 28)
         versionCode 1
-        versionName "4.0.0-pre"
+        versionName "4.0.0-pre.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -28,9 +28,14 @@ repositories {
 }
 
 dependencies {
+    def supportLibVersion = safeExtGet('supportLibVersion', '+')
+    def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
+    def appCompatLibName =  (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
+    def mediaRouterLibName =  (supportLibMajorVersion < 20) ? "androidx.mediarouter:mediarouter" : "com.android.support:mediarouter-v7"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
-    implementation "com.android.support:appcompat-v7:${safeExtGet('supportLibVersion', '+')}"
-    implementation "com.android.support:mediarouter-v7:${safeExtGet('supportLibVersion', '+')}"
+    implementation "$appCompatLibName:$supportLibVersion"
+    implementation "$mediaRouterLibName:$supportLibVersion"
     implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
 }

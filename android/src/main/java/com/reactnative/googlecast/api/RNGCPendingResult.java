@@ -1,6 +1,6 @@
 package com.reactnative.googlecast.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;
 import com.google.android.gms.common.api.PendingResult;

@@ -1,29 +1,27 @@
 import React from 'react'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import {
-  Button,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  ToolbarAndroid,
-  TouchableOpacity,
-} from 'react-native'
-
-import {
-  CastButton,
   MediaInfo,
   MediaLoadOptions,
   MediaMetadata,
   RemoteMediaClient,
   WebImage,
 } from 'react-native-google-cast'
-
+import { Options } from 'react-native-navigation'
 import RNVideo from 'react-native-video'
+import Video from '../Video'
 
-export default class Video extends React.Component {
-  static options(passProps) {
+export interface Props {
+  componentId: string
+  video: Video
+}
+
+interface State {
+  started?: boolean
+}
+
+export default class VideoScreen extends React.Component<Props> {
+  static options(passProps): Options {
     return {
       statusBar: {
         style: 'light',
@@ -34,7 +32,7 @@ export default class Video extends React.Component {
         },
         rightButtons: [
           {
-            id: 'Cast',
+            id: 'cast',
             component: {
               name: 'castvideos.CastButton',
             },
@@ -44,9 +42,9 @@ export default class Video extends React.Component {
     }
   }
 
-  state = {}
+  state: State = {}
 
-  cast(video) {
+  cast(video: Props['video']) {
     RemoteMediaClient.loadMedia(
       new MediaInfo({
         contentId: video.mediaUrl,
@@ -60,7 +58,7 @@ export default class Video extends React.Component {
         }),
         streamDuration: video.duration,
       }),
-      new MediaLoadOptions({ autoplay: true }),
+      new MediaLoadOptions({ autoplay: true })
     )
       .then(console.log)
       .catch(console.warn)
@@ -77,7 +75,7 @@ export default class Video extends React.Component {
   }
 
   renderVideo() {
-    if (!this.state.started)
+    if (!this.state.started) {
       return (
         <TouchableOpacity onPress={() => this.setState({ started: true })}>
           <Image
@@ -86,6 +84,7 @@ export default class Video extends React.Component {
           />
         </TouchableOpacity>
       )
+    }
 
     return (
       <RNVideo
@@ -100,9 +99,7 @@ export default class Video extends React.Component {
       <View style={styles.info}>
         <Text style={styles.title}>{this.props.video.title}</Text>
         <Text style={styles.subtitle}>{this.props.video.studio}</Text>
-        <Text
-          style={styles.description}
-        >{`Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.`}</Text>
+        <Text style={styles.description}>{this.props.video.subtitle}</Text>
       </View>
     )
   }

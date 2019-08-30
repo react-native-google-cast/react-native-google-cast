@@ -1,5 +1,9 @@
 package com.reactnative.googlecast.castvideos;
 
+import android.content.Context;
+
+import androidx.multidex.MultiDex;
+
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -8,15 +12,21 @@ import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativenavigation.react.ReactGateway;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainApplication extends NavigationApplication {
 
   @Override
+  protected void attachBaseContext(Context base) {
+    super.attachBaseContext(base);
+    MultiDex.install(this);
+  }
+
+  @Override
   protected ReactGateway createReactGateway() {
     ReactNativeHost host = new NavigationReactNativeHost(
-        this, isDebug(), createAdditionalReactPackages()) {
+      this, isDebug(), createAdditionalReactPackages()) {
       @Override
       protected String getJSMainModuleName() {
         return "example/index";
@@ -31,12 +41,25 @@ public class MainApplication extends NavigationApplication {
   }
 
   protected List<ReactPackage> getPackages() {
-    // Add additional packages you require here
-    // No need to add RnnPackage and MainReactPackage
-    return Arrays.<ReactPackage>asList(
-      new GoogleCastPackage(),
-      new ReactVideoPackage()
-    );
+    // We're not using auto-linking in the example project
+    // because it shares dependencies with playground
+    // so we only hand-pick the ones we actually need here.
+
+    // @SuppressWarnings("UnnecessaryLocalVariable")
+    // List<ReactPackage> packages = new PackageList(this).getPackages();
+
+    List<ReactPackage> packages = new ArrayList<ReactPackage>();
+
+    // Packages that cannot be autolinked yet can be added manually here, for
+    // example: packages.add(new MyReactNativePackage());
+
+    packages.add(new GoogleCastPackage());
+
+    // This is only here because the example project uses react-native-video.
+    // You probably don't need this ;-)
+    packages.add(new ReactVideoPackage());
+
+    return packages;
   }
 
   @Override

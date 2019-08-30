@@ -1,11 +1,22 @@
 {
   "name": "react-native-google-cast",
-  "version": "4.0.0-pre",
+  "version": "4.0.0-pre.1",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
+  "main": "lib/index",
   "types": "./lib/index",
   "files": [
     "lib/**/*"
   ],
+  "author": "Petr Bela <github@petrbela.com>",
+  "contributors": [
+    "Charlie L <carlyeah@me.com>"
+  ],
+  "homepage": "https://github.com/react-native-google-cast/react-native-google-cast",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-google-cast/react-native-google-cast.git"
+  },
+  "license": "MIT",
   "scripts": {
     "start": "react-native start",
     "prepublishOnly": "tsc",
@@ -15,17 +26,44 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json"
   },
-  "contributors": [
-    {
-      "name": "Petr Bela",
-      "email": "github@petrbela.com"
-    },
-    {
-      "name": "Charlie L",
-      "email": "carlyeah@me.com"
-    }
-  ],
-  "license": "MIT",
+  "dependencies": {
+    "prop-types": "^15.6.0"
+  },
+  "peerDependencies": {
+    "react": ">=15.1 || >=16.0.0",
+    "react-native": ">=0.40"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/runtime": "^7.5.0",
+    "@react-native-community/eslint-config": "^0.0.3",
+    "@types/react": "^16.8.23",
+    "@types/react-native": "^0.57.65",
+    "@types/react-native-video": "^3.1.4",
+    "babel-jest": "^24.1.0",
+    "concurrently": "^4.1.0",
+    "detox": "^12.6.1",
+    "jest": "^24.1.0",
+    "jest-websocket-mock": "^1.1.1",
+    "jetifier": "^1.6.4",
+    "jsdoc-to-markdown": "^4.0.1",
+    "metro-react-native-babel-preset": "^0.56.0",
+    "mock-socket": "^8.0.5",
+    "prettier": "^1.18.2",
+    "react": "16.8.6",
+    "react-native": "0.60.5",
+    "react-native-gesture-handler": "^1.2.1",
+    "react-native-navigation": "^3.1.2",
+    "react-native-video": "^5.0.0",
+    "react-navigation": "^3.9.1",
+    "react-test-renderer": "16.8.6",
+    "rimraf": "^2.6.3",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-markdown": "^1.2.0",
+    "typescript": "^3.5.3"
+  },
   "keywords": [
     "react-native",
     "ios",
@@ -35,44 +73,6 @@
     "cast",
     "google-cast"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:react-native-google-cast/react-native-google-cast.git"
-  },
-  "dependencies": {
-    "prop-types": "^15.6.0"
-  },
-  "peerDependencies": {
-    "react": ">=15.1 || >=16.0.0",
-    "react-native": ">=0.40"
-  },
-  "devDependencies": {
-    "@types/react": "^16.8.16",
-    "@types/react-native": "^0.57.65",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "24.1.0",
-    "concurrently": "^4.1.0",
-    "detox": "^12.6.1",
-    "jest": "24.1.0",
-    "jest-websocket-mock": "^1.1.1",
-    "jsdoc-to-markdown": "^4.0.1",
-    "metro-react-native-babel-preset": "0.51.1",
-    "mock-socket": "^8.0.5",
-    "prettier": "^1.18.2",
-    "react": "16.6.3",
-    "react-native": "0.58.4",
-    "react-native-gesture-handler": "^1.2.1",
-    "react-native-navigation": "^2.18.4",
-    "react-native-video": "^4.3.1",
-    "react-navigation": "^3.9.1",
-    "react-test-renderer": "16.6.3",
-    "rimraf": "^2.6.3",
-    "tslint": "^5.18.0",
-    "tslint-config-prettier": "^1.18.0",
-    "typedoc": "^0.14.2",
-    "typedoc-plugin-markdown": "^1.2.0",
-    "typescript": "^3.5.3"
-  },
   "detox": {
     "configurations": {
       "ios.sim.debug": {
