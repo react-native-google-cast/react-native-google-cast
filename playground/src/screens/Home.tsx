@@ -2,19 +2,21 @@ import React from 'react'
 import { Button, SectionList, Text, View } from 'react-native'
 import { NavigationScreenProps } from 'react-navigation'
 
-export type Props = NavigationScreenProps
+export interface Props extends NavigationScreenProps {}
 
 export default function Home(props: Props) {
   return (
     <View>
       <SectionList
         renderItem={({ item, index }) => (
-          <Button
-            key={index}
-            testID={item.title}
-            onPress={() => props.navigation.navigate(item.title)}
-            title={item.title}
-          />
+          <View style={{ paddingVertical: 5, paddingHorizontal: 20 }}>
+            <Button
+              key={index}
+              testID={item.title}
+              onPress={() => props.navigation.navigate(item.title)}
+              title={item.title}
+            />
+          </View>
         )}
         renderSectionHeader={({ section: { title } }) => (
           <Text style={{ fontWeight: 'bold' }}>{title}</Text>

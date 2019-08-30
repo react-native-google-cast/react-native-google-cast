@@ -6,8 +6,6 @@ sidebar_label: Setup
 
 ## iOS
 
-- ⚠️ Make sure you're using Google Cast SDK version `4.3.0` until the [duplicate symbol issue](https://issuetracker.google.com/issues/113069508) is fixed
-
 - ⚠️ If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, enable the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note: "Wireless Accessory Configuration" is unrelated. You need to be a member of the Apple Developer Program to see the "Access WiFi Information" setting.
 
 - In `AppDelegate.m` add
@@ -68,14 +66,25 @@ sidebar_label: Setup
     android:value="com.foo.GoogleCastOptionsProvider" />
   ```
 
-- ⚠️ Change your `MainActivity` to extend `GoogleCastActivity`.
+- ⚠️ In your `MainActivity`, initialize CastContext by overriding the `onCreate` method.
 
   ```java
-  import com.facebook.react.GoogleCastActivity;
+  ...
+  import android.os.Bundle;
+  import androidx.annotation.Nullable;
+  import com.google.android.gms.cast.framework.CastContext;
 
-  public class MainActivity extends GoogleCastActivity {
-    // ..
+  public class MainActivity extends ReactActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+
+      // lazy load Google Cast context
+      CastContext.getSharedInstance(this);
+    }
+
+    ...
   }
   ```
 
-  If you already extend other class than `ReactActivity` (e.g. if you use `react-native-navigation`) or integrate React Native in native app, make sure that the `Activity` is a descendant of `android.support.v7.app.AppCompatActivity`. Then add `CastContext.getSharedInstance(this);` to your `Activity`'s `onCreate` method (this lazy loads the Google Cast context).
+  This works if you're extending `ReactActivity` (or `NavigationActivity` if you're using react-native-navigation). If you're extending a different activity, make sure it is a descendant of `androidx.appcompat.app.AppCompatActivity`.

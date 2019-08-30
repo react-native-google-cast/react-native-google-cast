@@ -188,6 +188,10 @@ android {
     }
 }
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
@@ -200,7 +204,9 @@ dependencies {
       implementation jscFlavor
     }
 
-//    implementation project(':react-native-gesture-handler')
+    implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
+
+    implementation project(':react-native-gesture-handler')
     implementation project(':react-native-google-cast')
 }
 
@@ -211,6 +217,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-
-apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
-applyNativeModulesAppBuildGradle(project, "../..")
+//apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+//applyNativeModulesAppBuildGradle(project, "../..")

@@ -13,7 +13,7 @@ const AppNavigator = createStackNavigator(
     defaultNavigationOptions: {
       headerRight: (
         <CastButton
-          style={{ color: 'black', width: 24, height: 24, marginRight: 10 }}
+          style={{ tintColor: 'black', width: 24, height: 24, marginRight: 10 }}
         />
       ),
     },

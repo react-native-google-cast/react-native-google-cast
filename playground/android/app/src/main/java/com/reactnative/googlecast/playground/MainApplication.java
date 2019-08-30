@@ -10,7 +10,7 @@ import com.facebook.soloader.SoLoader;
 import com.reactnative.googlecast.GoogleCastPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -23,11 +23,19 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      @SuppressWarnings("UnnecessaryLocalVariable")
-      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // We're not using auto-linking in the playground project
+      // because it shares dependencies with example
+      // so we only hand-pick the ones we actually need here.
+
+      // @SuppressWarnings("UnnecessaryLocalVariable")
+      // List<ReactPackage> packages = new PackageList(this).getPackages();
 
       // Packages that cannot be autolinked yet can be added manually here, for
       // example: packages.add(new MyReactNativePackage());
+
+      List<ReactPackage> packages = new ArrayList<>();
+
+      packages.add(new MainReactPackage());
       packages.add(new GoogleCastPackage());
       packages.add(new RNGestureHandlerPackage());
 

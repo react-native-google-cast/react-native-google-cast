@@ -7,6 +7,7 @@ import androidx.multidex.MultiDex;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.shell.MainReactPackage;
 import com.reactnative.googlecast.GoogleCastPackage;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
@@ -26,7 +27,7 @@ public class MainApplication extends NavigationApplication {
   @Override
   protected ReactGateway createReactGateway() {
     ReactNativeHost host = new NavigationReactNativeHost(
-      this, isDebug(), createAdditionalReactPackages()) {
+        this, isDebug(), createAdditionalReactPackages()) {
       @Override
       protected String getJSMainModuleName() {
         return "example/index";
@@ -48,10 +49,12 @@ public class MainApplication extends NavigationApplication {
     // @SuppressWarnings("UnnecessaryLocalVariable")
     // List<ReactPackage> packages = new PackageList(this).getPackages();
 
-    List<ReactPackage> packages = new ArrayList<ReactPackage>();
-
     // Packages that cannot be autolinked yet can be added manually here, for
     // example: packages.add(new MyReactNativePackage());
+
+    List<ReactPackage> packages = new ArrayList<>();
+
+    packages.add(new MainReactPackage());
 
     packages.add(new GoogleCastPackage());
 

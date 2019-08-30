@@ -1,9 +1,15 @@
 import React from 'react'
-import { Button, SectionList, SectionListStatic, Text } from 'react-native'
+import {
+  Button,
+  SectionList,
+  SectionListStatic,
+  Text,
+  View,
+} from 'react-native'
 import { NavigationScreenProps } from 'react-navigation'
 import { MediaInfo, MediaMetadata, RemoteMediaClient } from '../../../lib'
 
-type FormatItem = {
+interface FormatItem {
   title: string
   mediaInfo: MediaInfo
 }
@@ -16,12 +22,14 @@ export default function Formats(props: Props) {
   return (
     <FormatList
       renderItem={({ item }) => (
-        <Button
-          key={item.title}
-          testID={item.title}
-          onPress={() => cast(item)}
-          title={item.title}
-        />
+        <View style={{ paddingVertical: 5, paddingHorizontal: 20 }}>
+          <Button
+            key={item.title}
+            testID={item.title}
+            onPress={() => cast(item)}
+            title={item.title}
+          />
+        </View>
       )}
       renderSectionHeader={({ section: { title } }) => (
         <Text style={{ fontWeight: 'bold' }}>{title}</Text>

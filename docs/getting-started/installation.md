@@ -22,7 +22,7 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
 - Setup your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
-- Add `pod 'google-cast-sdk', '4.3.0'` to your `Podfile`.
+- Add `pod 'google-cast-sdk', '4.3.0'` to your `Podfile`. (⚠️ Make sure you're using Google Cast SDK version `4.3.0` until the [duplicate symbol issue](https://issuetracker.google.com/issues/113069508) is fixed)
 
 - Add `pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'` to your `Podfile`
 
@@ -56,7 +56,16 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
    ```java
    dependencies {
+     ...
+
      implementation project(':react-native-google-cast')
+
+     implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
+   }
+
+   // you also need to have this helper defined
+   def safeExtGet(prop, fallback) {
+     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
    }
    ```
 
