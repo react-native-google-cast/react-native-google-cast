@@ -12,6 +12,7 @@ import com.google.android.gms.cast.framework.media.ImagePicker;
 import com.google.android.gms.cast.framework.media.MediaIntentReceiver;
 import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.google.android.gms.common.images.WebImage;
+import com.reactnative.googlecast.components.GoogleCastExpandedControlsActivity;
 
 import java.util.Arrays;
 import java.util.List;

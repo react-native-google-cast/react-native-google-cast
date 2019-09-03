@@ -4,15 +4,17 @@
 
 This library wraps the native Google Cast SDK v4 for Android and iOS, providing a unified JavaScript interface.
 
+It is written in TypeScript so types will always be up-to-date.
+
 > Migration to v4 is a work in progress. If some functionality does not exist yet, please open a ticket or make a pull request :)
 
 ## Version overview
 
-| RNGC | React Native | Purpose                                                                                                                                            |
-| ---- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.x  | <=0.59       | Old version implemented for Google Cast SDK v2 with manual discoverability. Not maintained anymore.                                                |
-| 3.x  | <=0.59*      | Rewrite of the library for Google Cast SDK v3 with automatic session management. Only bug fixes will be merged.                                    |
-| 4.x  | >=0.60*      | Current version with a completely rewritten API, closely resembling native Android/iOS(/web?) APIs. We highly recommend to use the latest version. |
+| RNGC | React Native | Purpose                                                                                                                                               |
+| ---- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.x  | Not sure :)  | Old version implemented for Google Cast SDK v2 with manual discoverability. Not maintained anymore.                                                   |
+| 3.x  | >=0.40       | Rewrite of the library for Google Cast SDK v3 with automatic session management. Only bug fixes will be merged.                                       |
+| 4.x  | >=0.60*      | Current version with a completely rewritten API, closely resembling native Android/iOS(/Chrome?) APIs. We highly recommend to use the latest version. |
 
 \* While v4.x is built with the latest changes in RN 0.60 (auto-linking, AndroidX, CocoaPods), you might still be able to use it with an older RN version by using [jetifier](https://github.com/mikehardy/jetifier#usage-for-source-files) (and vice versa for 3.x)
 

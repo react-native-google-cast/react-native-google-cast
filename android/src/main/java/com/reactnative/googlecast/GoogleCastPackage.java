@@ -5,7 +5,10 @@ import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
+import com.reactnative.googlecast.api.RNGCCastContext;
+import com.reactnative.googlecast.api.RNGCCastSession;
 import com.reactnative.googlecast.api.RNGCRemoteMediaClient;
+import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +21,8 @@ public class GoogleCastPackage implements ReactPackage {
   createNativeModules(ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
 
-    modules.add(new GoogleCastModule(reactContext));
+    modules.add(new RNGCCastContext(reactContext));
+    modules.add(new RNGCCastSession(reactContext));
     modules.add(new RNGCRemoteMediaClient(reactContext));
 
     return modules;
@@ -33,7 +37,7 @@ public class GoogleCastPackage implements ReactPackage {
   createViewManagers(ReactApplicationContext reactContext) {
     List<ViewManager> managers = new ArrayList<>();
 
-    managers.add(new GoogleCastButtonManager());
+    managers.add(new RNGoogleCastButtonManager());
 
     return managers;
   }

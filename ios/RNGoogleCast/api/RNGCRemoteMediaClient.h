@@ -8,5 +8,20 @@ static NSString *const MEDIA_PLAYBACK_STARTED =
 static NSString *const MEDIA_PLAYBACK_ENDED = @"GoogleCast:MediaPlaybackEnded";
 
 @interface RNGCRemoteMediaClient
-    : RCTEventEmitter <RCTBridgeModule, GCKRemoteMediaClientListener>
+    : RCTEventEmitter <GCKRemoteMediaClientListener>
+
++ (RNGCRemoteMediaClient)initWithClient:(GCKRemoteMediaClient)client;
+
++ constantsToExport = @{
+  @"MEDIA_STATUS_UPDATED" : MEDIA_STATUS_UPDATED,
+  @"MEDIA_PLAYBACK_STARTED" : MEDIA_PLAYBACK_STARTED,
+  @"MEDIA_PLAYBACK_ENDED" : MEDIA_PLAYBACK_ENDED,
+};
+
++ supportedEvents = @[
+  MEDIA_STATUS_UPDATED,
+  MEDIA_PLAYBACK_STARTED,
+  MEDIA_PLAYBACK_ENDED,
+];
+
 @end

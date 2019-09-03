@@ -40,14 +40,15 @@ export default function Formats(props: Props) {
           data: [
             {
               title: 'BMP',
-              mediaInfo: new MediaInfo({
+              mediaInfo: {
                 contentId:
                   'http://eeweb.poly.edu/~yao/EL5123/image/lena_gray.bmp',
                 contentType: 'image/bmp',
-                metadata: new MediaMetadata.Photo({
+                metadata: {
+                  type: 'photo',
                   title: 'BMP image',
-                }),
-              }),
+                },
+              },
             },
             {
               title: 'PNG',
@@ -55,9 +56,10 @@ export default function Formats(props: Props) {
                 contentId:
                   'https://sample-videos.com/img/Sample-png-image-500kb.png',
                 contentType: 'image/png',
-                metadata: new MediaMetadata.Photo({
+                metadata: {
+                  type: 'photo',
                   title: 'PNG image',
-                }),
+                },
               },
             },
           ],
@@ -67,12 +69,13 @@ export default function Formats(props: Props) {
           data: [
             {
               title: 'MP4',
-              mediaInfo: new MediaInfo({
+              mediaInfo: {
                 contentId:
                   'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
                 contentType: 'application/mp4',
                 streamDuration: 596,
-                metadata: new MediaMetadata.Movie({
+                metadata: {
+                  type: 'movie',
                   images: [
                     {
                       height: 1000,
@@ -86,8 +89,8 @@ export default function Formats(props: Props) {
                     'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
                   studio: 'Blender Foundation',
                   releaseDate: '2008-04-10',
-                }),
-              }),
+                },
+              },
             },
           ],
         },
@@ -96,7 +99,6 @@ export default function Formats(props: Props) {
           data: [
             {
               title: 'DASH',
-              // can also pass a simple object
               mediaInfo: {
                 contentId:
                   'http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-manifest.mpd',
@@ -105,10 +107,10 @@ export default function Formats(props: Props) {
             },
             {
               title: 'HLS',
-              mediaInfo: new MediaInfo({
+              mediaInfo: {
                 contentId: 'https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8',
                 contentType: 'application/x-mpegURL',
-              }),
+              },
             },
           ],
         },
@@ -119,7 +121,8 @@ export default function Formats(props: Props) {
 }
 
 function cast(item: FormatItem) {
-  RemoteMediaClient.loadMedia(item.mediaInfo, { autoplay: true })
+  RemoteMediaClient.getCurrent()
+    .loadMedia(item.mediaInfo, { autoplay: true })
     .then(console.log)
     .catch(console.warn)
 }

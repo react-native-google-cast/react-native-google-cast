@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native'
-import MediaInfo from './MediaInfo'
-import MediaLoadOptions from './MediaLoadOptions'
+import MediaInfo from '../types/MediaInfo'
+import MediaLoadOptions from '../types/MediaLoadOptions'
 
 const { RNGCRemoteMediaClient: Native } = NativeModules
 
@@ -18,6 +18,10 @@ const { RNGCRemoteMediaClient: Native } = NativeModules
  * @see [RemotePlayer]{@link https://developers.google.com/cast/docs/reference/chrome/cast.framework.RemotePlayer} (Chrome)
  */
 export default class RemoteMediaClient {
+  static getCurrent(): RemoteMediaClient {
+    return new RemoteMediaClient()
+  }
+
   // mediaQueue: MediaQueue
   // mediaStatus: MediaStatus
 
@@ -36,7 +40,7 @@ export default class RemoteMediaClient {
    * )
    * ```
    */
-  static loadMedia(
+  loadMedia(
     mediaInfo: MediaInfo,
     mediaLoadOptions?: MediaLoadOptions
   ): Promise<void> {
@@ -50,7 +54,7 @@ export default class RemoteMediaClient {
    *
    * @param customData Custom application-specific data to pass along with the request.
    */
-  static pause(customData: object): Promise<void> {
+  pause(customData?: object): Promise<void> {
     return Native.pause(customData)
   }
 
@@ -61,7 +65,7 @@ export default class RemoteMediaClient {
    *
    * @param customData Custom application-specific data to pass along with the request.
    */
-  static play(customData: object): Promise<void> {
+  play(customData?: object): Promise<void> {
     return Native.play(customData)
   }
 
@@ -69,7 +73,7 @@ export default class RemoteMediaClient {
    * Seeks to a new position within the current media item.
    * The request will fail if there is no current media status.
    */
-  static seek(options: {
+  seek(options: {
     /** Custom application-specific data to pass along with the request. */
     customData?: object
     /** The time interval by which to seek. */
@@ -88,10 +92,7 @@ export default class RemoteMediaClient {
    * @param playbackRate The new playback rate, which must be between `0.5` and `2.0`. The normal rate is `1.0`.
    * @param customData Custom application-specific data to pass along with the request.
    */
-  static setPlaybackRate(
-    playbackRate: number,
-    customData: object
-  ): Promise<void> {
+  setPlaybackRate(playbackRate: number, customData?: object): Promise<void> {
     return Native.setPlaybackRate(playbackRate, customData)
   }
 
@@ -103,7 +104,7 @@ export default class RemoteMediaClient {
    * @param muted Whether the stream should be muted or unmuted.
    * @param customData Custom application-specific data to pass along with the request.
    */
-  static setStreamMuted(muted: boolean, customData: object): Promise<void> {
+  setStreamMuted(muted: boolean, customData?: object): Promise<void> {
     return Native.setStreamMuted(muted, customData)
   }
 
@@ -114,7 +115,7 @@ export default class RemoteMediaClient {
    *
    * @param customData Custom application-specific data to pass along with the request.
    */
-  static stop(customData: object): Promise<void> {
+  stop(customData?: object): Promise<void> {
     return Native.stop(customData)
   }
 }

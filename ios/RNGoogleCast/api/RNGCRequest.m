@@ -35,6 +35,23 @@
 
 - (void)request:(GCKRequest *)request
     didAbortWithReason:(GCKRequestAbortReason)abortReason {
+  NSString *message;
+  
+  switch (abortReason) {
+    case GCKRequestAbortReasonReplaced:
+      message = @"The request was aborted because a similar and overridding request was initiated.";
+      break;
+      
+    case GCKRequestAbortReasonCancelled:
+      message = @"The request was aborted because it was cancelled.";
+      break;
+      
+    default:
+      message = @"The request was aborted.";
+      break;
+  }
+  
+  reject(message, message, nil);
 }
 
 @end

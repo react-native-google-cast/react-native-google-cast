@@ -1,27 +1,22 @@
 #import "RNGCRemoteMediaClient.h"
-#import "RCTConvert+GCKMediaInformation.m"
-#import "RCTConvert+GCKMediaLoadOptions.m"
-#import "RCTConvert+GCKMediaStatus.m"
 #import "RNGCRequest.h"
+#import "../types/RCTConvert+GCKMediaInformation.m"
+#import "../types/RCTConvert+GCKMediaLoadOptions.m"
+#import "../types/RCTConvert+GCKMediaStatus.m"
 #import <Foundation/Foundation.h>
 
 @implementation RNGCRemoteMediaClient {
+  GCKRemoteMediaClient *client;
   NSUInteger currentItemID;
-  bool hasListeners;
   bool playbackStarted;
   bool playbackEnded;
 }
 
-@synthesize bridge = _bridge;
-
-RCT_EXPORT_MODULE();
-
-- (NSArray<NSString *> *)supportedEvents {
-  return @[
-    MEDIA_STATUS_UPDATED,
-    MEDIA_PLAYBACK_STARTED,
-    MEDIA_PLAYBACK_ENDED,
-  ];
+- (instancetype)initWithClient:(GCKRemoteMediaClient *)client {
+  if (self = [super init]) {
+    self->client = client;
+  }
+  return self;
 }
 
 - (void)getClientElseReject:(RCTPromiseRejectBlock)reject {
@@ -51,58 +46,43 @@ RCT_EXPORT_METHOD(loadMedia
                   : (NSDictionary *)options resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
                   : (RCTPromiseRejectBlock)reject) {
+
   GCKMediaInformation *mediaInfo = [RCTConvert GCKMediaInformation:media];
   GCKMediaLoadOptions *loadOptions = [RCTConvert GCKMediaLoadOptions:options];
 
-  [self withClientResolve:resolve
-                   reject:reject
-                  perform:^(GCKRemoteMediaClient *client) {
-                    return [client loadMedia:mediaInfo withOptions:loadOptions];
-                  }];
+  [RNGCRequest promisifyRequest:[client loadMedia:mediaInfo withOptions:loadOptions] resolve:resolve reject:reject];
 }
 
 RCT_EXPORT_METHOD(play
                   : (NSDictionary *)customData resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
                   : (RCTPromiseRejectBlock)reject) {
-  [self withClientResolve:resolve
-                   reject:reject
-                  perform:^(GCKRemoteMediaClient *client) {
-                    return [client playWithCustomData:customData];
-                  }];
+  
+  [RNGCRequest promisifyRequest:[client playWithCustomData:customData] resolve:resolve reject:reject];
 }
 
 RCT_EXPORT_METHOD(pause
                   : (NSDictionary *)customData resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
                   : (RCTPromiseRejectBlock)reject) {
-  [self withClientResolve:resolve
-                   reject:reject
-                  perform:^(GCKRemoteMediaClient *client) {
-                    return [client pauseWithCustomData:customData];
-                  }];
+
+  [RNGCRequest promisifyRequest:[client pauseWithCustomData:customData] resolve:resolve reject:reject];
 }
 
 RCT_EXPORT_METHOD(stop
                   : (NSDictionary *)customData resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
                   : (RCTPromiseRejectBlock)reject) {
-  [self withClientResolve:resolve
-                   reject:reject
-                  perform:^(GCKRemoteMediaClient *client) {
-                    return [client stopWithCustomData:customData];
-                  }];
+  
+  [RNGCRequest promisifyRequest:[client stopWithCustomData:customData] resolve:resolve reject:reject];
 }
 
 RCT_EXPORT_METHOD(seek
                   : (GCKMediaSeekOptions *)options resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
                   : (RCTPromiseRejectBlock)reject) {
-  [self withClientResolve:resolve
-                   reject:reject
-                  perform:^(GCKRemoteMediaClient *client) {
-                    return [client seekWithOptions:options];
-                  }];
+
+  [RNGCRequest promisifyRequest:[client seekWithOptions:options] resolve:resolve reject:reject];
 }
 
 RCT_EXPORT_METHOD(setPlaybackRate
@@ -110,12 +90,9 @@ RCT_EXPORT_METHOD(setPlaybackRate
                   : (NSDictionary *)customData
                   : (RCTPromiseResolveBlock)resolve rejecter
                   : (RCTPromiseRejectBlock)reject) {
-  [self withClientResolve:resolve
-                   reject:reject
-                  perform:^(GCKRemoteMediaClient *client) {
-                    return [client setPlaybackRate:playbackRate
-                                        customData:customData];
-                  }];
+
+  [RNGCRequest promisifyRequest:[client setPlaybackRate:playbackRate
+                                             customData:customData] resolve:resolve reject:reject];
 }
 
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client

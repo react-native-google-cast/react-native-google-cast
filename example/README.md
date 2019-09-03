@@ -6,7 +6,7 @@ The aim of this app is to be analogous to the [CastVideos sample apps](https://d
 
 Please note that this project uses `package.json` from the parent folder to simplify developing the library while testing it on this example project. If you use `react-native-google-cast` in your own project, please follow instructions in the main [README](../README.md), and understand that the location of your `package.json` will be different than in this example project.
 
-In addition, this example project demonstrates how to use react-native-google-cast with:
+In addition, this example project demonstrates how to set up and use react-native-google-cast with:
 
 - [react-native-navigation](https://wix.github.io/react-native-navigation)
 - [react-native-video](https://github.com/react-native-community/react-native-video)
@@ -25,4 +25,5 @@ From the **root** of `react-native-google-cast`:
 
 #### Android
 
+- run `npx jetify` to ensure dependencies are updated to AndroidX
 - in Android Studio open `example/android/` folder and run from there
