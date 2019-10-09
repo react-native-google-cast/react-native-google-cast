@@ -19,6 +19,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaLoadRequestData;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -122,13 +123,20 @@ public class GoogleCastModule
 
                 Integer seconds = null;
                 if (params.hasKey("playPosition")) {
-                    seconds = params.getInt("playPosition");
-                }
-                if (seconds == null) {
-                    seconds = 0;
+                    try {
+                        seconds = params.getInt("playPosition");
+                    } catch (Exception ignore) {}
                 }
 
-                remoteMediaClient.load(buildMediaInfo(params), true, seconds * 1000);
+                MediaLoadRequestData.Builder builder = new MediaLoadRequestData.Builder();
+                builder
+                        .setAutoplay(true)
+                        .setMediaInfo(buildMediaInfo(params));
+
+                if (seconds != null) {
+                    builder.setCurrentTime(seconds * 1000);
+                }
+                remoteMediaClient.load(builder.build());
 
                 Log.e(REACT_CLASS, "Casting media... ");
             }
@@ -136,38 +144,66 @@ public class GoogleCastModule
     }
 
     private MediaInfo buildMediaInfo(ReadableMap params) {
-        MediaMetadata movieMetadata =
-                new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+
+        int mediaType = MediaMetadata.MEDIA_TYPE_MOVIE;
+        if (params.hasKey("mediaType")) {
+            mediaType = params.getInt("mediaType");
+        }
+
+        MediaMetadata metaData = new MediaMetadata(mediaType);
 
         if (params.hasKey("title") && params.getString("title") != null) {
-            movieMetadata.putString(MediaMetadata.KEY_TITLE,
+            metaData.putString(MediaMetadata.KEY_TITLE,
                     params.getString("title"));
         }
 
         if (params.hasKey("subtitle") && params.getString("subtitle") != null) {
-            movieMetadata.putString(MediaMetadata.KEY_SUBTITLE,
+            metaData.putString(MediaMetadata.KEY_SUBTITLE,
                     params.getString("subtitle"));
         }
 
         if (params.hasKey("studio") && params.getString("studio") != null) {
-            movieMetadata.putString(MediaMetadata.KEY_STUDIO,
+            metaData.putString(MediaMetadata.KEY_STUDIO,
                     params.getString("studio"));
         }
 
         if (params.hasKey("imageUrl") && params.getString("imageUrl") != null) {
-            movieMetadata.addImage(
+            metaData.addImage(
                     new WebImage(Uri.parse(params.getString("imageUrl"))));
         }
 
         if (params.hasKey("posterUrl") && params.getString("posterUrl") != null) {
-            movieMetadata.addImage(
+            metaData.addImage(
                     new WebImage(Uri.parse(params.getString("posterUrl"))));
         }
 
+        // The section duration in milliseconds.
+        if (params.hasKey("sectionDuration")) {
+            try {
+                int value = params.getInt("sectionDuration");
+                metaData.putTimeMillis(MediaMetadata.KEY_SECTION_DURATION, value);
+            } catch (Exception ignore) {}
+        }
+
+        // For live content, this field can be used to specify the absolute section start time.
+        // The value is in Epoch time in milliseconds.
+        if (params.hasKey("sectionStartAbsoluteTime")) {
+            try {
+                // ReadableMap does not support long yet, use workaround
+                long value = (long) params.getDouble("sectionStartAbsoluteTime");
+                metaData.putTimeMillis(MediaMetadata.KEY_SECTION_START_ABSOLUTE_TIME, value);
+            } catch (Exception ignore) {}
+        }
+
+
+        int streamType = MediaInfo.STREAM_TYPE_BUFFERED;
+        if (params.hasKey("streamType")) {
+            streamType = params.getInt("streamType");
+        }
         MediaInfo.Builder builder =
                 new MediaInfo.Builder(params.getString("mediaUrl"))
-                        .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                        .setMetadata(movieMetadata);
+                        .setStreamType(streamType)
+                        .setMetadata(metaData);
 
         if (params.hasKey("contentType") &&
                 params.getString("contentType") != null) {
