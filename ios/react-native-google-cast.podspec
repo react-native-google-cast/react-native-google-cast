@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.license       = package['license']
   s.platforms     = { :ios => "9.0", :tvos => "11.0" }
 
-  s.source        = { :git => 'https://github.com/tadaam-tv/react-native-google-cast.git' }
+  s.source        = { :git => 'https://github.com/tadaam-tv/react-native-google-cast.git', :tag => s.version }
   s.source_files  = 'ios/RNGoogleCast/**/*.{h,m}'
 
   s.dependency     'React'

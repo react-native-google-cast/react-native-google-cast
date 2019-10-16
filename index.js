@@ -9,6 +9,10 @@ import {
 
 const { RNGoogleCast: GoogleCast } = NativeModules
 
+// Mock if not supported (ex. tvOS, Web)
+if (!GoogleCast) {
+  GoogleCast = {};
+}
 import CastButton from './CastButton'
 export { CastButton }
 
