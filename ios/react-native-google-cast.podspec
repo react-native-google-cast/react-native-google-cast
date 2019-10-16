@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
   s.source        = { :git => 'https://github.com/tadaam-tv/react-native-google-cast.git' }
   s.source_files  = 'ios/RNGoogleCast/**/*.{h,m}'
 
-  s.dependency      'React'
-  s.dependency      'google-cast-sdk', '>= 3'
+  s.dependency     'React'
+  s.ios.dependency 'google-cast-sdk', '>= 3'
 end
