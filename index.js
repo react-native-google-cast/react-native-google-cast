@@ -7,12 +7,12 @@ import {
   Platform,
 } from 'react-native'
 
-const { RNGoogleCast: GoogleCast } = NativeModules
-
-// Mock if not supported (ex. tvOS, Web)
+let { RNGoogleCast: GoogleCast } = NativeModules;
+// // Mock if not supported (ex. tvOS, Web)
 if (!GoogleCast) {
   GoogleCast = {};
 }
+
 import CastButton from './CastButton'
 export { CastButton }
 
