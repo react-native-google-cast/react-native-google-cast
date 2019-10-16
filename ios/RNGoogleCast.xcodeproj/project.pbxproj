@@ -10,22 +10,10 @@
 		911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE484201C8E8200474413 /* RNGoogleCast.m */; };
 		911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */; };
 		91B564E22278EF3000ECA9FE /* RNGoogleCastButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B564E12278EF3000ECA9FE /* RNGoogleCastButton.m */; };
-		B50887B52357410E00742BFF /* RNGoogleCast.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE484201C8E8200474413 /* RNGoogleCast.m */; };
-		B50887B62357410E00742BFF /* RNGoogleCastButtonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */; };
-		B50887B72357410E00742BFF /* RNGoogleCastButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B564E12278EF3000ECA9FE /* RNGoogleCastButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		58B511D91A9E6C8500147676 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B50887B92357410E00742BFF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -43,18 +31,10 @@
 		911BE486201C8E8700474413 /* RNGoogleCastButtonManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButtonManager.m; sourceTree = "<group>"; };
 		91B564E02278EF3000ECA9FE /* RNGoogleCastButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleCastButton.h; sourceTree = "<group>"; };
 		91B564E12278EF3000ECA9FE /* RNGoogleCastButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleCastButton.m; sourceTree = "<group>"; };
-		B50887BD2357410E00742BFF /* libRNGoogleCast-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libRNGoogleCast-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		58B511D81A9E6C8500147676 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B50887B82357410E00742BFF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -77,7 +57,6 @@
 			children = (
 				911BE482201C8E5700474413 /* RNGoogleCast */,
 				134814211AA4EA7D00B7C361 /* Products */,
-				B50887BD2357410E00742BFF /* libRNGoogleCast-tvOS.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -113,23 +92,6 @@
 			productReference = 134814201AA4EA6300B7C361 /* libRNGoogleCast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B50887B32357410E00742BFF /* RNGoogleCast-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B50887BA2357410E00742BFF /* Build configuration list for PBXNativeTarget "RNGoogleCast-tvOS" */;
-			buildPhases = (
-				B50887B42357410E00742BFF /* Sources */,
-				B50887B82357410E00742BFF /* Frameworks */,
-				B50887B92357410E00742BFF /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "RNGoogleCast-tvOS";
-			productName = RCTDataManager;
-			productReference = B50887BD2357410E00742BFF /* libRNGoogleCast-tvOS.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -158,7 +120,6 @@
 			projectRoot = "";
 			targets = (
 				58B511DA1A9E6C8500147676 /* RNGoogleCast */,
-				B50887B32357410E00742BFF /* RNGoogleCast-tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -171,16 +132,6 @@
 				911BE485201C8E8200474413 /* RNGoogleCast.m in Sources */,
 				911BE487201C8E8700474413 /* RNGoogleCastButtonManager.m in Sources */,
 				91B564E22278EF3000ECA9FE /* RNGoogleCastButton.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B50887B42357410E00742BFF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B50887B52357410E00742BFF /* RNGoogleCast.m in Sources */,
-				B50887B62357410E00742BFF /* RNGoogleCastButtonManager.m in Sources */,
-				B50887B72357410E00742BFF /* RNGoogleCastButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,40 +244,6 @@
 			};
 			name = Release;
 		};
-		B50887BB2357410E00742BFF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios/Pods/google-cast-sdk/**";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native/React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../../../ios/Pods/google-cast-sdk/**",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		B50887BC2357410E00742BFF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios/Pods/google-cast-sdk/**";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native/React/**",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../../../ios/Pods/google-cast-sdk/**",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -344,15 +261,6 @@
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,
 				58B511F11A9E6C8500147676 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B50887BA2357410E00742BFF /* Build configuration list for PBXNativeTarget "RNGoogleCast-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B50887BB2357410E00742BFF /* Debug */,
-				B50887BC2357410E00742BFF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
