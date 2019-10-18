@@ -28,20 +28,19 @@ public class GoogleCastButtonManager
 
   @Override
   public MediaRouteButton createViewInstance(ThemedReactContext context) {
-    CastContext castContext = CastContext.getSharedInstance(context);
-
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
     CastButtonFactory.setUpMediaRouteButton(context, button);
-
-    updateButtonState(button, castContext.getCastState());
-
-    castContext.addCastStateListener(new CastStateListener() {
-      @Override
-      public void onCastStateChanged(int newState) {
-        GoogleCastButtonManager.this.updateButtonState(button, newState);
-      }
-    });
-
+    try {
+      CastContext castContext = CastContext.getSharedInstance(context);
+      updateButtonState(button, castContext.getCastState());
+      castContext.addCastStateListener(new CastStateListener() {
+        @Override
+        public void onCastStateChanged(int newState) {
+          GoogleCastButtonManager.this.updateButtonState(button, newState);
+        }
+      });
+    } catch (Exception ignore) {
+    }
     return button;
   }
 

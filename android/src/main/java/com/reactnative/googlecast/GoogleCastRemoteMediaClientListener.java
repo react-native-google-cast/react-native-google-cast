@@ -14,7 +14,7 @@ public class GoogleCastRemoteMediaClientListener
   private boolean playbackEnded;
   private int currentItemId;
 
-  public GoogleCastRemoteMediaClientListener(GoogleCastModule module) {
+  GoogleCastRemoteMediaClientListener(GoogleCastModule module) {
     this.module = module;
   }
 

@@ -248,9 +248,13 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                CastContext castContext =
-                        CastContext.getSharedInstance(getReactApplicationContext());
-                promise.resolve(castContext.getCastState() - 1);
+                try {
+                    CastContext castContext =
+                            CastContext.getSharedInstance(getReactApplicationContext());
+                    promise.resolve(castContext.getCastState() - 1);
+                } catch (Exception e) {
+                    promise.reject(e);
+                }
             }
         });
     }
@@ -363,11 +367,15 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.endCurrentSession(stopCasting);
-                promise.resolve(true);
+                try {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.endCurrentSession(stopCasting);
+                    promise.resolve(true);
+                } catch (Exception e) {
+                    promise.reject(e);
+                }
             }
         });
     }
@@ -390,11 +398,14 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.addSessionManagerListener(mSessionManagerListener,
-                        CastSession.class);
+                try {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.addSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+                } catch (Exception ignore) {
+                }
             }
         });
     }
@@ -404,11 +415,14 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.removeSessionManagerListener(mSessionManagerListener,
-                        CastSession.class);
+                try {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.removeSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+                } catch (Exception ignore) {
+                }
             }
         });
     }
@@ -417,15 +431,15 @@ public class GoogleCastModule
     public void onHostDestroy() {
     }
 
-    protected void setCastSession(CastSession castSession) {
+    void setCastSession(CastSession castSession) {
         this.mCastSession = castSession;
     }
 
-    protected CastSession getCastSession() {
+    CastSession getCastSession() {
         return mCastSession;
     }
 
-    protected void runOnUiQueueThread(Runnable runnable) {
+    void runOnUiQueueThread(Runnable runnable) {
         getReactApplicationContext().runOnUiQueueThread(runnable);
     }
 }
