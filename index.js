@@ -92,6 +92,9 @@ export default {
   sendMessage(namespace: string, message: string) {
     return GoogleCast.sendMessage(message, namespace)
   },
+  showCastPicker(){
+    GoogleCast.showCastPicker()
+  },
 
   // TODO use the same native event interface instead of hacking it here
   EventEmitter:

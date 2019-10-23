@@ -28,6 +28,7 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.WebImage;
+import com.reactnative.googlecast.GoogleCastButtonManager;
 
 import org.json.JSONObject;
 import java.io.IOException;
@@ -103,6 +104,17 @@ public class GoogleCastModule
         getReactApplicationContext()
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, params);
+    }
+
+    @ReactMethod
+    public void showCastPicker() {
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                GoogleCastButtonManager.getGoogleCastButtonManagerInstance().performClick();
+                Log.e(REACT_CLASS, "showCastPicker... ");
+            }
+        });
     }
 
     @ReactMethod
