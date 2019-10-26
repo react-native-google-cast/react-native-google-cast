@@ -254,6 +254,7 @@ GoogleCast.castMedia({
 - `GoogleCast.play()`
 - `GoogleCast.pause()`
 - `GoogleCast.seek(playPosition)` - jump to position in seconds from the beginning of the stream
+- `GoogleCast.setVolume(volume)`
 - `GoogleCast.stop()`
 - `GoogleCast.endSession(stopCasting)`
 - `GoogleCast.initChannel('urn:x-cast:...')` - initialize custom channel for communication with Cast receiver app. Once you do this, you can subscribe to `CHANNEL_*` events.
@@ -336,7 +337,11 @@ options.physicalVolumeButtonsWillControlDeviceVolume = YES; // add this row
 [GCKCastContext setSharedInstanceWithOptions:options];
 ```
 
-Programmatic access to the volume will be added in a future version.
+You can also change the volume with
+
+```js
+GoogleCast.setVolume(volume)
+```
 
 ## Events
 
