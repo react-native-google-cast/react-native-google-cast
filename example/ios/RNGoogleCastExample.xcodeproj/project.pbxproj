@@ -12,6 +12,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		91455C242364EDB300DFD613 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91455C232364EDB300DFD613 /* JavaScriptCore.framework */; };
 		E3FF67D6334435E9D6C7F3E2 /* libPods-RNGoogleCastExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15678DB1BAEAB66C2AA6DB58 /* libPods-RNGoogleCastExample.a */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		15678DB1BAEAB66C2AA6DB58 /* libPods-RNGoogleCastExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNGoogleCastExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8961E1462A1038BD2B371D4F /* Pods-RNGoogleCastExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNGoogleCastExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-RNGoogleCastExample/Pods-RNGoogleCastExample.release.xcconfig"; sourceTree = "<group>"; };
+		91455C232364EDB300DFD613 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EB12080B5F3DB098D4108ACF /* Pods-RNGoogleCastExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNGoogleCastExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNGoogleCastExample/Pods-RNGoogleCastExample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -55,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91455C242364EDB300DFD613 /* JavaScriptCore.framework in Frameworks */,
 				E3FF67D6334435E9D6C7F3E2 /* libPods-RNGoogleCastExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +108,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				91455C232364EDB300DFD613 /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				15678DB1BAEAB66C2AA6DB58 /* libPods-RNGoogleCastExample.a */,
 			);
@@ -164,7 +168,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				186D4759C2ED822017913682 /* [CP] Embed Pods Frameworks */,
+				072D6B6A39DEBD67E2B4BE3F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -195,6 +199,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -243,26 +248,24 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		186D4759C2ED822017913682 /* [CP] Embed Pods Frameworks */ = {
+		072D6B6A39DEBD67E2B4BE3F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-RNGoogleCastExample/Pods-RNGoogleCastExample-frameworks.sh",
-				"${PODS_ROOT}/google-cast-sdk/GoogleCastSDK-Public-3.5.6-Release/GoogleCast.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-RNGoogleCastExample/Pods-RNGoogleCastExample-resources.sh",
+				"${PODS_ROOT}/google-cast-sdk-no-bluetooth/GoogleCastSDK-ios-4.4.5_static/GoogleCast.framework/GoogleCastCoreResources.bundle",
+				"${PODS_ROOT}/google-cast-sdk-no-bluetooth/GoogleCastSDK-ios-4.4.5_static/GoogleCast.framework/GoogleCastUIResources.bundle",
 			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleCast.framework",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleCastCoreResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleCastUIResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RNGoogleCastExample/Pods-RNGoogleCastExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RNGoogleCastExample/Pods-RNGoogleCastExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C13BD0203F0F6B023E34B36B /* [CP] Check Pods Manifest.lock */ = {
