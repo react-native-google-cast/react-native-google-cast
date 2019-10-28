@@ -15,19 +15,19 @@ declare module 'react-native-google-cast' {
     | 'Connecting'
     | 'Connected'
 
-  export type CastOptions = Partial<{
-    title: string
-    subtitle: string
-    studio: string
-    imageUrl: string
-    posterUrl: string
-    isLive: boolean
+  export type CastOptions = {
+    title?: string
+    subtitle?: string
+    studio?: string
+    imageUrl?: string
+    posterUrl?: string
+    isLive?: boolean
     mediaUrl: string
-    contentType: string
-    customData: any
-    streamDuration: number
-    textTrackStyle: TextTrackStyle
-  }>
+    contentType?: string
+    customData?: any
+    streamDuration?: number
+    textTrackStyle?: TextTrackStyle
+  }
 
   export type TextTrackStyle = Partial<{
     backgroundColor: string
@@ -53,7 +53,7 @@ declare module 'react-native-google-cast' {
   const GoogleCast: {
     getCastDevice(): Promise<CastDevice>
     getCastState(): Promise<CastState>
-    castMedia(options?: CastOptions): void
+    castMedia(options: CastOptions): void
     endSession(stopCast?: boolean): Promise<boolean>
     play(): void
     pause(): void
