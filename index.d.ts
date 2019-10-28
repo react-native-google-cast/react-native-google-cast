@@ -29,12 +29,12 @@ declare module 'react-native-google-cast' {
     textTrackStyle?: TextTrackStyle
   }
 
-  export type TextTrackStyle = Partial<{
-    backgroundColor: string
-    edgeColor: string
-    edgeType: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised'
-    fontFamily: string
-    fontGenericFamily:
+  export type TextTrackStyle = {
+    backgroundColor?: string
+    edgeColor?: string
+    edgeType?: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised'
+    fontFamily?: string
+    fontGenericFamily?:
       | 'casual'
       | 'cursive'
       | 'monoSansSerif'
@@ -42,13 +42,13 @@ declare module 'react-native-google-cast' {
       | 'sansSerif'
       | 'serif'
       | 'smallCaps'
-    fontScale: number
-    fontStyle: 'bold' | 'boldItalic' | 'italic' | 'normal'
-    foregroundColor: string
-    windowColor: string
-    windowCornerRadius: number
-    windowType: 'none' | 'normal' | 'rounded'
-  }>
+    fontScale?: number
+    fontStyle?: 'bold' | 'boldItalic' | 'italic' | 'normal'
+    foregroundColor?: string
+    windowColor?: string
+    windowCornerRadius?: number
+    windowType? 'none' | 'normal' | 'rounded'
+  }
 
   const GoogleCast: {
     getCastDevice(): Promise<CastDevice>
