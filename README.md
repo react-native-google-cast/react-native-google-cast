@@ -259,6 +259,7 @@ GoogleCast.castMedia({
 - `GoogleCast.endSession(stopCasting)`
 - `GoogleCast.initChannel('urn:x-cast:...')` - initialize custom channel for communication with Cast receiver app. Once you do this, you can subscribe to `CHANNEL_*` events.
 - `GoogleCast.sendMessage('urn:x-cast:...', message)` - send message over the custom channel
+- `GoogleCast.showCastPicker()` - Custom method to manually pop the cast options picker. Not needed if you implement the button.
 
 ## Components
 
