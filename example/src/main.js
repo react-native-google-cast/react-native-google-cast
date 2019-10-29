@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Text,
   View,
-  DeviceEventEmitter,
   Platform,
   ToolbarAndroid,
   TouchableOpacity,
@@ -165,7 +164,6 @@ class Main extends React.Component {
     const channel = 'urn:x-cast:com.reactnative.googlecast.example'
 
     GoogleCast.initChannel(channel).then(() => {
-      debugger
       GoogleCast.sendMessage(channel, JSON.stringify({ message: 'Hello' }))
     })
   }

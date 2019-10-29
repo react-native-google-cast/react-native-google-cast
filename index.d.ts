@@ -1,6 +1,6 @@
 declare module 'react-native-google-cast' {
   import * as React from 'react'
-  import { EventEmitter } from 'react-native'
+  import { EventEmitter, ViewProps } from 'react-native'
 
   export type CastDevice = {
     id: string
@@ -47,7 +47,7 @@ declare module 'react-native-google-cast' {
     foregroundColor?: string
     windowColor?: string
     windowCornerRadius?: number
-    windowType? 'none' | 'normal' | 'rounded'
+    windowType?: 'none' | 'normal' | 'rounded'
   }
 
   const GoogleCast: {
@@ -62,6 +62,8 @@ declare module 'react-native-google-cast' {
     launchExpandedControls(): void
     initChannel(channel: string): Promise<boolean>
     sendMessage(message: string, namespace: string): Promise<boolean>
+    showCastPicker(): void
+    toggleSubtitles(enabled: boolean, languageCode?: string): Promise<void>
     EventEmitter: EventEmitter
     SESSION_STARTING: string
     SESSION_STARTED: string
@@ -80,5 +82,5 @@ declare module 'react-native-google-cast' {
 
   export default GoogleCast
 
-  export const CastButton: React.ComponentType<any>
+  export class CastButton extends React.Component<ViewProps> {}
 }
