@@ -3,6 +3,7 @@
   "version": "3.2.0",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "start": "react-native start"
   },

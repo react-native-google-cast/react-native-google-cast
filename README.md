@@ -259,6 +259,7 @@ GoogleCast.castMedia({
 - `GoogleCast.endSession(stopCasting)`
 - `GoogleCast.initChannel('urn:x-cast:...')` - initialize custom channel for communication with Cast receiver app. Once you do this, you can subscribe to `CHANNEL_*` events.
 - `GoogleCast.sendMessage('urn:x-cast:...', message)` - send message over the custom channel
+- `GoogleCast.showCastPicker()` - Custom method to manually pop the cast options picker. Not needed if you implement the button.
 - `GoogleCast.toggleSubtitles(enabled, languageCode)` **Android Only**
   * Enables/Disables closed captions for the video. Enabling subtitles only results in them showing if the stream contains a caption track in the requested language.
   * Param: `enabled` - Required. True to enable, False to disable capions

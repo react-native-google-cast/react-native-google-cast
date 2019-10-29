@@ -118,6 +118,9 @@ export default {
   sendMessage(namespace: string, message: string) {
     return GoogleCast.sendMessage(message, namespace)
   },
+  showCastPicker(){
+    GoogleCast.showCastPicker()
+  },
 
   /**
    * Enable/disable subtitles, optionally selecting a preferred subtitle language.
