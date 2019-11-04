@@ -3,7 +3,7 @@ import MediaRepeatMode from './MediaRepeatMode'
 /**
  * Options for loading media queue items with {@link RemoteMediaClient}.
  *
- * @see [Android]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/MediaLoadOptions} | [iOS]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_load_options} | [Chrome]{@link https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.LoadRequest}
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaLoadOptions) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_load_options) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.LoadRequest)
  */
 export default interface MediaQueueLoadOptions {
   /**  The custom application-specific data to pass along with the load request. */

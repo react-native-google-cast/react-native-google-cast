@@ -13,21 +13,13 @@
     "noEmitHelpers": true,
     "noImplicitReturns": true,
     "paths": {
-      "react-native-google-cast": ["."]
+      "react-native-google-cast": ["./lib"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "es6",
-    "typeRoots": ["./node_modules/@types", "lib/index.ts"]
-  },
-  "typedocOptions": {
-    "include": ["lib"],
-    // "includeDeclarations": true,
-    "mode": "modules",
-    "mdDocusaurus": true,
-    "theme": "markdown",
-    "out": "docs/api"
+    "typeRoots": ["./node_modules/@types", "lib"]
   },
   "exclude": ["./node_modules", "**/__tests__/*"],
   "include": ["./lib"]

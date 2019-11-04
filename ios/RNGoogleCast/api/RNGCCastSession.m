@@ -15,6 +15,10 @@
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
 - (NSDictionary *)constantsToExport {
   return @{
     @"CHANNEL_CONNECTED" : CHANNEL_CONNECTED,
@@ -51,8 +55,8 @@ RCT_EXPORT_METHOD(initChannel: (NSString *)namespace) {
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKGenericChannel *channel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     //    channel.delegate = self;
-    channels[namespace] = channel;
-    [castSession addChannel:channel];
+    self->channels[namespace] = channel;
+    [self->castSession addChannel:channel];
   });
 }
 

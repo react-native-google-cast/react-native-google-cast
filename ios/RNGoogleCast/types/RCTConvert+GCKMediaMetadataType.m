@@ -25,7 +25,7 @@ RCT_ENUM_CONVERTER(GCKMediaMetadataType, (@{
   case GCKMediaMetadataTypeTVShow:
     return @"tvShow";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

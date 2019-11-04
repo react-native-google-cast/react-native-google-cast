@@ -5,8 +5,7 @@ import WebImage from './WebImage'
  *
  * You will typically want to use one of the subtypes, based on the type of media.
  *
- * @see [MediaMetadata]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/MediaMetadata} (Android)
- * @see [GCKMediaMetadata]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_metadata} (iOS)
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaMetadata) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_metadata) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.MediaMetadata)
  */
 export default interface MediaMetadata {
   /** List of images, e.g. a poster image, album cover, photo etc. */
@@ -28,7 +27,7 @@ export default interface MediaMetadata {
  * }
  * ```
  */
-interface MediaMetadataGeneric extends MediaMetadata {
+export interface Generic extends MediaMetadata {
   /** The name of the artist who created the media. */
   artist?: string
 
@@ -57,7 +56,7 @@ interface MediaMetadataGeneric extends MediaMetadata {
  * }
  * ```
  */
-interface MediaMetadataMovie extends MediaMetadata {
+export interface Movie extends MediaMetadata {
   /** Media type. */
   type: 'movie'
 
@@ -86,7 +85,7 @@ interface MediaMetadataMovie extends MediaMetadata {
  * }
  * ```
  */
-interface MediaMetadataMusicTrack extends MediaMetadata {
+export interface MusicTrack extends MediaMetadata {
   /** The name of the artist who produced an album. For example, in compilation albums such as DJ mixes, the album artist is not necessarily the same as the artist(s) of the individual songs on the album. */
   albumArtist?: string
 
@@ -126,7 +125,7 @@ interface MediaMetadataMusicTrack extends MediaMetadata {
  * }
  * ```
  */
-interface MediaMetadataPhoto extends MediaMetadata {
+export interface Photo extends MediaMetadata {
   /** The name of the photographer. */
   artist?: string
 
@@ -170,7 +169,7 @@ interface MediaMetadataPhoto extends MediaMetadata {
  * }
  * ```
  */
-interface MediaMetadataTvShow extends MediaMetadata {
+export interface TvShow extends MediaMetadata {
   /** The value is the date and/or time at which the TV show episode was first aired, in ISO-8601 format. */
   broadcastDate?: string
 
@@ -193,10 +192,20 @@ interface MediaMetadataTvShow extends MediaMetadata {
   title?: string
 }
 
-export {
-  MediaMetadataGeneric as Generic,
-  MediaMetadataMovie as Movie,
-  MediaMetadataMusicTrack as MusicTrack,
-  MediaMetadataPhoto as Photo,
-  MediaMetadataTvShow as TvShow,
+/**
+ * Custom media metadata.
+ *
+ * @example
+ * ```ts
+ * {
+ *   type: 'user',
+ *   mykey: 'My Value',
+ * }
+ * ```
+ */
+export interface User extends MediaMetadata {
+  /** Media type. */
+  type: 'user'
+
+  [key: string]: any
 }

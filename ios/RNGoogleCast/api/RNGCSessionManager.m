@@ -7,6 +7,38 @@
   RNGCRemoteMediaClient *client;
 }
 
+RCT_EXPORT_MODULE()
+
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
+- (NSDictionary *)constantsToExport {
+  return @{
+    @"SESSION_STARTING" : SESSION_STARTING,
+    @"SESSION_STARTED" : SESSION_STARTED,
+    @"SESSION_START_FAILED" : SESSION_START_FAILED,
+    @"SESSION_SUSPENDED" : SESSION_SUSPENDED,
+    @"SESSION_RESUMING" : SESSION_RESUMING,
+    @"SESSION_RESUMED" : SESSION_RESUMED,
+    @"SESSION_ENDING" : SESSION_ENDING,
+    @"SESSION_ENDED" : SESSION_ENDED,
+  };
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+  return @[
+    SESSION_STARTING,
+    SESSION_STARTED,
+    SESSION_START_FAILED,
+    SESSION_SUSPENDED,
+    SESSION_RESUMING,
+    SESSION_RESUMED,
+    SESSION_ENDING,
+    SESSION_ENDED,
+  ];
+}
+
 RCT_EXPORT_METHOD(endSession
                   : (BOOL)stopCasting resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
@@ -26,22 +58,23 @@ RCT_EXPORT_METHOD(endSession
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willStartCastSession:(GCKCastSession *)session {
-  [module sendEventWithName:SESSION_STARTING body:@{}];
+  [self sendEventWithName:SESSION_STARTING body:@{}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didStartCastSession:(GCKCastSession *)session {
   castSession = session;
-  client = [[RNGCRemoteMediaClient alloc] initWithClient:session.remoteMediaClient];
-  [session.remoteMediaClient addListener:client];
-  [module sendEventWithName:SESSION_STARTED body:@{}];
+  //  client = [[RNGCRemoteMediaClient alloc]
+  //  initWithClient:session.remoteMediaClient]; [session.remoteMediaClient
+  //  addListener:client];
+  [self sendEventWithName:SESSION_STARTED body:@{}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didFailToStartCastSession:(GCKCastSession *)session
                     withError:(NSError *)error {
-  [module sendEventWithName:SESSION_START_FAILED
-                       body:@{@"error" : [error localizedDescription]}];
+  [self sendEventWithName:SESSION_START_FAILED
+                     body:@{@"error" : [error localizedDescription]}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
@@ -49,26 +82,26 @@ RCT_EXPORT_METHOD(endSession
                withReason:(GCKConnectionSuspendReason)reason {
   castSession = nil;
   [session.remoteMediaClient removeListener:client];
-  [module sendEventWithName:SESSION_SUSPENDED body:@{}];
+  [self sendEventWithName:SESSION_SUSPENDED body:@{}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willResumeCastSession:(GCKCastSession *)session {
-  [module sendEventWithName:SESSION_RESUMING body:@{}];
+  [self sendEventWithName:SESSION_RESUMING body:@{}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didResumeCastSession:(GCKCastSession *)session {
   castSession = session;
   [session.remoteMediaClient addListener:client];
-  [module sendEventWithName:SESSION_RESUMED body:@{}];
+  [self sendEventWithName:SESSION_RESUMED body:@{}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willEndCastSession:(GCKCastSession *)session {
   castSession = nil;
   [session.remoteMediaClient removeListener:client];
-  [module sendEventWithName:SESSION_ENDING body:@{}];
+  [self sendEventWithName:SESSION_ENDING body:@{}];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
@@ -78,7 +111,7 @@ RCT_EXPORT_METHOD(endSession
   if (error) {
     body[@"error"] = [error localizedDescription];
   }
-  [module sendEventWithName:SESSION_ENDED body:body];
+  [self sendEventWithName:SESSION_ENDED body:body];
 }
 
 @end

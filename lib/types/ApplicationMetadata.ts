@@ -3,7 +3,7 @@ import WebImage from './WebImage'
 /**
  * Information about a receiver application.
  *
- * @see [Android]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/ApplicationMetadata} | [iOS]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_application_metadata} | [Chrome]{@link https://developers.google.com/cast/docs/reference/chrome/cast.framework.ApplicationMetadata}
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/ApplicationMetadata) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_application_metadata) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.ApplicationMetadata)
  */
 export default interface ApplicationMetadata {
   /** The application's unique ID. This is the one registered in the Google Cast SDK Developer Console. */

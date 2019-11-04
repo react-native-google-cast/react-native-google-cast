@@ -16,7 +16,7 @@ RCT_ENUM_CONVERTER(GCKMediaResumeState, (@{
   case GCKMediaResumeStatePause:
     return @"pause";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

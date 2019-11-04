@@ -25,7 +25,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackSubtype, (@{
   case GCKMediaTextTrackSubtypeSubtitles:
     return @"subtitles";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

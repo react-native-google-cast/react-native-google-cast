@@ -26,7 +26,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackStyleEdgeType, (@{
   case GCKMediaTextTrackStyleEdgeTypeRaised:
     return @"raised";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

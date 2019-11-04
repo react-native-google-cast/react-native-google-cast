@@ -12,7 +12,7 @@
   case GCKStandbyStatusUnknown:
     return @"unknown";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

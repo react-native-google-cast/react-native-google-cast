@@ -19,7 +19,7 @@ RCT_ENUM_CONVERTER(GCKMediaStreamType, (@{
   case GCKMediaStreamTypeNone:
     return @"none";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

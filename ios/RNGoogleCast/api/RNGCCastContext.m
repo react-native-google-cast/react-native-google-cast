@@ -9,8 +9,6 @@
 
 @implementation RNGCCastContext {
   bool hasListeners;
-  NSMutableDictionary *channels;
-  GCKCastSession *castSession;
 }
 
 @synthesize bridge = _bridge;
@@ -21,29 +19,27 @@ RCT_EXPORT_MODULE();
   return NO;
 }
 
-- (NSDictionary *)constantsToExport {
-  NSMutableDictionary<NSString *, NSString *>* constants = [NSMutableDictionary new];
-  
-  for (NSString* key in RNGCSessionManager.constantsToExport) {
-    [constants setValue:RNGCSessionManager.constantsToExport[key] forKey:key];
+- (instancetype)init {
+  if (self = [super init]) {
+    [[NSNotificationCenter defaultCenter]
+      addObserver:self
+         selector:@selector(castDeviceDidChange:)
+             name:kGCKCastStateDidChangeNotification
+           object:[GCKCastContext sharedInstance]];
   }
-  
-  return constants;
+  return self;
+}
+
+- (NSDictionary *)constantsToExport {
+  return @{
+    @"CAST_STATE_CHANGED": CAST_STATE_CHANGED
+  };
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-  NSArray<NSString *> *events = @[];
-  
-  events = [events arrayByAddingObjectsFromArray:RNGCSessionManager.supportedEvents];
-  
-  return events;
-}
-
-- (instancetype)init {
-  if (self = [super init]) {
-    channels = [[NSMutableDictionary alloc] init];
-  }
-  return self;
+  return @[
+    CAST_STATE_CHANGED
+  ];
 }
 
 // Will be called when this module's first listener is added.
@@ -74,16 +70,42 @@ RCT_REMAP_METHOD(getCastState,
   });
 }
 
-RCT_EXPORT_METHOD(launchExpandedControls) {
+RCT_REMAP_METHOD(showCastDialog,
+                 showCastDialogWithResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
   dispatch_async(dispatch_get_main_queue(), ^{
-    [GCKCastContext.sharedInstance presentDefaultExpandedMediaControls];
+    [GCKCastContext.sharedInstance presentCastDialog];
+    resolve(@(YES));
   });
 }
 
-RCT_EXPORT_METHOD(showIntroductoryOverlay) {
+RCT_REMAP_METHOD(showExpandedControls,
+                 showExpandedControlsWithResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
   dispatch_async(dispatch_get_main_queue(), ^{
-    [GCKCastContext.sharedInstance presentCastInstructionsViewControllerOnce];
+    [GCKCastContext.sharedInstance presentDefaultExpandedMediaControls];
+    resolve(@(YES));
   });
+}
+
+RCT_EXPORT_METHOD(showIntroductoryOverlay:(id)options
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (!options[@"once"]) {
+      [GCKCastContext.sharedInstance clearCastInstructionsShownFlag];
+    }
+    
+    resolve(@([GCKCastContext.sharedInstance presentCastInstructionsViewControllerOnce]));
+  });
+}
+
+- (void)castDeviceDidChange:(NSNotification *)notification {
+  if (!hasListeners) return;
+
+  GCKCastState state = [GCKCastContext sharedInstance].castState;
+  [self sendEventWithName:CAST_STATE_CHANGED
+                     body:[RCTConvert fromGCKCastState:state]];
 }
 
 @end

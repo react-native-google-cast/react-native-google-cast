@@ -12,7 +12,7 @@
   case GCKActiveInputStatusUnknown:
     return @"unknown";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

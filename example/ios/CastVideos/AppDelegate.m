@@ -17,9 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  NSURL *jsCodeLocation;
-
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings]
+  NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings]
       jsBundleURLForBundleRoot:@"example/index"
               fallbackResource:nil];
 

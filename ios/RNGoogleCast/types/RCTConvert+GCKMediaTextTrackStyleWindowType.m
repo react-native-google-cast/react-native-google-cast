@@ -21,7 +21,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackStyleWindowType, (@{
   case GCKMediaTextTrackStyleWindowTypeRoundedCorners:
     return @"rounded";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

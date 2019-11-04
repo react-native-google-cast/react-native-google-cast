@@ -22,7 +22,7 @@ RCT_ENUM_CONVERTER(GCKCastState, (@{
   case GCKCastStateNoDevicesAvailable:
     return @"noDevicesAvailable";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

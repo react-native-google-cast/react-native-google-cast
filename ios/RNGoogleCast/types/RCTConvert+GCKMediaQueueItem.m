@@ -4,11 +4,19 @@
 
 @implementation RCTConvert (GCKMediaQueueItem)
 
++ (NSArray<GCKMediaQueueItem *> *)GCKMediaQueueItemArray:(id)json {
+  NSMutableArray<GCKMediaQueueItem *> *items = [[NSMutableArray alloc] init];
+  for (id item in json) {
+    [items addObject:[RCTConvert GCKMediaQueueItem:item]];
+  }
+  return items;
+}
+
 + (GCKMediaQueueItem *)GCKMediaQueueItem:(id)json {
   GCKMediaQueueItemBuilder *builder = [[GCKMediaQueueItemBuilder alloc] init];
 
   if (json[@"activeTrackIds"]) {
-    NSMutableArray<NSNumber *> *tracks;
+    NSMutableArray<NSNumber *> *tracks = [[NSMutableArray alloc] init];
     for (id track in json[@"activeTrackIds"]) {
       [tracks addObject:[RCTConvert NSNumber:track]];
     }
@@ -25,19 +33,19 @@
   
   if (json[@"mediaInfo"]) {
     builder.mediaInformation =
-    [RCTConvert fromGCKMediaInformation:json[@"mediaInfo"]];
+    [RCTConvert GCKMediaInformation:json[@"mediaInfo"]];
   }
 
   if (json[@"playbackDuration"]) {
-    builder.playbackDuration = [RCTConvert double:json[@"playbackDuration"]];
+    builder.playbackDuration = [RCTConvert NSTimeInterval:json[@"playbackDuration"]];
   }
 
   if (json[@"preloadTime"]) {
-    builder.preloadTime = [RCTConvert double:json[@"preloadTime"]];
+    builder.preloadTime = [RCTConvert NSTimeInterval:json[@"preloadTime"]];
   }
 
   if (json[@"startTime"]) {
-    builder.startTime = [RCTConvert double:json[@"startTime"]];
+    builder.startTime = [RCTConvert NSTimeInterval:json[@"startTime"]];
   }
 
   return [builder build];
@@ -50,18 +58,26 @@
 
   json[@"autoplay"] = @(item.autoplay);
 
-  json[@"customData"] = item.customData;
+  json[@"customData"] = item.customData ?: [NSNull null];
 
-  json[@"itemId"] = @(item.itemID);
+  if (item.itemID != kGCKMediaQueueInvalidItemID) {
+    json[@"itemId"] = @(item.itemID);
+  }
   
   json[@"mediaInfo"] =
   [RCTConvert fromGCKMediaInformation:item.mediaInformation];
 
-  json[@"playbackDuration"] = @(item.playbackDuration);
+  if (!isinf(item.playbackDuration)) {
+    json[@"playbackDuration"] = @(item.playbackDuration);
+  }
 
-  json[@"preloadTime"] = @(item.preloadTime);
+  if (!isnan(item.preloadTime)) {
+    json[@"preloadTime"] = @(item.preloadTime);
+  }
 
-  json[@"startTime"] = @(item.startTime);
+  if (!isnan(item.startTime)) {
+    json[@"startTime"] = @(item.startTime);
+  }
 
   return json;
 }

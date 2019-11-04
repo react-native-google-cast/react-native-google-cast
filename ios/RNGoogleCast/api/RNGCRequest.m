@@ -30,7 +30,7 @@
 }
 
 - (void)request:(GCKRequest *)request didFailWithError:(GCKError *)error {
-  reject([error localizedDescription], [error localizedDescription], error);
+  reject([error localizedDescription], [error localizedFailureReason], error);
 }
 
 - (void)request:(GCKRequest *)request

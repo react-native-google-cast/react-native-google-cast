@@ -22,7 +22,7 @@ RCT_ENUM_CONVERTER(GCKMediaPlayerIdleReason, (@{
   case GCKMediaPlayerIdleReasonInterrupted:
     return @"interrupted";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

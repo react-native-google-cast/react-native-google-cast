@@ -9,8 +9,13 @@
 @implementation RCTConvert (GCKMediaInformation)
 
 + (GCKMediaInformation *)GCKMediaInformation:(id)json {
-  GCKMediaInformationBuilder *builder =
-      [[GCKMediaInformationBuilder alloc] initWithContentID:json[@"contentId"]];
+  GCKMediaInformationBuilder *builder;
+  
+  #if GCK_VERSION_IS_AT_LEAST(4, 3, 4)
+    builder = [[GCKMediaInformationBuilder alloc] initWithContentURL:[NSURL URLWithString:json[@"contentUrl"]]];
+  #else
+    builder = [[GCKMediaInformationBuilder alloc] initWithContentID:json[@"contentUrl"]];
+  #endif
 
 //  if (json[@"adBreakClips"]) {
 //    NSMutableArray<GCKAdBreakClipInfo *> *adBreakClips;
@@ -21,7 +26,7 @@
 //  }
   
   if (json[@"adBreaks"]) {
-    NSMutableArray<GCKAdBreakInfo *> *adBreaks;
+    NSMutableArray<GCKAdBreakInfo *> *adBreaks = [[NSMutableArray alloc] init];
     for (id adBreak in json[@"adBreaks"]) {
       [adBreaks addObject:[RCTConvert GCKAdBreakInfo:adBreak]];
     }
@@ -33,7 +38,7 @@
   }
   
   if (json[@"customData"]) {
-    builder.customData = json[@"customData"];
+    builder.customData = [RCTConvert id:json[@"customData"]];
   }
   
   if (json[@"entity"]) {
@@ -41,7 +46,7 @@
   }
   
   if (json[@"mediaTracks"]) {
-    NSMutableArray<GCKMediaTrack *> *mediaTracks;
+    NSMutableArray<GCKMediaTrack *> *mediaTracks = [[NSMutableArray alloc] init];
     for (id track in json[@"mediaTracks"]) {
       [mediaTracks addObject:[RCTConvert GCKMediaTrack:track]];
     }
@@ -53,7 +58,7 @@
   }
   
   if (json[@"streamDuration"]) {
-    builder.streamDuration = [RCTConvert double:json[@"streamDuration"]] * 1000;
+    builder.streamDuration = [RCTConvert NSTimeInterval:json[@"streamDuration"]] * 1000;
   }
   
   if (json[@"streamType"]) {
@@ -70,29 +75,29 @@
 + (id)fromGCKMediaInformation:(GCKMediaInformation *)info {
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
-  NSMutableArray<id> *adBreakClips;
+  NSMutableArray<id> *adBreakClips = [[NSMutableArray alloc] init];
   for (GCKAdBreakClipInfo *clip in info.adBreakClips) {
     [adBreakClips addObject:[RCTConvert fromGCKAdBreakClipInfo:clip]];
   };
   json[@"adBreakClips"] = adBreakClips;
   
-  NSMutableArray<id> *adBreaks;
+  NSMutableArray<id> *adBreaks = [[NSMutableArray alloc] init];
   for (GCKAdBreakInfo *adBreak in info.adBreaks) {
     [adBreaks addObject:[RCTConvert fromGCKAdBreakInfo:adBreak]];
   };
   json[@"adBreaks"] = adBreaks;
   
-  json[@"contentId"] = info.contentID;
+  json[@"contentId"] = info.contentID ?: [NSNull null];
 
-  // TODO in 4.3.4 json[@"contentURL"] = info.contentURL
+  json[@"contentUrl"] = info.contentURL ?: [NSNull null];
   
-  json[@"customData"] = info.customData;
+  json[@"customData"] = info.customData ?: [NSNull null];
 
-  json[@"contentType"] = info.contentType;
+  json[@"contentType"] = info.contentType ?: [NSNull null];
 
-  json[@"entity"] = info.entity;
+  json[@"entity"] = info.entity ?: [NSNull null];
 
-  NSMutableArray<id> *mediaTracks;
+  NSMutableArray<id> *mediaTracks = [[NSMutableArray alloc] init];
   for (GCKMediaTrack *track in info.mediaTracks) {
     [mediaTracks addObject:[RCTConvert fromGCKMediaTrack:track]];
   };
@@ -100,7 +105,9 @@
   
   json[@"metadata"] = [RCTConvert fromGCKMediaMetadata:info.metadata];
 
-  json[@"streamDuration"] = @(info.streamDuration);
+  if (!isinf(info.streamDuration)) {
+    json[@"streamDuration"] = @(info.streamDuration);
+  }
 
   json[@"streamType"] = [RCTConvert fromGCKMediaStreamType:info.streamType];
   

@@ -88,3 +88,8 @@ sidebar_label: Setup
   ```
 
   This works if you're extending `ReactActivity` (or `NavigationActivity` if you're using react-native-navigation). If you're extending a different activity, make sure it is a descendant of `androidx.appcompat.app.AppCompatActivity`.
+
+
+## Chrome
+
+Not supported yet

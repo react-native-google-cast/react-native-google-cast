@@ -21,6 +21,11 @@ public class RNGoogleCastButtonManager
 
   public static final String REACT_CLASS = "RNGoogleCastButton";
   private Integer mColor = null;
+  private static MediaRouteButton currentInstance;
+
+  public static MediaRouteButton getCurrent() {
+    return currentInstance;
+  }
 
   @Override
   public String getName() {
@@ -33,6 +38,8 @@ public class RNGoogleCastButtonManager
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
     CastButtonFactory.setUpMediaRouteButton(context, button);
+
+    currentInstance = button;
 
     updateButtonState(button, castContext.getCastState());
 

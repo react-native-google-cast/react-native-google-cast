@@ -25,7 +25,7 @@ RCT_ENUM_CONVERTER(GCKMediaPlayerState, (@{
   case GCKMediaPlayerStatePlaying:
     return @"playing";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

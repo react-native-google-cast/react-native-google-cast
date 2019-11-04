@@ -12,7 +12,7 @@
 + (id)fromGCKImage:(GCKImage *)image {
   return @{
     @"height" : @(image.height),
-    @"url" : image.URL,
+    @"url" : [image.URL absoluteString],
     @"width" : @(image.width),
   };
 }

@@ -62,13 +62,13 @@
   return @{
     @"backgroundColor" : [RCTConvert fromGCKColor:style.backgroundColor],
     
-    @"customData" : style.customData,
+    @"customData" : style.customData ?: [NSNull null],
     
     @"edgeColor" : [RCTConvert fromGCKColor:style.edgeColor],
     
     @"edgeType" : [RCTConvert fromGCKMediaTextTrackStyleEdgeType:style.edgeType],
     
-    @"fontFamily" : style.fontFamily,
+    @"fontFamily" : style.fontFamily ?: [NSNull null],
     
     @"fontGenericFamily" : [RCTConvert fromGCKMediaTextTrackStyleFontGenericFamily:style.fontGenericFamily],
     

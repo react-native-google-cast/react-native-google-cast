@@ -7,9 +7,7 @@
  *
  * Colors are represented as strings “#RRGGBBAA” where XX are the two hexadecimal symbols that represent the 0-255 value for the specific channel/color. It follows CSS 8-digit hex color notation (See http://dev.w3.org/csswg/css-color/#hex-notation).
  *
- * @see [Android]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/TextTrackStyle}
- * @see [iOS]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_text_track_style}
- * @see [Chrome]{@link https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.TextTrackStyle}
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/TextTrackStyle) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_text_track_style) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.TextTrackStyle)
  */
 export default interface TextTrackStyle {
   /** Background RGBA color, represented as "#RRGGBBAA". The alpha channel should be used for transparent backgrounds. */

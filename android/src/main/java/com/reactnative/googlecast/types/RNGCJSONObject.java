@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 
-final class RNGCJSONObject {
+public class RNGCJSONObject {
   public static JSONObject fromJson(final ReadableMap json) {
     return new JSONObject(json.toHashMap());
   }

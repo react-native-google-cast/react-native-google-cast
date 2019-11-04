@@ -1,0 +1,10 @@
+{
+  "exclude": "**/*.test.ts",
+  "hideBreadcrumbs": true,
+  "hideSources": true,
+  "ignoreCompilerErrors": true,
+  "mode": "file",
+  "platform": "docusaurus",
+  "readme": "none",
+  "theme": "markdown"
+}

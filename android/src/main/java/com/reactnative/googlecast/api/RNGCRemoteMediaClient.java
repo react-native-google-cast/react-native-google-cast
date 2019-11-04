@@ -1,7 +1,6 @@
 package com.reactnative.googlecast.api;
 
 import androidx.annotation.Nullable;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -15,8 +14,11 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.reactnative.googlecast.types.RNGCJSONObject;
 import com.reactnative.googlecast.types.RNGCMediaInfo;
 import com.reactnative.googlecast.types.RNGCMediaLoadOptions;
+import com.reactnative.googlecast.types.RNGCMediaQueueItem;
+import com.reactnative.googlecast.types.RNGCMediaSeekOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -100,21 +102,66 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void stop(final Promise promise) {
+  public void
+  queueInsertAndPlayItem(final ReadableMap item, final Integer beforeItemId,
+                         final Integer playPosition,
+                         final ReadableMap customData, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {
-        return client.stop();
+        return client.queueInsertAndPlayItem(
+            RNGCMediaQueueItem.fromJson(item), beforeItemId, playPosition,
+            RNGCJSONObject.fromJson(customData));
       }
     }, promise);
   }
 
   @ReactMethod
-  public void seek(final int position, final Promise promise) {
+  public void seek(final ReadableMap options, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {
-        return client.seek(position * 1000);
+        return client.seek(RNGCMediaSeekOptions.fromJson(options));
+      }
+    }, promise);
+  }
+
+  @ReactMethod
+  public void setPlaybackRate(final double playbackRate, final ReadableMap customData, final Promise promise) {
+    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        return client.setPlaybackRate(playbackRate, RNGCJSONObject.fromJson(customData));
+      }
+    }, promise);
+  }
+
+  @ReactMethod
+  public void setStreamMuted(final boolean muted, final ReadableMap customData, final Promise promise) {
+    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        return client.setStreamMute(muted, RNGCJSONObject.fromJson(customData));
+      }
+    }, promise);
+  }
+
+  @ReactMethod
+  public void setStreamVolume(final double volume, final ReadableMap customData, final Promise promise) {
+    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        return client.setStreamVolume(volume, RNGCJSONObject.fromJson(customData));
+      }
+    }, promise);
+  }
+
+  @ReactMethod
+  public void stop(final ReadableMap customData, final Promise promise) {
+    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        return client.stop(RNGCJSONObject.fromJson(customData));
       }
     }, promise);
   }
@@ -123,8 +170,8 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
     @Override
     protected RemoteMediaClient getX() {
       final CastSession castSession = CastContext.getSharedInstance()
-        .getSessionManager()
-        .getCurrentCastSession();
+                                          .getSessionManager()
+                                          .getCurrentCastSession();
 
       if (castSession == null) {
         throw new IllegalStateException(("No castSession!"));

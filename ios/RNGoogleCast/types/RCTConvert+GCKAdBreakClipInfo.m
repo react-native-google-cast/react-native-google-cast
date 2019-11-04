@@ -19,16 +19,16 @@
     @"adBreakClipId" : info.adBreakClipID,
     @"duration" : @(info.duration),
     @"title" : info.title,
-    @"clickThroughUrl" : info.clickThroughURL,
-    @"contentUrl" : info.contentURL,
-    @"mimeType" : info.mimeType,
-    @"contentId" : info.contentID,
-    @"posterUrl" : info.posterURL,
+    @"clickThroughUrl" : info.clickThroughURL ?: [NSNull null],
+    @"contentUrl" : info.contentURL ?: [NSNull null],
+    @"mimeType" : info.mimeType ?: [NSNull null],
+    @"contentId" : info.contentID ?: [NSNull null],
+    @"posterUrl" : info.posterURL ?: [NSNull null],
     @"whenSkippable" : @(info.whenSkippable),
     @"hlsSegmentFormat" :
         [RCTConvert fromGCKHLSSegmentFormat:info.hlsSegmentFormat],
     //    @"vastAdsRequest" : ,
-    @"customData" : info.customData,
+    @"customData" : info.customData ?: [NSNull null],
   };
 }
 

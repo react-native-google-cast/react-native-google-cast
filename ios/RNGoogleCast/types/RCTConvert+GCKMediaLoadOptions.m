@@ -31,7 +31,7 @@
   }
 
   if (json[@"playPosition"]) {
-    options.playPosition = [RCTConvert double:json[@"playPosition"]];
+    options.playPosition = [RCTConvert NSTimeInterval:json[@"playPosition"]];
   }
 
   return options;
@@ -42,11 +42,11 @@
 
   json[@"autoplay"] = @(options.autoplay);
 
-  json[@"credentials"] = options.credentials;
+  json[@"credentials"] = options.credentials ?: [NSNull null];
 
-  json[@"credentialsType"] = options.credentialsType;
+  json[@"credentialsType"] = options.credentialsType ?: [NSNull null];
 
-  json[@"customData"] = options.customData;
+  json[@"customData"] = options.customData ?: [NSNull null];
   
   json[@"playbackRate"] = @(options.playbackRate);
 

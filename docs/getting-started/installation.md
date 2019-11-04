@@ -10,25 +10,47 @@ or
 
 `$ yarn add react-native-google-cast`
 
-## Link package
+**If you're using React Native =>0.60, you're done.** Continue to [Setup](setup.html).
+
+## Link package (React Native <=0.59)
 
 `$ react-native link react-native-google-cast`
 
 Note: This will only link the react-native-google-cast library. You'll still need to add Google Cast SDK using the steps below.
 
-### iOS (CocoaPods)
+### iOS
 
-- Install [CocoaPods](https://cocoapods.org/)
+#### Using CocoaPods
 
-- Setup your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
+_(React Native <=0.59)_ Install [CocoaPods](https://cocoapods.org/) and set up your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
-- Add `pod 'google-cast-sdk', '4.3.0'` to your `Podfile`. (⚠️ Make sure you're using Google Cast SDK version `4.3.0` until the [duplicate symbol issue](https://issuetracker.google.com/issues/113069508) is fixed)
+In your `ios/Podfile`, add **one** of these snippets:
 
-- Add `pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'` to your `Podfile`
+- If targeting [iOS 13 and don't require guest mode](https://developers.google.com/cast/docs/ios_sender/ios13_changes), add
 
-- Run `pod install`
+  ```
+  pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
+  ```
 
-### iOS (Manually)
+- If you need to support guest mode, add
+
+  ```
+  pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'
+  ```
+
+  Note that due to a [duplicate symbol issue](https://issuetracker.google.com/issues/113069508), you have to use version `4.3.0` and not the latest version. Because of that, you might see issues in iOS 13.
+
+- If you want to link the Google Cast SDK manually, add
+
+  ```
+  pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/ios/'
+  ```
+
+  and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup). Note that this option is not explored yet. If you go this route, please let us know how you made it work. :)
+
+Finally, run `pod install`.
+
+#### Manually
 
 - In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
 
@@ -83,3 +105,7 @@ Note: This will only link the react-native-google-cast library. You'll still nee
      }
    }
    ```
+
+### Chrome
+
+Not supported yet

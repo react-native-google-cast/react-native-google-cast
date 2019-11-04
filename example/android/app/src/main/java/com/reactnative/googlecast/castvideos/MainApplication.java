@@ -12,6 +12,8 @@ import com.reactnative.googlecast.GoogleCastPackage;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativenavigation.react.ReactGateway;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +60,10 @@ public class MainApplication extends NavigationApplication {
 
     packages.add(new GoogleCastPackage());
 
-    // This is only here because the example project uses react-native-video.
+    // This is only here because the example project uses these dependencies.
     // You probably don't need this ;-)
+    packages.add(new RNGestureHandlerPackage());
+    packages.add(new ReanimatedPackage());
     packages.add(new ReactVideoPackage());
 
     return packages;

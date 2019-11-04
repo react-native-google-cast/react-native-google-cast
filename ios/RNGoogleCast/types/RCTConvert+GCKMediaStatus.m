@@ -19,9 +19,9 @@
 
   json[@"currentItemId"] = @(status.currentItemID);
   
-  json[@"currentQueueItem"] = [RCTConvert fromGCKMediaQueueItem:status.currentQueueItem];
+//  json[@"currentQueueItem"] = [RCTConvert fromGCKMediaQueueItem:status.currentQueueItem];
   
-  json[@"customData"] = status.customData;
+  json[@"customData"] = status.customData ?: [NSNull null];
 
   json[@"idleReason"] =
   [RCTConvert fromGCKMediaPlayerIdleReason:status.idleReason];
@@ -31,7 +31,7 @@
   json[@"loadingItemId"] = @(status.loadingItemID);
 
   json[@"mediaInfo"] =
-  [RCTConvert fromGCKMediaInformation:status.mediaInformation];
+  status.mediaInformation == nil ? [NSNull null] : [RCTConvert fromGCKMediaInformation:status.mediaInformation];
   
 //  json[@"mediaSessionId"] = @(status.mediaSessionID);
 
@@ -53,12 +53,18 @@
 //  json[@"queueHasPreviousItem"] = @(status.queueHasPreviousItem);
 //
 //  json[@"queueItemCount"] = @(status.queueItemCount);
-//
+  
+  NSMutableArray<id> *queueItems = [[NSMutableArray alloc] init];
+  for (int i = 0; i < status.queueItemCount; i++) {
+    [queueItems addObject:[RCTConvert fromGCKMediaQueueItem:[status queueItemAtIndex:i]]];
+  }
+  json[@"queueItems"] = queueItems;
+
   json[@"queueRepeatMode"] = [RCTConvert fromGCKMediaRepeatMode:status.queueRepeatMode];
 
   json[@"streamPosition"] = @(status.streamPosition);
   
-  json[@"videoInfo"] = [RCTConvert fromGCKVideoInfo:status.videoInfo];
+  json[@"videoInfo"] = status.videoInfo == nil ? [NSNull null] : [RCTConvert fromGCKVideoInfo:status.videoInfo];
 
   json[@"volume"] = @(status.volume);
 

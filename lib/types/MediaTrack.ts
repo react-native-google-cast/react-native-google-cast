@@ -1,7 +1,7 @@
 /**
  * A type that represents a media track, such as a language track or closed caption text track in a video.
  *
- * @see [Android]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/MediaTrack} | [iOS]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_track}
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaTrack) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_track)
  */
 export default interface MediaTrack {
   /** The content ID of the media track. */

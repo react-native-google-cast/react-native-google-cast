@@ -12,24 +12,29 @@ public class RNGCMediaLoadOptions {
     // if (json.hasKey("activeTrackIds")) {
     //   builder.setActiveTrackIds(json.getArray("activeTrackIds").toArrayList());
     // }
+
     if (json.hasKey("autoplay")) {
       builder.setAutoplay(json.getBoolean("autoplay"));
     }
+
     if (json.hasKey("credentials")) {
       builder.setCredentials(json.getString("credentials"));
     }
+
     if (json.hasKey("credentialsType")) {
       builder.setCredentialsType(json.getString("credentialsType"));
     }
-    if (json.hasKey("playPosition")) {
-      builder.setPlayPosition(json.getInt("playPosition"));
+
+    if (json.hasKey("customData")) {
+      builder.setCustomData(RNGCJSONObject.fromJson(json.getMap("customData")));
     }
+
     if (json.hasKey("playbackRate")) {
       builder.setPlaybackRate(json.getDouble("playbackRate"));
     }
-    if (json.hasKey("customData")) {
-      builder.setCustomData(
-          new JSONObject(json.getMap("customData").toHashMap()));
+
+    if (json.hasKey("playPosition")) {
+      builder.setPlayPosition(json.getInt("playPosition"));
     }
 
     return builder.build();

@@ -25,7 +25,7 @@ RCT_ENUM_CONVERTER(GCKHLSSegmentFormat, (@{
   case GCKHLSSegmentFormatTS_AAC:
     return @"TS_AAC";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

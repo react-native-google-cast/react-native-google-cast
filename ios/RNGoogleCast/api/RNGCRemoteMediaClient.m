@@ -1,98 +1,194 @@
 #import "RNGCRemoteMediaClient.h"
-#import "RNGCRequest.h"
 #import "../types/RCTConvert+GCKMediaInformation.m"
 #import "../types/RCTConvert+GCKMediaLoadOptions.m"
 #import "../types/RCTConvert+GCKMediaStatus.m"
+#import "RNGCRequest.h"
 #import <Foundation/Foundation.h>
+#import <PromisesObjC/FBLPromises.h>
 
 @implementation RNGCRemoteMediaClient {
-  GCKRemoteMediaClient *client;
+  NSMutableDictionary *channels;
   NSUInteger currentItemID;
   bool playbackStarted;
   bool playbackEnded;
 }
 
-- (instancetype)initWithClient:(GCKRemoteMediaClient *)client {
+RCT_EXPORT_MODULE()
+
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
+- (NSDictionary *)constantsToExport {
+  return @{
+    @"MEDIA_STATUS_UPDATED" : MEDIA_STATUS_UPDATED,
+    @"MEDIA_PLAYBACK_STARTED" : MEDIA_PLAYBACK_STARTED,
+    @"MEDIA_PLAYBACK_ENDED" : MEDIA_PLAYBACK_ENDED,
+  };
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+  return @[
+    MEDIA_STATUS_UPDATED,
+    MEDIA_PLAYBACK_STARTED,
+    MEDIA_PLAYBACK_ENDED,
+  ];
+}
+
+- (instancetype)init {
   if (self = [super init]) {
-    self->client = client;
+    channels = [[NSMutableDictionary alloc] init];
   }
   return self;
 }
 
-- (void)getClientElseReject:(RCTPromiseRejectBlock)reject {
+- (FBLPromise *)getClient {
+  return [FBLPromise async:^(FBLPromiseFulfillBlock _Nonnull fulfill, FBLPromiseRejectBlock _Nonnull reject) {
+    GCKSession *session =
+        GCKCastContext.sharedInstance.sessionManager.currentSession;
+
+    if (session && session.remoteMediaClient) {
+      fulfill(session.remoteMediaClient);
+    } else {
+      NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
+                                           code:GCKErrorCodeNoMediaSession
+                                       userInfo:nil];
+      reject(error);
+    }
+  }];
 }
 
 - (void)withClientResolve:(RCTPromiseResolveBlock)resolve
-                   reject:(RCTPromiseRejectBlock)reject
-                  perform:
-                      (GCKRequest * (^)(GCKRemoteMediaClient *client))block {
-  GCKSession *session =
-      GCKCastContext.sharedInstance.sessionManager.currentSession;
-
-  if (!session || !session.remoteMediaClient) {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:GCKErrorCodeNoMediaSession
-                                     userInfo:nil];
-    reject(@"no_session", @"No castSession!", error);
-    return;
-  }
-
-  GCKRequest *request = block(session.remoteMediaClient);
-  [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
+      reject:(RCTPromiseRejectBlock)reject
+     perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
+  [[[self getClient] then:^id _Nullable(id  _Nullable client) {
+    resolve(block(client));
+    return nil;
+  }] catch:^(NSError * _Nonnull error) {
+    reject(error.localizedDescription, error.localizedFailureReason, error);
+  }];
 }
 
-RCT_EXPORT_METHOD(loadMedia
-                  : (NSDictionary *)media withOptions
-                  : (NSDictionary *)options resolver
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
-
-  GCKMediaInformation *mediaInfo = [RCTConvert GCKMediaInformation:media];
-  GCKMediaLoadOptions *loadOptions = [RCTConvert GCKMediaLoadOptions:options];
-
-  [RNGCRequest promisifyRequest:[client loadMedia:mediaInfo withOptions:loadOptions] resolve:resolve reject:reject];
+- (void)withClientPromisifyResolve:(RCTPromiseResolveBlock)resolve
+     reject:(RCTPromiseRejectBlock)reject
+    perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
+  [[[self getClient] then:^id _Nullable(id  _Nullable client) {
+    GCKRequest *request = block(client);
+    [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
+    return nil;
+  }] catch:^(NSError * _Nonnull error) {
+    reject(error.localizedDescription, error.localizedFailureReason, error);
+  }];
 }
 
-RCT_EXPORT_METHOD(play
-                  : (NSDictionary *)customData resolver
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_REMAP_METHOD(getMediaStatus,
+                 getMediaStatusResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
   
-  [RNGCRequest promisifyRequest:[client playWithCustomData:customData] resolve:resolve reject:reject];
+  [self withClientResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    GCKMediaStatus *status = [client mediaStatus];
+    return status == nil ? [NSNull null] : [RCTConvert fromGCKMediaStatus:status];
+  }];
 }
 
-RCT_EXPORT_METHOD(pause
-                  : (NSDictionary *)customData resolver
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
 
-  [RNGCRequest promisifyRequest:[client pauseWithCustomData:customData] resolve:resolve reject:reject];
+RCT_EXPORT_METHOD(loadMedia: (GCKMediaInformation *) mediaInfo
+                  withOptions: (GCKMediaLoadOptions *) loadOptions
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client loadMedia:mediaInfo withOptions:loadOptions];
+  }];
 }
 
-RCT_EXPORT_METHOD(stop
-                  : (NSDictionary *)customData resolver
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
-  
-  [RNGCRequest promisifyRequest:[client stopWithCustomData:customData] resolve:resolve reject:reject];
+RCT_EXPORT_METHOD(play: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client playWithCustomData:customData];
+  }];
 }
 
-RCT_EXPORT_METHOD(seek
-                  : (GCKMediaSeekOptions *)options resolver
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(pause: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
 
-  [RNGCRequest promisifyRequest:[client seekWithOptions:options] resolve:resolve reject:reject];
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client pauseWithCustomData:customData];
+  }];
 }
 
-RCT_EXPORT_METHOD(setPlaybackRate
-                  : (float)playbackRate customData
-                  : (NSDictionary *)customData
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(queueInsertAndPlayItem: (GCKMediaQueueItem *) item
+                  beforeItemId: (NSUInteger) beforeItemId
+                  playPosition: (NSTimeInterval) playPosition
+                  customData: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  if (beforeItemId == 0) beforeItemId = kGCKMediaQueueInvalidItemID;
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client queueInsertAndPlayItem:item beforeItemWithID:beforeItemId playPosition:playPosition customData:customData];
+  }];
+}
 
-  [RNGCRequest promisifyRequest:[client setPlaybackRate:playbackRate
-                                             customData:customData] resolve:resolve reject:reject];
+RCT_EXPORT_METHOD(queueInsertItems: (NSArray<GCKMediaQueueItem *> *) items
+                  beforeItemId: (NSUInteger) beforeItemId
+                  customData: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  if (beforeItemId == 0) beforeItemId = kGCKMediaQueueInvalidItemID;
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client queueInsertItems:items beforeItemWithID:beforeItemId customData:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(seek: (GCKMediaSeekOptions *) options
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client seekWithOptions:options];
+  }];
+}
+
+RCT_EXPORT_METHOD(setPlaybackRate: (float) playbackRate
+                  customData: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client setPlaybackRate:playbackRate customData:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(setStreamMuted: (bool) muted
+                  customData: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client setStreamMuted:muted customData:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(setStreamVolume: (float) volume
+                  customData: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client setStreamVolume:volume customData:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client stopWithCustomData:customData];
+  }];
 }
 
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client

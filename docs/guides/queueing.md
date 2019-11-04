@@ -14,19 +14,19 @@ The Cast Receiver SDK maintains the queue and responds to operations on the queu
 
 ## Create and load media queue items
 
-A media queue item is represented in the Cast framework as a [MediaQueueItem](api/MediaQueueItem.md) instance. When you create a media queue item, if you are using the Media Player Library with adaptive content, you can set the preload time so that the player can begin buffering the media queue item before the item ahead of it in the queue finishes playing. Setting the item's autoplay attribute to true allows the receiver to play it automatically. You can create your media queue item as follows:
+A media queue item is represented in the Cast framework as a [MediaQueueItem](../api/interfaces/mediaqueueitem) instance. When you create a media queue item, if you are using the Media Player Library with adaptive content, you can set the preload time so that the player can begin buffering the media queue item before the item ahead of it in the queue finishes playing. Setting the item's autoplay attribute to true allows the receiver to play it automatically. You can create your media queue item as follows:
 
 ```js
-var mediaQueueItem = new MediaQueueItem({
-  mediaInfo: new MediaInfo({
-    contentId: 'https://...',
-  }),
+var mediaQueueItem = {
+  mediaInfo: {
+    contentUrl: 'https://...',
+  },
   autoplay: true,
   preloadTime: 8.0,
-})
+}
 ```
 
-Load an array of media queue items in the queue by using the appropriate queueLoadItems method of the [RemoteMediaClient](api/RemoteMediaClient.md) class.
+Load an array of media queue items in the queue by using the appropriate queueLoadItems method of the [RemoteMediaClient](../api/classes/remotemediaclient) class.
 
 ## Receive media queue status update
 
@@ -44,4 +44,4 @@ Use these members together with the other media status members to inform your ap
 
 ## Edit the queue
 
-To work with the items in the queue, use the queue methods of [RemoteMediaClient](api/RemoteMediaClient.md). you have several APIs. These let you load an array of items into a new queue, insert items into an existing queue, update the properties of items in the queue, make an item jump forward or backward in the queue, set the properties of the queue itself (for example, change the repeatMode that selects the next item), remove items from the queue, and reorder the items in the queue.
+To work with the items in the queue, use the queue methods of [RemoteMediaClient](../api/classes/remotemediaclient). you have several APIs. These let you load an array of items into a new queue, insert items into an existing queue, update the properties of items in the queue, make an item jump forward or backward in the queue, set the properties of the queue itself (for example, change the repeatMode that selects the next item), remove items from the queue, and reorder the items in the queue.

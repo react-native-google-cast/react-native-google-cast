@@ -9,10 +9,10 @@
 + (GCKMediaMetadata *)GCKMediaMetadata:(id)json {
   GCKMediaMetadata *metadata;
 
-  if (json[@"metadataType"]) {
+  if (json[@"type"]) {
     metadata = [[GCKMediaMetadata alloc]
         initWithMetadataType:[RCTConvert
-                                 GCKMediaMetadataType:json[@"metadataType"]]];
+                                 GCKMediaMetadataType:json[@"type"]]];
   } else {
     metadata = [[GCKMediaMetadata alloc] init];
   }
@@ -110,9 +110,9 @@
 + (id)fromGCKMediaMetadata:(GCKMediaMetadata *)metadata {
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
   
-  json[@"metadataType"] = [RCTConvert fromGCKMediaMetadataType:metadata.metadataType];
+  json[@"type"] = [RCTConvert fromGCKMediaMetadataType:metadata.metadataType];
 
-  NSMutableArray<id> *images;
+  NSMutableArray<id> *images = [[NSMutableArray alloc] init];
   for (GCKImage *image in metadata.images) {
     [images addObject:[RCTConvert fromGCKImage:image]];
   };

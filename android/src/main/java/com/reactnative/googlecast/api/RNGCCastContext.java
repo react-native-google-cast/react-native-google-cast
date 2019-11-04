@@ -1,23 +1,28 @@
 package com.reactnative.googlecast.api;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.mediarouter.app.MediaRouteButton;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.reactnative.googlecast.api.RNGCSessionManagerListener;
 import com.reactnative.googlecast.components.GoogleCastExpandedControlsActivity;
+import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
 import com.reactnative.googlecast.types.RNGCCastState;
 
 import java.util.HashMap;
@@ -104,12 +109,59 @@ public class RNGCCastContext
   }
 
   @ReactMethod
-  public void launchExpandedControls() {
+  public void showCastDialog(final Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
+        if (button != null) {
+          button.performClick();
+          promise.resolve(true);
+        } else {
+          promise.resolve(false);
+        }
+      }
+    });
+  }
+
+  @ReactMethod
+  public void showExpandedControls() {
     ReactApplicationContext context = getReactApplicationContext();
     Intent intent =
         new Intent(context, GoogleCastExpandedControlsActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
+  }
+
+  @ReactMethod
+  public void showIntroductoryOverlay(final ReadableMap options, final Promise promise) {
+    final
+    MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
+
+    if ((button != null) && button.getVisibility() == View.VISIBLE) {
+      new Handler().post(new Runnable() {
+        @Override
+        public void run() {
+          IntroductoryOverlay.Builder builder = new IntroductoryOverlay.Builder(getCurrentActivity(), button);
+
+          if (options.getBoolean("once")) {
+            builder.setSingleTime();
+          }
+
+          builder.setOnOverlayDismissedListener(
+            new IntroductoryOverlay.OnOverlayDismissedListener() {
+              @Override
+              public void onOverlayDismissed() {
+                promise.resolve(true);
+              }
+            });
+
+          IntroductoryOverlay overlay = builder.build();
+
+          overlay.show();
+        }
+      });
+    }
   }
 
   private void setupCastListener() {

@@ -14,9 +14,9 @@ public class RNGCMediaMetadata {
 
     MediaMetadata metadata;
 
-    if (json.hasKey("metadataType")) {
+    if (json.hasKey("type")) {
       metadata = new MediaMetadata(
-          RNGCMediaMetadataType.fromJson(json.getString("metadataType")));
+          RNGCMediaMetadataType.fromJson(json.getString("type")));
     } else {
       metadata = new MediaMetadata();
     }
@@ -107,7 +107,7 @@ public class RNGCMediaMetadata {
   public static WritableMap toJson(final MediaMetadata metadata) {
     final WritableMap json = Arguments.createMap();
 
-    json.putString("metadataType", RNGCMediaMetadataType.toJson(
+    json.putString("type", RNGCMediaMetadataType.toJson(
       metadata.getMediaType()));
 
     final WritableArray images = Arguments.createArray();

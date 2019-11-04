@@ -19,7 +19,7 @@ RCT_ENUM_CONVERTER(GCKMediaTrackType, (@{
   case GCKMediaTrackTypeVideo:
     return @"video";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

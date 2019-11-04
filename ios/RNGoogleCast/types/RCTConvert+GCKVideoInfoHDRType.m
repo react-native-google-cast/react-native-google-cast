@@ -19,7 +19,7 @@ RCT_ENUM_CONVERTER(GCKVideoInfoHDRType, (@{
   case GCKVideoInfoHDRTypeSDR:
     return @"SDR";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

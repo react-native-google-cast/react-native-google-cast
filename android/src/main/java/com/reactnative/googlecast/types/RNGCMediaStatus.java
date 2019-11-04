@@ -5,12 +5,13 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.google.android.gms.cast.ApplicationMetadata;
+import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.common.images.WebImage;
 
 public class RNGCMediaStatus {
   public static WritableMap toJson(final MediaStatus status) {
-    final WritableMap json = new WritableNativeMap();
+    final WritableMap json = Arguments.createMap();
 
     json.putInt("currentItemId", status.getCurrentItemId());
 
@@ -35,6 +36,12 @@ public class RNGCMediaStatus {
                    RNGCPlayerState.toJson(status.getPlayerState()));
 
     json.putInt("preloadedItemId", status.getPreloadedItemId());
+
+    final WritableArray queueItems = Arguments.createArray();
+    for (MediaQueueItem item: status.getQueueItems()) {
+      queueItems.pushMap(RNGCMediaQueueItem.toJson(item));
+    }
+    json.putArray("queueItems", queueItems);
 
     json.putString("queueRepeatMode",
                    RNGCMediaRepeatMode.toJson(status.getQueueRepeatMode()));

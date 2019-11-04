@@ -24,7 +24,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackStyleFontStyle, (@{
   case GCKMediaTextTrackStyleFontStyleNormal:
     return @"normal";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

@@ -1,29 +1,32 @@
 import { NativeModules } from 'react-native'
 import MediaInfo from '../types/MediaInfo'
 import MediaLoadOptions from '../types/MediaLoadOptions'
+import MediaQueueItem from '../types/MediaQueueItem'
+import MediaStatus from '../types/MediaStatus'
 
 const { RNGCRemoteMediaClient: Native } = NativeModules
 
-// TODO use the same native event interface instead of hacking it here
-// EventEmitter:
-//   Platform.OS === 'ios'
-//     ? new NativeEventEmitter(GoogleCast)
-//     : DeviceEventEmitter
+// const EventEmitter = new NativeEventEmitter(Native)
 
 /**
  * Class for controlling a media player application running on a Cast receiver.
  *
- * @see [RemoteMediaClient]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient} (Android)
- * @see [GCKRemoteMediaClient]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_remote_media_client} (iOS)
- * @see [RemotePlayer]{@link https://developers.google.com/cast/docs/reference/chrome/cast.framework.RemotePlayer} (Chrome)
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_remote_media_client) _GCKRemoteMediaClient_  | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.RemotePlayer) _RemotePlayer_
  */
 export default class RemoteMediaClient {
   static getCurrent(): RemoteMediaClient {
     return new RemoteMediaClient()
   }
 
-  // mediaQueue: MediaQueue
-  // mediaStatus: MediaStatus
+  // getMediaQueue(): Promise<MediaQueue> {
+  // }
+
+  /**
+   * The current media status, or `null` if there isn't a media session.
+   */
+  getMediaStatus(): Promise<MediaStatus | null> {
+    return Native.getMediaStatus()
+  }
 
   /**
    * Loads and starts playback of a media item or a queue of media items with a request data.
@@ -31,18 +34,18 @@ export default class RemoteMediaClient {
    * @example
    * ```ts
    * RemoteMediaClient.loadMedia(
-   *   new MediaInfo({
-   *     contentId: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
-   *   }),
-   *   new MediaLoadOptions({
+   *   {
+   *     contentUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
+   *   },
+   *   {
    *     autoplay: true,
-   *   })
+   *   }
    * )
    * ```
    */
   loadMedia(
     mediaInfo: MediaInfo,
-    mediaLoadOptions?: MediaLoadOptions
+    mediaLoadOptions: MediaLoadOptions = {}
   ): Promise<void> {
     return Native.loadMedia(mediaInfo, mediaLoadOptions)
   }
@@ -70,18 +73,69 @@ export default class RemoteMediaClient {
   }
 
   /**
+   * Inserts a single item into the queue and starts playing it at the specified position.
+   *
+   * @param item The item to insert.
+   * @param beforeItemId The ID of the item that will be located immediately after the inserted item. If the value is `null`, or does not refer to any item currently in the queue, the inserted item will be appended to the end of the queue.
+   * @param playPosition The initial playback position for the item when it is first played, relative to the beginning of the stream. This value is ignored when the same item is played again, for example when the queue repeats, or the item is later jumped to. In those cases the item's `startTime` is used.
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queueInsertAndPlayItem(
+    item: MediaQueueItem,
+    beforeItemId?: number,
+    playPosition?: number,
+    customData?: object
+  ): Promise<void> {
+    return Native.queueInsertAndPlayItem(
+      item,
+      beforeItemId || 0,
+      playPosition || 0,
+      customData
+    )
+  }
+
+  /**
+   * Inserts a single item into the queue.
+   *
+   * @param item The item to insert.
+   * @param beforeItemId The ID of the item that will be located immediately after the inserted item. If the value is `null`, or does not refer to any item currently in the queue, the inserted item will be appended to the end of the queue.
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queueInsertItem(
+    item: MediaQueueItem,
+    beforeItemId?: number,
+    customData?: object
+  ) {
+    return this.queueInsertItems([item], beforeItemId, customData)
+  }
+
+  /**
+   * Inserts a list of new media items into the queue.
+   *
+   * @param items List of items to insert into the queue, in the order that they should be played. The `itemId` field of the items should be unassigned.
+   * @param beforeItemId The ID of the item that will be located immediately after the inserted list. If the value is `null`, or does not refer to any item currently in the queue, the inserted list will be appended to the end of the queue.
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queueInsertItems(
+    items: MediaQueueItem[],
+    beforeItemId?: number,
+    customData?: object
+  ): Promise<void> {
+    return Native.queueInsertItems(items, beforeItemId || 0, customData)
+  }
+
+  /**
    * Seeks to a new position within the current media item.
-   * The request will fail if there is no current media status.
    */
   seek(options: {
     /** Custom application-specific data to pass along with the request. */
     customData?: object
-    /** The time interval by which to seek. */
-    interval: number
-    /** Whether the time interval is relative to the current stream position (`true`) or to the beginning of the stream (`false`). The default value is `false`, indicating an absolute seek position. */
-    relative?: boolean
-    /** The action to take after the seek operation has finished. The default value is `Unchanged`. */
-    resumeState?: 'Play' | 'Pause'
+    /** Whether seek to end of stream or live. _On iOS, only supported from SDK v4.4.1._ */
+    infinite?: boolean
+    /** The position to seek to, in milliseconds from the beginning of the stream. Ignored if `infinite` is `true`. */
+    position?: number
+    /** The action to take after the seek operation has finished. If not specified, it will preserve current play state. */
+    resumeState?: 'play' | 'pause'
   }): Promise<void> {
     return Native.seek(options)
   }
@@ -89,7 +143,7 @@ export default class RemoteMediaClient {
   /**
    * Sets the playback rate for the current media session.
    *
-   * @param playbackRate The new playback rate, which must be between `0.5` and `2.0`. The normal rate is `1.0`.
+   * @param playbackRate The new playback rate, between `0.5` and `2.0`. The normal rate is `1.0`.
    * @param customData Custom application-specific data to pass along with the request.
    */
   setPlaybackRate(playbackRate: number, customData?: object): Promise<void> {
@@ -106,6 +160,16 @@ export default class RemoteMediaClient {
    */
   setStreamMuted(muted: boolean, customData?: object): Promise<void> {
     return Native.setStreamMuted(muted, customData)
+  }
+
+  /**
+   * Sets the stream volume.
+   *
+   * @param playbackRate The new volume, between `0.0` and `1.0`.
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  setStreamVolume(volume: number, customData?: object): Promise<void> {
+    return Native.setStreamVolume(volume, customData)
   }
 
   /**

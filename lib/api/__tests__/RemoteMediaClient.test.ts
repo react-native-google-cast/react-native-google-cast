@@ -1,10 +1,5 @@
 import WebSocket from 'ws'
-import GoogleCast, {
-  MediaInfo,
-  MediaLoadOptions,
-  MediaMetadata,
-  WebImage,
-} from '../..'
+import GoogleCast from '../..'
 import RemoteMediaClient from '../RemoteMediaClient'
 
 const ws = new WebSocket('ws://192.168.0.104:57686')
@@ -17,11 +12,9 @@ describe('RemoteMediaClient', () => {
   })
 
   it('sends basic load media request', async done => {
-    client.loadMedia(
-      new MediaInfo({
-        contentId: video.mediaUrl,
-      })
-    )
+    client.loadMedia({
+      contentUrl: video.mediaUrl,
+    })
 
     ws.on('message', message => {
       console.log(message)
@@ -31,19 +24,20 @@ describe('RemoteMediaClient', () => {
 
   it('with metadata', async () => {
     client.loadMedia(
-      new MediaInfo({
-        contentId: video.mediaUrl,
-        metadata: new MediaMetadata.Movie({
+      {
+        contentUrl: video.mediaUrl,
+        metadata: {
+          type: 'movie',
           images: [
-            new WebImage({ url: video.imageUrl, width: 480, height: 270 }),
-            new WebImage({ url: video.posterUrl, width: 780, height: 1200 }),
+            { url: video.imageUrl, width: 480, height: 270 },
+            { url: video.posterUrl, width: 780, height: 1200 },
           ],
           subtitle: video.subtitle,
           title: video.title,
-        }),
+        },
         streamDuration: video.duration,
-      }),
-      new MediaLoadOptions({ autoplay: true })
+      },
+      { autoplay: true }
     )
   })
 })

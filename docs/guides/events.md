@@ -6,80 +6,52 @@ sidebar_label: Events
 
 The library emits events to inform you about current state.
 
+## Cast State Events
+
+Triggered when the [CastState](../api/classes/castcontext#static-getcaststate) changes.
+
+```js
+import GoogleCast from 'react-native-google-cast'
+
+const listener = GoogleCast.onCastStateChanged(castState => {
+  // 'noDevicesAvailable' | 'notConnected' | 'connecting' | 'connected'
+})
+
+// when you want to stop listening
+listener.remove()
+```
+
 ## Session Events
 
 A session is an end-to-end connection from a sender application (mobile app) to a receiver application (on Chromecast).
 
 ```js
-import GoogleCast from 'react-native-google-cast'
+const sessionManager = GoogleCast.getSessionManager()
 
-// Establishing connection to Chromecast
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_STARTING, () => {
-  /* callback */
-})
-
-// Connection established
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_STARTED, () => {
-  /* callback */
-})
-
-// Connection failed
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_START_FAILED, error => {
-  console.error(error)
-})
-
-// Connection suspended (your application went to background or disconnected)
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_SUSPENDED, () => {
-  /* callback */
-})
-
-// Attempting to reconnect
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_RESUMING, () => {
-  /* callback */
-})
-
-// Reconnected
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_RESUMED, () => {
-  /* callback */
-})
-
-// Disconnecting
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_ENDING, () => {
-  /* callback */
-})
-
-// Disconnected (error provides explanation if ended forcefully)
-GoogleCast.EventEmitter.addListener(GoogleCast.SESSION_ENDED, error => {
+const listener = sessionManager.onSessionStarted(session => {
   /* callback */
 })
 ```
+
+For a full list of events see [SessionManager](../api/classes/sessionmanager).
 
 ## Media Events
 
-Remote media client controls media playback on a Cast receiver.
+[RemoteMediaClient](../api/classes/remotemediaclient) controls media playback on a Cast receiver.
 
 ```js
 // Status of the media has changed. The `mediaStatus` object contains the new status.
-GoogleCast.EventEmitter.addListener(
-  GoogleCast.MEDIA_STATUS_UPDATED,
-  ({ mediaStatus }) => {},
-)
+GoogleCast.getClient().onMediaStatusUpdated(mediaStatus => {})
 ```
 
-For convenience, the following events are triggered in addition to `MEDIA_STATUS_UPDATED` in these special cases (they're called after `MEDIA_STATUS_UPDATED`, if you're subscribed to both).
+For convenience, the following events are triggered in addition to `MediaStatusUpdated` in these special cases (they're called after `MediaStatusUpdated`, if you're subscribed to both).
 
 ```js
 // Media started playing
-GoogleCast.EventEmitter.addListener(
-  GoogleCast.MEDIA_PLAYBACK_STARTED,
-  ({ mediaStatus }) => {},
-)
+GoogleCast.getClient().onMediaPlaybackStarted(mediaStatus => {})
 
 // Media finished playing
-GoogleCast.EventEmitter.addListener(
-  GoogleCast.MEDIA_PLAYBACK_ENDED,
-  ({ mediaStatus }) => {},
-)
+GoogleCast.getClient().onMediaPlaybackEnded(mediaStatus => {})
 ```
 
 ## Channel Events
@@ -94,19 +66,19 @@ A channel must be registered by calling `GoogleCast.initChannel('urn:x-cast:...'
 // Communication channel established
 GoogleCast.EventEmitter.addListener(
   GoogleCast.CHANNEL_CONNECTED,
-  ({ namespace }) => {},
+  ({ namespace }) => {}
 )
 
 // Communication channel terminated
 GoogleCast.EventEmitter.addListener(
   GoogleCast.CHANNEL_DISCONNECTED,
-  ({ namespace }) => {},
+  ({ namespace }) => {}
 )
 
 // Message received
 GoogleCast.EventEmitter.addListener(
   GoogleCast.CHANNEL_MESSAGE_RECEIVED,
-  ({ namespace, message }) => {},
+  ({ namespace, message }) => {}
 )
 
 // Send message

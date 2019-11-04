@@ -35,7 +35,7 @@ sidebar_label: Troubleshooting
   clang: error: linker command failed with exit code 1 (use -v to see invocation)
   ```
 
-  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). Please use Google Cast SDK version `4.3.0` until the issue is fixed.
+  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). Please use `react-native-google-cast/NoBluetooth`, or downgrade to Google Cast SDK version `4.3.0` until the issue is fixed.
 
 - Cast button isn't displayed on an iOS device
 

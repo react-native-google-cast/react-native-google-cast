@@ -47,8 +47,7 @@ public class RNGCMediaQueueItem {
     }
 
     if (json.hasKey("customData")) {
-      builder.setCustomData(
-          new JSONObject(json.getMap("customData").toHashMap()));
+      builder.setCustomData(RNGCJSONObject.fromJson(json.getMap("customData")));
     }
 
     if (json.hasKey("playbackDuration")) {

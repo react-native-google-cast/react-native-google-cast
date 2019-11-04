@@ -22,7 +22,7 @@ RCT_ENUM_CONVERTER(GCKMediaRepeatMode, (@{
   case GCKMediaRepeatModeSingle:
     return @"single";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

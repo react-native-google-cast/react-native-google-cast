@@ -3,7 +3,7 @@ import WebImage from './WebImage'
 /**
  * An object representing a Cast receiver device.
  *
- * @see [Android]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/CastDevice} | [iOS]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_device} | [Chrome]{@link https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Receiver}
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/CastDevice) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_device) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Receiver)
  */
 export default interface Device {
   /** A unique identifier for the device. */

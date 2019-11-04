@@ -11,7 +11,7 @@
     options.startIndex = [RCTConvert NSUInteger:json[@"startIndex"]];
   }
   if (json[@"playPosition"]) {
-    options.playPosition = [RCTConvert double:json[@"playPosition"]];
+    options.playPosition = [RCTConvert NSTimeInterval:json[@"playPosition"]];
   }
   if (json[@"repeatMode"]) {
     options.repeatMode = [RCTConvert GCKMediaRepeatMode:json[@"repeatMode"]];
@@ -29,7 +29,7 @@
   json[@"startIndex"] = @(options.startIndex);
   json[@"playPosition"] = @(options.playPosition);
   json[@"repeatMode"] = [RCTConvert fromGCKMediaRepeatMode:options.repeatMode];
-  json[@"customData"] = options.customData;
+  json[@"customData"] = options.customData ?: [NSNull null];
 
   return json;
 }

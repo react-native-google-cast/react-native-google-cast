@@ -34,7 +34,7 @@ RCT_ENUM_CONVERTER(
   case GCKMediaTextTrackStyleFontGenericFamilySmallCapitals:
     return @"smallCaps";
   default:
-    return nil;
+    return [NSNull null];
   }
 }
 

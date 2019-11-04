@@ -20,13 +20,13 @@
 + (id)fromGCKMediaTrack:(GCKMediaTrack *)track {
   return @{
     @"id" : @(track.identifier),
-    @"contentId" : track.contentIdentifier,
-    @"contentType" : track.contentType,
+    @"contentId" : track.contentIdentifier ?: [NSNull null],
+    @"contentType" : track.contentType ?: [NSNull null],
     @"type" : [RCTConvert fromGCKMediaTrackType:track.type],
     @"subtype" : [RCTConvert fromGCKMediaTextTrackSubtype:track.textSubtype],
-    @"name" : track.name,
-    @"languageCode" : track.languageCode,
-    @"customData" : track.customData,
+    @"name" : track.name ?: [NSNull null],
+    @"languageCode" : track.languageCode ?: [NSNull null],
+    @"customData" : track.customData ?: [NSNull null],
   };
 }
 

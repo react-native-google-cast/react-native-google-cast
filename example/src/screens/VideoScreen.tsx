@@ -1,17 +1,19 @@
+import { ActionSheetProps } from '@expo/react-native-action-sheet'
 import React from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import {
-  MediaInfo,
-  MediaLoadOptions,
-  MediaMetadata,
-  RemoteMediaClient,
-  WebImage,
-} from 'react-native-google-cast'
-import { Options } from 'react-native-navigation'
+  EmitterSubscription,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { Navigation, Options } from 'react-native-navigation'
 import RNVideo from 'react-native-video'
+import GoogleCast, { CastState, RemoteMediaClient } from '../../../lib'
 import Video from '../Video'
 
-export interface Props {
+export interface Props extends ActionSheetProps {
   componentId: string
   video: Video
 }
@@ -23,11 +25,9 @@ interface State {
 export default class VideoScreen extends React.Component<Props> {
   static options(passProps): Options {
     return {
-      statusBar: {
-        style: 'light',
-      },
       topBar: {
         title: {
+          alignment: 'fill',
           color: 'white',
         },
         rightButtons: [
@@ -42,27 +42,68 @@ export default class VideoScreen extends React.Component<Props> {
     }
   }
 
+  castStateListener: EmitterSubscription
   state: State = {}
 
-  cast(video: Props['video']) {
-    RemoteMediaClient.loadMedia(
-      new MediaInfo({
-        contentId: video.mediaUrl,
-        metadata: new MediaMetadata.Movie({
-          images: [
-            new WebImage({ url: video.imageUrl, width: 480, height: 270 }),
-            new WebImage({ url: video.posterUrl, width: 780, height: 1200 }),
+  componentDidMount() {
+    Navigation.events().bindComponent(this)
+
+    const setConnected = (state: CastState) => {
+      this.setState({
+        connected: state === 'connected',
+      })
+
+      Navigation.mergeOptions(this.props.componentId, {
+        topBar: {
+          rightButtons: [
+            {
+              id: 'cast',
+              component: {
+                name: 'castvideos.CastButton',
+              },
+            },
+            ...(state === 'connected'
+              ? [
+                  {
+                    id: 'queue',
+                    icon: require('../assets/playlist.png'),
+                  },
+                ]
+              : []),
           ],
-          subtitle: video.subtitle,
-          title: video.title,
-        }),
-        streamDuration: video.duration,
-      }),
-      new MediaLoadOptions({ autoplay: true })
-    )
+        },
+      })
+    }
+    GoogleCast.getCastState().then(setConnected)
+    this.castStateListener = GoogleCast.onCastStateChanged(setConnected)
+  }
+
+  componentWillUnmount() {
+    this.castStateListener.remove()
+  }
+
+  cast(video: Props['video']) {
+    RemoteMediaClient.getCurrent()
+      .loadMedia(
+        {
+          contentUrl: video.mediaUrl,
+          metadata: {
+            images: [
+              { url: video.imageUrl, width: 480, height: 270 },
+              { url: video.posterUrl, width: 780, height: 1200 },
+            ],
+            subtitle: video.subtitle,
+            title: video.title,
+            type: 'movie',
+          },
+          streamDuration: video.duration,
+        },
+        { autoplay: true }
+      )
       .then(console.log)
       .catch(console.warn)
-    // GoogleCast.launchExpandedControls()
+
+    GoogleCast.showExpandedControls()
   }
 
   render() {
@@ -78,10 +119,12 @@ export default class VideoScreen extends React.Component<Props> {
     if (!this.state.started) {
       return (
         <TouchableOpacity onPress={() => this.setState({ started: true })}>
-          <Image
-            style={styles.video}
-            source={{ uri: this.props.video.imageUrl }}
-          />
+          <Navigation.Element elementId="videoPreview">
+            <Image
+              style={styles.video}
+              source={{ uri: this.props.video.imageUrl }}
+            />
+          </Navigation.Element>
         </TouchableOpacity>
       )
     }
@@ -102,6 +145,14 @@ export default class VideoScreen extends React.Component<Props> {
         <Text style={styles.description}>{this.props.video.subtitle}</Text>
       </View>
     )
+  }
+
+  navigationButtonPressed({ buttonId }) {
+    if (buttonId === 'queue') {
+      Navigation.push(this.props.componentId, {
+        component: { name: 'castvideos.Queue' },
+      })
+    }
   }
 }
 

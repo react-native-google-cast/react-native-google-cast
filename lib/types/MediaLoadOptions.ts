@@ -1,7 +1,7 @@
 /**
- * Options for loading media with {@link RemoteMediaClient#loadMedia}.
+ * Options for loading media with {@link RemoteMediaClient.loadMedia}.
  *
- * @see [Android]{@link https://developers.google.com/android/reference/com/google/android/gms/cast/MediaLoadOptions} | [iOS]{@link https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_load_options} | [Chrome]{@link https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.LoadRequest}
+ * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaLoadOptions) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_load_options) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.LoadRequest)
  */
 export default interface MediaLoadOptions {
   /** An array of integers specifying the active tracks. */
