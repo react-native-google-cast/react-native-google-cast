@@ -16,16 +16,17 @@ declare module 'react-native-google-cast' {
     | 'Connected'
 
   export type CastOptions = {
+    mediaUrl: string
     title?: string
     subtitle?: string
     studio?: string
     imageUrl?: string
     posterUrl?: string
-    isLive?: boolean
-    mediaUrl: string
     contentType?: string
-    customData?: any
     streamDuration?: number
+    playPosition?: number
+    isLive?: boolean
+    customData?: any
     textTrackStyle?: TextTrackStyle
   }
 
@@ -60,23 +61,31 @@ declare module 'react-native-google-cast' {
     stop(): void
     seek(playPosition: number): void
     launchExpandedControls(): void
+    showIntroductoryOverlay(): void
+    setVolume(volume: number): void
     initChannel(channel: string): Promise<boolean>
     sendMessage(message: string, namespace: string): Promise<boolean>
     showCastPicker(): void
     toggleSubtitles(enabled: boolean, languageCode?: string): Promise<void>
+
     EventEmitter: EventEmitter
+    
     SESSION_STARTING: string
     SESSION_STARTED: string
     SESSION_START_FAILED: string
     SESSION_SUSPENDED: string
-    SESSION_ENDING: string
-    SESSION_ENDED: string
     SESSION_RESUMING: string
     SESSION_RESUMED: string
-    MEDIA_PROGRESS_UPDATED: string
+    SESSION_ENDING: string
+    SESSION_ENDED: string
+    
     MEDIA_STATUS_UPDATED: string
-    MEDIA_PLAYBACK_ENDED: string
     MEDIA_PLAYBACK_STARTED: string
+    MEDIA_PLAYBACK_ENDED: string
+    MEDIA_PROGRESS_UPDATED: string
+    
+    CHANNEL_CONNECTED: string
+    CHANNEL_DISCONNECTED: string
     CHANNEL_MESSAGE_RECEIVED: string
   }
 
