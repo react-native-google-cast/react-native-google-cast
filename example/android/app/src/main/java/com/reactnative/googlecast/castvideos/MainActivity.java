@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
+import com.reactnative.googlecast.api.RNGCCastContext;
 import com.reactnativenavigation.NavigationActivity;
-import com.google.android.gms.cast.framework.CastContext;
 
 public class MainActivity extends NavigationActivity {
 
@@ -14,6 +14,6 @@ public class MainActivity extends NavigationActivity {
     super.onCreate(savedInstanceState);
 
     // lazy load Google Cast context
-    CastContext.getSharedInstance(this);
+    RNGCCastContext.getSharedInstance(this);
   }
 }

@@ -15,6 +15,7 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
+import com.reactnative.googlecast.api.RNGCCastContext;
 
 public class RNGoogleCastButtonManager
     extends SimpleViewManager<MediaRouteButton> {
@@ -34,21 +35,26 @@ public class RNGoogleCastButtonManager
 
   @Override
   public MediaRouteButton createViewInstance(ThemedReactContext context) {
-    CastContext castContext = CastContext.getSharedInstance(context);
-
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
     currentInstance = button;
 
-    updateButtonState(button, castContext.getCastState());
+    if (!RNGCCastContext.isTV(context)) {
+      CastContext castContext = CastContext.getSharedInstance(context);
 
-    castContext.addCastStateListener(new CastStateListener() {
-      @Override
-      public void onCastStateChanged(int newState) {
-        RNGoogleCastButtonManager.this.updateButtonState(button, newState);
-      }
-    });
+      updateButtonState(button, castContext.getCastState());
+
+      castContext.addCastStateListener(new CastStateListener() {
+        @Override
+        public void onCastStateChanged(int newState) {
+          RNGoogleCastButtonManager.this.updateButtonState(button, newState);
+        }
+      });
+
+    } else {
+      updateButtonState(button, CastState.NO_DEVICES_AVAILABLE);
+    }
 
     return button;
   }

@@ -1,9 +1,13 @@
 package com.reactnative.googlecast.api;
 
+import android.app.UiModeManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.view.View;
+import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.mediarouter.app.MediaRouteButton;
 
@@ -28,10 +32,13 @@ import com.reactnative.googlecast.types.RNGCCastState;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.content.Context.UI_MODE_SERVICE;
+
 public class RNGCCastContext
     extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-  @VisibleForTesting public static final String REACT_CLASS = "RNGCCastContext";
+  @VisibleForTesting
+  public static final String REACT_CLASS = "RNGCCastContext";
 
   public static final String SESSION_STARTING = "GoogleCast:SessionStarting";
   public static final String SESSION_STARTED = "GoogleCast:SessionStarted";
@@ -44,9 +51,32 @@ public class RNGCCastContext
   public static final String SESSION_ENDED = "GoogleCast:SessionEnded";
 
   private SessionManagerListener<CastSession> mSessionManagerListener;
+  private boolean isTV;
+
+  public static CastContext getSharedInstance(@NonNull Context context) {
+    if (!RNGCCastContext.isTV(context)) {
+      return CastContext.getSharedInstance(context);
+    }
+
+    return null;
+  }
+
+  public static boolean isTV(@NonNull Context context) {
+    UiModeManager uiModeManager = (UiModeManager) context.getSystemService(UI_MODE_SERVICE);
+
+    try {
+      return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+
+    } catch (NullPointerException exception) {
+      return false;
+    }
+  }
 
   public RNGCCastContext(ReactApplicationContext reactContext) {
     super(reactContext);
+
+    this.isTV = RNGCCastContext.isTV(reactContext);
+
     reactContext.addLifecycleEventListener(this);
     setupCastListener();
   }
@@ -84,14 +114,19 @@ public class RNGCCastContext
 
   @ReactMethod
   public void getCastState(final Promise promise) {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-      @Override
-      public void run() {
-        CastContext castContext =
-            CastContext.getSharedInstance(getReactApplicationContext());
-        promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
-      }
-    });
+    if (this.isTV) {
+      promise.resolve(null);
+
+    } else {
+      getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+        @Override
+        public void run() {
+          CastContext castContext =
+              CastContext.getSharedInstance(getReactApplicationContext());
+          promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
+        }
+      });
+    }
   }
 
   @ReactMethod
@@ -135,8 +170,7 @@ public class RNGCCastContext
 
   @ReactMethod
   public void showIntroductoryOverlay(final ReadableMap options, final Promise promise) {
-    final
-    MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
+    final MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
 
     if ((button != null) && button.getVisibility() == View.VISIBLE) {
       new Handler().post(new Runnable() {
@@ -149,12 +183,12 @@ public class RNGCCastContext
           }
 
           builder.setOnOverlayDismissedListener(
-            new IntroductoryOverlay.OnOverlayDismissedListener() {
-              @Override
-              public void onOverlayDismissed() {
-                promise.resolve(true);
-              }
-            });
+              new IntroductoryOverlay.OnOverlayDismissedListener() {
+                @Override
+                public void onOverlayDismissed() {
+                  promise.resolve(true);
+                }
+              });
 
           IntroductoryOverlay overlay = builder.build();
 
@@ -170,36 +204,42 @@ public class RNGCCastContext
 
   @Override
   public void onHostResume() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-      @Override
-      public void run() {
-        SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
-        sessionManager.addSessionManagerListener(mSessionManagerListener,
-                                                 CastSession.class);
-      }
-    });
+    if (!this.isTV) {
+      getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+        @Override
+        public void run() {
+          SessionManager sessionManager =
+              CastContext.getSharedInstance(getReactApplicationContext())
+                  .getSessionManager();
+          sessionManager.addSessionManagerListener(mSessionManagerListener,
+              CastSession.class);
+        }
+      });
+    }
   }
 
   @Override
   public void onHostPause() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-      @Override
-      public void run() {
-        SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
-        sessionManager.removeSessionManagerListener(mSessionManagerListener,
-                                                    CastSession.class);
-      }
-    });
+    if (!this.isTV) {
+      getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+        @Override
+        public void run() {
+          SessionManager sessionManager =
+              CastContext.getSharedInstance(getReactApplicationContext())
+                  .getSessionManager();
+          sessionManager.removeSessionManagerListener(mSessionManagerListener,
+              CastSession.class);
+        }
+      });
+    }
   }
 
   @Override
-  public void onHostDestroy() {}
+  public void onHostDestroy() {
+  }
 
   public void runOnUiQueueThread(Runnable runnable) {
     getReactApplicationContext().runOnUiQueueThread(runnable);
   }
+
 }
