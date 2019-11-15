@@ -25,6 +25,27 @@ type CastState =
   | 'Connecting'
   | 'Connected'
 
+type TextTrackStyle = {
+  backgroundColor?: string,
+  edgeColor?: string,
+  edgeType?: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised',
+  fontFamily?: string,
+  fontGenericFamily?:
+    | 'casual'
+    | 'cursive'
+    | 'monoSansSerif'
+    | 'monoSerif'
+    | 'sansSerif'
+    | 'serif'
+    | 'smallCaps',
+  fontScale?: number,
+  fontStyle?: 'bold' | 'boldItalic' | 'italic' | 'normal',
+  foregroundColor?: string,
+  windowColor?: string,
+  windowCornerRadius?: number,
+  windowType?: 'none' | 'normal' | 'rounded',
+}
+
 export default {
   getCastDevice(): Promise<CastDevice> {
     return GoogleCast.getCastDevice()
@@ -47,6 +68,9 @@ export default {
     contentType?: string,
     streamDuration?: number,
     playPosition?: number,
+    isLive?: boolean,
+    customData?: Object,
+    textTrackStyle?: TextTrackStyle,
   }) {
     return GoogleCast.castMedia(params)
   },
@@ -85,12 +109,27 @@ export default {
   },
   launchExpandedControls: GoogleCast.launchExpandedControls,
   showIntroductoryOverlay: GoogleCast.showIntroductoryOverlay,
-
+  setVolume(volume: number) {
+    return GoogleCast.setVolume(volume)
+  },
   initChannel(namespace: string) {
     return GoogleCast.initChannel(namespace)
   },
   sendMessage(namespace: string, message: string) {
     return GoogleCast.sendMessage(message, namespace)
+  },
+  showCastPicker(){
+    GoogleCast.showCastPicker()
+  },
+
+  /**
+   * Enable/disable subtitles, optionally selecting a preferred subtitle language.
+   *
+   * @param {boolean} enabled
+   * @param {boolean} languageCode
+   */
+  toggleSubtitles(enabled: boolean, languageCode?: string) {
+    return GoogleCast.toggleSubtitles(enabled, languageCode)
   },
 
   // TODO use the same native event interface instead of hacking it here

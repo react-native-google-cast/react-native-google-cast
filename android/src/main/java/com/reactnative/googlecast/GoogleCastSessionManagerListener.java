@@ -2,6 +2,7 @@ package com.reactnative.googlecast;
 
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 
 public class GoogleCastSessionManagerListener
     implements SessionManagerListener<CastSession> {
@@ -67,11 +68,14 @@ public class GoogleCastSessionManagerListener
     module.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        remoteMediaClientListener =
-            new GoogleCastRemoteMediaClientListener(module);
-        castSession.getRemoteMediaClient().addListener(
-            remoteMediaClientListener);
-        castSession.getRemoteMediaClient().addProgressListener(remoteMediaClientListener, 1000);
+        RemoteMediaClient client = castSession.getRemoteMediaClient();
+        if (client == null) {
+          return;
+        }
+
+        remoteMediaClientListener = new GoogleCastRemoteMediaClientListener(module);
+        client.addListener(remoteMediaClientListener);
+        client.addProgressListener(remoteMediaClientListener, 1000);
       }
     });
   }

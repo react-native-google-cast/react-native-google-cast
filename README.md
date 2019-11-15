@@ -2,7 +2,7 @@
 
 # react-native-google-cast
 
-This library wraps the native Google Cast SDK v3 for iOS and Android, providing a unified JavaScript interface.
+This library wraps the native Google Cast SDK for iOS and Android, providing a unified JavaScript interface.
 
 > This is a complete rewrite of the library. If you're still using v1, please check the [v1 branch](https://github.com/react-native-google-cast/react-native-google-cast/tree/v1).
 
@@ -36,20 +36,48 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 <details>
   <summary>iOS (CocoaPods)</summary>
 
-- Install [CocoaPods](https://cocoapods.org/)
+_(React Native <=0.59)_ Install [CocoaPods](https://cocoapods.org/) and set up your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
-- Setup your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
+In your `ios/Podfile`, add **one** of these snippets:
 
-- Add `pod 'google-cast-sdk', '~> 3'` to your `Podfile`. Alternatively, you can try SDK v4 by using `pod 'google-cast-sdk', '4.3.0'` (see setup below).
+- If targeting [iOS 13 and don't require guest mode](https://developers.google.com/cast/docs/ios_sender/ios13_changes), add
 
-- Add `pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'` to your `Podfile`
+  ```
+  pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
+  ```
 
-- Run `pod install`
+- If you need to support guest mode, add
+
+  ```
+  pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'
+  pod 'google-cast-sdk', '4.3.0'
+  ```
+
+  Note that due to a [duplicate symbol issue](https://issuetracker.google.com/issues/113069508), you have to use version `4.3.0` and not the latest version. Because of that, you might see issues in iOS 13.
+
+- If you want to link the Google Cast SDK manually, add
+
+  ```
+  pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/ios/'
+  ```
+
+  and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup). Note that this option is not explored yet. If you go this route, please let us know how you made it work. :)
+
+- Or, if you're still using v3 of the SDK (the API is compatible).
+
+  ```
+  pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'
+  pod 'google-cast-sdk', '~> 3'
+  ```
+
+  Note that this is now considered legacy and not recommended. We encourage you to switch to SDK v4 (Google Cast iOS SDK v4, not this library's v4, which is still in the works).
+
+Finally, run `pod install`.
 
 </details>
 
 <details>
-  <summary>iOS (Manually)</summary>
+  <summary>iOS (Manually for React Native <=0.59)</summary>
 
 - In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
 
@@ -108,20 +136,9 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
 - In `AppDelegate.m` add
 
-```obj-c
-#import <GoogleCast/GoogleCast.h>
-```
-
-- If you're using SDK v3, in `AppDelegate.m` in the `didFinishLaunchingWithOptions` method add:
-
   ```obj-c
-  GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
-  [GCKCastContext setSharedInstanceWithOptions:options];
+  #import <GoogleCast/GoogleCast.h>
   ```
-
-  (or replace `kGCKMediaDefaultReceiverApplicationID` with your custom Cast app id).
-
-- If you're using SDK v4, use this code instead:
 
   ```obj-c
   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
@@ -129,7 +146,16 @@ Note: This will only link the react-native-google-cast library. You'll still nee
   [GCKCastContext setSharedInstanceWithOptions:options];
   ```
 
-  Currently, the only thing using SDK v4 will do is improve discoverability in iOS 12 / Xcode 10 by enabling [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `your target > capabilities`. New features of the SDK V4 are planned to be added in v4 of this library.
+  (or replace `kGCKDefaultMediaReceiverApplicationID` with your custom Cast app id).
+
+  Make sure you also enable [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `your target > capabilities`.
+
+- If you're still using Google Cast SDK v3, use this code instead:
+
+  ```obj-c
+  GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
+  [GCKCastContext setSharedInstanceWithOptions:options];
+  ```
 
 </details>
 
@@ -189,13 +215,18 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 ## Usage
 
 ```js
-// Require the module
 import GoogleCast, { CastButton } from 'react-native-google-cast'
+```
 
-// Render the Cast button which enables to connect to Chromecast
-;<CastButton style={{ width: 24, height: 24 }} />
+Render the Cast button which enables to connect to Chromecast
 
-// Stream the media to the connected Chromecast
+```js
+<CastButton style={{ width: 24, height: 24 }} />
+```
+
+Once a user has pressed the Cast button and connected to a device (`SESSION_STARTED` event), you can start streaming media.
+
+```js
 GoogleCast.castMedia({
   mediaUrl:
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
@@ -223,10 +254,16 @@ GoogleCast.castMedia({
 - `GoogleCast.play()`
 - `GoogleCast.pause()`
 - `GoogleCast.seek(playPosition)` - jump to position in seconds from the beginning of the stream
+- `GoogleCast.setVolume(volume)`
 - `GoogleCast.stop()`
 - `GoogleCast.endSession(stopCasting)`
 - `GoogleCast.initChannel('urn:x-cast:...')` - initialize custom channel for communication with Cast receiver app. Once you do this, you can subscribe to `CHANNEL_*` events.
 - `GoogleCast.sendMessage('urn:x-cast:...', message)` - send message over the custom channel
+- `GoogleCast.showCastPicker()` - Custom method to manually pop the cast options picker. Not needed if you implement the button.
+- `GoogleCast.toggleSubtitles(enabled, languageCode)` **Android Only**
+  * Enables/Disables closed captions for the video. Enabling subtitles only results in them showing if the stream contains a caption track in the requested language.
+  * Param: `enabled` - Required. True to enable, False to disable capions
+  * Param: `languageCode` - Optional, used for finding the right captions track in the stream. If not provided the default value of `en` will be used (for English).
 
 ## Components
 
@@ -299,12 +336,17 @@ The Cast framework automatically manages the volume for the sender app and synch
 Physical button volume control is automatically enabled on Android. On iOS, you need to enable it when initializing the cast context:
 
 ```obj-c
-GCKCastOptions *options = [[GCKCastOptions alloc] initWithReceiverApplicationID:kGCKMediaDefaultReceiverApplicationID];
-options.physicalVolumeButtonsWillControlDeviceVolume = YES;
+GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
+GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+options.physicalVolumeButtonsWillControlDeviceVolume = YES; // add this row
 [GCKCastContext setSharedInstanceWithOptions:options];
 ```
 
-Programmatic access to the volume will be added in a future version.
+You can also change the volume with
+
+```js
+GoogleCast.setVolume(volume)
+```
 
 ## Events
 
@@ -444,15 +486,32 @@ Refer to the [example](example/) folder to find an implementation of this projec
 
 ## Troubleshooting
 
-- _Android:_ `com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.`
+### Android
+
+- `com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.`
 
   You don't have Google Play Services available on your device. Make sure to install them either from http://opengapps.org/ or follow tutorials online.
 
   TODO: Handle gracefully and ignore the Cast library without crashing.
 
-- _Android\*_ `java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity`
+- `java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity`
 
   Make sure your `MainActivity` extends `GoogleCastActivity`, `AppCompatActivity`, or some other descendant of `FragmentActivity`.
+
+### iOS
+
+- ```
+  duplicate symbol __ZN3fLB18FLAGS_nolog_prefixE in:
+    /Users/user/Documents/Apps/test-rn/RNAwesomeProject/ios/Pods/google-cast-sdk/GoogleCastSDK-ios-4.3.1_static/GoogleCast.framework/GoogleCast(logging_f31ccd6e0091bd60840b95581a5633bf.o)
+  ld: 7 duplicate symbols for architecture x86_64
+  clang: error: linker command failed with exit code 1 (use -v to see invocation)
+  ```
+
+  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). Please use `pod 'google-cast-sdk', '4.3.0'` or `pod react-native-google-cast/NoBluetooth`.
+
+- Cast button isn't displayed on an iOS device (but shows in emulator)
+
+  This can be caused by a number of reasons. Start by making sure you enabled the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note: "Wireless Accessory Configuration" is unrelated. You need to be a member of the Apple Developer Program to see the "Access WiFi Information" setting.
 
 ## Contribution
 

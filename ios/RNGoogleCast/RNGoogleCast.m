@@ -20,6 +20,10 @@
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
 - (instancetype)init {
   self = [super init];
   channels = [[NSMutableDictionary alloc] init];
@@ -44,7 +48,9 @@ RCT_EXPORT_MODULE();
 
     @"CHANNEL_CONNECTED" : CHANNEL_CONNECTED,
     @"CHANNEL_MESSAGE_RECEIVED" : CHANNEL_MESSAGE_RECEIVED,
-    @"CHANNEL_DISCONNECTED" : CHANNEL_DISCONNECTED
+    @"CHANNEL_DISCONNECTED" : CHANNEL_DISCONNECTED,
+
+    @"CAST_AVAILABLE" : @YES
   };
 }
 
@@ -105,6 +111,12 @@ RCT_EXPORT_METHOD(launchExpandedControls) {
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance presentDefaultExpandedMediaControls];
   });
+}
+
+RCT_EXPORT_METHOD(showCastPicker) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+[GCKCastContext.sharedInstance presentCastDialog];
+});
 }
 
 RCT_EXPORT_METHOD(showIntroductoryOverlay) {
@@ -256,6 +268,11 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
   if (castSession) {
     [castSession.remoteMediaClient seekToTimeInterval:playPosition];
   }
+}
+RCT_EXPORT_METHOD(setVolume : (float)volume) {
+    if (castSession) {
+        [castSession.remoteMediaClient setStreamVolume:volume];
+    }
 }
 
 #pragma mark - GCKSessionManagerListener events

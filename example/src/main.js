@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Text,
   View,
-  DeviceEventEmitter,
   Platform,
   ToolbarAndroid,
   TouchableOpacity,
@@ -22,6 +21,7 @@ class Main extends React.Component {
 
     this.cast = this.cast.bind(this)
     this.renderVideo = this.renderVideo.bind(this)
+    this.subtitlesEnabled = false
 
     this.state = {
       videos: [],
@@ -64,32 +64,40 @@ class Main extends React.Component {
     this.sendMessage()
   }
 
+  onActionSelected = position => {
+    switch (position) {
+      case 0:
+        GoogleCast.play()
+        break
+      case 1:
+        GoogleCast.pause()
+        break
+      case 2:
+        GoogleCast.stop()
+        break
+      case 3:
+        this.subtitlesEnabled = !this.subtitlesEnabled
+        GoogleCast.toggleSubtitles(this.subtitlesEnabled)
+        break
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
         {Platform.OS === 'android' ? (
           <ToolbarAndroid
-            title="Google Cast Example"
             contentInsetStart={4}
-            actions={[{ title: 'Log out', show: 'never' }]}
+            actions={[
+              { title: 'Play', show: 'always' },
+              { title: 'Pause', show: 'always' },
+              { title: 'Stop', show: 'always' },
+              { title: 'CC (en)', show: 'always' },
+            ]}
+            onActionSelected={this.onActionSelected}
             style={styles.toolbarAndroid}
           >
             <CastButton style={styles.castButtonAndroid} />
-            <Button
-              title="Play"
-              onPress={() => GoogleCast.play()}
-              style={styles.stopButton}
-            />
-            <Button
-              title="Pause"
-              onPress={() => GoogleCast.pause()}
-              style={styles.stopButton}
-            />
-            <Button
-              title="Stop"
-              onPress={() => GoogleCast.endSession()}
-              style={styles.stopButton}
-            />
           </ToolbarAndroid>
         ) : (
           <View style={styles.toolbarIOS}>
@@ -103,7 +111,7 @@ class Main extends React.Component {
         )}
         <FlatList
           data={this.state.videos}
-          keyExtractor={(item, index) => index}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={this.renderVideo}
           style={{ width: '100%', alignSelf: 'stretch' }}
         />
@@ -156,7 +164,6 @@ class Main extends React.Component {
     const channel = 'urn:x-cast:com.reactnative.googlecast.example'
 
     GoogleCast.initChannel(channel).then(() => {
-      debugger
       GoogleCast.sendMessage(channel, JSON.stringify({ message: 'Hello' }))
     })
   }

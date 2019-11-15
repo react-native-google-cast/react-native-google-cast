@@ -2,7 +2,9 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { requireNativeComponent } from 'react-native'
+import { requireNativeComponent, NativeModules } from 'react-native';
+
+const { RNGoogleCast: GoogleCast } = NativeModules;
 
 /**
  * Button that presents the Cast icon.
@@ -14,7 +16,11 @@ import { requireNativeComponent } from 'react-native'
  */
 class CastButton extends React.Component {
   render() {
-    return <GoogleCastButton {...this.props} />
+    if (GoogleCast.CAST_AVAILABLE) {
+      return <GoogleCastButton {...this.props} />;
+    } else {
+      return null;
+    }
   }
 }
 

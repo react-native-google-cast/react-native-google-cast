@@ -15,12 +15,11 @@ target 'RNGoogleCastExample' do
     'RCTImage',
   ]
   pod 'yoga', path: "#{rnpath}/ReactCommon/yoga"
-  pod 'DoubleConversion', podspec: "#{rnpath}/third-party-podspecs"
-  pod 'glog', podspec: "#{rnpath}/third-party-podspecs"
-  pod 'Folly', podspec: "#{rnpath}/third-party-podspecs"
+  pod 'DoubleConversion', podspec: "#{rnpath}/third-party-podspecs/DoubleConversion.podspec"
+  pod 'glog', podspec: "#{rnpath}/third-party-podspecs/glog.podspec"
+  pod 'Folly', podspec: "#{rnpath}/third-party-podspecs/Folly.podspec"
 
-  pod 'react-native-google-cast', path: '../../ios/'
-  pod 'google-cast-sdk', '~> 3'
+  pod 'react-native-google-cast/NoBluetooth', path: '../../ios/'
 end
 
 # post_install do |installer|
