@@ -13,6 +13,7 @@
   bool playbackEnded;
   NSUInteger currentItemID;
   NSTimer *progressTimer;
+  bool styleChangeRequest;
 }
 
 @synthesize bridge = _bridge;
@@ -221,13 +222,18 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                 height:720]];
   }
     
+  GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
+    [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#FF000080"]];
+    [textTrackStyle setFontFamily:@"serif"];
+    styleChangeRequest = [castSession.remoteMediaClient setTextTrackStyle:textTrackStyle];
+    
   GCKMediaTrack *captionsTrack =
     [[GCKMediaTrack alloc] initWithIdentifier:1
-                            contentIdentifier:@"https://gist.github.com/chdemko/5356310#file-example-vtt"
+                            contentIdentifier:@"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/DesigningForGoogleCast-en.vtt"
                                   contentType:@"text/vtt"
                                          type:GCKMediaTrackTypeText
                                   textSubtype:GCKMediaTextTrackSubtypeCaptions
-                                         name:@"English Captions"
+                                         name:@"English Captions 3"
                                  languageCode:@"en"
                                    customData:nil];
     
@@ -240,7 +246,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                             metadata:metadata
                                       streamDuration:streamDuration
                                          mediaTracks:tracks
-                                      textTrackStyle:nil
+                                      textTrackStyle:captionsTrack
                                           customData:customData];
   // Cast the video.
   if (castSession) {
@@ -252,6 +258,15 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
     NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:GCKErrorCodeNoMediaSession userInfo:nil];
     reject(@"no_session", @"No castSession!", error);
   }
+}
+
+#pragma mark - GCKRequestDelegate
+
+- (void)requestDidComplete:(GCKRequest *)request {
+    if (request == styleChangeRequest) {
+        NSLog(@"Style update completed.");
+        styleChangeRequest = nil;
+    }
 }
 
 RCT_EXPORT_METHOD(play) {
