@@ -220,13 +220,26 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                  width:480
                                 height:720]];
   }
+    
+  GCKMediaTrack *captionsTrack =
+    [[GCKMediaTrack alloc] initWithIdentifier:1
+                            contentIdentifier:@"https://gist.github.com/chdemko/5356310#file-example-vtt"
+                                  contentType:@"text/vtt"
+                                         type:GCKMediaTrackTypeText
+                                  textSubtype:GCKMediaTextTrackSubtypeCaptions
+                                         name:@"English Captions"
+                                 languageCode:@"en"
+                                   customData:nil];
+    
+    NSArray *tracks = @[captionsTrack];
+    
   GCKMediaInformation *mediaInfo =
       [[GCKMediaInformation alloc] initWithContentID:mediaUrl
                                           streamType:GCKMediaStreamTypeBuffered
                                          contentType:contentType
                                             metadata:metadata
                                       streamDuration:streamDuration
-                                         mediaTracks:nil
+                                         mediaTracks:tracks
                                       textTrackStyle:nil
                                           customData:customData];
   // Cast the video.
