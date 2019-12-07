@@ -222,22 +222,36 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                 height:720]];
   }
     
-  GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
-    [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#FF000080"]];
+    GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
+    [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#FFEB3B"]];
     [textTrackStyle setFontFamily:@"serif"];
     styleChangeRequest = [castSession.remoteMediaClient setTextTrackStyle:textTrackStyle];
     
-  GCKMediaTrack *captionsTrack =
+    
+    NSString *en = @"https://bitdash-a.akamaihd.net/content/sintel/subtitles/subtitles_en.vtt";
+    NSString *es = @"https://bitdash-a.akamaihd.net/content/sintel/subtitles/subtitles_es.vtt";
+    
+    GCKMediaTrack *enLang =
     [[GCKMediaTrack alloc] initWithIdentifier:1
-                            contentIdentifier:@"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/DesigningForGoogleCast-en.vtt"
+                            contentIdentifier:en
                                   contentType:@"text/vtt"
                                          type:GCKMediaTrackTypeText
                                   textSubtype:GCKMediaTextTrackSubtypeCaptions
-                                         name:@"English Captions 3"
+                                         name:@"English"
                                  languageCode:@"en"
                                    customData:nil];
     
-    NSArray *tracks = @[captionsTrack];
+    GCKMediaTrack *esLang =
+    [[GCKMediaTrack alloc] initWithIdentifier:2
+                            contentIdentifier:es
+                                  contentType:@"text/vtt"
+                                         type:GCKMediaTrackTypeText
+                                  textSubtype:GCKMediaTextTrackSubtypeCaptions
+                                         name:@"Spanish"
+                                 languageCode:@"es"
+                                   customData:nil];
+    
+    NSArray *tracks = @[enLang, esLang];
     
   GCKMediaInformation *mediaInfo =
       [[GCKMediaInformation alloc] initWithContentID:mediaUrl
