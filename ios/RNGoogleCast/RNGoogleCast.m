@@ -189,6 +189,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
   NSString *contentType = [RCTConvert NSString:params[@"contentType"]];
   NSDictionary *customData = [RCTConvert NSDictionary:params[@"customData"]];
+  NSArray *mediaTracks = [RCTConvert NSArray:params[@"mediaTracks"]];
   double streamDuration = [RCTConvert double:params[@"streamDuration"]];
   double playPosition = [RCTConvert double:params[@"playPosition"]];
 
@@ -222,46 +223,38 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                 height:720]];
   }
     
-    GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
-    [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#FFEB3B"]];
-    [textTrackStyle setFontFamily:@"serif"];
-    styleChangeRequest = [castSession.remoteMediaClient setTextTrackStyle:textTrackStyle];
+  GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
+  [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#FFEB3B"]];
+  [textTrackStyle setFontFamily:@"serif"];
+  styleChangeRequest = [castSession.remoteMediaClient setTextTrackStyle:textTrackStyle];
     
+  NSMutableArray *tracks = [[NSMutableArray alloc] init];
+  for(id track in mediaTracks) {
+      
+      NSNumber* ID = [track valueForKey:@"id"];
+      int trackId = [ID intValue];
+        
+      GCKMediaTrack *lang =
+      [[GCKMediaTrack alloc] initWithIdentifier:trackId
+                                contentIdentifier:track[@"uri"]
+                                contentType:track[@"type"]
+                                type:GCKMediaTrackTypeText
+                                textSubtype:GCKMediaTextTrackSubtypeCaptions
+                                name:track[@"title"]
+                                languageCode:track[@"language"]
+                                customData:nil];
+      [tracks addObject:lang];
+   }
     
-    NSString *en = @"https://bitdash-a.akamaihd.net/content/sintel/subtitles/subtitles_en.vtt";
-    NSString *es = @"https://bitdash-a.akamaihd.net/content/sintel/subtitles/subtitles_es.vtt";
-    
-    GCKMediaTrack *enLang =
-    [[GCKMediaTrack alloc] initWithIdentifier:1
-                            contentIdentifier:en
-                                  contentType:@"text/vtt"
-                                         type:GCKMediaTrackTypeText
-                                  textSubtype:GCKMediaTextTrackSubtypeCaptions
-                                         name:@"English"
-                                 languageCode:@"en"
-                                   customData:nil];
-    
-    GCKMediaTrack *esLang =
-    [[GCKMediaTrack alloc] initWithIdentifier:2
-                            contentIdentifier:es
-                                  contentType:@"text/vtt"
-                                         type:GCKMediaTrackTypeText
-                                  textSubtype:GCKMediaTextTrackSubtypeCaptions
-                                         name:@"Spanish"
-                                 languageCode:@"es"
-                                   customData:nil];
-    
-    NSArray *tracks = @[enLang, esLang];
-    
-  GCKMediaInformation *mediaInfo =
+   GCKMediaInformation *mediaInfo =
       [[GCKMediaInformation alloc] initWithContentID:mediaUrl
-                                          streamType:GCKMediaStreamTypeBuffered
-                                         contentType:contentType
-                                            metadata:metadata
-                                      streamDuration:streamDuration
-                                         mediaTracks:tracks
-                                      textTrackStyle:captionsTrack
-                                          customData:customData];
+                                  streamType:GCKMediaStreamTypeBuffered
+                                  contentType:contentType
+                                  metadata:metadata
+                                  streamDuration:streamDuration
+                                  mediaTracks:tracks
+                                  textTrackStyle:nil
+                                  customData:customData];
   // Cast the video.
   if (castSession) {
     [castSession.remoteMediaClient loadMedia:mediaInfo
