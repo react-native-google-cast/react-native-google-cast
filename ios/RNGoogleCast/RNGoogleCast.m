@@ -224,8 +224,9 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   }
     
   GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
-  [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#FFEB3B"]];
-  [textTrackStyle setFontFamily:@"serif"];
+  [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#ffffff"]];
+  [textTrackStyle setBackgroundColor:[[GCKColor alloc] initWithCSSString:@"#0c1519b8"]];
+  [textTrackStyle setFontFamily:@"arial"];
   styleChangeRequest = [castSession.remoteMediaClient setTextTrackStyle:textTrackStyle];
     
   NSMutableArray *tracks = [[NSMutableArray alloc] init];
@@ -253,7 +254,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                   metadata:metadata
                                   streamDuration:streamDuration
                                   mediaTracks:tracks
-                                  textTrackStyle:nil
+                                  textTrackStyle:textTrackStyle
                                   customData:customData];
   // Cast the video.
   if (castSession) {
