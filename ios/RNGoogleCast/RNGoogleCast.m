@@ -13,7 +13,6 @@
   bool playbackEnded;
   NSUInteger currentItemID;
   NSTimer *progressTimer;
-  bool styleChangeRequest;
 }
 
 @synthesize bridge = _bridge;
@@ -189,6 +188,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
   NSString *contentType = [RCTConvert NSString:params[@"contentType"]];
   NSDictionary *customData = [RCTConvert NSDictionary:params[@"customData"]];
+  NSDictionary *textTrackStyle = [RCTConvert NSDictionary:params[@"textTrackStyle"]];
   NSArray *mediaTracks = [RCTConvert NSArray:params[@"mediaTracks"]];
   double streamDuration = [RCTConvert double:params[@"streamDuration"]];
   double playPosition = [RCTConvert double:params[@"playPosition"]];
@@ -223,11 +223,14 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                 height:720]];
   }
     
-  GCKMediaTextTrackStyle *textTrackStyle = [GCKMediaTextTrackStyle createDefault];
-  [textTrackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:@"#ffffff"]];
-  [textTrackStyle setBackgroundColor:[[GCKColor alloc] initWithCSSString:@"#0c1519b8"]];
-  [textTrackStyle setFontFamily:@"arial"];
-  styleChangeRequest = [castSession.remoteMediaClient setTextTrackStyle:textTrackStyle];
+  GCKMediaTextTrackStyle *trackStyle = nil;
+  if(textTrackStyle) {
+    trackStyle = [GCKMediaTextTrackStyle createDefault];
+    [trackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:textTrackStyle[@"textColor"]]];
+    [trackStyle setBackgroundColor:[[GCKColor alloc] initWithCSSString:textTrackStyle[@"backgroundColor"]]];
+    [trackStyle setFontFamily:textTrackStyle[@"fontFamily"]];
+  }
+      
     
   NSMutableArray *tracks = [[NSMutableArray alloc] init];
   for(id track in mediaTracks) {
@@ -254,7 +257,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                   metadata:metadata
                                   streamDuration:streamDuration
                                   mediaTracks:tracks
-                                  textTrackStyle:textTrackStyle
+                                  textTrackStyle:trackStyle
                                   customData:customData];
   // Cast the video.
   if (castSession) {
@@ -266,15 +269,6 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
     NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:GCKErrorCodeNoMediaSession userInfo:nil];
     reject(@"no_session", @"No castSession!", error);
   }
-}
-
-#pragma mark - GCKRequestDelegate
-
-- (void)requestDidComplete:(GCKRequest *)request {
-    if (request == styleChangeRequest) {
-        NSLog(@"Style update completed.");
-        styleChangeRequest = nil;
-    }
 }
 
 RCT_EXPORT_METHOD(play) {
