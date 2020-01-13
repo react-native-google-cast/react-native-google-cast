@@ -177,6 +177,8 @@ Finally, run `pod install`.
   ```java
   package com.foo;
 
+  import android.content.Context;
+  import com.google.android.gms.cast.framework.CastOptions;
   import com.reactnative.googlecast.GoogleCastOptionsProvider;
 
   public class CastOptionsProvider extends GoogleCastOptionsProvider {
@@ -196,6 +198,12 @@ Finally, run `pod install`.
   <meta-data
     android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
     android:value="com.foo.GoogleCastOptionsProvider" />
+  ```
+  
+  as well as add this to the `app/build.gradle`:
+  
+  ```gradle
+  implementation "com.google.android.gms:play-services-cast-framework:${rootProject.ext.castFrameworkVersion}"
   ```
 
 - Change your `MainActivity` to extend `GoogleCastActivity`.
