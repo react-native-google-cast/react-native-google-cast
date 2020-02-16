@@ -9,6 +9,7 @@
   bool hasListeners;
   NSMutableDictionary *channels;
   GCKCastSession *castSession;
+  GCKMediaInformation *mediaInfo;
   bool playbackStarted;
   bool playbackEnded;
   NSUInteger currentItemID;
@@ -110,6 +111,29 @@ RCT_EXPORT_METHOD(launchExpandedControls) {
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance presentDefaultExpandedMediaControls];
   });
+}
+
+RCT_EXPORT_METHOD(toggleSubtitles: (BOOL) enabled languageCode:(NSString *) languageCode) {
+  if (castSession == nil) return;
+
+  if (!enabled) {
+    [castSession.remoteMediaClient setActiveTrackIDs:@[]];
+    return;
+  }
+
+  NSArray *mediaTracks = mediaInfo.mediaTracks;
+  NSString *languageToSelect = languageCode != nil ? languageCode : DEFAULT_SUBTITLES_LANGUAGE;
+
+  if (mediaTracks == nil || [mediaTracks count] == 0) {
+    return;
+  }
+  
+  for(GCKMediaTrack *track in mediaTracks) {
+    if (track != nil && [[track languageCode] isEqualToString:languageToSelect]) {
+      [castSession.remoteMediaClient setActiveTrackIDs:@[@(track.identifier)]];
+      return;
+    }
+  }
 }
 
 RCT_EXPORT_METHOD(showCastPicker) {
@@ -359,11 +383,13 @@ RCT_EXPORT_METHOD(setVolume : (float)volume) {
   if (!playbackStarted && mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
     [self sendEventWithName:MEDIA_PLAYBACK_STARTED body:@{@"mediaStatus":status}];
     playbackStarted = true;
+    mediaInfo = mediaStatus.mediaInformation;
   }
 
   if (!playbackEnded && mediaStatus.idleReason == GCKMediaPlayerIdleReasonFinished) {
     [self sendEventWithName:MEDIA_PLAYBACK_ENDED body:@{@"mediaStatus":status}];
     playbackEnded = true;
+    mediaInfo = mediaStatus.mediaInformation;
   }
 }
 
