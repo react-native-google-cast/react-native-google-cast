@@ -14,11 +14,11 @@ PODS:
   - Protobuf (3.10.0)
   - React (0.59.10):
     - React/Core (= 0.59.10)
-  - react-native-google-cast/NoBluetooth (3.2.2):
+  - react-native-google-cast/NoBluetooth (3.3.0):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (3.2.2):
+  - react-native-google-cast/RNGoogleCast (3.3.0):
     - React
   - React/Core (0.59.10):
     - yoga (= 0.59.10.React)
