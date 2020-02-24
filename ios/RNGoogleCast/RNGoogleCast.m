@@ -212,6 +212,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
   NSString *contentType = [RCTConvert NSString:params[@"contentType"]];
   NSDictionary *customData = [RCTConvert NSDictionary:params[@"customData"]];
+  NSArray *textTracks = [RCTConvert NSArray:params[@"textTracks"]];
   double streamDuration = [RCTConvert double:params[@"streamDuration"]];
   double playPosition = [RCTConvert double:params[@"playPosition"]];
 
@@ -244,13 +245,34 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                  width:480
                                 height:720]];
   }
+
+  // Add text tracks from Brightcove API
+  NSMutableArray *tracks = [[NSMutableArray alloc] init];
+  if ([textTracks[0] count] > 0) {
+    GCKMediaTrack *captionsTrack;
+    for (NSDictionary *track in textTracks) {        
+      captionsTrack = [[GCKMediaTrack alloc] initWithIdentifier:track[@"srclang"]
+                              contentIdentifier:track[@"src"]
+                                    contentType:track[@"mime_type"]
+                                            type:GCKMediaTrackTypeText
+                                    textSubtype:GCKMediaTextTrackSubtypeCaptions
+                                            name:track[@"label"]
+                                    languageCode:track[@"srclang"]
+                                      customData:nil];
+      [tracks addObject: captionsTrack];
+    }
+  }
+  else {
+    tracks = nil;
+  }
+
   GCKMediaInformation *mediaInfo =
       [[GCKMediaInformation alloc] initWithContentID:mediaUrl
                                           streamType:GCKMediaStreamTypeBuffered
                                          contentType:contentType
                                             metadata:metadata
                                       streamDuration:streamDuration
-                                         mediaTracks:nil
+                                         mediaTracks:tracks
                                       textTrackStyle:nil
                                           customData:customData];
   // Cast the video.
