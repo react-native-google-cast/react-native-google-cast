@@ -263,6 +263,7 @@ GoogleCast.castMedia({
 - `GoogleCast.pause()`
 - `GoogleCast.seek(playPosition)` - jump to position in seconds from the beginning of the stream
 - `GoogleCast.setVolume(volume)`
+- `GoogleCast.setPlaybackRate(rate)`
 - `GoogleCast.stop()`
 - `GoogleCast.endSession(stopCasting)`
 - `GoogleCast.initChannel('urn:x-cast:...')` - initialize custom channel for communication with Cast receiver app. Once you do this, you can subscribe to `CHANNEL_*` events.
