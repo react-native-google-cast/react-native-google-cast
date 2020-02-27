@@ -288,9 +288,16 @@ RCT_EXPORT_METHOD(seek : (int)playPosition) {
     [castSession.remoteMediaClient seekToTimeInterval:playPosition];
   }
 }
+
 RCT_EXPORT_METHOD(setVolume : (float)volume) {
     if (castSession) {
         [castSession.remoteMediaClient setStreamVolume:volume];
+    }
+}
+
+RCT_EXPORT_METHOD(setPlaybackRate : (float)rate) {
+    if (castSession) {
+        [castSession.remoteMediaClient setPlaybackRate:rate];
     }
 }
 

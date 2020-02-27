@@ -348,6 +348,23 @@ public class GoogleCastModule
     }
 
     @ReactMethod
+    public void setPlaybackRate(final double rate) {
+        if (mCastSession != null) {
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    RemoteMediaClient client = mCastSession.getRemoteMediaClient();
+                    if (client == null) {
+                        return;
+                    }
+
+                    client.setPlaybackRate(rate);
+                }
+            });
+        }
+    }
+
+    @ReactMethod
     public void endSession(final boolean stopCasting, final Promise promise) {
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override

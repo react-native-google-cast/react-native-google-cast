@@ -63,13 +63,14 @@ declare module 'react-native-google-cast' {
     launchExpandedControls(): void
     showIntroductoryOverlay(): void
     setVolume(volume: number): void
+    setPlaybackRate(rate: number): void
     initChannel(channel: string): Promise<boolean>
     sendMessage(message: string, namespace: string): Promise<boolean>
     showCastPicker(): void
     toggleSubtitles(enabled: boolean, languageCode?: string): Promise<void>
 
     EventEmitter: EventEmitter
-    
+
     SESSION_STARTING: string
     SESSION_STARTED: string
     SESSION_START_FAILED: string
@@ -78,12 +79,12 @@ declare module 'react-native-google-cast' {
     SESSION_RESUMED: string
     SESSION_ENDING: string
     SESSION_ENDED: string
-    
+
     MEDIA_STATUS_UPDATED: string
     MEDIA_PLAYBACK_STARTED: string
     MEDIA_PLAYBACK_ENDED: string
     MEDIA_PROGRESS_UPDATED: string
-    
+
     CHANNEL_CONNECTED: string
     CHANNEL_DISCONNECTED: string
     CHANNEL_MESSAGE_RECEIVED: string
