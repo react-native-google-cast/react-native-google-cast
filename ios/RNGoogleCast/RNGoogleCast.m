@@ -250,8 +250,9 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSMutableArray *tracks = [[NSMutableArray alloc] init];
   if ([textTracks[0] count] > 0) {
     GCKMediaTrack *captionsTrack;
+    int trackId = 1;
     for (NSDictionary *track in textTracks) {        
-      captionsTrack = [[GCKMediaTrack alloc] initWithIdentifier:track[@"srclang"]
+      captionsTrack = [[GCKMediaTrack alloc] initWithIdentifier:trackId
                               contentIdentifier:track[@"src"]
                                     contentType:track[@"mime_type"]
                                             type:GCKMediaTrackTypeText
@@ -260,6 +261,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                     languageCode:track[@"srclang"]
                                       customData:nil];
       [tracks addObject: captionsTrack];
+      trackId++;
     }
   }
   else {
