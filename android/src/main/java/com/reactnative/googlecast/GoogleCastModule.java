@@ -129,14 +129,14 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                MediaRouteButton mediaRouterButton = GoogleCastButtonManager.getGoogleCastButtonManagerInstance();
+                MediaRouteButton mediaRouteButton = GoogleCastButtonManager.getGoogleCastButtonManagerInstance();
 
-                if (mediaRouterButton == null) {
-                    Log.e(REACT_CLASS, "Cannot call function showCastPicker when mediaRouterButton is null. Make sure there is a cast button in the view");
+                if (mediaRouteButton == null) {
+                    Log.e(REACT_CLASS, "Cannot call function showCastPicker when mediaRouteButton is null. Make sure there is a cast button in the view");
                     return;
                 }
 
-                mediaRouterButton.performClick();
+                mediaRouteButton.performClick();
                 Log.e(REACT_CLASS, "showCastPicker... ");
             }
         });
