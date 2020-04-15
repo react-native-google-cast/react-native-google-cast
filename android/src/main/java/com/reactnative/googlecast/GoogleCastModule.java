@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import android.support.v7.app.MediaRouteButton;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
@@ -63,7 +65,7 @@ public class GoogleCastModule
     protected static final String MEDIA_PROGRESS_UPDATED =
             "GoogleCast:MediaProgressUpdated";
 
-    protected static final  String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:ChannelMessageReceived";
+    protected static final String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:ChannelMessageReceived";
 
     protected static final String E_CAST_NOT_AVAILABLE = "E_CAST_NOT_AVAILABLE";
     protected static final String GOOGLE_CAST_NOT_AVAILABLE_MESSAGE = "Google Cast not available";
@@ -127,7 +129,14 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                GoogleCastButtonManager.getGoogleCastButtonManagerInstance().performClick();
+                MediaRouteButton mediaRouterButton = GoogleCastButtonManager.getGoogleCastButtonManagerInstance();
+
+                if (mediaRouterButton == null) {
+                    Log.e(REACT_CLASS, "Cannot call function showCastPicker when mediaRouterButton is null. Make sure there is a cast button in the view");
+                    return;
+                }
+
+                mediaRouterButton.performClick();
                 Log.e(REACT_CLASS, "showCastPicker... ");
             }
         });
