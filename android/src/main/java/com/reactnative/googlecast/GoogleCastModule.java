@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import android.support.v7.app.MediaRouteButton;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
@@ -127,8 +129,21 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                GoogleCastButtonManager.getGoogleCastButtonManagerInstance().performClick();
+                MediaRouteButton mediaRouteButton = GoogleCastButtonManager.getGoogleCastButtonManagerInstance();
                 Log.e(REACT_CLASS, "showCastPicker... ");
+                if (mediaRouteButton == null) {
+                    Log.e(REACT_CLASS, "Cannot call function showDialog when mediaRouteButton is null. Make sure there is a cast button in the view");
+                    return;
+                }
+
+                mediaRouteButton.onAttachedToWindow();
+                boolean didShowDialog = mediaRouteButton.performClick();
+
+                if (didShowDialog) {
+                    Log.i(REACT_CLASS, "Show Google Cast picker");
+                } else {
+                    Log.e(REACT_CLASS, "Unable to run showDialog on mediaRouteButton");
+                }
             }
         });
     }
