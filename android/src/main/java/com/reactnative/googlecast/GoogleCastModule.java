@@ -30,6 +30,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.WebImage;
 import com.reactnative.googlecast.GoogleCastButtonManager;
+import android.support.v7.app.MediaRouteButton;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -127,8 +128,21 @@ public class GoogleCastModule
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
-                GoogleCastButtonManager.getGoogleCastButtonManagerInstance().performClick();
+              MediaRouteButton mediaRouteButton = GoogleCastButtonManager.getGoogleCastButtonManagerInstance();
                 Log.e(REACT_CLASS, "showCastPicker... ");
+                if (mediaRouteButton == null) {
+                    Log.e(REACT_CLASS, "Cannot call function showDialog when mediaRouteButton is null. Make sure there is a cast button in the view");
+                    return;
+                }
+
+                mediaRouteButton.onAttachedToWindow();
+                boolean didShowDialog = mediaRouteButton.performClick();
+
+                if (didShowDialog) {
+                    Log.i(REACT_CLASS, "Show Google Cast picker");
+                } else {
+                    Log.e(REACT_CLASS, "Unable to run showDialog on mediaRouteButton");
+                }
             }
         });
     }
