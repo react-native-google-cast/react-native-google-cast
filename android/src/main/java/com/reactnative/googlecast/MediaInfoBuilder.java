@@ -130,7 +130,7 @@ public class MediaInfoBuilder {
             new MediaInfo.Builder(mediaUrl)
                 .setStreamType(streamType)
                 .setMetadata(movieMetadata)
-                .setMediaTracks(subtitles);
+                .setMediaTracks(mediaTracks);
 
         String contentType = ReadableMapUtils.getString(parameters, "contentType");
         builder = builder.setContentType(contentType != null ? contentType : DEFAULT_CONTENT_TYPE);
