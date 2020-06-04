@@ -4,9 +4,15 @@ import android.support.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
+import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+
+import static com.google.android.gms.cast.MediaMetadata.KEY_SUBTITLE;
+import static com.google.android.gms.cast.MediaMetadata.KEY_TITLE;
 
 public class GoogleCastRemoteMediaClientListener
     implements RemoteMediaClient.Listener, RemoteMediaClient.ProgressListener {
@@ -68,9 +74,23 @@ public class GoogleCastRemoteMediaClientListener
 
     MediaInfo info = mediaStatus.getMediaInfo();
     if (info != null) {
-      map.putInt("streamDuration", (int) (info.getStreamDuration() / 1000));
+        map.putInt("streamDuration", (int) (info.getStreamDuration() / 1000));
+        MediaMetadata metadata = info.getMetadata();
+        String title = metadata.getString(KEY_TITLE);
+        if(title != null) map.putString("title", title);
+        String subtitle = metadata.getString(KEY_SUBTITLE);
+        if(subtitle != null) map.putString("subtitle", subtitle);
+        if(metadata.getImages().size() > 0){
+            String imageUrl = metadata.getImages().get(0).getUrl().toString();
+            map.putString("imageUrl", imageUrl);
+        }
+        final CastSession session = module.getCastSession();
+        if(session != null){
+            CastDevice device = session.getCastDevice();
+            String deviceName = device.getFriendlyName();
+            map.putString("deviceName", deviceName);
+        }
     }
-
     WritableMap message = Arguments.createMap();
     message.putMap("mediaStatus", map);
     return message;

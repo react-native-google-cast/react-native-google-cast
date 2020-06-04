@@ -360,12 +360,24 @@ RCT_EXPORT_METHOD(setVolume : (float)volume) {
   double position = mediaStatus.streamPosition;
   double duration = mediaStatus.mediaInformation.streamDuration;
 
+  GCKMediaMetadata* metadata = mediaStatus.mediaInformation.metadata;
+  NSString* title = [metadata stringForKey:kGCKMetadataKeyTitle];
+  NSString* subtitle = [metadata stringForKey:kGCKMetadataKeySubtitle];
+  GCKImage* image = metadata.images.firstObject;
+  NSString* imageUrl = image ? [[image valueForKey:@"URL"] absoluteString] : nil;
+  GCKSession* session = [[GCKCastContext.sharedInstance sessionManager] currentSession ];
+  NSString* deviceName = session.device.friendlyName;
+  
   NSDictionary *status = @{
     @"playerState": @(mediaStatus.playerState),
     @"idleReason": @(mediaStatus.idleReason),
     @"muted": @(mediaStatus.isMuted),
     @"streamPosition": isinf(position) || isnan(position) ? [NSNull null] : @(position),
     @"streamDuration": isinf(duration) || isnan(duration) ? [NSNull null] : @(duration),
+    @"title": title ?: [NSNull null],
+    @"subtitle": subtitle ?: [NSNull null],
+    @"imageUrl": imageUrl ?: [NSNull null],
+    @"deviceName": deviceName ?: [NSNull null],
   };
 
   [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus":status}];
