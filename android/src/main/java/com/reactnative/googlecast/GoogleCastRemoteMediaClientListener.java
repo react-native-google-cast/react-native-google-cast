@@ -76,6 +76,11 @@ public class GoogleCastRemoteMediaClientListener
     if (info != null) {
         map.putInt("streamDuration", (int) (info.getStreamDuration() / 1000));
         MediaMetadata metadata = info.getMetadata();
+        if (metadata == null) {
+            WritableMap message = Arguments.createMap();
+            message.putMap("mediaStatus", map);
+            return message;
+        }
         String title = metadata.getString(KEY_TITLE);
         if(title != null) map.putString("title", title);
         String subtitle = metadata.getString(KEY_SUBTITLE);
