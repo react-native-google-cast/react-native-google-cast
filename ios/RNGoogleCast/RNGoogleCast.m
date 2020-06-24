@@ -212,6 +212,8 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
   NSString *contentType = [RCTConvert NSString:params[@"contentType"]];
   NSDictionary *customData = [RCTConvert NSDictionary:params[@"customData"]];
+  NSDictionary *textTrackStyle = [RCTConvert NSDictionary:params[@"textTrackStyle"]];
+  NSArray *mediaTracks = [RCTConvert NSArray:params[@"mediaTracks"]];
   double streamDuration = [RCTConvert double:params[@"streamDuration"]];
   double playPosition = [RCTConvert double:params[@"playPosition"]];
 
@@ -244,14 +246,42 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                  width:480
                                 height:720]];
   }
+
+
+  GCKMediaTextTrackStyle *trackStyle = nil;
+  if(textTrackStyle) {
+    trackStyle = [GCKMediaTextTrackStyle createDefault];
+    [trackStyle setForegroundColor:[[GCKColor alloc] initWithCSSString:textTrackStyle[@"textColor"]]];
+    [trackStyle setBackgroundColor:[[GCKColor alloc] initWithCSSString:textTrackStyle[@"backgroundColor"]]];
+    [trackStyle setFontFamily:textTrackStyle[@"fontFamily"]];
+  }
+
+
+  NSMutableArray *tracks = [[NSMutableArray alloc] init];
+  for(id track in mediaTracks) {
+    NSNumber* ID = [track valueForKey:@"id"];
+    int trackId = [ID intValue];
+
+    GCKMediaTrack *lang =
+    [[GCKMediaTrack alloc] initWithIdentifier:trackId
+                              contentIdentifier:track[@"uri"]
+                              contentType:track[@"type"]
+                              type:GCKMediaTrackTypeText
+                              textSubtype:GCKMediaTextTrackSubtypeCaptions
+                              name:track[@"title"]
+                              languageCode:track[@"language"]
+                              customData:nil];
+    [tracks addObject:lang];
+  }
+
   GCKMediaInformation *mediaInfo =
       [[GCKMediaInformation alloc] initWithContentID:mediaUrl
                                           streamType:GCKMediaStreamTypeBuffered
                                          contentType:contentType
                                             metadata:metadata
                                       streamDuration:streamDuration
-                                         mediaTracks:nil
-                                      textTrackStyle:nil
+                                         mediaTracks:tracks
+                                      textTrackStyle:trackStyle
                                           customData:customData];
   // Cast the video.
   if (castSession) {
