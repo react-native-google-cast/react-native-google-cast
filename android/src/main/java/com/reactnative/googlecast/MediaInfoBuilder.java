@@ -3,16 +3,20 @@ package com.reactnative.googlecast;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.TextTrackStyle;
 import com.google.android.gms.common.images.WebImage;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class MediaInfoBuilder {
     private static final String DEFAULT_CONTENT_TYPE = "video/mp4";
@@ -99,10 +103,34 @@ public class MediaInfoBuilder {
                         ? MediaInfo.STREAM_TYPE_LIVE
                         : MediaInfo.STREAM_TYPE_BUFFERED;
 
+        List mediaTracks = new ArrayList();
+        if (parameters.hasKey("tracks") && parameters.getArray("tracks") != null) {
+            ReadableArray tracks = parameters.getArray("tracks");
+
+                for (int i = 0; i < tracks.size(); i++) {
+                ReadableMap trackData = tracks.getMap(i);
+
+                    MediaTrack track = new MediaTrack.Builder(i, MediaTrack.TYPE_TEXT)
+                    .setName(trackData.getString("title"))
+                    .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
+                    .setContentId(trackData.getString("id"))
+                    .setContentType(
+                        trackData.hasKey("type")
+                            ? trackData.getString("type")
+                            : "text/vtt"
+                    )
+                    .setLanguage(trackData.getString("language"))
+                    .build();
+
+                    mediaTracks.add(track);
+            }
+        }
+
         MediaInfo.Builder builder =
                 new MediaInfo.Builder(mediaUrl)
                         .setStreamType(streamType)
                         .setMetadata(movieMetadata);
+                        .setMediaTracks(mediaTracks);
 
         String contentType = ReadableMapUtils.getString(parameters, "contentType");
         builder = builder.setContentType(contentType != null ? contentType : DEFAULT_CONTENT_TYPE);
