@@ -2,8 +2,9 @@ package com.reactnative.googlecast;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -12,6 +13,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
@@ -19,6 +21,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.framework.CastContext;
@@ -28,10 +31,9 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.images.WebImage;
-import com.reactnative.googlecast.GoogleCastButtonManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -129,6 +131,44 @@ public class GoogleCastModule
             public void run() {
                 GoogleCastButtonManager.getGoogleCastButtonManagerInstance().performClick();
                 Log.e(REACT_CLASS, "showCastPicker... ");
+            }
+        });
+    }
+
+    @ReactMethod
+    public void castMediaMultiple(final ReadableMap params){
+        if (mCastSession == null){
+            return;
+        }
+        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+            @Override
+            public void run() {
+                RemoteMediaClient remoteMediaClient = mCastSession.getRemoteMediaClient();
+                if (remoteMediaClient == null) {
+                    return;
+                }
+
+                ReadableArray listParams = null;
+                Integer repeatMode = 0;
+                if(params.hasKey("castedMediaList")){
+                    listParams = ReadableMapUtils.getReadableArray(params, "castedMediaList");
+                }
+                if(params.hasKey("repeatMode")){
+                    repeatMode = params.getInt("repeatMode");
+                }
+
+                ArrayList<MediaQueueItem> queueList = new ArrayList<>();
+                int startIndex = 0;
+
+                for(int i=0 ; i<listParams.size(); i++){
+                    MediaQueueItem item = new MediaQueueItem.Builder(MediaInfoBuilder.buildMediaInfo(listParams.getMap(i))).build();
+                    queueList.add(item);
+                }
+
+                remoteMediaClient.queueLoad(queueList.toArray(new MediaQueueItem[listParams.size()]), startIndex,  repeatMode, null);
+
+
+                Log.e(REACT_CLASS, "Casting media multiple... ");
             }
         });
     }

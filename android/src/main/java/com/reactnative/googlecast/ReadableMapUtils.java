@@ -1,9 +1,10 @@
 package com.reactnative.googlecast;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 import java.util.Map;
@@ -23,6 +24,14 @@ public class ReadableMapUtils {
         }
 
         return map.getMap(key);
+    }
+
+    public static @Nullable ReadableArray getReadableArray(@NonNull ReadableMap map, @NonNull String key){
+        if(!map.hasKey(key)){
+            return null;
+        }
+
+        return map.getArray(key);
     }
 
     public static @Nullable Map<?, ?> getMap(@NonNull ReadableMap map, @NonNull String key) {

@@ -20,24 +20,24 @@ type CastDevice = {
 }
 
 type CastState =
-  | 'NoDevicesAvailable'
-  | 'NotConnected'
-  | 'Connecting'
-  | 'Connected'
+| 'NoDevicesAvailable'
+| 'NotConnected'
+| 'Connecting'
+| 'Connected'
 
 type TextTrackStyle = {
-  backgroundColor?: string,
-  edgeColor?: string,
-  edgeType?: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised',
-  fontFamily?: string,
-  fontGenericFamily?:
-    | 'casual'
-    | 'cursive'
-    | 'monoSansSerif'
-    | 'monoSerif'
-    | 'sansSerif'
-    | 'serif'
-    | 'smallCaps',
+    backgroundColor?: string,
+    edgeColor?: string,
+    edgeType?: 'depressed' | 'dropShadow' | 'none' | 'outline' | 'raised',
+    fontFamily?: string,
+    fontGenericFamily?:
+  | 'casual'
+  | 'cursive'
+  | 'monoSansSerif'
+  | 'monoSerif'
+  | 'sansSerif'
+  | 'serif'
+  | 'smallCaps',
   fontScale?: number,
   fontStyle?: 'bold' | 'boldItalic' | 'italic' | 'normal',
   foregroundColor?: string,
@@ -55,7 +55,7 @@ export default {
       state =>
         ['NoDevicesAvailable', 'NotConnected', 'Connecting', 'Connected'][
           state
-        ],
+          ],
     )
   },
   castMedia(params: {
@@ -73,6 +73,34 @@ export default {
     textTrackStyle?: TextTrackStyle,
   }) {
     return GoogleCast.castMedia(params)
+  },
+  /**
+   *
+   * @param params {
+   *   replayMode: REPEAT_MODE_REPEAT_OFF = 0, REPEAT_MODE_REPEAT_ALL = 1, REPEAT_MODE_REPEAT_SINGLE = 2
+   *   castedMediaList: list of CastOptions
+   *   {
+    mediaUrl: string,
+    title?: string,
+    subtitle?: string,
+    studio?: string,
+    imageUrl?: string,
+    posterUrl?: string,
+    contentType?: string,
+    streamDuration?: number,
+    playPosition?: number,
+    isLive?: boolean,
+    customData?: Object,
+    textTrackStyle?: TextTrackStyle,
+  }
+   * }
+   *
+   */
+  castMediaMultiple(params: {
+    castedMediaList: any,
+    repeatMode?: number
+  }){
+    return GoogleCast.castMediaMultiple(params)
   },
   /**
    * Ends the current session.
@@ -129,16 +157,16 @@ export default {
    * @param {boolean} languageCode
    */
   toggleSubtitles(enabled: boolean, languageCode?: string) {
-    return GoogleCast.toggleSubtitles(enabled, languageCode)
-  },
+  return GoogleCast.toggleSubtitles(enabled, languageCode)
+},
 
-  // TODO use the same native event interface instead of hacking it here
-  EventEmitter:
-    Platform.OS === 'ios'
-      ? new NativeEventEmitter(GoogleCast)
-      : DeviceEventEmitter,
+// TODO use the same native event interface instead of hacking it here
+EventEmitter:
+  Platform.OS === 'ios'
+    ? new NativeEventEmitter(GoogleCast)
+    : DeviceEventEmitter,
 
-  SESSION_STARTING: GoogleCast.SESSION_STARTING,
+    SESSION_STARTING: GoogleCast.SESSION_STARTING,
   SESSION_STARTED: GoogleCast.SESSION_STARTED,
   SESSION_START_FAILED: GoogleCast.SESSION_START_FAILED,
   SESSION_SUSPENDED: GoogleCast.SESSION_SUSPENDED,
