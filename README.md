@@ -136,9 +136,13 @@ Finally, run `pod install`.
 
 - In `AppDelegate.m` add
 
+  To the top of the file with the other imports:
+
   ```obj-c
   #import <GoogleCast/GoogleCast.h>
   ```
+
+  Before attaching the React Native root view to the window:
 
   ```obj-c
   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
