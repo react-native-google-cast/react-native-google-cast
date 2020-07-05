@@ -140,6 +140,8 @@ Finally, run `pod install`.
   #import <GoogleCast/GoogleCast.h>
   ```
 
+  and place the following code at the beginning of the `application:didFinishLaunchingWithOptions` method
+
   ```obj-c
   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
   GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
@@ -148,7 +150,7 @@ Finally, run `pod install`.
 
   (or replace `kGCKDefaultMediaReceiverApplicationID` with your custom Cast app id).
 
-  Make sure you also enable [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `your target > capabilities`.
+  Make sure you also enable [Access WiFi Information](https://developers.google.com/cast/docs/ios_sender/) in: `[your target] > capabilities`.
 
 - If you're still using Google Cast SDK v3, use this code instead:
 
