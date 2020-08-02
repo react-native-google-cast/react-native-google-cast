@@ -1,8 +1,8 @@
 import { NativeModules } from 'react-native'
-import MediaInfo from '../types/MediaInfo'
-import MediaLoadOptions from '../types/MediaLoadOptions'
-import MediaQueueItem from '../types/MediaQueueItem'
-import MediaStatus from '../types/MediaStatus'
+import type MediaInfo from '../types/MediaInfo'
+import type MediaLoadOptions from '../types/MediaLoadOptions'
+import type MediaQueueItem from '../types/MediaQueueItem'
+import type MediaStatus from '../types/MediaStatus'
 
 const { RNGCRemoteMediaClient: Native } = NativeModules
 

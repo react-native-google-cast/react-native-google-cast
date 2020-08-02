@@ -17,19 +17,24 @@
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  NSURL *jsCodeLocation = [[RCTBundleURLProvider sharedSettings]
-      jsBundleURLForBundleRoot:@"example/index"
-              fallbackResource:nil];
-
-  [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
-
   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc]
       initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
   GCKCastOptions *options =
       [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
   [GCKCastContext setSharedInstanceWithOptions:options];
 
+  [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
+
   return YES;
+}
+
+-(NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+  #if DEBUG
+    return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
+    return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #endif
 }
 
 @end

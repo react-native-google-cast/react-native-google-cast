@@ -29,18 +29,18 @@ CastButton.propTypes = {
 }
 
 const GoogleCastButton = requireNativeComponent(
-  'RNGoogleCastButton',
-  CastButton,
-  {
-    nativeOnly: {
-      accessibilityLabel: true,
-      accessibilityLiveRegion: true,
-      accessibilityComponentType: true,
-      testID: true,
-      nativeID: true,
-      importantForAccessibility: true,
-      renderToHardwareTextureAndroid: true,
-      onLayout: true,
-    },
-  }
+  'RNGoogleCastButton'
+  // CastButton,
+  // {
+  //   nativeOnly: {
+  //     accessibilityLabel: true,
+  //     accessibilityLiveRegion: true,
+  //     accessibilityComponentType: true,
+  //     testID: true,
+  //     nativeID: true,
+  //     importantForAccessibility: true,
+  //     renderToHardwareTextureAndroid: true,
+  //     onLayout: true,
+  //   },
+  // }
 )

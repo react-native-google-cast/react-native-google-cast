@@ -1,7 +1,7 @@
 import CastContext from './api/CastContext'
 import RemoteMediaClient from './api/RemoteMediaClient'
 import CastButton from './components/CastButton'
-import CastState from './types/CastState'
+import { CastState } from './types/CastState'
 import MediaInfo from './types/MediaInfo'
 import MediaLoadOptions from './types/MediaLoadOptions'
 import * as MediaMetadata from './types/MediaMetadata'

@@ -1,10 +1,12 @@
+import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { Button, SectionList, Text, View } from 'react-native'
-import { NavigationScreenProps } from 'react-navigation'
 
-export interface Props extends NavigationScreenProps {}
+export interface HomeProps {}
 
-export default function Home(props: Props) {
+export default function Home() {
+  const navigation = useNavigation()
+
   return (
     <View>
       <SectionList
@@ -13,7 +15,7 @@ export default function Home(props: Props) {
             <Button
               key={index}
               testID={item.title}
-              onPress={() => props.navigation.navigate(item.title)}
+              onPress={() => navigation.navigate(item.title)}
               title={item.title}
             />
           </View>
@@ -27,26 +29,8 @@ export default function Home(props: Props) {
             data: [{ title: 'Demo' }, { title: 'Formats' }],
           },
         ]}
-        keyExtractor={(item, index) => item + index}
+        keyExtractor={(item, index) => item.title + index}
       />
     </View>
   )
-}
-
-const styles = {
-  root: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  h1: {
-    fontSize: 24,
-    textAlign: 'center',
-    margin: 30,
-  },
-  footer: {
-    fontSize: 10,
-    color: '#888',
-    marginTop: 10,
-  },
 }

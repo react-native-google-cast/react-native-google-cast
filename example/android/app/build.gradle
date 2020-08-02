@@ -9,7 +9,7 @@ import com.android.build.OutputFile
  * cycle. By default, bundleDebugJsAndAssets is skipped, as in debug/dev mode we prefer to load the
  * bundle directly from the development server. Below you can see all the possible configurations
  * and their defaults. If you decide to add a configuration block, make sure to add it before the
- * `apply from: "../../../node_modules/react-native/react.gradle"` line.
+ * `apply from: "../../node_modules/react-native/react.gradle"` line.
  *
  * project.ext.react = [
  *   // the name of the generated asset file containing your JS bundle
@@ -44,7 +44,7 @@ import com.android.build.OutputFile
  *   //         'devDisabledIn${buildType}'
  *
  *   // the root of your project, i.e. where "package.json" lives
- *   root: "../../../",
+ *   root: "../../",
  *
  *   // where to put the JS bundle asset in debug mode
  *   jsBundleDirDebug: "$buildDir/intermediates/assets/debug",
@@ -76,11 +76,11 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "example/index.js",
+    entryFile: "index.js",
     enabledHermes: false,  // clean and rebuild if changing
 ]
 
-apply from: "../../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -130,7 +130,7 @@ android {
         applicationId "com.reactnative.googlecast.castvideos"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative60"
+//        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative60"
         multiDexEnabled true
         versionCode 1
         versionName "4.0.0-pre.1"
@@ -200,13 +200,6 @@ dependencies {
     // In RN60+, this is not necessary if you're using autolinking
     implementation project(':react-native-google-cast')
 
-    // These dependencies are just for this project,
-    // you don't need them for RNGC :)
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-navigation')
-    implementation project(':react-native-reanimated')
-    implementation project(':react-native-video')
-
     // https://developer.android.com/studio/build/multidex
     implementation 'androidx.multidex:multidex:2.0.1'
 }
@@ -218,5 +211,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-// apply from: file("../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
-// applyNativeModulesAppBuildGradle(project, "../..")
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+applyNativeModulesAppBuildGradle(project)

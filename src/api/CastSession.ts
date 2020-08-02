@@ -1,8 +1,8 @@
 import { NativeEventEmitter, NativeModules } from 'react-native'
-import ActiveInputState from '../types/ActiveInputState'
-import ApplicationMetadata from '../types/ApplicationMetadata'
-import Device from '../types/Device'
-import StandbyState from '../types/StandbyState'
+import type { ActiveInputState } from '../types/ActiveInputState'
+import type ApplicationMetadata from '../types/ApplicationMetadata'
+import type Device from '../types/Device'
+import type { StandbyState } from '../types/StandbyState'
 import RemoteMediaClient from './RemoteMediaClient'
 
 const { RNGCCastSession: Native } = NativeModules

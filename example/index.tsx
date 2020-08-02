@@ -4,10 +4,9 @@ import {
   connectActionSheet,
 } from '@expo/react-native-action-sheet'
 import React from 'react'
-import { Image, TouchableOpacity } from 'react-native'
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler'
+import { CastButton } from 'react-native-google-cast'
 import { Navigation } from 'react-native-navigation'
-import { CastButton } from '../lib'
 import HomeScreen from './src/screens/HomeScreen'
 import QueueScreen from './src/screens/QueueScreen'
 import VideoScreen from './src/screens/VideoScreen'

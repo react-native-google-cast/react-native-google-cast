@@ -9,10 +9,13 @@ import {
   View,
 } from 'react-native'
 import { Navigation, Options } from 'react-native-navigation'
-import GoogleCast, { CastState, RemoteMediaClient } from '../../../lib'
+import GoogleCast, {
+  CastState,
+  RemoteMediaClient,
+} from 'react-native-google-cast'
 import Video from '../Video'
 
-export interface Props extends ActionSheetProps {
+export interface HomeScreenProps extends ActionSheetProps {
   componentId: string
 }
 
@@ -21,8 +24,11 @@ interface State {
   videos: Video[]
 }
 
-class HomeScreen extends React.Component<Props, State> {
-  static options(passProps): Options {
+export default class HomeScreen extends React.Component<
+  HomeScreenProps,
+  State
+> {
+  static options(): Options {
     return {
       topBar: {
         title: {
@@ -42,7 +48,7 @@ class HomeScreen extends React.Component<Props, State> {
     }
   }
 
-  castStateListener: EmitterSubscription
+  castStateListener?: EmitterSubscription
   state: State = {
     connected: false,
     videos: [],
@@ -83,41 +89,36 @@ class HomeScreen extends React.Component<Props, State> {
     GoogleCast.showIntroductoryOverlay()
 
     Video.findAll()
-      .then(videos => this.setState({ videos }))
+      .then((videos) => this.setState({ videos }))
       .catch(console.error)
   }
 
   componentWillUnmount() {
-    this.castStateListener.remove()
+    this.castStateListener?.remove()
   }
 
   render() {
     return (
       <FlatList
         data={this.state.videos}
-        keyExtractor={(item, index) => item.title}
+        keyExtractor={(item) => item.title}
         renderItem={this.renderVideo}
         style={{ width: '100%', alignSelf: 'stretch' }}
       />
     )
   }
 
-  renderVideo = ({ item, index }: { item: Video; index: number }) => {
-    const video = item
-    const elementId = `video${index}`
-
+  renderVideo = ({ item: video }: { item: Video }) => {
     return (
       <TouchableOpacity
         key={video.title}
-        onPress={() => this.navigateToVideo(video, elementId)}
+        onPress={() => this.navigateToVideo(video)}
         style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
       >
-        <Navigation.Element elementId={elementId}>
-          <Image
-            source={{ uri: video.imageUrl }}
-            style={{ width: 160, height: 90 }}
-          />
-        </Navigation.Element>
+        <Image
+          source={{ uri: video.imageUrl }}
+          style={{ width: 160, height: 90 }}
+        />
 
         <View style={{ flex: 1, marginLeft: 10, alignSelf: 'center' }}>
           <Text>{video.title}</Text>
@@ -132,7 +133,7 @@ class HomeScreen extends React.Component<Props, State> {
                   options: ['Play Now', 'Play Next', 'Add to Queue', 'Cancel'],
                   cancelButtonIndex: 3,
                 },
-                async buttonIndex => {
+                async (buttonIndex) => {
                   const client = RemoteMediaClient.getCurrent()
 
                   if (buttonIndex === 0) {
@@ -142,17 +143,17 @@ class HomeScreen extends React.Component<Props, State> {
                     client
                       .queueInsertItem(
                         {
-                          mediaInfo: item.toMediaInfo(),
+                          mediaInfo: video.toMediaInfo(),
                         },
                         status && status.queueItems.length > 2
                           ? status.queueItems[1].itemId
-                          : null
+                          : undefined
                       )
                       .catch(console.warn)
                   } else if (buttonIndex === 2) {
                     client
                       .queueInsertItem({
-                        mediaInfo: item.toMediaInfo(),
+                        mediaInfo: video.toMediaInfo(),
                       })
                       .catch(console.warn)
                   }
@@ -176,7 +177,7 @@ class HomeScreen extends React.Component<Props, State> {
     GoogleCast.showExpandedControls()
   }
 
-  navigateToVideo = (video: Video, elementId: string) => {
+  navigateToVideo = (video: Video) => {
     Navigation.push(this.props.componentId, {
       component: {
         name: 'castvideos.Video',
@@ -207,7 +208,7 @@ class HomeScreen extends React.Component<Props, State> {
     })
   }
 
-  navigationButtonPressed({ buttonId }) {
+  navigationButtonPressed({ buttonId }: { buttonId: string }) {
     if (buttonId === 'queue') {
       Navigation.push(this.props.componentId, {
         component: { name: 'castvideos.Queue' },
@@ -215,5 +216,3 @@ class HomeScreen extends React.Component<Props, State> {
     }
   }
 }
-
-export default HomeScreen

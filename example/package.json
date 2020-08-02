@@ -1,0 +1,39 @@
+{
+  "name": "react-native-google-cast-example",
+  "description": "Example app for react-native-google-cast",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start"
+  },
+  "dependencies": {
+    "@expo/react-native-action-sheet": "^3.8.0",
+    "react": "16.11.0",
+    "react-native": "0.62.2",
+    "react-native-draggable-flatlist": "^2.3.6",
+    "react-native-gesture-handler": "^1.7.0",
+    "react-native-navigation": "^6.10.1",
+    "react-native-reanimated": "^1.10.1",
+    "react-native-video": "^4.4.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/runtime": "^7.9.6",
+    "@types/react-native-video": "^5.0.1",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "metro-react-native-babel-preset": "^0.59.0"
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "example/ios/build/Build/Products/Debug-iphonesimulator/RNGCPlayground.app",
+        "build": "xcodebuild -workspace example/ios/RNGCPlayground.xcworkspace -scheme RNGCPlayground -configuration Debug -sdk iphonesimulator -derivedDataPath example/ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone Xs"
+      }
+    },
+    "test-runner": "jest"
+  }
+}

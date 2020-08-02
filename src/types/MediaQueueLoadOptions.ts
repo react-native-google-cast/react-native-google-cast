@@ -1,4 +1,4 @@
-import MediaRepeatMode from './MediaRepeatMode'
+import { MediaRepeatMode } from './MediaRepeatMode'
 
 /**
  * Options for loading media queue items with {@link RemoteMediaClient}.

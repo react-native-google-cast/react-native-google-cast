@@ -1,6 +1,6 @@
 import MediaInfo from './MediaInfo'
 import MediaQueueItem from './MediaQueueItem'
-import MediaRepeatMode from './MediaRepeatMode'
+import { MediaRepeatMode } from './MediaRepeatMode'
 import VideoInfo from './VideoInfo'
 
 /**

@@ -1,5 +1,5 @@
 import { NativeEventEmitter, NativeModules } from 'react-native'
-import CastSession from './CastSession'
+import type CastSession from './CastSession'
 
 const { RNGCSessionManager: Native } = NativeModules
 const EventEmitter = new NativeEventEmitter(Native)

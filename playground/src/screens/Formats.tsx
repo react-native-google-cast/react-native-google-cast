@@ -6,8 +6,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import { NavigationScreenProps } from 'react-navigation'
-import { MediaInfo, MediaMetadata, RemoteMediaClient } from '../../../lib'
+import { MediaInfo, RemoteMediaClient } from 'react-native-google-cast'
 
 interface FormatItem {
   title: string
@@ -16,9 +15,7 @@ interface FormatItem {
 
 const FormatList = SectionList as SectionListStatic<FormatItem>
 
-export type Props = NavigationScreenProps
-
-export default function Formats(props: Props) {
+export default function Formats() {
   return (
     <FormatList
       renderItem={({ item }) => (
@@ -41,7 +38,7 @@ export default function Formats(props: Props) {
             {
               title: 'BMP',
               mediaInfo: {
-                contentId:
+                contentUrl:
                   'http://eeweb.poly.edu/~yao/EL5123/image/lena_gray.bmp',
                 contentType: 'image/bmp',
                 metadata: {
@@ -53,7 +50,7 @@ export default function Formats(props: Props) {
             {
               title: 'PNG',
               mediaInfo: {
-                contentId:
+                contentUrl:
                   'https://sample-videos.com/img/Sample-png-image-500kb.png',
                 contentType: 'image/png',
                 metadata: {
@@ -70,7 +67,7 @@ export default function Formats(props: Props) {
             {
               title: 'MP4',
               mediaInfo: {
-                contentId:
+                contentUrl:
                   'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
                 contentType: 'application/mp4',
                 streamDuration: 596,
@@ -100,7 +97,7 @@ export default function Formats(props: Props) {
             {
               title: 'DASH',
               mediaInfo: {
-                contentId:
+                contentUrl:
                   'http://yt-dash-mse-test.commondatastorage.googleapis.com/media/car-20120827-manifest.mpd',
                 contentType: 'video/webm',
               },
@@ -108,7 +105,8 @@ export default function Formats(props: Props) {
             {
               title: 'HLS',
               mediaInfo: {
-                contentId: 'https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8',
+                contentUrl:
+                  'https://mnmedias.api.telequebec.tv/m3u8/29880.m3u8',
                 contentType: 'application/x-mpegURL',
               },
             },

@@ -1,7 +1,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native'
-import CastState from '../types/CastState'
-import CastSession from './CastSession'
-import RemoteMediaClient from './RemoteMediaClient'
+import type { CastState } from '../types/CastState'
+import type CastSession from './CastSession'
+import type RemoteMediaClient from './RemoteMediaClient'
 import SessionManager from './SessionManager'
 
 const { RNGCCastContext: Native } = NativeModules
@@ -36,7 +36,7 @@ export default class CastContext {
    */
   static async getClient(): Promise<RemoteMediaClient | null> {
     const session = await this.getCurrentCastSession()
-    return session.client
+    return session ? session.client : null
   }
 
   /**

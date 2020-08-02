@@ -1,12 +1,14 @@
 android/build/
+docs/
 docs-website/
+playground/
 example/
 playground/
 project.xcworkspace
-xcuserdata
 *.iml
 .clang-format
 .github
-.DS_Store
 .prettierrc
-.vscode
+.DS_Store
+.vscode/
+*xcuserdata

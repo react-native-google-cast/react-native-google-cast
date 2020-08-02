@@ -1,50 +1,42 @@
+platform :ios, '9.0'
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '9.0'
-
-# require_relative '../../node_modules/@react-native-community/cli-platform-ios/native_modules'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'CastVideos' do
-  rnpath = '../../node_modules/react-native'
+  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
+  pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
+  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
+  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
+  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
+  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
+  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
+  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
+  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
+  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
+  pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
 
-  pod 'FBLazyVector', path: "#{rnpath}/Libraries/FBLazyVector"
-  pod 'FBReactNativeSpec', path: "#{rnpath}/Libraries/FBReactNativeSpec"
-  pod 'RCTRequired', path: "#{rnpath}/Libraries/RCTRequired"
-  pod 'RCTTypeSafety', path: "#{rnpath}/Libraries/TypeSafety"
-  pod 'React', path: "#{rnpath}/"
-  pod 'React-Core', path: "#{rnpath}/"
-  pod 'React-CoreModules', path: "#{rnpath}/React/CoreModules"
-  pod 'React-Core/DevSupport', path: "#{rnpath}/"
-  pod 'React-RCTActionSheet', path: "#{rnpath}/Libraries/ActionSheetIOS"
-  pod 'React-RCTAnimation', path: "#{rnpath}/Libraries/NativeAnimation"
-  pod 'React-RCTBlob', path: "#{rnpath}/Libraries/Blob"
-  pod 'React-RCTImage', path: "#{rnpath}/Libraries/Image"
-  pod 'React-RCTLinking', path: "#{rnpath}/Libraries/LinkingIOS"
-  pod 'React-RCTNetwork', path: "#{rnpath}/Libraries/Network"
-  pod 'React-RCTSettings', path: "#{rnpath}/Libraries/Settings"
-  pod 'React-RCTText', path: "#{rnpath}/Libraries/Text"
-  pod 'React-RCTVibration', path: "#{rnpath}/Libraries/Vibration"
-  pod 'React-Core/RCTWebSocket', path: "#{rnpath}/"
+  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
+  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
+  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
+  pod 'ReactCommon/callinvoker', :path => "../node_modules/react-native/ReactCommon"
+  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
+  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga', :modular_headers => true
 
-  pod 'React-cxxreact', path: "#{rnpath}/ReactCommon/cxxreact"
-  pod 'React-jsi', path: "#{rnpath}/ReactCommon/jsi"
-  pod 'React-jsiexecutor', path: "#{rnpath}/ReactCommon/jsiexecutor"
-  pod 'React-jsinspector', path: "#{rnpath}/ReactCommon/jsinspector"
-  pod 'ReactCommon/jscallinvoker', path: "#{rnpath}/ReactCommon"
-  pod 'ReactCommon/turbomodule/core', path: "#{rnpath}/ReactCommon"
-  pod 'Yoga', path: "#{rnpath}/ReactCommon/yoga"
-
-  pod 'DoubleConversion', podspec: "#{rnpath}/third-party-podspecs/DoubleConversion.podspec"
-  pod 'glog', podspec: "#{rnpath}/third-party-podspecs/glog.podspec"
-  pod 'Folly', podspec: "#{rnpath}/third-party-podspecs/Folly.podspec"
-
-  pod 'RNGestureHandler', path: '../../node_modules/react-native-gesture-handler/'
-  pod 'ReactNativeNavigation', path: '../../node_modules/react-native-navigation/'
-  pod 'RNReanimated', path: '../../node_modules/react-native-reanimated/'
-  pod 'react-native-video', path: '../../node_modules/react-native-video/'
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   # last but not least :)
   pod 'react-native-google-cast/NoBluetooth', path: '../../ios/'
 
-  # use_native_modules!
+  use_native_modules!
 end
