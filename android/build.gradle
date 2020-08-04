@@ -25,17 +25,13 @@ android {
 repositories {
     mavenCentral()
     jcenter()
+    google()
 }
 
 dependencies {
-    def supportLibVersion = safeExtGet('supportLibVersion', '+')
-    def supportLibMajorVersion = supportLibVersion.split('\\.')[0] as int
-    def appCompatLibName =  (supportLibMajorVersion < 20) ? "androidx.appcompat:appcompat" : "com.android.support:appcompat-v7"
-    def mediaRouterLibName =  (supportLibMajorVersion < 20) ? "androidx.mediarouter:mediarouter" : "com.android.support:mediarouter-v7"
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
-    implementation "$appCompatLibName:$supportLibVersion"
-    implementation "$mediaRouterLibName:$supportLibVersion"
+    implementation "com.android.support:appcompat-v7:${safeExtGet('supportLibVersion', '+')}"
+    implementation "com.android.support:mediarouter-v7:${safeExtGet('supportLibVersion', '+')}"
     implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
 }

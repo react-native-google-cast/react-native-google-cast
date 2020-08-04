@@ -1,4 +1,4 @@
-import { MediaRepeatMode } from './MediaRepeatMode'
+import MediaRepeatMode from './MediaRepeatMode'
 
 /**
  * Options for loading media queue items with {@link RemoteMediaClient}.
@@ -15,6 +15,6 @@ export default interface MediaQueueLoadOptions {
   /**  The initial playback position for the first item in the queue items array when it is first played, relative to the beginning of the stream. This value is ignored when the same item is played again, for example when the queue repeats, or the item is later jumped to. In those cases the item's `startTime` is used. */
   playPosition?: number
 
-  /**  The repeat mode for playing the queue. One of `All`, `AllAndShuffle`, `Single`, `Off`. */
+  /**  The repeat mode for playing the queue. One of `all`, `allAndShuffle`, `single`, `off`. */
   repeatMode?: MediaRepeatMode
 }

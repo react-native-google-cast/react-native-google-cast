@@ -30,7 +30,7 @@ CastButton.propTypes = {
 
 const GoogleCastButton = requireNativeComponent(
   'RNGoogleCastButton'
-  // CastButton,
+  // CastButton
   // {
   //   nativeOnly: {
   //     accessibilityLabel: true,

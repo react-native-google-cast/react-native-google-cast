@@ -402,7 +402,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.reactnative.googlecast.CastVideos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reactnative.googlecast.castvideos;
 				PRODUCT_NAME = CastVideos;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -428,7 +428,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.reactnative.googlecast.CastVideos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reactnative.googlecast.castvideos;
 				PRODUCT_NAME = CastVideos;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

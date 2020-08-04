@@ -1,7 +1,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native'
-import type { CastState } from '../types/CastState'
-import type CastSession from './CastSession'
-import type RemoteMediaClient from './RemoteMediaClient'
+import CastState from '../types/CastState'
+import CastSession from './CastSession'
+import RemoteMediaClient from './RemoteMediaClient'
 import SessionManager from './SessionManager'
 
 const { RNGCCastContext: Native } = NativeModules
