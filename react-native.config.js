@@ -1,9 +1,11 @@
+const path = require('path');
+
 module.exports = {
   dependency: {
     platforms: {
       ios: {
         podspecPath:
-          'node_modules/react-native-google-cast/ios/react-native-google-cast.podspec',
+          path.join(__dirname, 'ios', 'react-native-google-cast.podspec'),
       },
     },
   },
