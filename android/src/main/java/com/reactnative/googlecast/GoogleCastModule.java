@@ -438,30 +438,34 @@ public class GoogleCastModule
 
     @Override
     public void onHostResume() {
-        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-            @Override
-            public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.addSessionManagerListener(mSessionManagerListener,
-                        CastSession.class);
-            }
-        });
+        if (CAST_AVAILABLE) {
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.addSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+                }
+            });
+        }
     }
 
     @Override
     public void onHostPause() {
-        getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-            @Override
-            public void run() {
-                SessionManager sessionManager =
-                        CastContext.getSharedInstance(getReactApplicationContext())
-                                .getSessionManager();
-                sessionManager.removeSessionManagerListener(mSessionManagerListener,
-                        CastSession.class);
-            }
-        });
+        if (CAST_AVAILABLE) {
+            getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+                @Override
+                public void run() {
+                    SessionManager sessionManager =
+                            CastContext.getSharedInstance(getReactApplicationContext())
+                                    .getSessionManager();
+                    sessionManager.removeSessionManagerListener(mSessionManagerListener,
+                            CastSession.class);
+                }
+            });
+        }
     }
 
     @Override
