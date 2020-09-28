@@ -14,8 +14,7 @@
 }
 
 -(void)setTintColor:(UIColor *)color {
-  _tintColor = color;
-  super.tintColor = color;
+  super.tintColor = _tintColor = _castButton.tintColor = color;
   [self setNeedsDisplay];
 }
 
