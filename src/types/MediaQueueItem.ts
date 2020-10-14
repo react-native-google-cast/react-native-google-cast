@@ -19,13 +19,13 @@ export default interface MediaQueueItem {
   /** Custom data, if any. */
   customData?: object
 
-  /** Unique identifier of the item in the queue. If used in QueueLoad or QueueInsert it must be `null` (as it will be assigned by the receiver when an item is first created/inserted). For other operations it is mandatory. */
+  /** Unique identifier of the item in the queue. If used in QueueLoad or QueueInsert it must be `undefined` (as it will be assigned by the receiver when an item is first created/inserted). For other operations it is mandatory. */
   itemId?: number
 
   /** The media information associated with this item. */
   mediaInfo: MediaInfo
 
-  /** The playback duration for the item, in seconds, or `null` if the stream's actual duration should be used. */
+  /** The playback duration for the item, in seconds, or `undefined` if the stream's actual duration should be used. */
   playbackDuration?: number
 
   /** This parameter is a hint for the receiver to preload this media item before it is played. It allows for a smooth transition between items played from the queue. The time is expressed in seconds, relative to the beginning of this item playback (usually the end of the previous item playback). Only positive values are valid. For example, if the value is 10 seconds, this item will be preloaded 10 seconds before the previous item has finished. The receiver will try to honor this value but will not guarantee it, for example if the value is larger than the previous item duration the receiver may just preload this item shortly after the previous item has started playing (there will never be two items being preloaded in parallel). Also, if an item is inserted in the queue just after the currentItem and the time to preload is higher than the time left on the currentItem, the preload will just happen as soon as possible. */

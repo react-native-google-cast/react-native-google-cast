@@ -1,16 +1,10 @@
 package com.reactnative.googlecast.api;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.reactnative.googlecast.types.RNGCMediaStatus;
 
-public class RNGCRemoteMediaClientListener
+public class RNGCRemoteMediaClientCallback
     extends RemoteMediaClient.Callback {
 
   private RNGCRemoteMediaClient client;
@@ -18,9 +12,24 @@ public class RNGCRemoteMediaClientListener
   private boolean playbackEnded;
   private int currentItemId;
 
-  public RNGCRemoteMediaClientListener(RNGCRemoteMediaClient client) {
+  public RNGCRemoteMediaClientCallback(RNGCRemoteMediaClient client) {
     this.client = client;
   }
+
+  @Override
+  public void onAdBreakStatusUpdated() {}
+
+  @Override
+  public void onMetadataUpdated() {}
+
+  @Override
+  public void onPreloadStatusUpdated() {}
+
+  @Override
+  public void onQueueStatusUpdated() {}
+
+  @Override
+  public void onSendingRemoteMediaRequest() {}
 
   @Override
   public void onStatusUpdated() {
@@ -59,19 +68,4 @@ public class RNGCRemoteMediaClientListener
       }
     });
   }
-
-  @Override
-  public void onMetadataUpdated() {}
-
-  @Override
-  public void onQueueStatusUpdated() {}
-
-  @Override
-  public void onPreloadStatusUpdated() {}
-
-  @Override
-  public void onSendingRemoteMediaRequest() {}
-
-  @Override
-  public void onAdBreakStatusUpdated() {}
 }

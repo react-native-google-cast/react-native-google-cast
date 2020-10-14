@@ -10,7 +10,17 @@ or
 
 `$ yarn add react-native-google-cast`
 
-**If you're using React Native =>0.60, you're done.** Continue to [Setup](setup.html).
+## Link package (React Native >=0.60)
+
+Android is linked automatically.
+
+For iOS, run:
+
+```
+cd ios && pod install
+```
+
+That's it. Continue to [Setup](setup.html).
 
 ## Link package (React Native <=0.59)
 
@@ -22,23 +32,23 @@ Note: This will only link the react-native-google-cast library. You'll still nee
 
 #### Using CocoaPods
 
-_(React Native <=0.59)_ Install [CocoaPods](https://cocoapods.org/) and set up your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
+Install [CocoaPods](https://cocoapods.org/) and set up your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
 In your `ios/Podfile`, add **one** of these snippets:
 
-- If targeting [iOS 13 and don't require guest mode](https://developers.google.com/cast/docs/ios_sender/ios13_changes), add
-
-  ```
-  pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
-  ```
-
-- If you need to support guest mode, add
+- If targeting iOS <=12, or iOS 13+ and you [require guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
 
   ```
   pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'
+  # pod 'google-cast-sdk', '4.5.0' <-- optional, will default to the latest version if not specified
   ```
 
-  Note that due to a [duplicate symbol issue](https://issuetracker.google.com/issues/113069508), you have to use version `4.3.0` and not the latest version. Because of that, you might see issues in iOS 13.
+- If targeting iOS 13+ and you [don't need guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_remove_guest_mode_support), add
+
+  ```
+  pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
+  # pod 'google-cast-sdk-no-bluetooth', '4.5.0' <-- optional, will default to the latest version if not specified
+  ```
 
 - If you want to link the Google Cast SDK manually, add
 
@@ -46,7 +56,7 @@ In your `ios/Podfile`, add **one** of these snippets:
   pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/ios/'
   ```
 
-  and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup). Note that this option is not explored yet. If you go this route, please let us know how you made it work. :)
+  and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup).
 
 Finally, run `pod install`.
 
@@ -96,12 +106,12 @@ Finally, run `pod install`.
    ```java
    buildscript {
      ext {
-       buildToolsVersion = "27.0.3"
+       buildToolsVersion = "29.0.2"
        minSdkVersion = 16
-       compileSdkVersion = 27
-       targetSdkVersion = 26
-       supportLibVersion = "26.1.0"
-       castFrameworkVersion = '16.1.2' // <-- Cast SDK version
+       compileSdkVersion = 29
+       targetSdkVersion = 29
+       supportLibVersion = "29.0.0"
+       castFrameworkVersion = "19.0.0" // <-- Cast SDK version
      }
    }
    ```

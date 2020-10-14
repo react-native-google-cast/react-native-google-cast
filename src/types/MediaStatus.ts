@@ -1,4 +1,6 @@
 import MediaInfo from './MediaInfo'
+import MediaPlayerIdleReason from './MediaPlayerIdleReason'
+import MediaPlayerState from './MediaPlayerState'
 import MediaQueueItem from './MediaQueueItem'
 import MediaRepeatMode from './MediaRepeatMode'
 import VideoInfo from './VideoInfo'
@@ -19,8 +21,8 @@ export default interface MediaStatus {
   /** Any custom data that is associated with the media item. */
   customData?: object
 
-  /** The current idle reason. This value is only meaningful if the `playerState` is `Idle`. One of `cancelled`, `error`, `finished`, `interrupted`. */
-  idleReason: 'cancelled' | 'error' | 'finished' | 'interrupted'
+  /** The current idle reason. This value is only meaningful if the `playerState` is `Idle`. */
+  idleReason: MediaPlayerIdleReason
 
   /** The stream's mute state. */
   isMuted: boolean
@@ -34,8 +36,8 @@ export default interface MediaStatus {
   /** Gets the current stream playback rate. This will be negative if the stream is seeking backwards, 0 if the stream is paused, 1 if the stream is playing normally, and some other positive value if the stream is seeking forwards. */
   playbackRate: number
 
-  /** The current player state. One of `buffering`, `idle`, `loading`, `playing`, `paused` */
-  playerState: 'buffering' | 'idle' | 'loading' | 'playing' | 'paused'
+  /** The current player state. */
+  playerState: MediaPlayerState
 
   /** ID of the next Item, only available if it has been preloaded. On the receiver media items can be preloaded and cached temporarily in memory, so when they are loaded later on, the process is faster (as the media does not have to be fetched from the network). */
   preloadedItemId?: number

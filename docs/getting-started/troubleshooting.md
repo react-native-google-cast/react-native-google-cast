@@ -35,8 +35,8 @@ sidebar_label: Troubleshooting
   clang: error: linker command failed with exit code 1 (use -v to see invocation)
   ```
 
-  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). Please use `react-native-google-cast/NoBluetooth`, or downgrade to Google Cast SDK version `4.3.0` until the issue is fixed.
+  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). It seems to affects Google SDK versions 4.3.x - 4.4.x. Please upgrade to `4.5.0` or use `react-native-google-cast/NoBluetooth`.
 
 - Cast button isn't displayed on an iOS device
 
-  If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, enable the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note: "Wireless Accessory Configuration" is unrelated. You need to be a member of the Apple Developer Program to see the "Access WiFi Information" setting.
+  If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, enable the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note: "Wireless Accessory Configuration" is unrelated.

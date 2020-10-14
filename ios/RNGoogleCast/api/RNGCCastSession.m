@@ -1,6 +1,7 @@
 #import "RNGCCastSession.h"
 #import "../types/RCTConvert+GCKActiveInputStatus.m"
 #import "../types/RCTConvert+GCKApplicationMetadata.m"
+#import "../types/RCTConvert+GCKCastSession.m"
 #import "../types/RCTConvert+GCKDevice.m"
 #import "../types/RCTConvert+GCKStandbyStatus.m"
 #import <Foundation/Foundation.h>

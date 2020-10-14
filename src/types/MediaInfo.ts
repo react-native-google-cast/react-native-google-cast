@@ -1,4 +1,5 @@
 import * as MediaMetadata from './MediaMetadata'
+import MediaStreamType from './MediaStreamType'
 import MediaTrack from './MediaTrack'
 import TextTrackStyle from './TextTrackStyle'
 
@@ -15,6 +16,9 @@ export default interface MediaInfo {
 
   // /** The list of ad breaks in this content. */
   // adBreaks?: AdBreakInfo[]
+
+  /** The content ID for this stream. */
+  contentId?: string
 
   /** The content (MIME) type. */
   contentType?: string
@@ -44,7 +48,7 @@ export default interface MediaInfo {
   streamDuration?: number
 
   /** The stream type. One of `buffered`, `live`, `none`. */
-  streamType?: 'buffered' | 'live' | 'none'
+  streamType?: MediaStreamType
 
   /** The text track style for this stream. */
   textTrackStyle?: TextTrackStyle

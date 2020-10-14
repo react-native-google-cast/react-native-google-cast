@@ -8,7 +8,7 @@ sidebar_label: Overview
 
 <!--
 - `GoogleCast.getCastState().then(state => {})`
-- `GoogleCast.loadMedia(mediaInfo, loadOptions)`
+- `GoogleCast.loadMedia(mediaLoadRequest)`
 - `GoogleCast.play()`
 - `GoogleCast.pause()`
 - `GoogleCast.seek(playPosition)` - jump to position in seconds from the beginning of the stream

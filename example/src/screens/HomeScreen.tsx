@@ -1,184 +1,60 @@
-import { ActionSheetProps } from '@expo/react-native-action-sheet'
-import React from 'react'
-import {
-  EmitterSubscription,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { Navigation, Options } from 'react-native-navigation'
+import React, { useState } from 'react'
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
 import GoogleCast, {
   CastState,
-  RemoteMediaClient,
+  useCastState,
+  useRemoteMediaClient,
 } from 'react-native-google-cast'
-import Video from '../Video'
+import { Navigation, NavigationComponentProps } from 'react-native-navigation'
+import { MenuProvider } from 'react-native-popup-menu'
+import Menu from '../components/Menu'
+import Video from '../models/Video'
 
-export interface HomeScreenProps extends ActionSheetProps {
-  componentId: string
-}
+export interface HomeScreenProps extends NavigationComponentProps {}
 
-interface State {
-  connected: boolean
-  videos: Video[]
-}
+export default function HomeScreen({ componentId }: HomeScreenProps) {
+  const castState = useCastState()
+  const client = useRemoteMediaClient()
+  const [videos, setVideos] = useState<Video[]>()
 
-export default class HomeScreen extends React.Component<
-  HomeScreenProps,
-  State
-> {
-  static options(): Options {
-    return {
-      topBar: {
-        title: {
-          alignment: 'center',
-          color: 'white',
-          text: 'CastVideos',
-        },
-        rightButtons: [
-          {
-            id: 'cast',
-            component: {
-              name: 'castvideos.CastButton',
-            },
+  GoogleCast.showIntroductoryOverlay()
+
+  React.useEffect(() => {
+    Video.findAll().then(setVideos).catch(console.error)
+  }, [])
+
+  Navigation.mergeOptions(componentId, {
+    topBar: {
+      rightButtons: [
+        {
+          id: 'cast',
+          component: {
+            name: 'castvideos.CastButton',
           },
-        ],
-      },
-    }
-  }
-
-  castStateListener?: EmitterSubscription
-  state: State = {
-    connected: false,
-    videos: [],
-  }
-
-  componentDidMount() {
-    Navigation.events().bindComponent(this)
-
-    const setConnected = (state: CastState) => {
-      this.setState({
-        connected: state === 'connected',
-      })
-
-      Navigation.mergeOptions(this.props.componentId, {
-        topBar: {
-          rightButtons: [
-            {
-              id: 'cast',
-              component: {
-                name: 'castvideos.CastButton',
-              },
-            },
-            ...(state === 'connected'
-              ? [
-                  {
-                    id: 'queue',
-                    icon: require('../assets/playlist.png'),
-                  },
-                ]
-              : []),
-          ],
         },
-      })
-    }
-    GoogleCast.getCastState().then(setConnected)
-    this.castStateListener = GoogleCast.onCastStateChanged(setConnected)
+        ...(castState === CastState.CONNECTED
+          ? [
+              {
+                id: 'queue',
+                icon: require('../assets/playlist.png'),
+              },
+            ]
+          : []),
+      ],
+    },
+  })
 
-    GoogleCast.showIntroductoryOverlay()
-
-    Video.findAll()
-      .then((videos) => this.setState({ videos }))
-      .catch(console.error)
-  }
-
-  componentWillUnmount() {
-    this.castStateListener?.remove()
-  }
-
-  render() {
-    return (
-      <FlatList
-        data={this.state.videos}
-        keyExtractor={(item) => item.title}
-        renderItem={this.renderVideo}
-        style={{ width: '100%', alignSelf: 'stretch' }}
-      />
-    )
-  }
-
-  renderVideo = ({ item: video }: { item: Video }) => {
-    return (
-      <TouchableOpacity
-        key={video.title}
-        onPress={() => this.navigateToVideo(video)}
-        style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}
-      >
-        <Image
-          source={{ uri: video.imageUrl }}
-          style={{ width: 160, height: 90 }}
-        />
-
-        <View style={{ flex: 1, marginLeft: 10, alignSelf: 'center' }}>
-          <Text>{video.title}</Text>
-          <Text style={{ color: 'gray' }}>{video.studio}</Text>
-        </View>
-
-        {this.state.connected && (
-          <TouchableOpacity
-            onPress={() => {
-              this.props.showActionSheetWithOptions(
-                {
-                  options: ['Play Now', 'Play Next', 'Add to Queue', 'Cancel'],
-                  cancelButtonIndex: 3,
-                },
-                async (buttonIndex) => {
-                  const client = RemoteMediaClient.getCurrent()
-
-                  if (buttonIndex === 0) {
-                    this.cast(video)
-                  } else if (buttonIndex === 1) {
-                    const status = await client.getMediaStatus()
-                    client
-                      .queueInsertItem(
-                        {
-                          mediaInfo: video.toMediaInfo(),
-                        },
-                        status && status.queueItems.length > 2
-                          ? status.queueItems[1].itemId
-                          : undefined
-                      )
-                      .catch(console.warn)
-                  } else if (buttonIndex === 2) {
-                    client
-                      .queueInsertItem({
-                        mediaInfo: video.toMediaInfo(),
-                      })
-                      .catch(console.warn)
-                  }
-                }
-              )
-            }}
-          >
-            <Image source={require('../assets/overflow.png')} />
-          </TouchableOpacity>
-        )}
-      </TouchableOpacity>
-    )
-  }
-
-  cast = (video: Video) => {
-    RemoteMediaClient.getCurrent()
-      .loadMedia(video.toMediaInfo(), { autoplay: true })
+  function cast(video: Video) {
+    client
+      ?.loadMedia({ autoplay: true, mediaInfo: video.toMediaInfo() })
       .then(console.log)
       .catch(console.warn)
 
     GoogleCast.showExpandedControls()
   }
 
-  navigateToVideo = (video: Video) => {
-    Navigation.push(this.props.componentId, {
+  function navigateToVideo(video: Video) {
+    Navigation.push(componentId, {
       component: {
         name: 'castvideos.Video',
         passProps: {
@@ -208,11 +84,90 @@ export default class HomeScreen extends React.Component<
     })
   }
 
-  navigationButtonPressed({ buttonId }: { buttonId: string }) {
-    if (buttonId === 'queue') {
-      Navigation.push(this.props.componentId, {
-        component: { name: 'castvideos.Queue' },
-      })
-    }
-  }
+  return (
+    <MenuProvider>
+      <FlatList
+        data={videos}
+        keyExtractor={(item) => item.title}
+        renderItem={({ item: video }) => {
+          return (
+            <TouchableOpacity
+              key={video.title}
+              onPress={() => navigateToVideo(video)}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: 10,
+              }}
+            >
+              <Image
+                source={{ uri: video.imageUrl }}
+                style={{ width: 160, height: 90 }}
+              />
+
+              <View style={{ flex: 1, marginLeft: 10, alignSelf: 'center' }}>
+                <Text>{video.title}</Text>
+                <Text style={{ color: 'gray' }}>{video.studio}</Text>
+              </View>
+
+              {client && (
+                <Menu
+                  options={[
+                    { text: 'Play Now', onPress: () => cast(video) },
+                    {
+                      text: 'Play Next',
+                      onPress: async () => {
+                        const status = await client.getMediaStatus()
+                        client
+                          .queueInsertItem(
+                            {
+                              mediaInfo: video.toMediaInfo(),
+                            },
+                            status && status.queueItems.length > 2
+                              ? status.queueItems[1].itemId
+                              : undefined
+                          )
+                          .catch(console.warn)
+                      },
+                    },
+                    {
+                      text: 'Add to Queue',
+                      onPress: () =>
+                        client
+                          .queueInsertItem({
+                            mediaInfo: video.toMediaInfo(),
+                          })
+                          .catch(console.warn),
+                    },
+                    { text: 'Cancel', style: 'cancel' },
+                  ]}
+                >
+                  <Image source={require('../assets/overflow.png')} />
+                </Menu>
+              )}
+            </TouchableOpacity>
+          )
+        }}
+        style={{ width: '100%', alignSelf: 'stretch' }}
+      />
+    </MenuProvider>
+  )
+}
+
+HomeScreen.options = {
+  topBar: {
+    title: {
+      alignment: 'center',
+      color: 'white',
+      text: 'CastVideos',
+    },
+    rightButtons: [
+      {
+        id: 'cast',
+        component: {
+          name: 'castvideos.CastButton',
+        },
+      },
+    ],
+  },
 }

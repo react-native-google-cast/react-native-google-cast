@@ -1,7 +1,9 @@
 #import "RNGCRemoteMediaClient.h"
 #import "../types/RCTConvert+GCKMediaInformation.m"
-#import "../types/RCTConvert+GCKMediaLoadOptions.m"
+#import "../types/RCTConvert+GCKMediaLoadRequest.m"
 #import "../types/RCTConvert+GCKMediaStatus.m"
+#import "../types/RCTConvert+GCKMediaTextTrackStyle.m"
+#import "../types/RCTConvert+GCKRemoteMediaClient.m"
 #import "RNGCRequest.h"
 #import <Foundation/Foundation.h>
 #import <PromisesObjC/FBLPromises.h>
@@ -9,6 +11,7 @@
 @implementation RNGCRemoteMediaClient {
   NSMutableDictionary *channels;
   NSUInteger currentItemID;
+  bool hasListeners;
   bool playbackStarted;
   bool playbackEnded;
 }
@@ -42,6 +45,23 @@ RCT_EXPORT_MODULE()
   return self;
 }
 
+// Will be called when this module's first listener is added.
+- (void)startObserving {
+  hasListeners = YES;
+  // Set up any upstream listeners or background tasks as necessary
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.sessionManager addListener:self];
+  });
+}
+
+// Will be called when this module's last listener is removed, or on dealloc.
+- (void)stopObserving {
+  hasListeners = NO;
+  // Remove upstream listeners, stop unnecessary background tasks
+// FIXME: this crashes on (hot) reload
+//  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+}
+
 - (FBLPromise *)getClient {
   return [FBLPromise async:^(FBLPromiseFulfillBlock _Nonnull fulfill, FBLPromiseRejectBlock _Nonnull reject) {
     GCKSession *session =
@@ -61,7 +81,7 @@ RCT_EXPORT_MODULE()
 - (void)withClientResolve:(RCTPromiseResolveBlock)resolve
       reject:(RCTPromiseRejectBlock)reject
      perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
-  [[[self getClient] then:^id _Nullable(id  _Nullable client) {
+  [[[self getClient] then:^id _Nullable(id _Nullable client) {
     resolve(block(client));
     return nil;
   }] catch:^(NSError * _Nonnull error) {
@@ -72,7 +92,7 @@ RCT_EXPORT_MODULE()
 - (void)withClientPromisifyResolve:(RCTPromiseResolveBlock)resolve
      reject:(RCTPromiseRejectBlock)reject
     perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
-  [[[self getClient] then:^id _Nullable(id  _Nullable client) {
+  [[[self getClient] then:^id _Nullable(id _Nullable client) {
     GCKRequest *request = block(client);
     [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
     return nil;
@@ -87,18 +107,17 @@ RCT_REMAP_METHOD(getMediaStatus,
   
   [self withClientResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
     GCKMediaStatus *status = [client mediaStatus];
-    return status == nil ? [NSNull null] : [RCTConvert fromGCKMediaStatus:status];
+    return status != nil ? [RCTConvert fromGCKMediaStatus:status] : [NSNull null];
   }];
 }
 
 
-RCT_EXPORT_METHOD(loadMedia: (GCKMediaInformation *) mediaInfo
-                  withOptions: (GCKMediaLoadOptions *) loadOptions
+RCT_EXPORT_METHOD(loadMedia: (GCKMediaLoadRequestData *) request
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
 
   [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
-    return [client loadMedia:mediaInfo withOptions:loadOptions];
+    return [client loadMediaWithLoadRequestData:request];
   }];
 }
 
@@ -152,6 +171,15 @@ RCT_EXPORT_METHOD(seek: (GCKMediaSeekOptions *) options
   }];
 }
 
+RCT_EXPORT_METHOD(setActiveTrackIds: (NSArray<NSNumber *> *) trackIds
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client setActiveTrackIDs:trackIds];
+  }];
+}
+
 RCT_EXPORT_METHOD(setPlaybackRate: (float) playbackRate
                   customData: (nullable NSDictionary *) customData
                   resolver: (RCTPromiseResolveBlock) resolve
@@ -179,6 +207,15 @@ RCT_EXPORT_METHOD(setStreamVolume: (float) volume
 
   [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
     return [client setStreamVolume:volume customData:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(setTextTrackStyle: (GCKMediaTextTrackStyle *) textTrackStyle
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client setTextTrackStyle:textTrackStyle];
   }];
 }
 

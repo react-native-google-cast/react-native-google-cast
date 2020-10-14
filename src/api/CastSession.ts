@@ -6,8 +6,8 @@ import StandbyState from '../types/StandbyState'
 import RemoteMediaClient from './RemoteMediaClient'
 
 const { RNGCCastSession: Native } = NativeModules
-
 const EventEmitter = new NativeEventEmitter(Native)
+
 /**
  * Cast sessions are created and managed automatically by the {@link SessionManager}, for example when the user selects a Cast device from the media route controller dialog. The current active CastSession can be accessed by {@link CastContext.getCurrentCastSession}.
  *
@@ -15,6 +15,13 @@ const EventEmitter = new NativeEventEmitter(Native)
  */
 export default class CastSession {
   client = new RemoteMediaClient()
+
+  /** Unique session ID. */
+  id?: string
+
+  constructor(args: { id?: string }) {
+    this.id = args.id
+  }
 
   /** Indicates whether a receiver device is currently the active video input. Active input state can only be reported when the Google cast device is connected to a TV or AVR with CEC support. */
   getActiveInputState(): Promise<ActiveInputState> {
@@ -39,15 +46,15 @@ export default class CastSession {
     return Native.getApplicationStatus()
   }
 
-  getClient(): RemoteMediaClient {
-    return this.client
-  }
-
   /**
    * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession.html#getCastDevice()) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session#a30d6130e558b235e37f1cbded2d27ce8) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastSession#getCastDevice)
    */
   getCastDevice(): Promise<Device> {
     return Native.getCastDevice()
+  }
+
+  getClient(): RemoteMediaClient {
+    return this.client
   }
 
   /**

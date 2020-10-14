@@ -1,32 +1,44 @@
 import { useEffect, useState } from 'react'
-import { NativeEventEmitter, NativeModules } from 'react-native'
 import CastSession from './CastSession'
+import SessionManager from './SessionManager'
 
-const { RNGCSessionManager: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
+/**
+ * Hook that provides the current {@link CastSession} (may be `null`).
+ *
+ * @example
+ * ```js
+ * import { useCastSession } from 'react-native-google-cast'
+ *
+ * function MyComponent() {
+ *   const castSession = useCastSession()
+ *
+ *   if (castSession) {
+ *     castSession.client.loadMedia(...)
+ *   }
+ * }
+ * ```
+ */
 
 export default function useCastSession() {
-  const [castSession, setCastSession] = useState<CastSession>()
+  const [castSession, setCastSession] = useState<CastSession | null>(null)
 
   useEffect(() => {
-    Native.getCurrentCastSession().then(setCastSession)
+    manager.getCurrentCastSession().then(setCastSession)
 
-    EventEmitter.addListener(Native.SESSION_STARTED, setCastSession)
-    EventEmitter.addListener(Native.SESSION_SUSPENDED, () =>
-      setCastSession(undefined)
-    )
-    EventEmitter.addListener(Native.SESSION_RESUMED, setCastSession)
-    EventEmitter.addListener(Native.SESSION_ENDING, () =>
-      setCastSession(undefined)
-    )
+    const started = manager.onSessionStarted(setCastSession)
+    const suspended = manager.onSessionSuspended(() => setCastSession(null))
+    const resumed = manager.onSessionResumed(setCastSession)
+    const ending = manager.onSessionEnding(() => setCastSession(null))
 
     return () => {
-      EventEmitter.removeListener(Native.SESSION_STARTED, setCastSession)
-      EventEmitter.removeListener(Native.SESSION_SUSPENDED, setCastSession)
-      EventEmitter.removeListener(Native.SESSION_RESUMED, setCastSession)
-      EventEmitter.removeListener(Native.SESSION_ENDING, setCastSession)
+      started.remove()
+      suspended.remove()
+      resumed.remove()
+      ending.remove()
     }
   }, [])
 
   return castSession
 }
+
+const manager = new SessionManager()

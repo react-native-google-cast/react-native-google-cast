@@ -1,160 +1,91 @@
-import { ActionSheetProps } from '@expo/react-native-action-sheet'
-import React from 'react'
-import {
-  EmitterSubscription,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { Navigation, Options } from 'react-native-navigation'
-import RNVideo from 'react-native-video'
+import React, { useState } from 'react'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import GoogleCast, {
   CastState,
-  RemoteMediaClient,
+  useCastState,
+  useRemoteMediaClient,
 } from 'react-native-google-cast'
-import Video from '../Video'
+import { Navigation, NavigationComponentProps } from 'react-native-navigation'
+import RNVideo from 'react-native-video'
+import Video from '../models/Video'
 
-export interface Props extends ActionSheetProps {
-  componentId: string
+export interface VideoScreenProps extends NavigationComponentProps {
   video: Video
 }
 
-interface State {
-  started?: boolean
-}
+export default function VideoScreen({ componentId, video }: VideoScreenProps) {
+  const castState = useCastState()
+  const client = useRemoteMediaClient()
+  const [playing, setPlaying] = useState(false)
 
-export default class VideoScreen extends React.Component<Props> {
-  static options(): Options {
-    return {
-      topBar: {
-        title: {
-          alignment: 'fill',
-          color: 'white',
-        },
-        rightButtons: [
-          {
-            id: 'cast',
-            component: {
-              name: 'castvideos.CastButton',
-            },
-          },
-        ],
-      },
-    }
-  }
-
-  castStateListener?: EmitterSubscription
-  state: State = {}
-
-  componentDidMount() {
-    Navigation.events().bindComponent(this)
-
-    const setConnected = (state: CastState) => {
-      this.setState({
-        connected: state === 'connected',
-      })
-
-      Navigation.mergeOptions(this.props.componentId, {
-        topBar: {
-          rightButtons: [
-            {
-              id: 'cast',
-              component: {
-                name: 'castvideos.CastButton',
-              },
-            },
-            ...(state === 'connected'
-              ? [
-                  {
-                    id: 'queue',
-                    icon: require('../assets/playlist.png'),
-                  },
-                ]
-              : []),
-          ],
-        },
-      })
-    }
-    GoogleCast.getCastState().then(setConnected)
-    this.castStateListener = GoogleCast.onCastStateChanged(setConnected)
-  }
-
-  componentWillUnmount() {
-    this.castStateListener?.remove()
-  }
-
-  cast(video: Props['video']) {
-    RemoteMediaClient.getCurrent()
-      .loadMedia(
+  Navigation.mergeOptions(componentId, {
+    topBar: {
+      rightButtons: [
         {
-          contentUrl: video.mediaUrl,
-          metadata: {
-            images: [
-              { url: video.imageUrl, width: 480, height: 270 },
-              { url: video.posterUrl, width: 780, height: 1200 },
-            ],
-            subtitle: video.subtitle,
-            title: video.title,
-            type: 'movie',
+          id: 'cast',
+          component: {
+            name: 'castvideos.CastButton',
           },
-          streamDuration: video.duration,
         },
-        { autoplay: true }
-      )
+        ...(castState === CastState.CONNECTED
+          ? [
+              {
+                id: 'queue',
+                icon: require('../assets/playlist.png'),
+              },
+            ]
+          : []),
+      ],
+    },
+  })
+
+  function cast() {
+    client
+      ?.loadMedia({ autoplay: true, mediaInfo: video.toMediaInfo() })
       .then(console.log)
-      .catch(console.warn)
+      .catch(console.error)
 
     GoogleCast.showExpandedControls()
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        {this.renderVideo()}
-        {this.renderInfo()}
-      </View>
-    )
-  }
-
-  renderVideo() {
-    if (!this.state.started) {
-      return (
-        <TouchableOpacity onPress={() => this.setState({ started: true })}>
-          <Image
-            style={styles.video}
-            source={{ uri: this.props.video.imageUrl }}
-          />
+  return (
+    <View style={styles.container}>
+      {playing ? (
+        <RNVideo source={{ uri: video.mp4Url }} style={styles.video} />
+      ) : (
+        <TouchableOpacity
+          onPress={() => {
+            client ? cast() : setPlaying(true)
+          }}
+        >
+          <Image style={styles.video} source={{ uri: video.imageUrl }} />
         </TouchableOpacity>
-      )
-    }
+      )}
 
-    return (
-      <RNVideo
-        source={{ uri: this.props.video.mediaUrl }}
-        style={styles.video}
-      />
-    )
-  }
-
-  renderInfo() {
-    return (
       <View style={styles.info}>
-        <Text style={styles.title}>{this.props.video.title}</Text>
-        <Text style={styles.subtitle}>{this.props.video.studio}</Text>
-        <Text style={styles.description}>{this.props.video.subtitle}</Text>
+        <Text style={styles.title}>{video.title}</Text>
+        <Text style={styles.subtitle}>{video.studio}</Text>
+        <Text style={styles.description}>{video.subtitle}</Text>
       </View>
-    )
-  }
+    </View>
+  )
+}
 
-  navigationButtonPressed({ buttonId }: { buttonId: string }) {
-    if (buttonId === 'queue') {
-      Navigation.push(this.props.componentId, {
-        component: { name: 'castvideos.Queue' },
-      })
-    }
-  }
+VideoScreen.options = {
+  topBar: {
+    title: {
+      alignment: 'fill',
+      color: 'white',
+    },
+    rightButtons: [
+      {
+        id: 'cast',
+        component: {
+          name: 'castvideos.CastButton',
+        },
+      },
+    ],
+  },
 }
 
 const styles = StyleSheet.create({

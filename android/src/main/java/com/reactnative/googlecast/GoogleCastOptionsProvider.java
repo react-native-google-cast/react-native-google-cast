@@ -12,7 +12,6 @@ import com.google.android.gms.cast.framework.media.ImagePicker;
 import com.google.android.gms.cast.framework.media.MediaIntentReceiver;
 import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.google.android.gms.common.images.WebImage;
-import com.reactnative.googlecast.components.GoogleCastExpandedControlsActivity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +28,7 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
                               MediaIntentReceiver.ACTION_STOP_CASTING),
                 new int[] {1, 2})
             .setTargetActivityClassName(
-                GoogleCastExpandedControlsActivity.class.getName())
+                RNGCExpandedControllerActivity.class.getName())
             .build();
 
     CastMediaOptions mediaOptions =
@@ -37,7 +36,7 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
             .setImagePicker(new ImagePickerImpl())
             .setNotificationOptions(notificationOptions)
             .setExpandedControllerActivityClassName(
-                GoogleCastExpandedControlsActivity.class.getName())
+                RNGCExpandedControllerActivity.class.getName())
             .build();
 
     return new CastOptions.Builder()

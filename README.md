@@ -41,12 +41,12 @@ Refer to the [playground](playground/) folder to find a sample app demonstrating
   ```gradle
   buildscript {
     ext {
-      buildToolsVersion = '28.0.3'
+      buildToolsVersion = '29.0.2'
       minSdkVersion = 16
-      compileSdkVersion = 28
-      targetSdkVersion = 28
-      supportLibVersion = '28.0.0'
-      castFrameworkVersion = '16.1.2'
+      compileSdkVersion = 29
+      targetSdkVersion = 29
+      supportLibVersion = '29.0.0'
+      castFrameworkVersion = '19.0.0'
     }
     ...
   }

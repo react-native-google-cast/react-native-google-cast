@@ -1,6 +1,6 @@
 import { NativeModules } from 'react-native'
-import MediaInfo from '../types/MediaInfo'
-import MediaLoadOptions from '../types/MediaLoadOptions'
+import MediaLoadRequest from 'src/types/MediaLoadRequest'
+import TextTrackStyle from 'src/types/TextTrackStyle'
 import MediaQueueItem from '../types/MediaQueueItem'
 import MediaStatus from '../types/MediaStatus'
 
@@ -14,10 +14,6 @@ const { RNGCRemoteMediaClient: Native } = NativeModules
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_remote_media_client) _GCKRemoteMediaClient_  | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.RemotePlayer) _RemotePlayer_
  */
 export default class RemoteMediaClient {
-  static getCurrent(): RemoteMediaClient {
-    return new RemoteMediaClient()
-  }
-
   // getMediaQueue(): Promise<MediaQueue> {
   // }
 
@@ -33,21 +29,16 @@ export default class RemoteMediaClient {
    *
    * @example
    * ```ts
-   * client.loadMedia(
-   *   {
+   * client.loadMedia({
+   *   autoplay: true,
+   *   mediaInfo: {
    *     contentUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
-   *   },
-   *   {
-   *     autoplay: true,
    *   }
-   * )
+   * })
    * ```
    */
-  loadMedia(
-    mediaInfo: MediaInfo,
-    mediaLoadOptions: MediaLoadOptions = {}
-  ): Promise<void> {
-    return Native.loadMedia(mediaInfo, mediaLoadOptions)
+  loadMedia(request: MediaLoadRequest): Promise<void> {
+    return Native.loadMedia(request)
   }
 
   /**
@@ -141,6 +132,17 @@ export default class RemoteMediaClient {
   }
 
   /**
+   * Sets the active media tracks.
+   *
+   * The request will fail if there is no current media status.
+   *
+   * @param trackIds The media track IDs. If `undefined` or an empty array, the current set of active trackIds will be removed.
+   */
+  setActiveMediaTracks(trackIds?: number[]): Promise<void> {
+    return Native.setActiveTrackIds(trackIds)
+  }
+
+  /**
    * Sets the playback rate for the current media session.
    *
    * @param playbackRate The new playback rate, between `0.5` and `2.0`. The normal rate is `1.0`.
@@ -170,6 +172,17 @@ export default class RemoteMediaClient {
    */
   setStreamVolume(volume: number, customData?: object): Promise<void> {
     return Native.setStreamVolume(volume, customData)
+  }
+
+  /**
+   * Sets the text track style.
+   *
+   * The request will fail if there is no current media status.
+   *
+   * @param textTrackStyle The text track style.
+   */
+  setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void> {
+    return Native.setTextTrackStyle(textTrackStyle)
   }
 
   /**

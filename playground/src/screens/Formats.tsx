@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import { MediaInfo, RemoteMediaClient } from 'react-native-google-cast'
+import { MediaInfo, useRemoteMediaClient } from 'react-native-google-cast'
 
 interface FormatItem {
   title: string
@@ -16,6 +16,17 @@ interface FormatItem {
 const FormatList = SectionList as SectionListStatic<FormatItem>
 
 export default function Formats() {
+  const client = useRemoteMediaClient()
+
+  function cast(item: FormatItem) {
+    if (!client) return
+
+    client
+      .loadMedia({ autoplay: true, mediaInfo: item.mediaInfo })
+      .then(console.log)
+      .catch(console.warn)
+  }
+
   return (
     <FormatList
       renderItem={({ item }) => (
@@ -116,11 +127,4 @@ export default function Formats() {
       keyExtractor={(item, index) => item.title + index}
     />
   )
-}
-
-function cast(item: FormatItem) {
-  RemoteMediaClient.getCurrent()
-    .loadMedia(item.mediaInfo, { autoplay: true })
-    .then(console.log)
-    .catch(console.warn)
 }

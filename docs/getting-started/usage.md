@@ -7,7 +7,7 @@ sidebar_label: Usage
 First, require the module
 
 ```js
-import { CastButton, RemoteMediaClient } from 'react-native-google-cast'
+import { CastButton } from 'react-native-google-cast'
 ```
 
 Render the Cast button which enables to connect to Chromecast
@@ -16,20 +16,62 @@ Render the Cast button which enables to connect to Chromecast
 <CastButton style={{ width: 24, height: 24 }} />
 ```
 
-Stream the media to the connected Chromecast
+To stream media to the connected cast device, you first need to get the current media client:
+
+- either using hooks:
+
+  ```ts
+  import { useCastSession } from 'react-native-google-cast'
+
+  function MyComponent() {
+    const castSession = useCastSession()
+
+    // make sure session is available
+    if (castSession) {
+      const client = castSession.client
+    }
+  }
+  ```
+
+- or using classes:
+
+  ```ts
+  import { CastSession } from 'react-native-google-cast'
+
+  class MyComponent extends React.Component {
+    render() {
+      return (
+        <Button
+          onPress={async () => {
+            const castSession = await CastSession.getCurrent()
+
+            // make sure session is available
+            if (castSession) {
+              const client = castSession.client
+            }
+          }}
+        />
+      )
+    }
+  }
+  ```
+
+Once you have the `client`, you can cast media by calling the `loadMedia` method:
 
 ```js
-GoogleCast.load({
-  contentUrl:
-    'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
+client.loadMedia({
+  mediaInfo: {
+    contentUrl:
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
+  },
 })
 ```
 
-or a slighly more complex example
+You can provide many different attributes, such as in this example:
 
 ```js
-GoogleCast.load(
-  {
+client.loadMedia({
+  mediaInfo: {
     contentUrl:
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
     contentType: 'video/mp4',
@@ -48,8 +90,8 @@ GoogleCast.load(
     },
     streamDuration: 596, // seconds
   },
-  {
-    playPosition: 10, // seconds
-  }
-)
+  startTime: 10, // seconds
+})
 ```
+
+Please see the [loadMedia](../api/classes/remotemediaclient#loadmedia) documentation for available options.

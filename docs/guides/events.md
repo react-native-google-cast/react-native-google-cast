@@ -6,6 +6,8 @@ sidebar_label: Events
 
 The library emits events to inform you about current state.
 
+> The new Hooks API automatically handles native events and updates your component state. If you're using functional components, it's recommended you use hooks instead of events.
+
 ## Cast State Events
 
 Triggered when the [CastState](../api/classes/castcontext#static-getcaststate) changes.
@@ -13,7 +15,7 @@ Triggered when the [CastState](../api/classes/castcontext#static-getcaststate) c
 ```js
 import GoogleCast from 'react-native-google-cast'
 
-const listener = GoogleCast.onCastStateChanged(castState => {
+const listener = GoogleCast.onCastStateChanged((castState) => {
   // 'noDevicesAvailable' | 'notConnected' | 'connecting' | 'connected'
 })
 
@@ -28,33 +30,33 @@ A session is an end-to-end connection from a sender application (mobile app) to 
 ```js
 const sessionManager = GoogleCast.getSessionManager()
 
-const listener = sessionManager.onSessionStarted(session => {
+const listener = sessionManager.onSessionStarted((session) => {
   /* callback */
 })
 ```
 
 For a full list of events see [SessionManager](../api/classes/sessionmanager).
 
-## Media Events
+## Client Events
 
 [RemoteMediaClient](../api/classes/remotemediaclient) controls media playback on a Cast receiver.
 
 ```js
 // Status of the media has changed. The `mediaStatus` object contains the new status.
-GoogleCast.getClient().onMediaStatusUpdated(mediaStatus => {})
+client.onMediaStatusUpdated((mediaStatus) => {})
 ```
 
-For convenience, the following events are triggered in addition to `MediaStatusUpdated` in these special cases (they're called after `MediaStatusUpdated`, if you're subscribed to both).
+For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated`, if you're subscribed to both).
 
 ```js
 // Media started playing
-GoogleCast.getClient().onMediaPlaybackStarted(mediaStatus => {})
+client.onMediaPlaybackStarted((mediaStatus) => {})
 
 // Media finished playing
-GoogleCast.getClient().onMediaPlaybackEnded(mediaStatus => {})
+client.onMediaPlaybackEnded((mediaStatus) => {})
 ```
 
-## Channel Events
+<!-- ## Channel Events
 
 A virtual communication channel for exchanging messages between a Cast sender (mobile app) and a Cast receiver (on Chromecast).
 
@@ -83,4 +85,4 @@ GoogleCast.EventEmitter.addListener(
 
 // Send message
 GoogleCast.sendMessage(namespace, message)
-```
+``` -->

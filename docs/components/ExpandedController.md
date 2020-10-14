@@ -17,7 +17,7 @@ To use the default expanded controller:
 - Android: in `AndroidManifest.xml` add
 
   ```xml
-  <activity android:name="com.reactnative.googlecast.GoogleCastExpandedControlsActivity" />
+  <activity android:name="com.reactnative.googlecast.RNGCExpandedControllerActivity" />
   ```
 
 Then, to show the expanded controller, call
@@ -27,3 +27,7 @@ GoogleCast.showExpandedControls()
 ```
 
 The expanded controller will also be shown automatically when the user taps the mini controller.
+
+## Customizing expanded controller
+
+TODO

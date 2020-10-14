@@ -1,13 +1,11 @@
 package com.reactnative.googlecast.api;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.mediarouter.app.MediaRouteButton;
 
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -17,11 +15,9 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManager;
-import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.reactnative.googlecast.components.GoogleCastExpandedControlsActivity;
+import com.reactnative.googlecast.RNGCExpandedControllerActivity;
 import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
 import com.reactnative.googlecast.types.RNGCCastState;
 
@@ -29,26 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RNGCCastContext
-    extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    extends ReactContextBaseJavaModule {
 
   @VisibleForTesting public static final String REACT_CLASS = "RNGCCastContext";
 
-  public static final String SESSION_STARTING = "GoogleCast:SessionStarting";
-  public static final String SESSION_STARTED = "GoogleCast:SessionStarted";
-  public static final String SESSION_START_FAILED =
-      "GoogleCast:SessionStartFailed";
-  public static final String SESSION_SUSPENDED = "GoogleCast:SessionSuspended";
-  public static final String SESSION_RESUMING = "GoogleCast:SessionResuming";
-  public static final String SESSION_RESUMED = "GoogleCast:SessionResumed";
-  public static final String SESSION_ENDING = "GoogleCast:SessionEnding";
-  public static final String SESSION_ENDED = "GoogleCast:SessionEnded";
-
-  private SessionManagerListener<CastSession> mSessionManagerListener;
+  private static final String CAST_STATE_CHANGED = "GoogleCast:CastStateChanged";
 
   public RNGCCastContext(ReactApplicationContext reactContext) {
     super(reactContext);
-    reactContext.addLifecycleEventListener(this);
-    setupCastListener();
   }
 
   @Override
@@ -60,20 +44,9 @@ public class RNGCCastContext
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
 
-    constants.put("SESSION_STARTING", SESSION_STARTING);
-    constants.put("SESSION_STARTED", SESSION_STARTED);
-    constants.put("SESSION_START_FAILED", SESSION_START_FAILED);
-    constants.put("SESSION_SUSPENDED", SESSION_SUSPENDED);
-    constants.put("SESSION_RESUMING", SESSION_RESUMING);
-    constants.put("SESSION_RESUMED", SESSION_RESUMED);
-    constants.put("SESSION_ENDING", SESSION_ENDING);
-    constants.put("SESSION_ENDED", SESSION_ENDED);
+    constants.put("CAST_STATE_CHANGED", CAST_STATE_CHANGED);
 
     return constants;
-  }
-
-  public void sendEvent(String eventName) {
-    this.sendEvent(eventName, null);
   }
 
   public void sendEvent(String eventName, @Nullable WritableMap params) {
@@ -128,7 +101,7 @@ public class RNGCCastContext
   public void showExpandedControls() {
     ReactApplicationContext context = getReactApplicationContext();
     Intent intent =
-        new Intent(context, GoogleCastExpandedControlsActivity.class);
+        new Intent(context, RNGCExpandedControllerActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
   }
@@ -139,7 +112,7 @@ public class RNGCCastContext
     MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
 
     if ((button != null) && button.getVisibility() == View.VISIBLE) {
-      new Handler().post(new Runnable() {
+      runOnUiQueueThread(new Runnable() {
         @Override
         public void run() {
           IntroductoryOverlay.Builder builder = new IntroductoryOverlay.Builder(getCurrentActivity(), button);
@@ -163,41 +136,6 @@ public class RNGCCastContext
       });
     }
   }
-
-  private void setupCastListener() {
-    mSessionManagerListener = new RNGCSessionManagerListener(this);
-  }
-
-  @Override
-  public void onHostResume() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-      @Override
-      public void run() {
-        SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
-        sessionManager.addSessionManagerListener(mSessionManagerListener,
-                                                 CastSession.class);
-      }
-    });
-  }
-
-  @Override
-  public void onHostPause() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
-      @Override
-      public void run() {
-        SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
-        sessionManager.removeSessionManagerListener(mSessionManagerListener,
-                                                    CastSession.class);
-      }
-    });
-  }
-
-  @Override
-  public void onHostDestroy() {}
 
   public void runOnUiQueueThread(Runnable runnable) {
     getReactApplicationContext().runOnUiQueueThread(runnable);

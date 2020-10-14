@@ -13,8 +13,11 @@ import java.util.List;
 
 public class RNGCMediaInfo {
   public static MediaInfo fromJson(final ReadableMap json) {
-    final MediaInfo.Builder builder =
-        new MediaInfo.Builder(json.getString("contentId"));
+    String contentId = json.hasKey("contentId")
+      ? json.getString("contentId")
+      : json.getString("contentUrl");
+
+    final MediaInfo.Builder builder = new MediaInfo.Builder(contentId);
 
 //    if (json.hasKey("adBreakClips")) {
 //      builder.setContentType(json.getString("adBreakClips"));
@@ -28,9 +31,13 @@ public class RNGCMediaInfo {
       builder.setContentType(json.getString("contentType"));
     }
 
+    if (json.hasKey("contentUrl")) {
+      builder.setContentUrl(json.getString("contentUrl"));
+    }
+
     if (json.hasKey("customData")) {
       builder.setCustomData(
-          RNGCJSONObject.fromJson(json.getMap("customData")));
+        RNGCJSONObject.fromJson(json.getMap("customData")));
     }
 
     if (json.hasKey("entity")) {
@@ -39,9 +46,9 @@ public class RNGCMediaInfo {
 
     if (json.hasKey("mediaTracks")) {
       final List<MediaTrack> mediaTracks = new ArrayList<MediaTrack>();
-      for (Object mediaTrack:
-           json.getArray("mediaTracks").toArrayList()) {
-        mediaTracks.add(RNGCMediaTrack.fromJson((ReadableMap)mediaTrack));
+      for (Object mediaTrack :
+        json.getArray("mediaTracks").toArrayList()) {
+        mediaTracks.add(RNGCMediaTrack.fromJson((ReadableMap) mediaTrack));
       }
       builder.setMediaTracks(mediaTracks);
     }
@@ -58,9 +65,9 @@ public class RNGCMediaInfo {
       builder.setStreamType(RNGCMediaStreamType.fromJson(json.getString("streamType")));
     }
 
-//    if (json.hasKey("textTrackStyle")) {
-//      builder.setEntity(json.getString(("textTrackStyle")));
-//    }
+    if (json.hasKey("textTrackStyle")) {
+      builder.setEntity(json.getString(("textTrackStyle")));
+    }
 
     // if (json.hasKey("vmapAdsRequest")) {
     //   builder.setEntity(json.getString(("vmapAdsRequest")));
@@ -80,12 +87,14 @@ public class RNGCMediaInfo {
 
     json.putString("contentType", info.getContentType());
 
+    json.putString("contentUrl", info.getContentUrl());
+
     json.putMap("customData", RNGCJSONObject.toJson(info.getCustomData()));
 
     json.putString("entity", info.getEntity());
 
     WritableArray mediaTracks = Arguments.createArray();
-    for (MediaTrack track: info.getMediaTracks()) {
+    for (MediaTrack track : info.getMediaTracks()) {
       mediaTracks.pushMap(RNGCMediaTrack.toJson(track));
     }
     json.putArray("mediaTracks", mediaTracks);
@@ -96,7 +105,7 @@ public class RNGCMediaInfo {
 
     json.putString("streamType", RNGCMediaStreamType.toJson(info.getStreamType()));
 
-    // testTrackStyle
+    json.putMap("textTrackStyle", RNGCTextTrackStyle.toJson(info.getTextTrackStyle()));
 
     // vmapAdsRequest
 

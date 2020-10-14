@@ -1,11 +1,15 @@
 package com.reactnative.googlecast.api;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
+import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
@@ -14,6 +18,9 @@ import com.google.android.gms.common.api.Status;
 import com.reactnative.googlecast.types.RNGCActiveInputState;
 import com.reactnative.googlecast.types.RNGCApplicationMetadata;
 import com.reactnative.googlecast.types.RNGCDevice;
+import com.reactnative.googlecast.types.RNGCJSONObject;
+import com.reactnative.googlecast.types.RNGCMediaTextTrackSubtype;
+import com.reactnative.googlecast.types.RNGCMediaTrackType;
 import com.reactnative.googlecast.types.RNGCStandbyState;
 
 import java.util.HashMap;
@@ -141,4 +148,14 @@ public class RNGCCastSession extends ReactContextBaseJavaModule {
       return getReactApplicationContext();
     }
   };
+
+  public static WritableMap toJson(final CastSession castSession) {
+    if (castSession == null) return null;
+
+    final WritableMap json = Arguments.createMap();
+
+    json.putString("id", castSession.getSessionId());
+
+    return json;
+  }
 }

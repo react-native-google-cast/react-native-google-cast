@@ -23,44 +23,66 @@ const EventEmitter = new NativeEventEmitter(Native)
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/SessionManager) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session_manager)
  */
 export default class SessionManager {
-  getCurrentCastSession(): Promise<CastSession> {
-    return Native.getCurrentCastSession()
+  async getCurrentCastSession(): Promise<CastSession | null> {
+    const session = await Native.getCurrentCastSession()
+    if (session) return new CastSession(session)
+    else return null
   }
 
   /** Called when a session is about to be started. */
   onSessionStarting(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_STARTING, handler)
+    return EventEmitter.addListener(Native.SESSION_STARTING, ({ session }) => {
+      console.log('session starting', session)
+      handler(new CastSession(session))
+    })
   }
 
   /** Called when a session has been successfully started. */
   onSessionStarted(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_STARTED, handler)
+    return EventEmitter.addListener(Native.SESSION_STARTED, ({ session }) => {
+      console.log('session started', session)
+      handler(new CastSession(session))
+    })
   }
 
   /** Called when a session has failed to start. */
   onSessionStartFailed(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_START_FAILED, handler)
+    return EventEmitter.addListener(
+      Native.SESSION_START_FAILED,
+      ({ session }) => handler(new CastSession(session))
+    )
   }
 
   onSessionSuspended(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_SUSPENDED, handler)
+    return EventEmitter.addListener(Native.SESSION_SUSPENDED, ({ session }) =>
+      handler(new CastSession(session))
+    )
   }
 
   onSessionResuming(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_RESUMING, handler)
+    return EventEmitter.addListener(Native.SESSION_RESUMING, ({ session }) =>
+      handler(new CastSession(session))
+    )
   }
 
   onSessionResumed(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_RESUMED, handler)
+    return EventEmitter.addListener(Native.SESSION_RESUMED, ({ session }) =>
+      handler(new CastSession(session))
+    )
   }
 
   /** Called when a session is about to be ended, either by request or due to an error. */
   onSessionEnding(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_ENDING, handler)
+    return EventEmitter.addListener(Native.SESSION_ENDING, ({ session }) =>
+      handler(new CastSession(session))
+    )
   }
 
   /** Called when a session has ended, either by request or due to an error. */
   onSessionEnded(handler: (session: CastSession, error?: string) => void) {
-    return EventEmitter.addListener(Native.SESSION_ENDED, handler)
+    return EventEmitter.addListener(
+      Native.SESSION_ENDED,
+      ({ session, error }) => handler(new CastSession(session), error)
+    )
   }
 }

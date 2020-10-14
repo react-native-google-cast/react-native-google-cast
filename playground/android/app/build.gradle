@@ -133,7 +133,7 @@ android {
     minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
     versionCode 1
-    versionName "1.0"
+    versionName "4.0.0-pre.2"
   }
   splits {
     abi {
@@ -193,6 +193,7 @@ dependencies {
 
   debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
     exclude group: 'com.facebook.flipper'
+    exclude group: 'com.squareup.okhttp3', module:'okhttp'
   }
 
   debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {

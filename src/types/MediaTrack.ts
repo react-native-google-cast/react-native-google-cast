@@ -4,22 +4,22 @@
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaTrack) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_track)
  */
 export default interface MediaTrack {
-  /** The content ID of the media track. */
+  /** The content ID (URI) of the media track. */
   contentId?: string
 
-  /** The content type (MIME type) of the media track, or null if none was specified. */
+  /** The content type (MIME type) of the media track, or `undefined` if none was specified. */
   contentType?: string
 
-  /** The custom data object for this media track, or null if none was specified. */
+  /** The custom data object for this media track, or `undefined` if none was specified. */
   customData?: object
 
   /** The unique ID of the media track. */
   id: number
 
-  /** The language of this media track in RFC-5464 format, or null if none was specified. */
-  languageCode?: string
+  /** The language of this media track in RFC-5464 format, or `undefined` if none was specified. Required for `subtitles` type but optional otherwise. */
+  language?: string
 
-  /** The name of the media track, or null if none was specified. */
+  /** The name of the media track, or `undefined` if none was specified. */
   name?: string
 
   /** The text track's subtype; applies only to text tracks. One of `captions`, `chapters`, `descriptions`, `metadata`, `subtitles`. */

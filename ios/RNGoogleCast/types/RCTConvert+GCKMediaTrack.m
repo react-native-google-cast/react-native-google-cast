@@ -13,7 +13,7 @@
                     type:[RCTConvert GCKMediaTrackType:json[@"type"]]
              textSubtype:[RCTConvert GCKMediaTextTrackSubtype:json[@"subtype"]]
                     name:json[@"name"]
-            languageCode:json[@"languageCode"]
+            languageCode:json[@"language"]
               customData:json[@"customData"]];
 }
 
@@ -25,7 +25,7 @@
     @"type" : [RCTConvert fromGCKMediaTrackType:track.type],
     @"subtype" : [RCTConvert fromGCKMediaTextTrackSubtype:track.textSubtype],
     @"name" : track.name ?: [NSNull null],
-    @"languageCode" : track.languageCode ?: [NSNull null],
+    @"language" : track.languageCode ?: [NSNull null],
     @"customData" : track.customData ?: [NSNull null],
   };
 }

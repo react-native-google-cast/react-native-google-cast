@@ -1,10 +1,10 @@
 #import "RNGCSessionManager.h"
 #import "RNGCRemoteMediaClient.h"
+#import "../types/RCTConvert+GCKCastSession.m"
 #import <Foundation/Foundation.h>
 
 @implementation RNGCSessionManager {
-  GCKCastSession *castSession;
-  RNGCRemoteMediaClient *client;
+  BOOL hasListeners;
 }
 
 RCT_EXPORT_MODULE()
@@ -39,6 +39,30 @@ RCT_EXPORT_MODULE()
   ];
 }
 
+// Will be called when this module's first listener is added.
+- (void)startObserving {
+  hasListeners = YES;
+  // Set up any upstream listeners or background tasks as necessary
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.sessionManager addListener:self];
+  });
+}
+
+// Will be called when this module's last listener is removed, or on dealloc.
+- (void)stopObserving {
+  hasListeners = NO;
+  // Remove upstream listeners, stop unnecessary background tasks
+// FIXME: this crashes on (hot) reload
+//  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+}
+
+RCT_REMAP_METHOD(getCurrentCastSession,
+                 getCurrentCastSessionResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+  GCKSessionManager *sessionManager = GCKCastContext.sharedInstance.sessionManager;
+  resolve([RCTConvert fromGCKCastSession:sessionManager.currentCastSession]);
+}
+
 RCT_EXPORT_METHOD(endSession
                   : (BOOL)stopCasting resolver
                   : (RCTPromiseResolveBlock)resolve rejecter
@@ -58,60 +82,63 @@ RCT_EXPORT_METHOD(endSession
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willStartCastSession:(GCKCastSession *)session {
-  [self sendEventWithName:SESSION_STARTING body:@{}];
+  [self sendEventWithName:SESSION_STARTING body:@{
+    @"session": [RCTConvert fromGCKCastSession:session]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didStartCastSession:(GCKCastSession *)session {
-  castSession = session;
-  //  client = [[RNGCRemoteMediaClient alloc]
-  //  initWithClient:session.remoteMediaClient]; [session.remoteMediaClient
-  //  addListener:client];
-  [self sendEventWithName:SESSION_STARTED body:@{}];
+  [self sendEventWithName:SESSION_STARTED body:@{
+    @"session": [RCTConvert fromGCKCastSession:session]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didFailToStartCastSession:(GCKCastSession *)session
                     withError:(NSError *)error {
-  [self sendEventWithName:SESSION_START_FAILED
-                     body:@{@"error" : [error localizedDescription]}];
+  [self sendEventWithName:SESSION_START_FAILED body:@{
+    @"session": [RCTConvert fromGCKCastSession:session],
+    @"error": [error localizedDescription]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didSuspendCastSession:(GCKCastSession *)session
                withReason:(GCKConnectionSuspendReason)reason {
-  castSession = nil;
-  [session.remoteMediaClient removeListener:client];
-  [self sendEventWithName:SESSION_SUSPENDED body:@{}];
+  [self sendEventWithName:SESSION_SUSPENDED body:@{
+    @"session": [RCTConvert fromGCKCastSession:session]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willResumeCastSession:(GCKCastSession *)session {
-  [self sendEventWithName:SESSION_RESUMING body:@{}];
+  [self sendEventWithName:SESSION_RESUMING body:@{
+    @"session": [RCTConvert fromGCKCastSession:session]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     didResumeCastSession:(GCKCastSession *)session {
-  castSession = session;
-  [session.remoteMediaClient addListener:client];
-  [self sendEventWithName:SESSION_RESUMED body:@{}];
+  [self sendEventWithName:SESSION_RESUMED body:@{
+    @"session": [RCTConvert fromGCKCastSession:session]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willEndCastSession:(GCKCastSession *)session {
-  castSession = nil;
-  [session.remoteMediaClient removeListener:client];
-  [self sendEventWithName:SESSION_ENDING body:@{}];
+  [self sendEventWithName:SESSION_ENDING body:@{
+    @"session": [RCTConvert fromGCKCastSession:session]
+  }];
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
      didEndCastSession:(GCKCastSession *)session
              withError:(NSError *)error {
-  NSMutableDictionary *body = [[NSMutableDictionary alloc] init];
-  if (error) {
-    body[@"error"] = [error localizedDescription];
-  }
-  [self sendEventWithName:SESSION_ENDED body:body];
+  [self sendEventWithName:SESSION_ENDED body:@{
+    @"session": [RCTConvert fromGCKCastSession:session],
+    @"error": [error localizedDescription]
+  }];
 }
 
 @end

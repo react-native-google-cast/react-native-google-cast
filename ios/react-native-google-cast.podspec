@@ -1,24 +1,27 @@
 require 'json'
-package = JSON.parse(File.read(File.join(__dir__, '../', 'package.json')))
+package = JSON.parse(File.read(File.join(__dir__, '..', 'package.json')))
 
 Pod::Spec.new do |s|
-  s.name          = package['name']
-  s.version       = package['version']
-  s.summary       = package['description']
-  s.license       = package['license']
+  s.name     = package['name']
+  s.version  = package['version']
+  s.summary  = package['description']
+  s.license  = package['license']
 
-  s.authors       = package['author']
-  s.homepage      = package['homepage']
-  s.platform      = :ios, '9.0'
+  s.authors  = package['author']
+  s.homepage = package['homepage']
+  s.platform = :ios, '10.0'
 
-  s.source        = { :git => 'https://github.com/react-native-google-cast/react-native-google-cast.git', :tag => s.version.to_s }
-  s.default_subspec = 'Default'
+  s.source = {
+    :git => 'https://github.com/react-native-google-cast/react-native-google-cast.git',
+    :tag => s.version.to_s
+  }
+  s.default_subspec = 'NoBluetooth'
 
-  s.dependency      'React'
+  s.dependency 'React'
 
-  s.subspec 'Default' do |ss|
+  s.subspec 'GuestMode' do |ss|
     ss.dependency "#{package['name']}/RNGoogleCast"
-    ss.dependency 'google-cast-sdk', '<= 4.3.0'
+    ss.dependency 'google-cast-sdk'
   end
 
   s.subspec 'NoBluetooth' do |ss|

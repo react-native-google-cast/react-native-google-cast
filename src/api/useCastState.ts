@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react'
-import { NativeEventEmitter, NativeModules } from 'react-native'
 import CastState from '../types/CastState'
-
-const { RNGCCastContext: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
+import CastContext from './CastContext'
 
 export default function useCastState() {
   const [castState, setCastState] = useState<CastState>()
 
   useEffect(() => {
-    EventEmitter.addListener(Native.CAST_STATE_CHANGED, setCastState)
+    CastContext.getCastState().then(setCastState)
+
+    const changed = CastContext.onCastStateChanged(setCastState)
 
     return () => {
-      EventEmitter.removeListener(Native.CAST_STATE_CHANGED, setCastState)
+      changed.remove()
     }
   }, [])
 

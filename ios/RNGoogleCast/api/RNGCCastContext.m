@@ -19,17 +19,6 @@ RCT_EXPORT_MODULE();
   return NO;
 }
 
-- (instancetype)init {
-  if (self = [super init]) {
-    [[NSNotificationCenter defaultCenter]
-      addObserver:self
-         selector:@selector(castDeviceDidChange:)
-             name:kGCKCastStateDidChangeNotification
-           object:[GCKCastContext sharedInstance]];
-  }
-  return self;
-}
-
 - (NSDictionary *)constantsToExport {
   return @{
     @"CAST_STATE_CHANGED": CAST_STATE_CHANGED
@@ -46,17 +35,21 @@ RCT_EXPORT_MODULE();
 - (void)startObserving {
   hasListeners = YES;
   // Set up any upstream listeners or background tasks as necessary
-  dispatch_async(dispatch_get_main_queue(), ^{
-//    [GCKCastContext.sharedInstance.sessionManager addListener:self];
-  });
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self
+       selector:@selector(castDeviceDidChange:)
+           name:kGCKCastStateDidChangeNotification
+         object:[GCKCastContext sharedInstance]];
 }
 
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
   // Remove upstream listeners, stop unnecessary background tasks
-// FIXME: this crashes on (hot) reload
-//  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+  [[NSNotificationCenter defaultCenter]
+    removeObserver:self
+              name:kGCKCastStateDidChangeNotification
+            object:[GCKCastContext sharedInstance]];
 }
 
 # pragma mark - GCKCastContext methods
@@ -95,7 +88,7 @@ RCT_EXPORT_METHOD(showIntroductoryOverlay:(id)options
     if (!options[@"once"]) {
       [GCKCastContext.sharedInstance clearCastInstructionsShownFlag];
     }
-    
+
     resolve(@([GCKCastContext.sharedInstance presentCastInstructionsViewControllerOnce]));
   });
 }

@@ -14,7 +14,7 @@
   #if GCK_VERSION_IS_AT_LEAST(4, 3, 4)
     builder = [[GCKMediaInformationBuilder alloc] initWithContentURL:[NSURL URLWithString:json[@"contentUrl"]]];
   #else
-    builder = [[GCKMediaInformationBuilder alloc] initWithContentID:json[@"contentUrl"]];
+    builder = [[GCKMediaInformationBuilder alloc] initWithContentID:json[@"contentId"] || json[@"contentUrl"]];
   #endif
 
 //  if (json[@"adBreakClips"]) {
@@ -37,6 +37,10 @@
     builder.contentType = [RCTConvert NSString:json[@"contentType"]];
   }
   
+  if (json[@"contentUrl"]) {
+    builder.contentURL = [NSURL URLWithString:[RCTConvert NSString:json[@"contentUrl"]]];
+  }
+
   if (json[@"customData"]) {
     builder.customData = [RCTConvert id:json[@"customData"]];
   }
