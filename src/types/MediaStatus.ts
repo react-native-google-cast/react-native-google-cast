@@ -21,7 +21,7 @@ export default interface MediaStatus {
   /** Any custom data that is associated with the media item. */
   customData?: object
 
-  /** The current idle reason. This value is only meaningful if the `playerState` is `Idle`. */
+  /** The current idle reason. This value is only meaningful if the `playerState` is `idle`. */
   idleReason: MediaPlayerIdleReason
 
   /** The stream's mute state. */

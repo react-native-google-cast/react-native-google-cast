@@ -2,11 +2,9 @@
 
 # react-native-google-cast
 
-This library wraps the native Google Cast SDK for Android and iOS, providing a unified JavaScript interface.
+This library wraps the native Google Cast SDK for Android and iOS (and maybe web/Chrome in the future), providing a unified JavaScript interface.
 
 It is written in TypeScript so types will always be up-to-date.
-
-> Migration to v4 is a work in progress. If some functionality does not exist yet, please open a ticket or make a pull request :)
 
 ## Version overview
 
@@ -18,7 +16,7 @@ It is written in TypeScript so types will always be up-to-date.
 
 ## Documentation
 
-TODO link
+https://react-native-google-cast.github.io/docs
 
 ## Example
 
@@ -26,7 +24,7 @@ Refer to the [example](example/) folder to find a React Native version of the Ca
 
 ## Playground
 
-Refer to the [playground](playground/) folder to find a sample app demonstrating the available APIs provided by the library.
+Refer to the [playground](playground/) folder to find a sample app demonstrating the available APIs provided by the library (⚠️ work in progress).
 
 ## Troubleshooting
 

@@ -25,9 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RNGCCastContext
-    extends ReactContextBaseJavaModule {
+  extends ReactContextBaseJavaModule {
 
-  @VisibleForTesting public static final String REACT_CLASS = "RNGCCastContext";
+  @VisibleForTesting
+  public static final String REACT_CLASS = "RNGCCastContext";
 
   private static final String CAST_STATE_CHANGED = "GoogleCast:CastStateChanged";
 
@@ -51,8 +52,8 @@ public class RNGCCastContext
 
   public void sendEvent(String eventName, @Nullable WritableMap params) {
     getReactApplicationContext()
-        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-        .emit(eventName, params);
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+      .emit(eventName, params);
   }
 
   @ReactMethod
@@ -61,7 +62,7 @@ public class RNGCCastContext
       @Override
       public void run() {
         CastContext castContext =
-            CastContext.getSharedInstance(getReactApplicationContext());
+          CastContext.getSharedInstance(getReactApplicationContext());
         promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
       }
     });
@@ -73,8 +74,8 @@ public class RNGCCastContext
       @Override
       public void run() {
         SessionManager sessionManager =
-            CastContext.getSharedInstance(getReactApplicationContext())
-                .getSessionManager();
+          CastContext.getSharedInstance(getReactApplicationContext())
+            .getSessionManager();
         sessionManager.endCurrentSession(stopCasting);
         promise.resolve(true);
       }
@@ -101,15 +102,14 @@ public class RNGCCastContext
   public void showExpandedControls() {
     ReactApplicationContext context = getReactApplicationContext();
     Intent intent =
-        new Intent(context, RNGCExpandedControllerActivity.class);
+      new Intent(context, RNGCExpandedControllerActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
   }
 
   @ReactMethod
   public void showIntroductoryOverlay(final ReadableMap options, final Promise promise) {
-    final
-    MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
+    final MediaRouteButton button = RNGoogleCastButtonManager.getCurrent();
 
     if ((button != null) && button.getVisibility() == View.VISIBLE) {
       runOnUiQueueThread(new Runnable() {

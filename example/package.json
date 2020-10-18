@@ -11,18 +11,18 @@
   "dependencies": {
     "react": "16.13.1",
     "react-native": "0.63.3",
-    "react-native-draggable-flatlist": "^2.3.6",
-    "react-native-gesture-handler": "^1.7.0",
-    "react-native-navigation": "^6.10.1",
+    "react-native-draggable-flatlist": "^2.4.0",
+    "react-native-gesture-handler": "^1.8.0",
+    "react-native-navigation": "^7.1.0",
     "react-native-popup-menu": "^0.15.9",
-    "react-native-reanimated": "^1.10.1",
-    "react-native-video": "^4.4.5"
+    "react-native-reanimated": "^1.13.1",
+    "react-native-video": "4"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/runtime": "^7.9.6",
-    "@types/react-native-video": "^5.0.1",
+    "@babel/core": "^7.12.3",
+    "@babel/runtime": "^7.12.1",
+    "@types/react-native-video": "^5.0.3",
     "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "metro-react-native-babel-preset": "^0.63.0"
   }
 }

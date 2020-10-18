@@ -12,15 +12,16 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.reactnative.googlecast.types.RNGCJSONObject;
-import com.reactnative.googlecast.types.RNGCMediaInfo;
 import com.reactnative.googlecast.types.RNGCMediaLoadRequest;
 import com.reactnative.googlecast.types.RNGCMediaQueueItem;
 import com.reactnative.googlecast.types.RNGCMediaSeekOptions;
+import com.reactnative.googlecast.types.RNGCMediaStatus;
 import com.reactnative.googlecast.types.RNGCTextTrackStyle;
 
 import java.util.HashMap;
@@ -59,21 +60,21 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void loadMedia(final ReadableMap request, final Promise promise) {
-    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+  public void getMediaStatus(final Promise promise) {
+    with.withX(new With.WithX<RemoteMediaClient>() {
       @Override
-      public PendingResult execute(RemoteMediaClient client) {
-        return client.load(RNGCMediaLoadRequest.fromJson(request));
+      public void execute(RemoteMediaClient client) {
+        promise.resolve(RNGCMediaStatus.toJson(client.getMediaStatus()));
       }
     }, promise);
   }
 
   @ReactMethod
-  public void play(final Promise promise) {
+  public void loadMedia(final ReadableMap request, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {
-        return client.play();
+        return client.load(RNGCMediaLoadRequest.fromJson(request));
       }
     }, promise);
   }
@@ -89,10 +90,20 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void play(final Promise promise) {
+    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        return client.play();
+      }
+    }, promise);
+  }
+
+  @ReactMethod
   public void
-  queueInsertAndPlayItem(final ReadableMap item, final Integer beforeItemId,
-                         final Integer playPosition,
-                         final ReadableMap customData, final Promise promise) {
+  queueInsertAndPlayItem(final ReadableMap item, @Nullable final Integer beforeItemId,
+                         @Nullable final Integer playPosition,
+                         @Nullable final ReadableMap customData, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {
@@ -102,6 +113,25 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
       }
     }, promise);
   }
+
+  @ReactMethod
+  public void
+  queueInsertItems(final ReadableArray items, @Nullable final Integer beforeItemId,
+                   @Nullable final ReadableMap customData, final Promise promise) {
+    with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        final MediaQueueItem[] queueItems = new MediaQueueItem[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+          queueItems[i] = RNGCMediaQueueItem.fromJson((ReadableMap) items.getMap(i));
+        }
+
+        return client.queueInsertItems(queueItems, beforeItemId,
+          RNGCJSONObject.fromJson(customData));
+      }
+    }, promise);
+  }
+
 
   @ReactMethod
   public void seek(final ReadableMap options, final Promise promise) {

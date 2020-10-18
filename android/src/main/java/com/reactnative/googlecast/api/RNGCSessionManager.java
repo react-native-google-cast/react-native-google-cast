@@ -11,14 +11,11 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastStatusCodes;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
-import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.reactnative.googlecast.types.RNGCCastState;
 
 import java.util.HashMap;
 import java.util.Map;

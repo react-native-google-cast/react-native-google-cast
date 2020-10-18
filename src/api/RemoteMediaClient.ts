@@ -1,12 +1,12 @@
-import { NativeModules } from 'react-native'
+import { NativeEventEmitter, NativeModules } from 'react-native'
 import MediaLoadRequest from 'src/types/MediaLoadRequest'
+import { MediaSeekOptions } from 'src/types/MediaSeekOptions'
 import TextTrackStyle from 'src/types/TextTrackStyle'
 import MediaQueueItem from '../types/MediaQueueItem'
 import MediaStatus from '../types/MediaStatus'
 
 const { RNGCRemoteMediaClient: Native } = NativeModules
-
-// const EventEmitter = new NativeEventEmitter(Native)
+const EventEmitter = new NativeEventEmitter(Native)
 
 /**
  * Class for controlling a media player application running on a Cast receiver.
@@ -94,7 +94,7 @@ export default class RemoteMediaClient {
    */
   queueInsertItem(
     item: MediaQueueItem,
-    beforeItemId?: number,
+    beforeItemId?: number | null,
     customData?: object
   ) {
     return this.queueInsertItems([item], beforeItemId, customData)
@@ -109,7 +109,7 @@ export default class RemoteMediaClient {
    */
   queueInsertItems(
     items: MediaQueueItem[],
-    beforeItemId?: number,
+    beforeItemId?: number | null,
     customData?: object
   ): Promise<void> {
     return Native.queueInsertItems(items, beforeItemId || 0, customData)
@@ -118,16 +118,7 @@ export default class RemoteMediaClient {
   /**
    * Seeks to a new position within the current media item.
    */
-  seek(options: {
-    /** Custom application-specific data to pass along with the request. */
-    customData?: object
-    /** Whether seek to end of stream or live. _On iOS, only supported from SDK v4.4.1._ */
-    infinite?: boolean
-    /** The position to seek to, in milliseconds from the beginning of the stream. Ignored if `infinite` is `true`. */
-    position?: number
-    /** The action to take after the seek operation has finished. If not specified, it will preserve current play state. */
-    resumeState?: 'play' | 'pause'
-  }): Promise<void> {
+  seek(options: MediaSeekOptions): Promise<void> {
     return Native.seek(options)
   }
 
@@ -194,5 +185,34 @@ export default class RemoteMediaClient {
    */
   stop(customData?: object): Promise<void> {
     return Native.stop(customData)
+  }
+
+  // ========== //
+  //   EVENTS   //
+  // ========== //
+
+  /**
+   * Called when media status changes.
+   */
+  onMediaStatusUpdated(handler: (mediaStatus: MediaStatus) => void) {
+    return EventEmitter.addListener(Native.MEDIA_STATUS_UPDATED, handler)
+  }
+
+  /**
+   * Convenience event that is triggered in addition to `onMediaStatusUpdated` when `playerState` changes to `playing`.
+   *
+   * Note: If you're also subscribed to `onMediaStatusUpdated`, it will be triggered before this event.
+   */
+  onMediaPlaybackStarted(handler: (mediaStatus: MediaStatus) => void) {
+    return EventEmitter.addListener(Native.MEDIA_PLAYBACK_STARTED, handler)
+  }
+
+  /**
+   * Convenience event that is triggered in addition to `onMediaStatusUpdated` when `playerState` changes to `idle` and `idleReason` is `finished`.
+   *
+   * Note: If you're also subscribed to `onMediaStatusUpdated`, it will be triggered before this event.
+   */
+  onMediaPlaybackEnded(handler: (mediaStatus: MediaStatus) => void) {
+    return EventEmitter.addListener(Native.MEDIA_PLAYBACK_ENDED, handler)
   }
 }

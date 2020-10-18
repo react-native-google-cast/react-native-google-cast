@@ -50,9 +50,11 @@ export default function Menu({ children, options }: MenuProps) {
       <MenuTrigger>{children}</MenuTrigger>
 
       <MenuOptions>
-        {options.map(({ onPress, text }) => (
-          <MenuOption onSelect={onPress} text={text} />
-        ))}
+        {options
+          .filter((o) => o.style !== 'cancel')
+          .map(({ onPress, text }) => (
+            <MenuOption key={text} onSelect={onPress} text={text} />
+          ))}
       </MenuOptions>
     </PopupMenu>
   )

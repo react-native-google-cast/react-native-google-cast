@@ -15,8 +15,7 @@ export default function QueueScreen({}: QueueScreenProps) {
     client
       ?.getMediaStatus()
       .then((status) => {
-        if (!status) return console.log('No mediaStatus')
-        setQueue(status.queueItems)
+        if (status) setQueue(status.queueItems)
       })
       .catch(console.warn)
   }, [client])

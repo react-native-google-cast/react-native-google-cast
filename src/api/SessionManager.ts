@@ -40,7 +40,6 @@ export default class SessionManager {
   /** Called when a session has been successfully started. */
   onSessionStarted(handler: (session: CastSession) => void) {
     return EventEmitter.addListener(Native.SESSION_STARTED, ({ session }) => {
-      console.log('session started', session)
       handler(new CastSession(session))
     })
   }

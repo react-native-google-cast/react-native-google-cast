@@ -48,18 +48,11 @@ RCT_EXPORT_MODULE()
 // Will be called when this module's first listener is added.
 - (void)startObserving {
   hasListeners = YES;
-  // Set up any upstream listeners or background tasks as necessary
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [GCKCastContext.sharedInstance.sessionManager addListener:self];
-  });
 }
 
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
-  // Remove upstream listeners, stop unnecessary background tasks
-// FIXME: this crashes on (hot) reload
-//  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
 }
 
 - (FBLPromise *)getClient {

@@ -21,7 +21,24 @@ export default function HomeScreen({ componentId }: HomeScreenProps) {
 
   React.useEffect(() => {
     Video.findAll().then(setVideos).catch(console.error)
-  }, [])
+
+    const listener = Navigation.events().registerComponentListener(
+      {
+        navigationButtonPressed: ({ buttonId }) => {
+          if (buttonId === 'queue') {
+            Navigation.push(componentId, {
+              component: {
+                name: 'castvideos.Queue',
+              },
+            })
+          }
+        },
+      },
+      componentId
+    )
+
+    return () => listener.remove()
+  }, [componentId])
 
   Navigation.mergeOptions(componentId, {
     topBar: {
@@ -61,19 +78,6 @@ export default function HomeScreen({ componentId }: HomeScreenProps) {
           video,
         },
         options: {
-          // customTransition: {
-          //   animations: [
-          //     {
-          //       type: 'sharedElement',
-          //       fromId: elementId,
-          //       toId: 'videoPreview',
-          //       startDelay: 0,
-          //       springVelocity: 0.2,
-          //       duration: 0.5,
-          //     },
-          //   ],
-          //   duration: 0.8,
-          // },
           topBar: {
             title: {
               text: video.title,
@@ -85,7 +89,7 @@ export default function HomeScreen({ componentId }: HomeScreenProps) {
   }
 
   return (
-    <MenuProvider>
+    <MenuProvider skipInstanceCheck>
       <FlatList
         data={videos}
         keyExtractor={(item) => item.title}

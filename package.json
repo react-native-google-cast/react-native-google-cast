@@ -33,6 +33,7 @@
     "bootstrap:playground": "yarn playground && yarn && yarn pods",
     "docs": "node scripts/docs.js && concurrently \"cd docs-website && yarn start\" \"node scripts/docsWatch.js\"",
     "docs:build": "node scripts/docs.js && cd docs-website && yarn build",
+    "docs:publish": "cd docs-website && GIT_USER=petrbela USE_SSH=true yarn run publish-gh-pages",
     "example": "yarn --cwd example",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",

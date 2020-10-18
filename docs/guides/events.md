@@ -46,7 +46,7 @@ For a full list of events see [SessionManager](../api/classes/sessionmanager).
 client.onMediaStatusUpdated((mediaStatus) => {})
 ```
 
-For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated`, if you're subscribed to both).
+For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated` if you're subscribed to both).
 
 ```js
 // Media started playing
@@ -63,6 +63,8 @@ A virtual communication channel for exchanging messages between a Cast sender (m
 Each channel is tagged with a unique namespace, so multiple channels may be multiplexed over a single network connection between a sender and a receiver.
 
 A channel must be registered by calling `GoogleCast.initChannel('urn:x-cast:...')` before it can be used. When the associated session is established, the channel will be connected automatically and can then send and receive messages.
+
+⚠️ To process custom events, you will need to create a custom receiver (CAF) as demonstrated in the [example project](example/receiver/index.html). Please note that, by default, CAF tries to parse the message as JSON (only the receiver does this, not the sender). More information in [this issue, specifically comment #7](https://issuetracker.google.com/issues/117136854#comment7).
 
 ```js
 // Communication channel established

@@ -1,5 +1,7 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
@@ -12,7 +14,9 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 public class RNGCJSONObject {
-  public static JSONObject fromJson(final ReadableMap json) {
+  @Nullable
+  public static JSONObject fromJson(@Nullable final ReadableMap json) {
+    if (json == null) return null;
     return new JSONObject(json.toHashMap());
   }
 
@@ -22,7 +26,7 @@ public class RNGCJSONObject {
 
     while (iterator.hasNext()) {
       try {
-        String key = (String)iterator.next();
+        String key = (String) iterator.next();
         Object value = jsonObject.get(key);
 
         if (value instanceof Float || value instanceof Double) {

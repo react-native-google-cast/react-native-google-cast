@@ -1,7 +1,9 @@
+#import "RCTConvert+GCKMediaInformation.m"
+#import "RCTConvert+GCKMediaQueueData.m"
 #import <GoogleCast/GoogleCast.h>
 #import <React/RCTConvert.h>
 
-@implementation RCTConvert (GCKMediaLoadOptions)
+@implementation RCTConvert (GCKMediaLoadRequest)
 
 + (GCKMediaLoadRequestData *)GCKMediaLoadRequestData:(id)json {
   GCKMediaLoadRequestDataBuilder *builder = [[GCKMediaLoadRequestDataBuilder alloc] init];
@@ -26,8 +28,16 @@
     builder.customData = [RCTConvert id:json[@"customData"]];
   }
 
+  if (json[@"mediaInfo"]) {
+    builder.mediaInformation = [RCTConvert GCKMediaInformation:json[@"mediaInfo"]];
+  }
+
   if (json[@"playbackRate"]) {
     builder.playbackRate = [RCTConvert float:json[@"playbackRate"]];
+  }
+
+  if (json[@"queueData"]) {
+    builder.queueData = [RCTConvert GCKMediaQueueData:json[@"queueData"]];
   }
 
   if (json[@"startTime"]) {
@@ -35,24 +45,6 @@
   }
 
   return [builder build];
-}
-
-+ (id)fromGCKMediaLoadRequestData:(GCKMediaLoadRequestData *)data {
-  NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
-
-  json[@"autoplay"] = data.autoplay == nil ? [NSNull null] : data.autoplay ? @(YES) : @(NO);
-
-  json[@"credentials"] = data.credentials ?: [NSNull null];
-
-  json[@"credentialsType"] = data.credentialsType ?: [NSNull null];
-
-  json[@"customData"] = data.customData ?: [NSNull null];
-
-  json[@"playbackRate"] = @(data.playbackRate);
-
-  json[@"startTime"] = @(data.startTime);
-
-  return json;
 }
 
 @end

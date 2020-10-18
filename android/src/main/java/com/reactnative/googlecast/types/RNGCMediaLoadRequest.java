@@ -23,9 +23,9 @@ public class RNGCMediaLoadRequest {
       builder.setCredentialsType(json.getString("credentialsType"));
     }
 
-//    if (!json.isNull(("customData"))) {
-//      builder.setCustomData(RNGCJSONObject.fromJson(json.getMap("customData")));
-//    }
+    if (json.hasKey(("customData")) && !json.isNull("customData")) {
+      builder.setCustomData(RNGCJSONObject.fromJson(json.getMap("customData")));
+    }
 
     if (json.hasKey("mediaInfo")) {
       builder.setMediaInfo(RNGCMediaInfo.fromJson(json.getMap("mediaInfo")));

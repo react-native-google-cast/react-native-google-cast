@@ -19,6 +19,4 @@ options.physicalVolumeButtonsWillControlDeviceVolume = YES;
 [GCKCastContext setSharedInstanceWithOptions:options];
 ```
 
-Or, you can control the volume programmatically:
-
-TODO
+You can also change the volume using [client.setStreamVolume](../api/classes/remotemediaclient#setstreamvolume).

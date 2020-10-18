@@ -4,16 +4,14 @@ title: Usage
 sidebar_label: Usage
 ---
 
-First, require the module
+First, render the Cast button which handles session and enables users to connect to Cast devices:
 
-```js
+```ts
 import { CastButton } from 'react-native-google-cast'
-```
 
-Render the Cast button which enables to connect to Chromecast
-
-```js
-<CastButton style={{ width: 24, height: 24 }} />
+function MyComponent() {
+  return <CastButton style={{ width: 24, height: 24 }} />
+}
 ```
 
 To stream media to the connected cast device, you first need to get the current media client:
@@ -21,14 +19,13 @@ To stream media to the connected cast device, you first need to get the current 
 - either using hooks:
 
   ```ts
-  import { useCastSession } from 'react-native-google-cast'
+  import { useRemoteMediaClient } from 'react-native-google-cast'
 
   function MyComponent() {
-    const castSession = useCastSession()
+    const client = useRemoteMediaClient()
 
-    // make sure session is available
-    if (castSession) {
-      const client = castSession.client
+    if (client) {
+      // ...
     }
   }
   ```
@@ -36,29 +33,22 @@ To stream media to the connected cast device, you first need to get the current 
 - or using classes:
 
   ```ts
-  import { CastSession } from 'react-native-google-cast'
+  import GoogleCast from 'react-native-google-cast'
 
   class MyComponent extends React.Component {
     render() {
-      return (
-        <Button
-          onPress={async () => {
-            const castSession = await CastSession.getCurrent()
+      const client = await GoogleCast.getClient()
 
-            // make sure session is available
-            if (castSession) {
-              const client = castSession.client
-            }
-          }}
-        />
-      )
+      if (client) {
+        // ...
+      }
     }
   }
   ```
 
 Once you have the `client`, you can cast media by calling the `loadMedia` method:
 
-```js
+```ts
 client.loadMedia({
   mediaInfo: {
     contentUrl:
@@ -69,7 +59,7 @@ client.loadMedia({
 
 You can provide many different attributes, such as in this example:
 
-```js
+```ts
 client.loadMedia({
   mediaInfo: {
     contentUrl:
@@ -94,4 +84,4 @@ client.loadMedia({
 })
 ```
 
-Please see the [loadMedia](../api/classes/remotemediaclient#loadmedia) documentation for available options.
+Please see the [MediaLoadRequest](../api/interfaces/medialoadrequest) documentation for available options.
