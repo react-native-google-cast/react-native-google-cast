@@ -29,8 +29,8 @@ Pods
 local.properties
 !debug.keystore
 *.iml
-android/gradle
-android/build
+android/build/
+android/gradle/
 
 # node.js
 #
