@@ -37,13 +37,13 @@ class Main extends React.Component {
     const CAST_VIDEOS_URL =
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json'
     fetch(CAST_VIDEOS_URL)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         const mp4Url = data.categories[0].mp4
         const imagesUrl = data.categories[0].images
 
         this.setState({
-          videos: data.categories[0].videos.map(video => ({
+          videos: data.categories[0].videos.map((video) => ({
             title: video.title,
             subtitle: video.subtitle,
             studio: video.studio,
@@ -64,7 +64,7 @@ class Main extends React.Component {
     this.sendMessage()
   }
 
-  onActionSelected = position => {
+  onActionSelected = (position) => {
     switch (position) {
       case 0:
         GoogleCast.play()
@@ -113,7 +113,6 @@ class Main extends React.Component {
           data={this.state.videos}
           keyExtractor={(item, index) => index.toString()}
           renderItem={this.renderVideo}
-          style={{ width: '100%', alignSelf: 'stretch' }}
         />
       </View>
     )
@@ -153,8 +152,8 @@ class Main extends React.Component {
       .split(/\s+/)
     console.log(events)
 
-    events.forEach(event => {
-      GoogleCast.EventEmitter.addListener(GoogleCast[event], function() {
+    events.forEach((event) => {
+      GoogleCast.EventEmitter.addListener(GoogleCast[event], function () {
         console.log(event, arguments)
       })
     })

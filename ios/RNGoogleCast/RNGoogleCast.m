@@ -127,7 +127,7 @@ RCT_EXPORT_METHOD(toggleSubtitles: (BOOL) enabled languageCode:(NSString *) lang
   if (mediaTracks == nil || [mediaTracks count] == 0) {
     return;
   }
-  
+
   for(GCKMediaTrack *track in mediaTracks) {
     if (track != nil && [[track languageCode] isEqualToString:languageToSelect]) {
       [castSession.remoteMediaClient setActiveTrackIDs:@[@(track.identifier)]];
@@ -233,11 +233,12 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
     contentType = @"video/mp4";
   }
 
-  [metadata addImage:[[GCKImage alloc]
-                         initWithURL:[[NSURL alloc] initWithString:imageUrl]
-                               width:480
-                              height:360]];
-
+  if (imageUrl) {
+    [metadata addImage:[[GCKImage alloc]
+                          initWithURL:[[NSURL alloc] initWithString:imageUrl]
+                                width:480
+                                height:360]];
+  }
   if (posterUrl) {
     [metadata addImage:[[GCKImage alloc]
                            initWithURL:[[NSURL alloc] initWithString:posterUrl]
