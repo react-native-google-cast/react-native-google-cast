@@ -6,19 +6,22 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - google-cast-sdk-no-bluetooth (4.4.5):
-    - google-cast-sdk-no-bluetooth/Core (= 4.4.5)
-    - Protobuf (~> 3.0)
-  - google-cast-sdk-no-bluetooth/Core (4.4.5):
-    - Protobuf (~> 3.0)
-  - Protobuf (3.10.0)
+  - google-cast-sdk-no-bluetooth (4.5.1):
+    - google-cast-sdk-no-bluetooth/Core (= 4.5.1)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.12)
+  - google-cast-sdk-no-bluetooth/Core (4.5.1):
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.12)
+  - GTMSessionFetcher/Core (1.5.0)
+  - Protobuf (3.13.0)
   - React (0.59.10):
     - React/Core (= 0.59.10)
-  - react-native-google-cast/NoBluetooth (3.3.0):
+  - react-native-google-cast/NoBluetooth (3.4.0):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (3.3.0):
+  - react-native-google-cast/RNGoogleCast (3.4.0):
     - React
   - React/Core (0.59.10):
     - yoga (= 0.59.10.React)
@@ -84,6 +87,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - boost-for-react-native
     - google-cast-sdk-no-bluetooth
+    - GTMSessionFetcher
     - Protobuf
 
 EXTERNAL SOURCES:
@@ -105,12 +109,13 @@ SPEC CHECKSUMS:
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
   glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
-  google-cast-sdk-no-bluetooth: c5e18481d73d491d1464d60d592a7357d23bc300
-  Protobuf: a4dc852ad69c027ca2166ed287b856697814375b
+  google-cast-sdk-no-bluetooth: 73ac8e9edbee16f52c2a445e391bd531e116bb31
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
+  Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
   React: 36d0768f9e93be2473b37e7fa64f92c1d5341eef
-  react-native-google-cast: 3e38104843a8dd40d284629678568233abdf7e13
+  react-native-google-cast: e19d00c9ec8909f3e842a7175ba35294b57c627d
   yoga: 684513b14b03201579ba3cee20218c9d1298b0cc
 
 PODFILE CHECKSUM: 1ddf61d211bd64aa9b2350c2b155edc66f3d7f00
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.10.0
