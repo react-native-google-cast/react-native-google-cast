@@ -28,8 +28,6 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.images.WebImage;
-import com.reactnative.googlecast.GoogleCastButtonManager;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -6,11 +6,7 @@ import androidx.annotation.ColorInt;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.mediarouter.app.MediaRouteButton;
 import androidx.appcompat.view.ContextThemeWrapper;
-/**
- * Copyright (c) SRG SSR. All rights reserved.
- * <p>
- * License information is available from the LICENSE file.
- */
+
 public class TintableMediaRouteActionProvider {
     private TintableMediaRouteActionProvider() {
     }

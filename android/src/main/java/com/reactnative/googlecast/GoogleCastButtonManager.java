@@ -1,12 +1,7 @@
 package com.reactnative.googlecast;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.mediarouter.app.MediaRouteButton;
-import android.util.AttributeSet;
 import android.view.View;
-import android.os.Build;
 
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -15,8 +10,6 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
-
-import com.reactnative.googlecast.TintableMediaRouteActionProvider;
 
 public class GoogleCastButtonManager
     extends SimpleViewManager<MediaRouteButton> {
@@ -40,6 +33,11 @@ public class GoogleCastButtonManager
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
     updateButtonState(button, castContext.getCastState());
+
+    if (mColor != null) {
+      TintableMediaRouteActionProvider.colorWorkaroundForCastIcon(button, mColor);
+    }
+
 
     castContext.addCastStateListener(new CastStateListener() {
       @Override
@@ -72,48 +70,4 @@ public class GoogleCastButtonManager
       button.setVisibility(View.VISIBLE);
     }
   }
-
-
-  // https://stackoverflow.com/a/41496796/384349
-  /*private class ColorableMediaRouteButton extends MediaRouteButton {
-    protected Drawable mRemoteIndicatorDrawable;
-
-    public ColorableMediaRouteButton(Context context) { super(context); }
-
-    public ColorableMediaRouteButton(Context context, AttributeSet attrs) {
-      super(context, attrs);
-    }
-
-    public ColorableMediaRouteButton(Context context, AttributeSet attrs,
-                                     int defStyleAttr) {
-      super(context, attrs, defStyleAttr);
-    }
-
-    public static Drawable getTintedDrawable(@NonNull final Context context,
-                                             @DrawableRes int drawableRes, @ColorRes int colorRes) {
-      Drawable d = ContextCompat.getDrawable(context, drawableRes);
-      d = DrawableCompat.wrap(d);
-      DrawableCompat.setTint(d.mutate(), ContextCompat.getColor(context, colorRes));
-      return d;
-    }
-
-    @Override
-    public void setRemoteIndicatorDrawable(Drawable d) {
-      mRemoteIndicatorDrawable = d;
-      super.setRemoteIndicatorDrawable(d);
-      if (mColor != null)
-        applyTint(mColor);
-    }
-
-    public void applyTint(Integer color) {
-      if (mRemoteIndicatorDrawable == null)
-        return;
-
-      //Drawable wrapDrawable = DrawableCompat.wrap(mRemoteIndicatorDrawable);
-      //DrawableCompat.setTint(wrapDrawable, color);
-
-
-
-    }
-  }*/
 }

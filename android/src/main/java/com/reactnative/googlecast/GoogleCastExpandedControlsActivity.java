@@ -1,9 +1,6 @@
 package com.reactnative.googlecast;
 
-import androidx.core.view.MenuItemCompat;
-import androidx.mediarouter.app.MediaRouteActionProvider;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
