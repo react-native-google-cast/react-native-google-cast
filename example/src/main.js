@@ -97,7 +97,7 @@ class Main extends React.Component {
             onActionSelected={this.onActionSelected}
             style={styles.toolbarAndroid}
           >
-            <CastButton style={styles.castButtonAndroid} />
+            <CastButton style={styles.castButtonAndroid} tintColor={-1} />
           </ToolbarAndroid>
         ) : (
           <View style={styles.toolbarIOS}>
