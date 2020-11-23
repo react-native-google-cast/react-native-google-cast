@@ -52,7 +52,7 @@ public class GoogleCastButtonManager
     return googleCastButtonManagerInstance;
   }
 
-  @ReactProp(name = "tintColor", defaultInteger = -1)
+  @ReactProp(name = "tintColor", defaultInt = -1)
   public void setTintColor(ColorableMediaRouteButton button, Integer color) {
     if (color == null)
       return;
