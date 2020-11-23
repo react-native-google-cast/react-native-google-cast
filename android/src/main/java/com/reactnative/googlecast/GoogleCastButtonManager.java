@@ -98,7 +98,13 @@ public class GoogleCastButtonManager
         return;
 
       Drawable wrapDrawable = DrawableCompat.wrap(mRemoteIndicatorDrawable);
-      DrawableCompat.setTint(wrapDrawable, color);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        DrawableCompat.setTint(drawable, color);
+
+      } else {
+        drawable.mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+      }
+      //DrawableCompat.setTint(wrapDrawable, color);
     }
   }
 }
