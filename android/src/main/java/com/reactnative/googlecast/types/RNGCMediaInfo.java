@@ -1,6 +1,7 @@
 package com.reactnative.googlecast.types;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -46,9 +47,9 @@ public class RNGCMediaInfo {
 
     if (json.hasKey("mediaTracks")) {
       final List<MediaTrack> mediaTracks = new ArrayList<MediaTrack>();
-      for (Object mediaTrack :
-        json.getArray("mediaTracks").toArrayList()) {
-        mediaTracks.add(RNGCMediaTrack.fromJson((ReadableMap) mediaTrack));
+      ReadableArray tracksArray = json.getArray("mediaTracks");
+      for (int i = 0; i < tracksArray.size(); i++) {
+        mediaTracks.add(RNGCMediaTrack.fromJson(tracksArray.getMap(i)));
       }
       builder.setMediaTracks(mediaTracks);
     }

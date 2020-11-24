@@ -1,6 +1,7 @@
 package com.reactnative.googlecast.types;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -34,10 +35,10 @@ public class RNGCMediaQueueItem {
     }
 
     if (json.hasKey("activeTrackIds")) {
-      List<Object> trackIds = json.getArray("activeTrackIds").toArrayList();
-      long[] activeTrackIds = new long[trackIds.size()];
-      for (int i = 0; i < trackIds.size(); i++) {
-        activeTrackIds[i] = (long) trackIds.get(i);
+      ReadableArray trackIdsArray = json.getArray("activeTrackIds");
+      long[] activeTrackIds = new long[trackIdsArray.size()];
+      for (int i = 0; i < trackIdsArray.size(); i++) {
+        activeTrackIds[i] = trackIdsArray.getInt(i);
       }
       builder.setActiveTrackIds(activeTrackIds);
     }

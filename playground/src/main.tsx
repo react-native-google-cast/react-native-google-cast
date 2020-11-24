@@ -4,6 +4,7 @@ import React from 'react'
 import { CastButton } from 'react-native-google-cast'
 import Formats from './screens/Formats'
 import Home from './screens/Home'
+import Queue from './screens/Queue'
 
 const Stack = createStackNavigator()
 
@@ -26,6 +27,7 @@ export default function App() {
       >
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Formats" component={Formats} />
+        <Stack.Screen name="Queue" component={Queue} />
       </Stack.Navigator>
     </NavigationContainer>
   )

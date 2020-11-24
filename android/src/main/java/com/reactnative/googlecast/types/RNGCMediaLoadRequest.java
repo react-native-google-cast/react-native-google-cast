@@ -8,7 +8,7 @@ public class RNGCMediaLoadRequest {
     final MediaLoadRequestData.Builder builder = new MediaLoadRequestData.Builder();
 
     // if (json.hasKey("activeTrackIds")) {
-    //   builder.setActiveTrackIds(json.getArray("activeTrackIds").toArrayList());
+    //   builder.setActiveTrackIds(json.getArray("activeTrackIds"));
     // }
 
     if (json.hasKey("autoplay")) {

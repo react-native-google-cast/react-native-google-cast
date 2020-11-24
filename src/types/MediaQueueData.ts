@@ -19,7 +19,7 @@ export default interface MediaQueueData {
   id?: string
 
   /** The items to be loaded in the queue. */
-  items?: MediaQueueItem
+  items?: MediaQueueItem[]
 
   /** Display name of the queue. */
   name?: string

@@ -123,7 +123,7 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
       public PendingResult execute(RemoteMediaClient client) {
         final MediaQueueItem[] queueItems = new MediaQueueItem[items.size()];
         for (int i = 0; i < items.size(); i++) {
-          queueItems[i] = RNGCMediaQueueItem.fromJson((ReadableMap) items.getMap(i));
+          queueItems[i] = RNGCMediaQueueItem.fromJson(items.getMap(i));
         }
 
         return client.queueInsertItems(queueItems, beforeItemId,

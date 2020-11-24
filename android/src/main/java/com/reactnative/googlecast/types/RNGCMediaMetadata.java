@@ -1,6 +1,7 @@
 package com.reactnative.googlecast.types;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -96,8 +97,9 @@ public class RNGCMediaMetadata {
                          json.getDouble("longitude"));
     }
     if (json.hasKey("images")) {
-      for (Object im : json.getArray("images").toArrayList()) {
-        metadata.addImage(RNGCWebImage.fromJson(Arguments.makeNativeMap((Map)im)));
+      ReadableArray imagesArray = json.getArray("images");
+      for (int i = 0; i < imagesArray.size(); i++) {
+        metadata.addImage(RNGCWebImage.fromJson(imagesArray.getMap(i)));
       }
     }
 

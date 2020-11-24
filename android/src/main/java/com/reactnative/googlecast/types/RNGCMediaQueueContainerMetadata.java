@@ -1,6 +1,7 @@
 package com.reactnative.googlecast.types;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -26,8 +27,9 @@ public class RNGCMediaQueueContainerMetadata {
 
     if (json.hasKey("containerImages")) {
       final List<WebImage> images = new ArrayList<WebImage>();
-      for (Object image : json.getArray("containerImages").toArrayList()) {
-        images.add(RNGCWebImage.fromJson((ReadableMap) image));
+      ReadableArray imagesArray = json.getArray("containerImages");
+      for (int i = 0; i < imagesArray.size(); i++) {
+        images.add(RNGCWebImage.fromJson(imagesArray.getMap(i)));
       }
       builder.setContainerImages(images);
     }
@@ -38,8 +40,9 @@ public class RNGCMediaQueueContainerMetadata {
 
     if (json.hasKey("sections")) {
       final List<MediaMetadata> sections = new ArrayList<MediaMetadata>();
-      for (Object section : json.getArray("sections").toArrayList()) {
-        sections.add(RNGCMediaMetadata.fromJson((ReadableMap) section));
+      ReadableArray sectionsArray = json.getArray("sections");
+      for (int i = 0; i < sectionsArray.size(); i++) {
+        sections.add(RNGCMediaMetadata.fromJson(sectionsArray.getMap(i)));
       }
       builder.setSections(sections);
     }

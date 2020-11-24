@@ -28,6 +28,10 @@ export default function Home() {
             title: 'Title1',
             data: [{ title: 'Formats' }],
           },
+          {
+            title: 'Queue',
+            data: [{ title: 'Queue' }],
+          },
         ]}
         keyExtractor={(item, index) => item.title + index}
       />

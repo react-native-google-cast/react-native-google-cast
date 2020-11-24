@@ -1,6 +1,7 @@
 package com.reactnative.googlecast.types;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RNGCMediaQueueData {
@@ -33,8 +35,9 @@ public class RNGCMediaQueueData {
 
     if (json.hasKey("items")) {
       final List<MediaQueueItem> items = new ArrayList<MediaQueueItem>();
-      for (Object item : json.getArray("items").toArrayList()) {
-        items.add(RNGCMediaQueueItem.fromJson((ReadableMap) item));
+      ReadableArray itemsArray = json.getArray("items");
+      for (int i = 0; i < itemsArray.size(); i++) {
+        items.add(RNGCMediaQueueItem.fromJson(itemsArray.getMap(i)));
       }
       builder.setItems(items);
     }
