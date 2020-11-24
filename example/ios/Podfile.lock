@@ -246,14 +246,14 @@ PODS:
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
   - React-jsinspector (0.63.3)
-  - react-native-google-cast (4.0.0-beta.1):
+  - react-native-google-cast (4.0.0-beta.2):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.0.0-beta.1)
-  - react-native-google-cast/NoBluetooth (4.0.0-beta.1):
+    - react-native-google-cast/NoBluetooth (= 4.0.0-beta.2)
+  - react-native-google-cast/NoBluetooth (4.0.0-beta.2):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.0.0-beta.1):
+  - react-native-google-cast/RNGoogleCast (4.0.0-beta.2):
     - PromisesObjC
     - React
   - react-native-video (4.4.5):
@@ -393,7 +393,7 @@ DEPENDENCIES:
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - boost-for-react-native
     - CocoaAsyncSocket
     - CocoaLibEvent
@@ -506,7 +506,7 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
-  react-native-google-cast: 7de014642710cf1354ad6cbfeeebfbcc8f6e9dfb
+  react-native-google-cast: 8ee5117767de82ac3836b4ff22efff06a0657a90
   react-native-video: eee541262ada11bc7ffe8ec5508e6a877937c462
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
   React-RCTAnimation: 1befece0b5183c22ae01b966f5583f42e69a83c2
@@ -524,6 +524,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 736ce9221b26789ba3ef0f20f3cce94525b84694
+PODFILE CHECKSUM: ffff7fe56ad3b9e0cbbf7dae3accf6d4f69432d5
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

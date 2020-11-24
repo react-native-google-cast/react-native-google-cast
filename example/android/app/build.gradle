@@ -133,7 +133,7 @@ android {
 //        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative60"
         multiDexEnabled true
         versionCode 1
-        versionName "4.0.0-beta.1"
+        versionName "4.0.0-beta.2"
     }
     splits {
         abi {
