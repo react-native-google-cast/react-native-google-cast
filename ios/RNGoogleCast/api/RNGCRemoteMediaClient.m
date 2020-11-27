@@ -155,6 +155,24 @@ RCT_EXPORT_METHOD(queueInsertItems: (NSArray<GCKMediaQueueItem *> *) items
   }];
 }
 
+RCT_EXPORT_METHOD(queueNext: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client queueNextItem:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(queuePrev: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client queuePrevItem:customData];
+  }];
+}
+
 RCT_EXPORT_METHOD(seek: (GCKMediaSeekOptions *) options
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {

@@ -116,6 +116,24 @@ export default class RemoteMediaClient {
   }
 
   /**
+   * Moves to the next item in the queue.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queueNext(customData?: object): Promise<void> {
+    return Native.queueNext(customData)
+  }
+
+  /**
+   * Moves to the previous item in the queue.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queuePrev(customData?: object): Promise<void> {
+    return Native.queuePrev(customData)
+  }
+
+  /**
    * Seeks to a new position within the current media item.
    */
   seek(options: MediaSeekOptions): Promise<void> {
