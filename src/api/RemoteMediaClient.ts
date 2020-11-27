@@ -62,7 +62,18 @@ export default class RemoteMediaClient {
   play(customData?: object): Promise<void> {
     return Native.play(customData)
   }
-
+  
+  /**
+   * Begins (or resumes) playback of the current media item.
+   *
+   * Playback always begins at the beginning of the stream. The request will fail if there is no current media status.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queueNext(customData?: object): Promise<void> {
+    return Native.queueNext(customData)
+  }
+  
   /**
    * Inserts a single item into the queue and starts playing it at the specified position.
    *
