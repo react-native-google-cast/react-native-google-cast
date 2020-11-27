@@ -1,6 +1,6 @@
 {
   "name": "react-native-google-cast",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0-beta.3",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "lib/commonjs/index",
   "react-native": "src/index",
@@ -46,7 +46,7 @@
     "pods:example": "cd example && pod-install --quiet",
     "pods:playground": "cd playground && pod-install --quiet",
     "prepare": "bob build",
-    "release": "release-it",
+    "release": "dotenv release-it --",
     "test": "jest",
     "typescript": "tsc --noEmit"
   },
@@ -58,6 +58,7 @@
     "@commitlint/config-conventional": "^9.1.2",
     "@react-native-community/bob": "^0.16.2",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@release-it/bumper": "^2.0.0",
     "@release-it/conventional-changelog": "^1.1.4",
     "@types/jest": "^26.0.10",
     "@types/react": "^16.9.46",
@@ -66,6 +67,7 @@
     "chokidar": "^3.2.3",
     "commitlint": "^9.1.2",
     "concurrently": "^5.3.0",
+    "dotenv-cli": "^4.0.0",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.3",
@@ -120,14 +122,28 @@
       "tagName": "v${version}"
     },
     "npm": {
-      "publish": true
+      "publish": true,
+      "skipChecks": true,
+      "tag": "next"
     },
     "github": {
       "release": true
     },
     "plugins": {
+      "@release-it/bumper": {
+        "out": [
+          "package.json",
+          "example/package.json",
+          "example/android/build.gradle",
+          "example/ios/Podfile.lock",
+          "playground/package.json",
+          "playground/android/build.gradle",
+          "playground/ios/Podfile.lock"
+        ]
+      },
       "@release-it/conventional-changelog": {
-        "preset": "angular"
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
       }
     }
   },
