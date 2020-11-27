@@ -64,24 +64,6 @@ export default class RemoteMediaClient {
   }
 
   /**
-   * Skip queue Item to next.
-   *
-   * @param customData Custom application-specific data to pass along with the request.
-   */
-  queueNext(customData?: object): Promise<void> {
-    return Native.queueNext(customData)
-  }
-
-  /**
-   * Skip queue Item to previous.
-   *
-   * @param customData Custom application-specific data to pass along with the request.
-   */
-  queuePrev(customData?: object): Promise<void> {
-    return Native.queuePrev(customData)
-  }
-
-  /**
    * Inserts a single item into the queue and starts playing it at the specified position.
    *
    * @param item The item to insert.
@@ -131,6 +113,24 @@ export default class RemoteMediaClient {
     customData?: object
   ): Promise<void> {
     return Native.queueInsertItems(items, beforeItemId || 0, customData)
+  }
+
+  /**
+   * Moves to the next item in the queue.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queueNext(customData?: object): Promise<void> {
+    return Native.queueNext(customData)
+  }
+
+  /**
+   * Moves to the previous item in the queue.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  queuePrev(customData?: object): Promise<void> {
+    return Native.queuePrev(customData)
   }
 
   /**
