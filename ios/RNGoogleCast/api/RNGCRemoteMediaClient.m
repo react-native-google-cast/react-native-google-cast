@@ -97,7 +97,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_METHOD(getMediaStatus,
                  getMediaStatusResolver: (RCTPromiseResolveBlock) resolve
                  rejecter: (RCTPromiseRejectBlock) reject) {
-  
+
   [self withClientResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
     GCKMediaStatus *status = [client mediaStatus];
     return status != nil ? [RCTConvert fromGCKMediaStatus:status] : [NSNull null];
@@ -160,7 +160,7 @@ RCT_EXPORT_METHOD(queueNext: (nullable NSDictionary *) customData
                   rejecter: (RCTPromiseRejectBlock) reject) {
 
   [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
-    return [client queueNextItem:customData];
+    return [client queueNextItem];
   }];
 }
 
@@ -169,7 +169,7 @@ RCT_EXPORT_METHOD(queuePrev: (nullable NSDictionary *) customData
                   rejecter: (RCTPromiseRejectBlock) reject) {
 
   [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
-    return [client queuePrevItem:customData];
+    return [client queuePreviousItem];
   }];
 }
 

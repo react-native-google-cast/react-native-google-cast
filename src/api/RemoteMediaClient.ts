@@ -118,7 +118,7 @@ export default class RemoteMediaClient {
   /**
    * Moves to the next item in the queue.
    *
-   * @param customData Custom application-specific data to pass along with the request.
+   * @param customData Custom application-specific data to pass along with the request. (Currently Android only. On iOS `customData` will be ignored.)
    */
   queueNext(customData?: object): Promise<void> {
     return Native.queueNext(customData)
@@ -127,7 +127,7 @@ export default class RemoteMediaClient {
   /**
    * Moves to the previous item in the queue.
    *
-   * @param customData Custom application-specific data to pass along with the request.
+   * @param customData Custom application-specific data to pass along with the request. (Currently Android only. On iOS `customData` will be ignored.)
    */
   queuePrev(customData?: object): Promise<void> {
     return Native.queuePrev(customData)

@@ -26,7 +26,37 @@ const mediaQueueItem = {
 }
 ```
 
-Load an array of media queue items in the queue by using the appropriate method of the [RemoteMediaClient](../api/classes/remotemediaclient) class.
+Load an array of media queue items in the queue by using the appropriate method on the client:
+
+- [loadMedia](../api/classes/remotemediaclient#loadMedia) - Replace current item or queue.
+- [queueInsertAndPlayItem](../api/classes/remotemediaclient#queueinsertandplayitem) - Insert an item into current queue and start playing it.
+- [queueInsertItem](../api/classes/remotemediaclient#queueinsertitem) - Insert item into current queue without changing what's currently playing.
+- [queueInsertItems](../api/classes/remotemediaclient#queueinsertitems) - Insert multiple items.
+
+For example:
+
+```js
+client.loadMedia({
+  queueData: {
+    items: [
+      {
+        mediaInfo: {
+          contentUrl: 'https://...',
+        },
+      },
+    ],
+  },
+})
+```
+
+## Interact with the queue
+
+- [play](../api/classes/remotemediaclient#play) - Play current item.
+- [pause](../api/classes/remotemediaclient#pause) - Pause current item.
+- [seek](../api/classes/remotemediaclient#seek) - Jump to a different position in the current item.
+- [queueNext](../api/classes/remotemediaclient#queuenext) - Play the next item.
+- [queuePrev](../api/classes/remotemediaclient#queueprev) - Play the previous item.
+- [stop](../api/classes/remotemediaclient#stop) - Stop playing and remove the queue.
 
 ## Receive media queue status update
 
@@ -41,6 +71,6 @@ When the receiver loads a media queue item, it assigns a unique ID to the item w
 
 > Note: To provide the best user experience, the sender app must show the next autoplay item in the queue in the sender UI.
 
-## Edit the queue
+<!-- ## Edit the queue
 
-To work with the items in the queue, use the queue methods of [RemoteMediaClient](../api/classes/remotemediaclient). These let you load an array of items into a new queue, insert items into an existing queue, update the properties of items in the queue, make an item jump forward or backward in the queue, set the properties of the queue itself (for example, change the `repeatMode` that selects the next item), remove items from the queue, and reorder the items in the queue.
+To work with the items in the queue, use the queue methods of [RemoteMediaClient](../api/classes/remotemediaclient). These let you load an array of items into a new queue, insert items into an existing queue, update the properties of items in the queue, make an item jump forward or backward in the queue, set the properties of the queue itself (for example, change the `repeatMode` that selects the next item), remove items from the queue, and reorder the items in the queue. -->

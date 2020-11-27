@@ -22,6 +22,7 @@ To stream media to the connected cast device, you first need to get the current 
   import { useRemoteMediaClient } from 'react-native-google-cast'
 
   function MyComponent() {
+    // this will automatically rerender when client is connected
     const client = useRemoteMediaClient()
 
     if (client) {
@@ -33,13 +34,36 @@ To stream media to the connected cast device, you first need to get the current 
 - or using classes:
 
   ```ts
-  import GoogleCast from 'react-native-google-cast'
+  import { SessionManager } from 'react-native-google-cast'
 
   class MyComponent extends React.Component {
-    render() {
-      const client = await GoogleCast.getClient()
+    manager = new SessionManager()
+    state = {}
 
-      if (client) {
+    // note that unlike hooks, you'll need to use events to monitor when the client is connected
+    componentDidMount() {
+      this.startedListener = manager.onSessionStarted((session) =>
+        this.setState({ client: session.client })
+      )
+      this.resumedListener = manager.onSessionResumed((session) =>
+        this.setState({ client: session.client })
+      )
+      this.suspendedListener = manager.onSessionSuspended((session) =>
+        this.setState({ client: undefined })
+      )
+      this.endingListener = manager.onSessionEnding((session) =>
+        this.setState({ client: undefined })
+      )
+    }
+    componentWillUnmount() {
+      if (this.startedListener) this.startedListener.remove()
+      if (this.resumedListener) this.resumedListener.remove()
+      if (this.suspendedListener) this.suspendedListener.remove()
+      if (this.endingListener) this.endingListener.remove()
+    }
+
+    render() {
+      if (this.state.client) {
         // ...
       }
     }

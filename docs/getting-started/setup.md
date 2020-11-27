@@ -6,9 +6,7 @@ sidebar_label: Setup
 
 ## iOS
 
-1. ⚠️ If developing using Xcode 10+ and targeting iOS devices running iOS 12+, enable the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note that "Wireless Accessory Configuration" is unrelated.
-
-2. In `AppDelegate.m` add
+1. In `AppDelegate.m` add
 
    ```obj-c
    #import <GoogleCast/GoogleCast.h>
@@ -24,21 +22,9 @@ sidebar_label: Setup
 
    If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
 
-3. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
+2. In Xcode, go to `Signing & Capabilities`, click `+ Capability` and select `Access WiFi Information`. (This is required since [iOS 12](https://developers.google.com/cast/docs/ios_sender/#ios_12).) Note that "Wireless Accessory Configuration" is unrelated.
 
-   ```xml
-   <key>NSBluetoothAlwaysUsageDescription</key>
-   <string>${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices.</string>
-   <key>NSBluetoothPeripheralUsageDescription</key>
-   <string>${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices.</string>
-   <key>NSMicrophoneUsageDescription</key>
-   <string>${PRODUCT_NAME} uses microphone access to listen for ultrasonic tokens
-   when pairing with nearby Cast devices.</string>
-   ```
-
-   The [official Guest Mode documentation](https://developers.google.com/cast/docs/guest_mode) explains how guest mode works. Note that most use cases work fine without guest mode so you may decide you don't need it if it's not worth asking for the extra privacy permissions.
-
-4. For iOS 14+, you also need to add [local network permissions](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#updating_your_app_on_ios_14) to `Info.plist`:
+3. For iOS 14+, you need to add [local network permissions](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#updating_your_app_on_ios_14) to `Info.plist`:
 
    ```xml
    <key>NSBonjourServices</key>
@@ -60,6 +46,20 @@ sidebar_label: Setup
    options.disableDiscoveryAutostart = true;
    # insert before [GCKCastContext setSharedInstanceWithOptions:options];
    ```
+
+4. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
+
+   ```xml
+   <key>NSBluetoothAlwaysUsageDescription</key>
+   <string>${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices.</string>
+   <key>NSBluetoothPeripheralUsageDescription</key>
+   <string>${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices.</string>
+   <key>NSMicrophoneUsageDescription</key>
+   <string>${PRODUCT_NAME} uses microphone access to listen for ultrasonic tokens
+   when pairing with nearby Cast devices.</string>
+   ```
+
+   The [official Guest Mode documentation](https://developers.google.com/cast/docs/guest_mode) explains how guest mode works. Note that most use cases work fine without guest mode so you may decide you don't need it if it's not worth asking for the extra privacy permissions.
 
 ## Android
 

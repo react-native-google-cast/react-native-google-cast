@@ -6,7 +6,7 @@ sidebar_label: Hooks
 
 If you're using functional components, the library provides a number of hooks that help you manage its state.
 
-## Cast State Hooks
+## Cast State Hook
 
 Receive the current [CastState](../api/enums/caststate).
 
@@ -16,7 +16,7 @@ import { useCastState } from 'react-native-google-cast'
 const castState = useCastState()
 ```
 
-## Session Hooks
+## Session Hook
 
 Receive the current [CastSession](../api/classes/castsession).
 
@@ -26,21 +26,12 @@ import { useCastSession } from 'react-native-google-cast'
 const castSession = useCastSession()
 ```
 
-## Client Hooks
+## Client Hook
 
-[RemoteMediaClient](../api/classes/remotemediaclient) controls media playback on a Cast receiver.
-
-```js
-// Status of the media has changed. The `mediaStatus` object contains the new status.
-client.onMediaStatusUpdated((mediaStatus) => {})
-```
-
-For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated`, if you're subscribed to both).
+Receive the current [RemoteMediaClient](../api/classes/remotemediaclient).
 
 ```js
-// Media started playing
-client.onMediaPlaybackStarted((mediaStatus) => {})
+import { useClient } from 'react-native-google-cast'
 
-// Media finished playing
-client.onMediaPlaybackEnded((mediaStatus) => {})
+const client = useClient()
 ```

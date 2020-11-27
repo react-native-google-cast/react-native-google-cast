@@ -16,7 +16,7 @@ It is written in TypeScript so types will always be up-to-date.
 
 ## Documentation
 
-https://react-native-google-cast.github.io/docs
+https://react-native-google-cast.github.io/docs/getting-started/installation
 
 ## Example
 
