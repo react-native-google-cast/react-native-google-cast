@@ -132,6 +132,24 @@ RCT_EXPORT_METHOD(pause: (nullable NSDictionary *) customData
   }];
 }
 
+RCT_EXPORT_METHOD(queueNext: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client queueNext:customData];
+  }];
+}
+
+RCT_EXPORT_METHOD(queuePrev: (nullable NSDictionary *) customData
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client queuePrev:customData];
+  }];
+}
+
 RCT_EXPORT_METHOD(queueInsertAndPlayItem: (GCKMediaQueueItem *) item
                   beforeItemId: (NSUInteger) beforeItemId
                   playPosition: (NSTimeInterval) playPosition
