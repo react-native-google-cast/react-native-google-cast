@@ -27,7 +27,7 @@ export default function Formats() {
     })
     return () => {
       console.log('leaving formats screen')
-      CastContext.endCurrentCastSession()
+      CastContext.endCurrentSession(true)
     }
   }, [])
 

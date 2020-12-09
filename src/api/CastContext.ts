@@ -34,8 +34,8 @@ export default class CastContext {
   /**
    * Ends the current session.
    */
-  static async endCurrentCastSession(stopCasting: boolean): Promise<void> {
-    return new SessionManager().endCurrentCastSession(stopCasting)
+  static async endCurrentSession(stopCasting: boolean): Promise<void> {
+    return new SessionManager().endCurrentSession(stopCasting)
   }
 
   /**

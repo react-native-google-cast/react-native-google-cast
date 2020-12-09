@@ -29,7 +29,7 @@ export default class SessionManager {
     else return null
   }
 
-  async endCurrentCastSession(stopCasting: boolean): Promise<void> {
+  async endCurrentSession(stopCasting: boolean): Promise<void> {
     await Native.endCurrentSession(stopCasting)
   }
 
