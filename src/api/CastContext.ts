@@ -21,7 +21,6 @@ const EventEmitter = new NativeEventEmitter(Native)
 export default class CastContext {
   /** The current casting state for the application. */
   static getCastState(): Promise<CastState> {
-    console.log('oi oi oi oi oi xxxxxx')
     return Native.getCastState()
   }
 
@@ -33,10 +32,10 @@ export default class CastContext {
   }
 
   /**
-   * Returns the current session if it is an instance of {@link CastSession}, otherwise returns `null` (if you manually create a custom {@link Session} with the {@link SessionManager}).
+   * Ends the current session.
    */
-  static async endCurrentCastSession(): Promise<void> {
-    return new SessionManager().endCurrentCastSession(true)
+  static async endCurrentCastSession(stopCasting: boolean): Promise<void> {
+    return new SessionManager().endCurrentCastSession(stopCasting)
   }
 
   /**
