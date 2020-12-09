@@ -73,6 +73,16 @@ public class RNGCSessionManager
     });
   }
 
+  @ReactMethod
+  public void endCurrentSession(final Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        promise.resolve(RNGCCastSession.toJson(getSessionManager().getCurrentCastSession()));
+      }
+    });
+  }
+
   @Override
   public void onSessionEnded(CastSession session, int error) {
     onDisconnected();
