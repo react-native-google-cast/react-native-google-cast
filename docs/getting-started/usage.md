@@ -104,7 +104,7 @@ client.loadMedia({
     },
     streamDuration: 596, // seconds
   },
-  startTime: 10, // seconds
+  startTime: 15000, // milliseconds
 })
 ```
 
