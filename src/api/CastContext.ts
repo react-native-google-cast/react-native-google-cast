@@ -35,9 +35,8 @@ export default class CastContext {
   /**
    * Returns the current session if it is an instance of {@link CastSession}, otherwise returns `null` (if you manually create a custom {@link Session} with the {@link SessionManager}).
    */
-  static endCurrentCastSession(): void {
-    console.log('ending session!!!')
-    new SessionManager().endCurrentCastSession(true)
+  static async endCurrentCastSession(): Promise<void> {
+    return new SessionManager().endCurrentCastSession(true)
   }
 
   /**

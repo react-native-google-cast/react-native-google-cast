@@ -20,16 +20,15 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RNGCSessionManager
-  extends ReactContextBaseJavaModule implements LifecycleEventListener, SessionManagerListener<CastSession> {
+public class RNGCSessionManager extends ReactContextBaseJavaModule
+    implements LifecycleEventListener, SessionManagerListener<CastSession> {
 
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCSessionManager";
 
   public static final String SESSION_STARTING = "GoogleCast:SessionStarting";
   public static final String SESSION_STARTED = "GoogleCast:SessionStarted";
-  public static final String SESSION_START_FAILED =
-    "GoogleCast:SessionStartFailed";
+  public static final String SESSION_START_FAILED = "GoogleCast:SessionStartFailed";
   public static final String SESSION_SUSPENDED = "GoogleCast:SessionSuspended";
   public static final String SESSION_RESUMING = "GoogleCast:SessionResuming";
   public static final String SESSION_RESUMED = "GoogleCast:SessionResumed";
@@ -69,6 +68,17 @@ public class RNGCSessionManager
       @Override
       public void run() {
         promise.resolve(RNGCCastSession.toJson(getSessionManager().getCurrentCastSession()));
+      }
+    });
+  }
+
+  @ReactMethod
+  public void endCurrentSession(final boolean stopCasting, final Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        getSessionManager().endCurrentSession(stopCasting);
+        promise.resolve(null);
       }
     });
   }
@@ -167,8 +177,7 @@ public class RNGCSessionManager
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        getSessionManager().addSessionManagerListener(RNGCSessionManager.this,
-          CastSession.class);
+        getSessionManager().addSessionManagerListener(RNGCSessionManager.this, CastSession.class);
       }
     });
   }
@@ -178,8 +187,7 @@ public class RNGCSessionManager
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        getSessionManager().removeSessionManagerListener(RNGCSessionManager.this,
-          CastSession.class);
+        getSessionManager().removeSessionManagerListener(RNGCSessionManager.this, CastSession.class);
       }
     });
   }
@@ -189,25 +197,23 @@ public class RNGCSessionManager
   }
 
   public void sendEvent(String eventName, @Nullable WritableMap params) {
-    getReactApplicationContext()
-      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-      .emit(eventName, params);
+    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName,
+        params);
   }
 
   private void onConnected(final CastSession castSession) {
-//    this.castSession = castSession;
+    // this.castSession = castSession;
 
-//    remoteMediaClientListener = new RNGCRemoteMediaClientListener(module);
-//    castSession.getRemoteMediaClient().registerCallback(
-//        remoteMediaClientListener);
+    // remoteMediaClientListener = new RNGCRemoteMediaClientListener(module);
+    // castSession.getRemoteMediaClient().registerCallback(
+    // remoteMediaClientListener);
   }
 
   private void onDisconnected() {
-//    this.castSession = null;
+    // this.castSession = null;
   }
 
   private SessionManager getSessionManager() {
-    return CastContext.getSharedInstance(getReactApplicationContext())
-      .getSessionManager();
+    return CastContext.getSharedInstance(getReactApplicationContext()).getSessionManager();
   }
 }
