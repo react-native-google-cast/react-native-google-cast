@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Button,
   SectionList,
@@ -6,7 +6,10 @@ import {
   Text,
   View,
 } from 'react-native'
-import { MediaInfo, useRemoteMediaClient } from 'react-native-google-cast'
+import CastContext, {
+  MediaInfo,
+  useRemoteMediaClient,
+} from 'react-native-google-cast'
 
 interface FormatItem {
   title: string
@@ -17,6 +20,16 @@ const FormatList = SectionList as SectionListStatic<FormatItem>
 
 export default function Formats() {
   const client = useRemoteMediaClient()
+
+  useEffect(() => {
+    CastContext.getCastState().then((state) => {
+      console.log('entering formats screen', state)
+    })
+    return () => {
+      console.log('leaving formats screen')
+      CastContext.endCurrentSession(true)
+    }
+  }, [])
 
   function cast(item: FormatItem) {
     if (!client) return
@@ -96,7 +109,7 @@ export default function Formats() {
                   subtitle:
                     'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
                   studio: 'Blender Foundation',
-                  releaseDate: '2008-04-10',
+                  // releaseDate: '2008-04-10',
                 },
               },
             },

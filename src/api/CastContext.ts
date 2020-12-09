@@ -32,6 +32,13 @@ export default class CastContext {
   }
 
   /**
+   * Ends the current session.
+   */
+  static async endCurrentSession(stopCasting: boolean): Promise<void> {
+    return new SessionManager().endCurrentSession(stopCasting)
+  }
+
+  /**
    * Convenience method to get the RemoteMediaClient associated with current session.
    */
   static async getClient(): Promise<RemoteMediaClient | null> {
