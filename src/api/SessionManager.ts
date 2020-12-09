@@ -29,6 +29,10 @@ export default class SessionManager {
     else return null
   }
 
+  async endCurrentCastSession(stopCasting: boolean): Promise<void> {
+    await Native.endCurrentCastSession(stopCasting)
+  }
+
   /** Called when a session is about to be started. */
   onSessionStarting(handler: (session: CastSession) => void) {
     return EventEmitter.addListener(Native.SESSION_STARTING, ({ session }) => {
