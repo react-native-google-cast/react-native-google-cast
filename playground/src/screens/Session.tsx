@@ -26,7 +26,7 @@ const DisconnectButton = () => {
   return <Button onPress={disconnect} title="Disconnect" disabled={!client} />
 }
 
-export default function Formats() {
+export default function Session() {
   const client = useRemoteMediaClient()
 
   function cast(item: FormatItem) {
