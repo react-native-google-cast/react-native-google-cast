@@ -32,6 +32,10 @@ export default function Home() {
             title: 'Queue',
             data: [{ title: 'Queue' }],
           },
+          {
+            title: 'Session',
+            data: [{ title: 'Session' }],
+          },
         ]}
         keyExtractor={(item, index) => item.title + index}
       />

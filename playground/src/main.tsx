@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 import { CastButton } from 'react-native-google-cast'
 import Formats from './screens/Formats'
+import Session from './screens/Session'
 import Home from './screens/Home'
 import Queue from './screens/Queue'
 
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Formats" component={Formats} />
         <Stack.Screen name="Queue" component={Queue} />
+        <Stack.Screen name="Session" component={Session} />
       </Stack.Navigator>
     </NavigationContainer>
   )
