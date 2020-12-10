@@ -24,6 +24,11 @@ export default class CastContext {
     return Native.getCastState()
   }
 
+  /** End the current session */
+  static endSession(stopCasting: boolean = false): Promise<CastState> {
+    return Native.endSession(stopCasting)
+  }
+
   /**
    * Returns the current session if it is an instance of {@link CastSession}, otherwise returns `null` (if you manually create a custom {@link Session} with the {@link SessionManager}).
    */

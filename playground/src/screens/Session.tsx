@@ -6,7 +6,10 @@ import {
   Text,
   View,
 } from 'react-native'
-import { MediaInfo, useRemoteMediaClient } from 'react-native-google-cast'
+import CastContext, {
+  MediaInfo,
+  useRemoteMediaClient,
+} from 'react-native-google-cast'
 
 interface FormatItem {
   title: string
@@ -18,14 +21,9 @@ const FormatList = SectionList as SectionListStatic<FormatItem>
 const DisconnectButton = () => {
   // const castState = useCastState() // TODO this is broken... always connected
   const client = useRemoteMediaClient()
+  const disconnect = () => CastContext.endSession()
 
-  return (
-    <Button
-      onPress={() => console.log('hello')}
-      title="Disconnect"
-      disabled={!client}
-    />
-  )
+  return <Button onPress={disconnect} title="Disconnect" disabled={!client} />
 }
 
 export default function Formats() {
