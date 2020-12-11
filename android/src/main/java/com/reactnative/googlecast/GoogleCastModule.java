@@ -450,6 +450,14 @@ public class GoogleCastModule
 
     @Override
     public void onHostPause() {
+        // /!\ the code in onHostDestroy was here before. /!\
+        // This move is because this callback is called when ExpandedControls are opened
+        // Thus, we didnt receive events when ExpandedControls was opened
+        // With this move, it's fixed (and events are not dupplicated) but it is kind of dirty fix that must be improved
+    }
+
+    @Override
+    public void onHostDestroy() {
         getReactApplicationContext().runOnUiQueueThread(new Runnable() {
             @Override
             public void run() {
@@ -460,10 +468,6 @@ public class GoogleCastModule
                         CastSession.class);
             }
         });
-    }
-
-    @Override
-    public void onHostDestroy() {
     }
 
     protected void setCastSession(CastSession castSession) {
