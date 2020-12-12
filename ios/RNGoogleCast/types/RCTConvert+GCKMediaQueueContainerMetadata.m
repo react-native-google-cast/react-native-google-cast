@@ -40,7 +40,9 @@
   return [builder build];
 }
 
-+ (id)fromGCKMediaQueueContainerMetadata:(GCKMediaQueueContainerMetadata *)metadata {
++ (nonnull id)fromGCKMediaQueueContainerMetadata:(nullable GCKMediaQueueContainerMetadata *)metadata {
+  if (metadata == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
   json[@"containerDuration"] = @(metadata.containerDuration);

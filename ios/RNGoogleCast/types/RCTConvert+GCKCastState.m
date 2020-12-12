@@ -11,7 +11,7 @@ RCT_ENUM_CONVERTER(GCKCastState, (@{
                    }),
                    GCKCastStateNoDevicesAvailable, integerValue)
 
-+ (id)fromGCKCastState:(GCKCastState)state {
++ (nonnull id)fromGCKCastState:(GCKCastState)state {
   switch (state) {
   case GCKCastStateConnected:
     return @"connected";

@@ -9,7 +9,7 @@ RCT_ENUM_CONVERTER(GCKMediaResumeState, (@{
                    }),
                    GCKMediaResumeStateUnchanged, integerValue)
 
-+ (id)fromGCKMediaResumeState:(GCKMediaResumeState)state {
++ (nonnull id)fromGCKMediaResumeState:(GCKMediaResumeState)state {
   switch (state) {
   case GCKMediaResumeStatePlay:
     return @"play";

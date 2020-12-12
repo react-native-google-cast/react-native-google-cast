@@ -4,7 +4,9 @@
 
 @implementation RCTConvert (GCKDevice)
 
-+ (id)fromGCKDevice:(GCKDevice *)device {
++ (nonnull id)fromGCKDevice:(nullable GCKDevice *)device {
+  if (device == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
   json[@"deviceId"] = device.deviceID;

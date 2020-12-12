@@ -7,7 +7,9 @@
   return [[GCKColor alloc] initWithCSSString:json];
 }
 
-+ (id)fromGCKColor:(GCKColor *)color {
++ (nonnull id)fromGCKColor:(nullable GCKColor *)color {
+  if (color == nil) return [NSNull null];
+  
   return color.CSSString;
 }
 

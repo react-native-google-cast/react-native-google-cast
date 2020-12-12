@@ -58,7 +58,9 @@
   return style;
 }
 
-+ (id)fromGCKMediaTextTrackStyle:(GCKMediaTextTrackStyle *)style {
++ (nonnull id)fromGCKMediaTextTrackStyle:(nullable GCKMediaTextTrackStyle *)style {
+  if (style == nil) return [NSNull null];
+
   return @{
     @"backgroundColor" : [RCTConvert fromGCKColor:style.backgroundColor],
     

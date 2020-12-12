@@ -12,7 +12,7 @@ RCT_ENUM_CONVERTER(GCKMediaMetadataType, (@{
                    }),
                    GCKMediaMetadataTypeUser, integerValue)
 
-+ (id)fromGCKMediaMetadataType:(GCKMediaMetadataType)metadataType {
++ (nonnull id)fromGCKMediaMetadataType:(GCKMediaMetadataType)metadataType {
   switch (metadataType) {
   case GCKMediaMetadataTypeGeneric:
     return @"generic";

@@ -13,7 +13,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackStyleEdgeType, (@{
                    }),
                    GCKMediaTextTrackStyleEdgeTypeUnknown, integerValue)
 
-+ (id)fromGCKMediaTextTrackStyleEdgeType:(GCKMediaTextTrackStyleEdgeType)type {
++ (nonnull id)fromGCKMediaTextTrackStyleEdgeType:(GCKMediaTextTrackStyleEdgeType)type {
   switch (type) {
   case GCKMediaTextTrackStyleEdgeTypeDepressed:
     return @"depressed";

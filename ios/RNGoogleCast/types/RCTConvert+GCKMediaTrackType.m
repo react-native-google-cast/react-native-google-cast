@@ -10,7 +10,7 @@ RCT_ENUM_CONVERTER(GCKMediaTrackType, (@{
                    }),
                    GCKMediaTrackTypeUnknown, integerValue)
 
-+ (id)fromGCKMediaTrackType:(GCKMediaTrackType)trackType {
++ (nonnull id)fromGCKMediaTrackType:(GCKMediaTrackType)trackType {
   switch (trackType) {
   case GCKMediaTrackTypeAudio:
     return @"audio";

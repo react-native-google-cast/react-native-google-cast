@@ -11,7 +11,7 @@ RCT_ENUM_CONVERTER(GCKMediaRepeatMode, (@{
                    }),
                    GCKMediaRepeatModeUnchanged, integerValue)
 
-+ (id)fromGCKMediaRepeatMode:(GCKMediaRepeatMode)mode {
++ (nonnull id)fromGCKMediaRepeatMode:(GCKMediaRepeatMode)mode {
   switch (mode) {
   case GCKMediaRepeatModeAll:
     return @"all";

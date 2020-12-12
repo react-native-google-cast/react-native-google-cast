@@ -107,7 +107,9 @@
   return metadata;
 }
 
-+ (id)fromGCKMediaMetadata:(GCKMediaMetadata *)metadata {
++ (nonnull id)fromGCKMediaMetadata:(nullable GCKMediaMetadata *)metadata {
+  if (metadata == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
   
   json[@"type"] = [RCTConvert fromGCKMediaMetadataType:metadata.metadataType];

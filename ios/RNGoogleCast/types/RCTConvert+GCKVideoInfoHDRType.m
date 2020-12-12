@@ -10,7 +10,7 @@ RCT_ENUM_CONVERTER(GCKVideoInfoHDRType, (@{
                    }),
                    GCKVideoInfoHDRTypeUnknown, integerValue)
 
-+ (id)fromGCKVideoInfoHDRType:(GCKVideoInfoHDRType)type {
++ (nonnull id)fromGCKVideoInfoHDRType:(GCKVideoInfoHDRType)type {
   switch (type) {
   case GCKVideoInfoHDRTypeDV:
     return @"DV";

@@ -51,7 +51,9 @@
   return [builder build];
 }
 
-+ (id)fromGCKMediaQueueItem:(GCKMediaQueueItem *)item {
++ (nonnull id)fromGCKMediaQueueItem:(nullable GCKMediaQueueItem *)item {
+  if (item == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
   json[@"activeTrackIds"] = item.activeTrackIDs;

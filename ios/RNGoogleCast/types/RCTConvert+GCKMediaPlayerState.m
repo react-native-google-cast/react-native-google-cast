@@ -12,7 +12,7 @@ RCT_ENUM_CONVERTER(GCKMediaPlayerState, (@{
                    }),
                    GCKMediaPlayerStateUnknown, integerValue)
 
-+ (id)fromGCKMediaPlayerState:(GCKMediaPlayerState)state {
++ (nonnull id)fromGCKMediaPlayerState:(GCKMediaPlayerState)state {
   switch (state) {
   case GCKMediaPlayerStateBuffering:
     return @"buffering";

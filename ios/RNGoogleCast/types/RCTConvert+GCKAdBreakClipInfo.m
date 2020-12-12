@@ -14,7 +14,9 @@
 //  return [builder ]
 //}
 
-+ (id)fromGCKAdBreakClipInfo:(GCKAdBreakClipInfo *)info {
++ (nonnull id)fromGCKAdBreakClipInfo:(nullable GCKAdBreakClipInfo *)info {
+  if (info == nil) return [NSNull null];
+
   return @{
     @"adBreakClipId" : info.adBreakClipID,
     @"duration" : @(info.duration),

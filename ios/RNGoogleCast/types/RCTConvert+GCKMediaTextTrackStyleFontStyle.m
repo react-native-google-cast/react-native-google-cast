@@ -12,7 +12,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackStyleFontStyle, (@{
                    }),
                    GCKMediaTextTrackStyleFontStyleUnknown, integerValue)
 
-+ (id)fromGCKMediaTextTrackStyleFontStyle:
++ (nonnull id)fromGCKMediaTextTrackStyleFontStyle:
     (GCKMediaTextTrackStyleFontStyle)type {
   switch (type) {
   case GCKMediaTextTrackStyleFontStyleBold:

@@ -4,7 +4,9 @@
 
 @implementation RCTConvert (GCKVideoInfo)
 
-+ (id)fromGCKVideoInfo:(GCKVideoInfo *)video {
++ (nonnull id)fromGCKVideoInfo:(nullable GCKVideoInfo *)video {
+  if (video == nil) return [NSNull null];
+
   return @{
     @"hdrType" : [RCTConvert fromGCKVideoInfoHDRType:video.hdrType],
     @"height" : @(video.height),

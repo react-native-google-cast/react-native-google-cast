@@ -13,7 +13,9 @@
   return info;
 }
 
-+ (id)fromGCKAdBreakInfo:(GCKAdBreakInfo *)info {
++ (nonnull id)fromGCKAdBreakInfo:(nullable GCKAdBreakInfo *)info {
+  if (info == nil) return [NSNull null];
+
   return @{
     @"adBreakId" : info.adBreakID,
     @"playbackPosition" : @(info.playbackPosition),

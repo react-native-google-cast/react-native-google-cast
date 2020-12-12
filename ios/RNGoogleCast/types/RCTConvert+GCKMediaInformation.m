@@ -76,7 +76,9 @@
   return [builder build];
 }
 
-+ (id)fromGCKMediaInformation:(GCKMediaInformation *)info {
++ (nonnull id)fromGCKMediaInformation:(nullable GCKMediaInformation *)info {
+  if (info == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
   NSMutableArray<id> *adBreakClips = [[NSMutableArray alloc] init];

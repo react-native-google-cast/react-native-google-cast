@@ -16,7 +16,7 @@ RCT_ENUM_CONVERTER(
     }),
     GCKMediaTextTrackStyleFontGenericFamilyUnknown, integerValue)
 
-+ (id)fromGCKMediaTextTrackStyleFontGenericFamily:
++ (nonnull id)fromGCKMediaTextTrackStyleFontGenericFamily:
     (GCKMediaTextTrackStyleFontGenericFamily)type {
   switch (type) {
   case GCKMediaTextTrackStyleFontGenericFamilyCasual:

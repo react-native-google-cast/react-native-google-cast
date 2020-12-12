@@ -8,7 +8,7 @@ RCT_ENUM_CONVERTER(GCKMediaQueueContainerType, (@{
                    }),
                    GCKMediaQueueContainerTypeGeneric, integerValue)
 
-+ (id)fromGCKMediaQueueContainerType:(GCKMediaQueueContainerType)type {
++ (nonnull id)fromGCKMediaQueueContainerType:(GCKMediaQueueContainerType)type {
   switch (type) {
   case GCKMediaQueueContainerTypeAudioBook:
     return @"audioBook";

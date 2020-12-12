@@ -10,7 +10,9 @@
 
 @implementation RCTConvert (GCKMediaStatus)
 
-+ (id)fromGCKMediaStatus:(GCKMediaStatus *)status {
++ (nonnull id)fromGCKMediaStatus:(nullable GCKMediaStatus *)status {
+  if (status == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
 //  json[@"activeTrackIds"] = status.activeTrackIDs;

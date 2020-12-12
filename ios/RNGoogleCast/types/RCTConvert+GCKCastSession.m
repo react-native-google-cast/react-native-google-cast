@@ -3,7 +3,7 @@
 
 @implementation RCTConvert (GCKCastSession)
 
-+ (id)fromGCKCastSession:(nullable GCKCastSession *)castSession {
++ (nonnull id)fromGCKCastSession:(nullable GCKCastSession *)castSession {
   if (castSession == nil) return [NSNull null];
   
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];

@@ -17,7 +17,9 @@
               customData:json[@"customData"]];
 }
 
-+ (id)fromGCKMediaTrack:(GCKMediaTrack *)track {
++ (nonnull id)fromGCKMediaTrack:(nullable GCKMediaTrack *)track {
+  if (track == nil) return [NSNull null];
+
   return @{
     @"id" : @(track.identifier),
     @"contentId" : track.contentIdentifier ?: [NSNull null],

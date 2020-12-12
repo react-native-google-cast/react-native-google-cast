@@ -4,7 +4,9 @@
 
 @implementation RCTConvert (GCKApplicationMetadata)
 
-+ (id)fromGCKApplicationMetadata:(GCKApplicationMetadata *)metadata {
++ (nonnull id)fromGCKApplicationMetadata:(nullable GCKApplicationMetadata *)metadata {
+  if (metadata == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
   json[@"applicationId"] = metadata.applicationID;

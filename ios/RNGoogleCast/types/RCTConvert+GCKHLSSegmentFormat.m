@@ -12,7 +12,7 @@ RCT_ENUM_CONVERTER(GCKHLSSegmentFormat, (@{
                    }),
                    GCKHLSSegmentFormatUndefined, integerValue)
 
-+ (id)fromGCKHLSSegmentFormat:(GCKHLSSegmentFormat)trackType {
++ (nonnull id)fromGCKHLSSegmentFormat:(GCKHLSSegmentFormat)trackType {
   switch (trackType) {
   case GCKHLSSegmentFormatAAC:
     return @"AAC";

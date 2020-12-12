@@ -9,7 +9,9 @@
                                 height:[RCTConvert NSInteger:json[@"height"]]];
 }
 
-+ (id)fromGCKImage:(GCKImage *)image {
++ (nonnull id)fromGCKImage:(nullable GCKImage *)image {
+  if (image == nil) return [NSNull null];
+
   return @{
     @"height" : @(image.height),
     @"url" : [image.URL absoluteString],

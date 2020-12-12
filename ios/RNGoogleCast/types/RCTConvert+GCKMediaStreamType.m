@@ -10,7 +10,7 @@ RCT_ENUM_CONVERTER(GCKMediaStreamType, (@{
                    }),
                    GCKMediaStreamTypeUnknown, integerValue)
 
-+ (id)fromGCKMediaStreamType:(GCKMediaStreamType)streamType {
++ (nonnull id)fromGCKMediaStreamType:(GCKMediaStreamType)streamType {
   switch (streamType) {
   case GCKMediaStreamTypeBuffered:
     return @"buffered";

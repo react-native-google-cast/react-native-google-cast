@@ -53,7 +53,9 @@
   return [builder build];
 }
 
-+ (id)fromGCKMediaQueueData:(GCKMediaQueueData *)data {
++ (nonnull id)fromGCKMediaQueueData:(nullable GCKMediaQueueData *)data {
+  if (data == nil) return [NSNull null];
+
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
   json[@"containerMetadata"] = [RCTConvert fromGCKMediaQueueContainerMetadata:data.containerMetadata];

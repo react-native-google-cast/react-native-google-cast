@@ -11,7 +11,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackStyleWindowType, (@{
                    }),
                    GCKMediaTextTrackStyleWindowTypeUnknown, integerValue)
 
-+ (id)fromGCKMediaTextTrackStyleWindowType:
++ (nonnull id)fromGCKMediaTextTrackStyleWindowType:
     (GCKMediaTextTrackStyleWindowType)type {
   switch (type) {
   case GCKMediaTextTrackStyleWindowTypeNone:

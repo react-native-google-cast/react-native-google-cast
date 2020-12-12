@@ -3,7 +3,7 @@
 
 @implementation RCTConvert (GCKActiveInputStatus)
 
-+ (id)fromGCKActiveInputStatus:(GCKActiveInputStatus)status {
++ (nonnull id)fromGCKActiveInputStatus:(GCKActiveInputStatus)status {
   switch (status) {
   case GCKActiveInputStatusActive:
     return @"active";

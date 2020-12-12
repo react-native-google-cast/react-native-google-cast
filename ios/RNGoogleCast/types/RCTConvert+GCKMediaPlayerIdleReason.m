@@ -11,7 +11,7 @@ RCT_ENUM_CONVERTER(GCKMediaPlayerIdleReason, (@{
                    }),
                    GCKMediaPlayerIdleReasonNone, integerValue)
 
-+ (id)fromGCKMediaPlayerIdleReason:(GCKMediaPlayerIdleReason)reason {
++ (nonnull id)fromGCKMediaPlayerIdleReason:(GCKMediaPlayerIdleReason)reason {
   switch (reason) {
   case GCKMediaPlayerIdleReasonCancelled:
     return @"cancelled";

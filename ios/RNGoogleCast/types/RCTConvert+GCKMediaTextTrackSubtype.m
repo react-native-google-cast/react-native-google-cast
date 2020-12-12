@@ -12,7 +12,7 @@ RCT_ENUM_CONVERTER(GCKMediaTextTrackSubtype, (@{
                    }),
                    GCKMediaTextTrackSubtypeUnknown, integerValue)
 
-+ (id)fromGCKMediaTextTrackSubtype:(GCKMediaTextTrackSubtype)subtype {
++ (nonnull id)fromGCKMediaTextTrackSubtype:(GCKMediaTextTrackSubtype)subtype {
   switch (subtype) {
   case GCKMediaTextTrackSubtypeCaptions:
     return @"captions";

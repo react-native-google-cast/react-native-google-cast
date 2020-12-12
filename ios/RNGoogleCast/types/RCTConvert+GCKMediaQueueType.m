@@ -16,7 +16,7 @@ RCT_ENUM_CONVERTER(GCKMediaQueueType, (@{
                    }),
                    GCKMediaQueueTypeGeneric, integerValue)
 
-+ (id)fromGCKMediaQueueType:(GCKMediaQueueType)type {
++ (nonnull id)fromGCKMediaQueueType:(GCKMediaQueueType)type {
   switch (type) {
   case GCKMediaQueueTypeAlbum:
     return @"album";

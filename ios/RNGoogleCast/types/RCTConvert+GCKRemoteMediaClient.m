@@ -3,7 +3,7 @@
 
 @implementation RCTConvert (GCKRemoteMediaClient)
 
-+ (id)fromGCKRemoteMediaClient:(nullable GCKRemoteMediaClient *)client {
++ (nonnull id)fromGCKRemoteMediaClient:(nullable GCKRemoteMediaClient *)client {
   if (client == nil) return [NSNull null];
   
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
