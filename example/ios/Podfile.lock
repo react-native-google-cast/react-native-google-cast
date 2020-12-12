@@ -6,22 +6,22 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - google-cast-sdk-no-bluetooth (4.5.1):
-    - google-cast-sdk-no-bluetooth/Core (= 4.5.1)
+  - google-cast-sdk-no-bluetooth (4.5.3):
+    - google-cast-sdk-no-bluetooth/Core (= 4.5.3)
     - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - google-cast-sdk-no-bluetooth/Core (4.5.1):
+    - Protobuf (~> 3.13)
+  - google-cast-sdk-no-bluetooth/Core (4.5.3):
     - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
+    - Protobuf (~> 3.13)
   - GTMSessionFetcher/Core (1.5.0)
-  - Protobuf (3.13.0)
+  - Protobuf (3.14.0)
   - React (0.59.10):
     - React/Core (= 0.59.10)
-  - react-native-google-cast/NoBluetooth (3.4.0):
+  - react-native-google-cast/NoBluetooth (3.4.1):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (3.4.0):
+  - react-native-google-cast/RNGoogleCast (3.4.1):
     - React
   - React/Core (0.59.10):
     - yoga (= 0.59.10.React)
@@ -84,7 +84,7 @@ DEPENDENCIES:
   - yoga (from `../../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - boost-for-react-native
     - google-cast-sdk-no-bluetooth
     - GTMSessionFetcher
@@ -109,13 +109,13 @@ SPEC CHECKSUMS:
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
   glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
-  google-cast-sdk-no-bluetooth: 73ac8e9edbee16f52c2a445e391bd531e116bb31
+  google-cast-sdk-no-bluetooth: 815df973d547e06a90768f4a72220950cd32d8cb
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
-  Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  Protobuf: 0cde852566359049847168e51bd1c690e0f70056
   React: 36d0768f9e93be2473b37e7fa64f92c1d5341eef
-  react-native-google-cast: e19d00c9ec8909f3e842a7175ba35294b57c627d
+  react-native-google-cast: 9ead682d0026c857318efa8ea9c6f58b6142651a
   yoga: 684513b14b03201579ba3cee20218c9d1298b0cc
 
-PODFILE CHECKSUM: 1ddf61d211bd64aa9b2350c2b155edc66f3d7f00
+PODFILE CHECKSUM: 3059020d4f2b4cfcc792a6b0fd23f51ba18f8a2b
 
 COCOAPODS: 1.10.0

@@ -1,5 +1,3 @@
-source 'https://github.com/CocoaPods/Specs.git'
-
 platform :ios, '9.0'
 
 target 'RNGoogleCastExample' do
@@ -12,7 +10,7 @@ target 'RNGoogleCastExample' do
     'RCTNetwork',
     'RCTWebSocket', # Needed for debugging
     'RCTAnimation', # Needed for FlatList and animations running on native UI thread
-    'RCTImage',
+    'RCTImage'
   ]
   pod 'yoga', path: "#{rnpath}/ReactCommon/yoga"
   pod 'DoubleConversion', podspec: "#{rnpath}/third-party-podspecs/DoubleConversion.podspec"
