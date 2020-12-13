@@ -10,57 +10,55 @@ or
 
 `$ yarn add react-native-google-cast@next`
 
-## Link package (React Native >=0.60)
+## iOS
 
-Android is linked automatically.
+If you're using RN >= 0.60 and you're fine with default settings (without guest mode), you can just run `cd ios && pod install`. Otherwise read below.
 
-For iOS, run:
+#### Using CocoaPods (RN >= 0.60, or <= 0.59 with CocoaPods)
 
-```
-cd ios && pod install
-```
+1. If you don't have [CocoaPods](https://cocoapods.org/) set up yet (RN <=0.59), follow instructions in the [react-native documentation](https://reactnative.dev/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
-That's it. Continue to [Setup](setup.html).
+2. In your `ios/Podfile`, add **one** of these snippets:
 
-## Link package (React Native <=0.59)
+   - If you [don't need guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_remove_guest_mode_support), add
 
-`$ react-native link react-native-google-cast`
+     ```
+     pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
+     pod 'google-cast-sdk-no-bluetooth'
+     ```
 
-Note: This will only link the react-native-google-cast library. You'll still need to add Google Cast SDK using the steps below.
+   - If you [want to support guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
 
-### iOS
+     ```
+     pod 'react-native-google-cast/GuestMode', path: '../node_modules/react-native-google-cast/ios/'
+     pod 'google-cast-sdk'
+     ```
 
-#### Using CocoaPods
+     To finish setting up guest mode, don't forget step 4 in the [Setup](setup#ios).
 
-Install [CocoaPods](https://cocoapods.org/) and set up your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
+   - If you want to link the Google Cast SDK manually, add this and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup)
 
-In your `ios/Podfile`, add **one** of these snippets:
+     ```
+     pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/ios/'
+     ```
 
-- If targeting iOS <=12, or iOS 13+ and you [require guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
+3. If you're using RN >= 0.60, and your `ios/Podfile` contains `use_native_modules!`, you'll need to disable autolinking for this package, otherwise the dependency you added in the previous step will conflict with the autolinked one. To do so, create `react-native.config.js` in the root of your project with this content:
 
-  ```
-  pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/ios/'
-  # pod 'google-cast-sdk', '4.5.0' <-- optional, will default to the latest version if not specified
-  ```
+   ```js
+   module.exports = {
+     dependencies: {
+       'react-native-google-cast': {
+         platforms: {
+           ios: null, // this will disable autolinking for this package on iOS
+         },
+       },
+     },
+   }
+   ```
 
-- If targeting iOS 13+ and you [don't need guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_remove_guest_mode_support), add
+4. Finally, run `pod install`.
 
-  ```
-  pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
-  # pod 'google-cast-sdk-no-bluetooth', '4.5.0' <-- optional, will default to the latest version if not specified
-  ```
-
-- If you want to link the Google Cast SDK manually, add
-
-  ```
-  pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/ios/'
-  ```
-
-  and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup).
-
-Finally, run `pod install`.
-
-#### Manually
+#### Manually (RN <=0.59)
 
 - In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
 
@@ -70,7 +68,41 @@ Finally, run `pod install`.
 
 - Follow the [instructions](https://developers.google.com/cast/docs/ios_sender/#google_cast_sdk) to install the Google Cast SDK
 
-### Android
+## Android
+
+Insert the following into `android/app/build.gradle`:
+
+```java
+dependencies {
+  // ...
+  implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
+}
+
+def safeExtGet(prop, fallback) {
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+```
+
+By default, the latest version (`+`) of the Cast SDK is used. To use a specific version, set it in the root `android/build.gradle`:
+
+```java
+buildscript {
+  ext {
+    buildToolsVersion = "29.0.2"
+    minSdkVersion = 16
+    compileSdkVersion = 29
+    targetSdkVersion = 29
+    supportLibVersion = "29.0.0"
+    castFrameworkVersion = "19.0.0" // <-- Cast SDK version
+  }
+}
+```
+
+#### RN >= 0.60
+
+No additional setup needed thanks to autolinking.
+
+#### RN <= 0.59
 
 1. Open up `android/app/src/main/java/[...]/MainApplication.java`
 
@@ -84,38 +116,15 @@ Finally, run `pod install`.
    project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
    ```
 
-3. Insert the following lines inside the `dependencies` block in `android/app/build.gradle`:
+3. Insert the following line inside the `dependencies` block in `android/app/build.gradle` (in addition to the `play-service-cast-framework` from above):
 
    ```java
    dependencies {
      ...
-
      implementation project(':react-native-google-cast')
-
-     implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
-   }
-
-   // you also need to have this helper defined
-   def safeExtGet(prop, fallback) {
-     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
    }
    ```
 
-4. By default, the react-native-google-cast package automatically loads the latest version (`+`) of the Cast SDK and support libraries as its dependencies. To use a specific version, set it in the root `android/build.gradle`:
-
-   ```java
-   buildscript {
-     ext {
-       buildToolsVersion = "29.0.2"
-       minSdkVersion = 16
-       compileSdkVersion = 29
-       targetSdkVersion = 29
-       supportLibVersion = "29.0.0"
-       castFrameworkVersion = "19.0.0" // <-- Cast SDK version
-     }
-   }
-   ```
-
-### Chrome
+## Chrome
 
 Not supported yet

@@ -36,7 +36,7 @@ sidebar_label: Setup
    <string>${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network.</string>
    ```
 
-   Make sure to replace `ABCD1234` with your receiver app id. If using the default receiver, you may delete that row.
+   Make sure to replace `ABCD1234` with your receiver app id. If using the default receiver, you may delete that line.
 
    You may also customize the local network usage description.
 
@@ -59,13 +59,15 @@ sidebar_label: Setup
    when pairing with nearby Cast devices.</string>
    ```
 
+   Also make sure you've installed guest mode in step 2 of the [Installation](installation#ios).
+
    The [official Guest Mode documentation](https://developers.google.com/cast/docs/guest_mode) explains how guest mode works. Note that most use cases work fine without guest mode so you may decide you don't need it if it's not worth asking for the extra privacy permissions.
 
 ## Android
 
 1. Make sure the device you're using (also applies to emulators) has Google Play Services installed.
 
-2. Add to `AndroidManifest.xml`
+2. Add to `AndroidManifest.xml` (in `android/app/src/main`):
 
    ```xml
    <application ...>
@@ -103,15 +105,17 @@ sidebar_label: Setup
      android:value="com.foo.GoogleCastOptionsProvider" />
    ```
 
-3. ⚠️ In your `MainActivity`, initialize CastContext by overriding the `onCreate` method.
+3. In your `MainActivity.java`, initialize CastContext by overriding the `onCreate` method.
 
    ```java
-   ...
+   // ...
    import android.os.Bundle;
    import androidx.annotation.Nullable;
    import com.google.android.gms.cast.framework.CastContext;
 
    public class MainActivity extends ReactActivity {
+     // ...
+
      @Override
      protected void onCreate(@Nullable Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
@@ -119,8 +123,6 @@ sidebar_label: Setup
        // lazy load Google Cast context
        CastContext.getSharedInstance(this);
      }
-
-     ...
    }
    ```
 

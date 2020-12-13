@@ -208,7 +208,14 @@ dependencies {
     implementation jscFlavor
   }
 
+  implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
+
+  // In RN60+, this is not necessary if you're using autolinking
   implementation project(':react-native-google-cast')
+}
+
+def safeExtGet(prop, fallback) {
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
 // Run this once to be able to run the application with BUCK

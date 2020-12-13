@@ -1,6 +1,11 @@
 package com.reactnative.googlecast.playground;
 
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+
 import com.facebook.react.ReactActivity;
+import com.google.android.gms.cast.framework.CastContext;
 
 public class MainActivity extends ReactActivity {
 
@@ -12,4 +17,13 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "RNGCPlayground";
   }
+
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    // lazy load Google Cast context
+    CastContext.getSharedInstance(this);
+  }
+
 }

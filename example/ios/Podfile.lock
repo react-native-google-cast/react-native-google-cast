@@ -67,19 +67,19 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - google-cast-sdk-no-bluetooth (4.5.1):
-    - google-cast-sdk-no-bluetooth/Core (= 4.5.1)
+  - google-cast-sdk-no-bluetooth (4.5.3):
+    - google-cast-sdk-no-bluetooth/Core (= 4.5.3)
     - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - google-cast-sdk-no-bluetooth/Core (4.5.1):
+    - Protobuf (~> 3.13)
+  - google-cast-sdk-no-bluetooth/Core (4.5.3):
     - GTMSessionFetcher/Core (~> 1.1)
-    - Protobuf (~> 3.12)
-  - GTMSessionFetcher/Core (1.4.0)
+    - Protobuf (~> 3.13)
+  - GTMSessionFetcher/Core (1.5.0)
   - OpenSSL-Universal (1.0.2.20):
     - OpenSSL-Universal/Static (= 1.0.2.20)
   - OpenSSL-Universal/Static (1.0.2.20)
   - PromisesObjC (1.2.11)
-  - Protobuf (3.13.0)
+  - Protobuf (3.14.0)
   - RCTRequired (0.63.3)
   - RCTTypeSafety (0.63.3):
     - FBLazyVector (= 0.63.3)
@@ -491,11 +491,11 @@ SPEC CHECKSUMS:
   FlipperKit: 59d616c8b88912d02114f0320fb4824fed54ab35
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
-  google-cast-sdk-no-bluetooth: 73ac8e9edbee16f52c2a445e391bd531e116bb31
-  GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
+  google-cast-sdk-no-bluetooth: 815df973d547e06a90768f4a72220950cd32d8cb
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
-  Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  Protobuf: 0cde852566359049847168e51bd1c690e0f70056
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
   RCTTypeSafety: edf4b618033c2f1c5b7bc3d90d8e085ed95ba2ab
   React: f36e90f3ceb976546e97df3403e37d226f79d0e3
@@ -506,7 +506,7 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
-  react-native-google-cast: 8ee5117767de82ac3836b4ff22efff06a0657a90
+  react-native-google-cast: 98dfed19a7fbb116aeae9813fb1a5d59c8c59a6b
   react-native-video: eee541262ada11bc7ffe8ec5508e6a877937c462
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
   React-RCTAnimation: 1befece0b5183c22ae01b966f5583f42e69a83c2
@@ -524,6 +524,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ffff7fe56ad3b9e0cbbf7dae3accf6d4f69432d5
+PODFILE CHECKSUM: 3c9a2345ca14932f22153bc3c3a58bdbdd96df70
 
 COCOAPODS: 1.10.0

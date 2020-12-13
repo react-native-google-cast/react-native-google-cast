@@ -22,7 +22,6 @@ fs.writeFileSync(
         'Getting Started': [
           'getting-started/installation',
           'getting-started/setup',
-          'getting-started/media-tracks',
           'getting-started/usage',
           'getting-started/troubleshooting',
         ],
