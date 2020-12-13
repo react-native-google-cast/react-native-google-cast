@@ -28,6 +28,8 @@ listener.remove()
 A session is an end-to-end connection from a sender application (mobile app) to a receiver application (on Chromecast).
 
 ```js
+import GoogleCast from 'react-native-google-cast'
+
 const sessionManager = GoogleCast.getSessionManager()
 
 const listener = sessionManager.onSessionStarted((session) => {
@@ -46,7 +48,7 @@ For a full list of events see [SessionManager](../api/classes/sessionmanager).
 client.onMediaStatusUpdated((mediaStatus) => {})
 ```
 
-For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated` if you're subscribed to both).
+<!-- For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated` if you're subscribed to both).
 
 ```js
 // Media started playing
@@ -54,7 +56,7 @@ client.onMediaPlaybackStarted((mediaStatus) => {})
 
 // Media finished playing
 client.onMediaPlaybackEnded((mediaStatus) => {})
-```
+``` -->
 
 <!-- ## Channel Events
 

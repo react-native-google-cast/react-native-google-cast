@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.Cast;
 
 public class RNGCActiveInputState {
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case Cast.ACTIVE_INPUT_STATE_YES:
       return "active";

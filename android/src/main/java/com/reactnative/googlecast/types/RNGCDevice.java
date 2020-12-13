@@ -13,8 +13,13 @@ import com.google.android.gms.common.images.WebImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class RNGCDevice {
-  public static WritableMap toJson(final CastDevice device) {
+  public static @Nullable
+  WritableMap toJson(final @Nullable CastDevice device) {
+    if (device == null) return null;
+
     final WritableMap json = new WritableNativeMap();
 
     json.putString("deviceId", device.getDeviceId());
@@ -24,8 +29,10 @@ public class RNGCDevice {
     json.putString("friendlyName", device.getFriendlyName());
 
     WritableArray icons = Arguments.createArray();
-    for (WebImage image : device.getIcons()) {
-      icons.pushMap(RNGCWebImage.toJson(image));
+    if (device.getIcons() != null) {
+      for (WebImage image : device.getIcons()) {
+        icons.pushMap(RNGCWebImage.toJson(image));
+      }
     }
     json.putArray("icons", icons);
 

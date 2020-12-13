@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.TextTrackStyle;
 
 public class RNGCTextTrackStyleWindowType {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "none":
       return TextTrackStyle.WINDOW_TYPE_NONE;
@@ -16,7 +18,7 @@ public class RNGCTextTrackStyleWindowType {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case TextTrackStyle.WINDOW_TYPE_NONE:
       return "none";

@@ -1,10 +1,12 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaQueueData;
 import com.google.android.gms.cast.MediaStatus;
 
 public class RNGCMediaQueueType {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
       case "album":
         return MediaQueueData.MEDIA_QUEUE_TYPE_ALBUM;
@@ -29,7 +31,7 @@ public class RNGCMediaQueueType {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
       case MediaQueueData.MEDIA_QUEUE_TYPE_ALBUM:
         return "album";

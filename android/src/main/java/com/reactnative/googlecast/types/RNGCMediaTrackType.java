@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaTrack;
 
 public class RNGCMediaTrackType {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "audio":
       return MediaTrack.TYPE_AUDIO;
@@ -16,7 +18,8 @@ public class RNGCMediaTrackType {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable
+  String toJson(final int value) {
     switch (value) {
     case MediaTrack.TYPE_AUDIO:
       return "audio";

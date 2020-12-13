@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.TextTrackStyle;
 
 public class RNGCTextTrackStyleFontGenericFamily {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "casual":
       return TextTrackStyle.FONT_FAMILY_CASUAL;
@@ -24,7 +26,7 @@ public class RNGCTextTrackStyleFontGenericFamily {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case TextTrackStyle.FONT_FAMILY_CASUAL:
       return "casual";

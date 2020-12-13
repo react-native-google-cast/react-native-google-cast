@@ -42,7 +42,6 @@ RCT_EXPORT_MODULE()
 // Will be called when this module's first listener is added.
 - (void)startObserving {
   hasListeners = YES;
-  // Set up any upstream listeners or background tasks as necessary
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance.sessionManager addListener:self];
   });
@@ -51,9 +50,13 @@ RCT_EXPORT_MODULE()
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
-  // Remove upstream listeners, stop unnecessary background tasks
-// FIXME: this crashes on (hot) reload
-//  [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+  });
+}
+
+- (void)invalidate {
+  [self stopObserving];
 }
 
 RCT_REMAP_METHOD(getCurrentCastSession,
@@ -108,6 +111,7 @@ RCT_EXPORT_METHOD(endSession
                withReason:(GCKConnectionSuspendReason)reason {
   [self sendEventWithName:SESSION_SUSPENDED body:@{
     @"session": [RCTConvert fromGCKCastSession:session]
+    // TODO @"reason": [RCTConvert fromGCKConnectionSuspendReason:reason]
   }];
 }
 

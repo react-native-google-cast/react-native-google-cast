@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaStatus;
 
 public class RNGCPlayerState {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "buffering":
       return MediaStatus.PLAYER_STATE_BUFFERING;
@@ -19,7 +21,7 @@ public class RNGCPlayerState {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case MediaStatus.PLAYER_STATE_BUFFERING:
       return "buffering";

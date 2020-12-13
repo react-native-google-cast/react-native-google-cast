@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaStatus;
 
 public class RNGCMediaRepeatMode {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "all":
       return MediaStatus.REPEAT_MODE_REPEAT_ALL;
@@ -18,7 +20,7 @@ public class RNGCMediaRepeatMode {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case MediaStatus.REPEAT_MODE_REPEAT_ALL:
       return "all";

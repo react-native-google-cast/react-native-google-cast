@@ -1,7 +1,9 @@
 package com.reactnative.googlecast.api;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -9,12 +11,14 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.Session;
+import com.google.android.gms.cast.framework.SessionManager;
+import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.reactnative.googlecast.types.RNGCJSONObject;
@@ -27,20 +31,18 @@ import com.reactnative.googlecast.types.RNGCTextTrackStyle;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
+public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCRemoteMediaClient";
 
   public static final String MEDIA_STATUS_UPDATED =
     "GoogleCast:MediaStatusUpdated";
-  public static final String MEDIA_PLAYBACK_STARTED =
-    "GoogleCast:MediaPlaybackStarted";
-  public static final String MEDIA_PLAYBACK_ENDED =
-    "GoogleCast:MediaPlaybackEnded";
 
   public RNGCRemoteMediaClient(ReactApplicationContext reactContext) {
     super(reactContext);
+
+    reactContext.addLifecycleEventListener(this);
   }
 
   @Override
@@ -53,8 +55,6 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
     final Map<String, Object> constants = new HashMap<>();
 
     constants.put("MEDIA_STATUS_UPDATED", MEDIA_STATUS_UPDATED);
-    constants.put("MEDIA_PLAYBACK_STARTED", MEDIA_PLAYBACK_STARTED);
-    constants.put("MEDIA_PLAYBACK_ENDED", MEDIA_PLAYBACK_ENDED);
 
     return constants;
   }
@@ -252,13 +252,116 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule {
     }
   };
 
-  protected void sendEvent(String eventName, @Nullable WritableMap params) {
+  private void sendEvent(@NonNull String eventName, @Nullable Object params) {
     getReactApplicationContext()
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
       .emit(eventName, params);
   }
 
-  protected void runOnUiQueueThread(Runnable runnable) {
-    getReactApplicationContext().runOnUiQueueThread(runnable);
+  private RemoteMediaClient.Callback clientCallback = new RemoteMediaClient.Callback() {
+    @Override
+    public void onStatusUpdated() {
+      with.withX(new With.WithX<RemoteMediaClient>() {
+        @Override
+        public void execute(RemoteMediaClient c) {
+          sendEvent(RNGCRemoteMediaClient.MEDIA_STATUS_UPDATED,
+            RNGCMediaStatus.toJson(c.getMediaStatus()));
+        }
+      });
+    }
+  };
+
+  private SessionManagerListener sessionListener = new SessionManagerListener() {
+    @Override
+    public void onSessionStarting(Session session) {
+    }
+
+    @Override
+    public void onSessionStarted(Session session, String s) {
+      with.withX(new With.WithX<RemoteMediaClient>() {
+        @Override
+        public void execute(RemoteMediaClient remoteMediaClient) {
+          remoteMediaClient.registerCallback(clientCallback);
+        }
+      });
+    }
+
+    @Override
+    public void onSessionStartFailed(Session session, int i) {
+    }
+
+    @Override
+    public void onSessionEnding(Session session) {
+      with.withX(new With.WithX<RemoteMediaClient>() {
+        @Override
+        public void execute(RemoteMediaClient remoteMediaClient) {
+          remoteMediaClient.unregisterCallback(clientCallback);
+        }
+      });
+    }
+
+    @Override
+    public void onSessionEnded(Session session, int i) {
+    }
+
+    @Override
+    public void onSessionResuming(Session session, String s) {
+    }
+
+    @Override
+    public void onSessionResumed(Session session, boolean b) {
+      with.withX(new With.WithX<RemoteMediaClient>() {
+        @Override
+        public void execute(RemoteMediaClient remoteMediaClient) {
+          remoteMediaClient.registerCallback(clientCallback);
+        }
+      });
+    }
+
+    @Override
+    public void onSessionResumeFailed(Session session, int i) {
+    }
+
+    @Override
+    public void onSessionSuspended(Session session, int i) {
+    }
+  };
+
+  @Override
+  public void onHostResume() {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext())
+          .getSessionManager();
+        sessionManager.addSessionManagerListener(sessionListener);
+
+        CastSession session = sessionManager.getCurrentCastSession();
+        if (session != null && session.getRemoteMediaClient() != null) {
+          session.getRemoteMediaClient().registerCallback(clientCallback);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void onHostPause() {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext())
+          .getSessionManager();
+        sessionManager.removeSessionManagerListener(sessionListener);
+
+        CastSession session = sessionManager.getCurrentCastSession();
+        if (session != null && session.getRemoteMediaClient() != null) {
+          session.getRemoteMediaClient().unregisterCallback(clientCallback);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void onHostDestroy() {
   }
 }

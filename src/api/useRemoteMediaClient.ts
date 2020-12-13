@@ -1,16 +1,18 @@
 import useCastSession from './useCastSession'
 
 /**
- * Hook that provides the current RemoteMediaClient (may be `null`).
+ * Hook that provides the current {@link RemoteMediaClient} (may be `null`).
  *
  * @example
  * ```js
- * import { useCastSession } from 'react-native-google-cast'
+ * import { useRemoteMediaClient } from 'react-native-google-cast'
  *
  * function MyComponent() {
  *   const client = useRemoteMediaClient()
  *
- *   client.loadMedia(...)
+ *   if (client) {
+ *     client.loadMedia(...)
+ *   }
  * }
  * ```
  */

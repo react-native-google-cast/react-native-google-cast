@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaMetadata;
 
 public class RNGCMediaMetadataType {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "generic":
       return MediaMetadata.MEDIA_TYPE_GENERIC;
@@ -20,7 +22,7 @@ public class RNGCMediaMetadataType {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case MediaMetadata.MEDIA_TYPE_GENERIC:
       return "generic";

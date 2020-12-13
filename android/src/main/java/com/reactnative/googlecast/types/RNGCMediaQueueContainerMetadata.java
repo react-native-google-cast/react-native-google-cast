@@ -1,5 +1,7 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -18,7 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 public class RNGCMediaQueueContainerMetadata {
-  public static MediaQueueContainerMetadata fromJson(final ReadableMap json) {
+  public static @Nullable
+  MediaQueueContainerMetadata fromJson(final @Nullable ReadableMap json) {
+    if (json == null) return null;
+
     MediaQueueContainerMetadata.Builder builder = new MediaQueueContainerMetadata.Builder();
 
     if (json.hasKey("containerDuration")) {
@@ -39,7 +44,7 @@ public class RNGCMediaQueueContainerMetadata {
     }
 
     if (json.hasKey("sections")) {
-      final List<MediaMetadata> sections = new ArrayList<MediaMetadata>();
+      final List<MediaMetadata> sections = new ArrayList<>();
       ReadableArray sectionsArray = json.getArray("sections");
       for (int i = 0; i < sectionsArray.size(); i++) {
         sections.add(RNGCMediaMetadata.fromJson(sectionsArray.getMap(i)));
@@ -54,22 +59,29 @@ public class RNGCMediaQueueContainerMetadata {
     return builder.build();
   }
 
-  public static WritableMap toJson(final MediaQueueContainerMetadata metadata) {
+  public static @Nullable
+  WritableMap toJson(final @Nullable MediaQueueContainerMetadata metadata) {
+    if (metadata == null) return null;
+
     final WritableMap json = new WritableNativeMap();
 
     json.putDouble("containerDuration", metadata.getContainerDuration());
 
     final WritableArray images = Arguments.createArray();
-    for (WebImage image: metadata.getContainerImages()) {
-      images.pushMap(RNGCWebImage.toJson(image));
+    if (metadata.getContainerImages() != null) {
+      for (WebImage image : metadata.getContainerImages()) {
+        images.pushMap(RNGCWebImage.toJson(image));
+      }
     }
     json.putArray("containerImages", images);
 
     json.putString("containerType", RNGCMediaQueueContainerType.toJson(metadata.getContainerType()));
 
     final WritableArray sections = Arguments.createArray();
-    for (MediaMetadata section: metadata.getSections()) {
-      sections.pushMap(RNGCMediaMetadata.toJson(section));
+    if (metadata.getSections() != null) {
+      for (MediaMetadata section : metadata.getSections()) {
+        sections.pushMap(RNGCMediaMetadata.toJson(section));
+      }
     }
     json.putArray("sections", sections);
 

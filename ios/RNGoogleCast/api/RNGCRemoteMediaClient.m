@@ -9,11 +9,7 @@
 #import <PromisesObjC/FBLPromises.h>
 
 @implementation RNGCRemoteMediaClient {
-  NSMutableDictionary *channels;
-  NSUInteger currentItemID;
   bool hasListeners;
-  bool playbackStarted;
-  bool playbackEnded;
 }
 
 RCT_EXPORT_MODULE()
@@ -25,74 +21,46 @@ RCT_EXPORT_MODULE()
 - (NSDictionary *)constantsToExport {
   return @{
     @"MEDIA_STATUS_UPDATED" : MEDIA_STATUS_UPDATED,
-    @"MEDIA_PLAYBACK_STARTED" : MEDIA_PLAYBACK_STARTED,
-    @"MEDIA_PLAYBACK_ENDED" : MEDIA_PLAYBACK_ENDED,
   };
 }
 
 - (NSArray<NSString *> *)supportedEvents {
   return @[
     MEDIA_STATUS_UPDATED,
-    MEDIA_PLAYBACK_STARTED,
-    MEDIA_PLAYBACK_ENDED,
   ];
-}
-
-- (instancetype)init {
-  if (self = [super init]) {
-    channels = [[NSMutableDictionary alloc] init];
-  }
-  return self;
 }
 
 // Will be called when this module's first listener is added.
 - (void)startObserving {
   hasListeners = YES;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.sessionManager addListener:self];
+    
+    GCKRemoteMediaClient *client = [self getClient];
+    if (client != nil) {
+      [client addListener:self];
+    }
+  });
 }
 
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
-}
-
-- (FBLPromise *)getClient {
-  return [FBLPromise async:^(FBLPromiseFulfillBlock _Nonnull fulfill, FBLPromiseRejectBlock _Nonnull reject) {
-    GCKSession *session =
-        GCKCastContext.sharedInstance.sessionManager.currentSession;
-
-    if (session && session.remoteMediaClient) {
-      fulfill(session.remoteMediaClient);
-    } else {
-      NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                           code:GCKErrorCodeNoMediaSession
-                                       userInfo:nil];
-      reject(error);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.sessionManager removeListener:self];
+    
+    GCKRemoteMediaClient *client = [self getClient];
+    if (client != nil) {
+      [client removeListener:self];
     }
-  }];
+  });
 }
 
-- (void)withClientResolve:(RCTPromiseResolveBlock)resolve
-      reject:(RCTPromiseRejectBlock)reject
-     perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
-  [[[self getClient] then:^id _Nullable(id _Nullable client) {
-    resolve(block(client));
-    return nil;
-  }] catch:^(NSError * _Nonnull error) {
-    reject(error.localizedDescription, error.localizedFailureReason, error);
-  }];
+- (void)invalidate {
+  [self stopObserving];
 }
 
-- (void)withClientPromisifyResolve:(RCTPromiseResolveBlock)resolve
-     reject:(RCTPromiseRejectBlock)reject
-    perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
-  [[[self getClient] then:^id _Nullable(id _Nullable client) {
-    GCKRequest *request = block(client);
-    [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
-    return nil;
-  }] catch:^(NSError * _Nonnull error) {
-    reject(error.localizedDescription, error.localizedFailureReason, error);
-  }];
-}
+# pragma mark - GCKRemoteMediaClient methods
 
 RCT_REMAP_METHOD(getMediaStatus,
                  getMediaStatusResolver: (RCTPromiseResolveBlock) resolve
@@ -239,32 +207,76 @@ RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
   }];
 }
 
+# pragma mark - GCKRemoteMediaClient events
+
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client
      didUpdateMediaStatus:(GCKMediaStatus *)mediaStatus {
-  if (currentItemID != mediaStatus.currentItemID) {
-    // reset item status
-    currentItemID = mediaStatus.currentItemID;
-    playbackStarted = false;
-    playbackEnded = false;
-  }
+  
+  [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{
+    @"mediaStatus": [RCTConvert fromGCKMediaStatus:mediaStatus]
+  }];
+}
 
-  NSDictionary *status = [RCTConvert fromGCKMediaStatus:mediaStatus];
+# pragma mark - GCKSessionManager events
 
-  [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{@"mediaStatus" : status}];
+- (void)sessionManager:(GCKSessionManager *)sessionManager didStartCastSession:(GCKCastSession *)session {
+  [session.remoteMediaClient addListener:self];
+}
 
-  if (!playbackStarted &&
-      mediaStatus.playerState == GCKMediaPlayerStatePlaying) {
-    [self sendEventWithName:MEDIA_PLAYBACK_STARTED
-                       body:@{@"mediaStatus" : status}];
-    playbackStarted = true;
-  }
+- (void)sessionManager:(GCKSessionManager *)sessionManager didResumeCastSession:(GCKCastSession *)session {
+  [session.remoteMediaClient addListener:self];
+}
 
-  if (!playbackEnded &&
-      mediaStatus.idleReason == GCKMediaPlayerIdleReasonFinished) {
-    [self sendEventWithName:MEDIA_PLAYBACK_ENDED
-                       body:@{@"mediaStatus" : status}];
-    playbackEnded = true;
-  }
+- (void)sessionManager:(GCKSessionManager *)sessionManager willEndCastSession:(GCKCastSession *)session {
+  [session.remoteMediaClient removeListener:self];
+}
+
+# pragma mark - Helpers
+
+- (nullable GCKRemoteMediaClient *)getClient {
+  GCKSession *session =
+      GCKCastContext.sharedInstance.sessionManager.currentSession;
+
+  if (session == nil || session.remoteMediaClient == nil) { return nil; }
+  
+  return session.remoteMediaClient;
+}
+
+- (FBLPromise *)getClientPromise {
+  return [FBLPromise async:^(FBLPromiseFulfillBlock _Nonnull fulfill, FBLPromiseRejectBlock _Nonnull reject) {
+    GCKRemoteMediaClient *client = [self getClient];
+
+    if (client != nil) {
+      fulfill(client);
+    } else {
+      reject([NSError errorWithDomain:NSCocoaErrorDomain
+                                 code:GCKErrorCodeNoMediaSession
+                             userInfo:nil]);
+    }
+  }];
+}
+
+- (void)withClientResolve:(RCTPromiseResolveBlock)resolve
+      reject:(RCTPromiseRejectBlock)reject
+     perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
+  [[[self getClientPromise] then:^id _Nullable(id _Nullable client) {
+    resolve(block(client));
+    return nil;
+  }] catch:^(NSError * _Nonnull error) {
+    reject(error.localizedDescription, error.localizedFailureReason, error);
+  }];
+}
+
+- (void)withClientPromisifyResolve:(RCTPromiseResolveBlock)resolve
+     reject:(RCTPromiseRejectBlock)reject
+    perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
+  [[[self getClientPromise] then:^id _Nullable(id _Nullable client) {
+    GCKRequest *request = block(client);
+    [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
+    return nil;
+  }] catch:^(NSError * _Nonnull error) {
+    reject(error.localizedDescription, error.localizedFailureReason, error);
+  }];
 }
 
 @end

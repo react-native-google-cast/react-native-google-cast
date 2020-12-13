@@ -25,12 +25,16 @@ export default function Home() {
         )}
         sections={[
           {
-            title: 'Title1',
+            title: 'Formats',
             data: [{ title: 'Formats' }],
           },
           {
             title: 'Queue',
             data: [{ title: 'Queue' }],
+          },
+          {
+            title: 'Events',
+            data: [{ title: 'Events' }],
           },
         ]}
         keyExtractor={(item, index) => item.title + index}

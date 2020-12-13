@@ -12,6 +12,19 @@ const EventEmitter = new NativeEventEmitter(Native)
  * Cast sessions are created and managed automatically by the {@link SessionManager}, for example when the user selects a Cast device from the media route controller dialog. The current active CastSession can be accessed by {@link CastContext.getCurrentCastSession}.
  *
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_session) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastSession)
+ *
+ * @example
+ * ```js
+ * import { useCastSession } from 'react-native-google-cast'
+ *
+ * function MyComponent() {
+ *   const castSession = useCastSession()
+ *
+ *   if (castSession) {
+ *     // ...
+ *   }
+ * }
+ * ```
  */
 export default class CastSession {
   client = new RemoteMediaClient()

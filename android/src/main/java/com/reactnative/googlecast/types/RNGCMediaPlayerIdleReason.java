@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaStatus;
 
 public class RNGCMediaPlayerIdleReason {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "cancelled":
       return MediaStatus.IDLE_REASON_CANCELED;
@@ -18,7 +20,7 @@ public class RNGCMediaPlayerIdleReason {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case MediaStatus.IDLE_REASON_CANCELED:
       return "cancelled";

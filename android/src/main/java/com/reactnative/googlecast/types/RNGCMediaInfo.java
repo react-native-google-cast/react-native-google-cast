@@ -1,5 +1,7 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -13,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RNGCMediaInfo {
-  public static MediaInfo fromJson(final ReadableMap json) {
+  public static @Nullable MediaInfo fromJson(final @Nullable ReadableMap json) {
+    if (json == null) return null;
+
     String contentId = json.hasKey("contentId")
       ? json.getString("contentId")
       : json.getString("contentUrl");
@@ -77,7 +81,9 @@ public class RNGCMediaInfo {
     return builder.build();
   }
 
-  public static WritableMap toJson(final MediaInfo info) {
+  public static @Nullable WritableMap toJson(final @Nullable MediaInfo info) {
+    if (info == null) return null;
+
     final WritableMap json = new WritableNativeMap();
 
     // adBreakClips
@@ -95,8 +101,10 @@ public class RNGCMediaInfo {
     json.putString("entity", info.getEntity());
 
     WritableArray mediaTracks = Arguments.createArray();
-    for (MediaTrack track : info.getMediaTracks()) {
-      mediaTracks.pushMap(RNGCMediaTrack.toJson(track));
+    if (info.getMediaTracks() != null) {
+      for (MediaTrack track : info.getMediaTracks()) {
+        mediaTracks.pushMap(RNGCMediaTrack.toJson(track));
+      }
     }
     json.putArray("mediaTracks", mediaTracks);
 

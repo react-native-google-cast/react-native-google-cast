@@ -21,6 +21,15 @@ const EventEmitter = new NativeEventEmitter(Native)
  * Whether or not the application uses the SessionManager to control sessions, it can attach listeners to be notified of session events, such as {@link onSessionStarted} or {@link onSessionEnded}.
  *
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/SessionManager) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session_manager)
+ *
+ * @example
+ * ```js
+ * import GoogleCast from 'react-native-google-cast'
+ *
+ * function MyComponent() {
+ *   const sessionManager = GoogleCast.getSessionManager()
+ * }
+ * ```
  */
 export default class SessionManager {
   async getCurrentCastSession(): Promise<CastSession | null> {

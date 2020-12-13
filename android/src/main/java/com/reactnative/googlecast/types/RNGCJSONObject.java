@@ -14,13 +14,14 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 public class RNGCJSONObject {
-  @Nullable
-  public static JSONObject fromJson(@Nullable final ReadableMap json) {
+  public static @Nullable JSONObject fromJson(final @Nullable ReadableMap json) {
     if (json == null) return null;
     return new JSONObject(json.toHashMap());
   }
 
-  public static WritableMap toJson(JSONObject jsonObject) {
+  public static @Nullable WritableMap toJson(@Nullable JSONObject jsonObject) {
+    if (jsonObject == null) return null;
+
     WritableMap writableMap = Arguments.createMap();
     Iterator iterator = jsonObject.keys();
 

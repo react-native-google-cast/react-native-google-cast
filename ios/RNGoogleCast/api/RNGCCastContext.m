@@ -31,7 +31,7 @@ RCT_EXPORT_MODULE();
   ];
 }
 
-// Will be called when this module's first listener is added.
+// Called when this module's first listener is added.
 - (void)startObserving {
   hasListeners = YES;
   // Set up any upstream listeners or background tasks as necessary
@@ -42,7 +42,7 @@ RCT_EXPORT_MODULE();
          object:[GCKCastContext sharedInstance]];
 }
 
-// Will be called when this module's last listener is removed, or on dealloc.
+// Called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
   // Remove upstream listeners, stop unnecessary background tasks
@@ -50,6 +50,11 @@ RCT_EXPORT_MODULE();
     removeObserver:self
               name:kGCKCastStateDidChangeNotification
             object:[GCKCastContext sharedInstance]];
+}
+
+// Called when the native bridge is invalidated (ie: on devmode reload).
+- (void)invalidate {
+  [self stopObserving];
 }
 
 # pragma mark - GCKCastContext methods

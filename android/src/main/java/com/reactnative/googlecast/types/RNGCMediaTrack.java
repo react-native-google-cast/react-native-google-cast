@@ -1,5 +1,7 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -8,7 +10,9 @@ import com.google.android.gms.cast.MediaTrack;
 import org.json.JSONObject;
 
 public class RNGCMediaTrack {
-  public static MediaTrack fromJson(final ReadableMap json) {
+  public static @Nullable MediaTrack fromJson(final @Nullable ReadableMap json) {
+    if (json == null) return null;
+
     int id = json.getInt("id");
     int type = RNGCMediaTrackType.fromJson(json.getString("type"));
 
@@ -43,7 +47,9 @@ public class RNGCMediaTrack {
     return builder.build();
   }
 
-  public static WritableMap toJson(final MediaTrack track) {
+  public static @Nullable WritableMap toJson(final @Nullable MediaTrack track) {
+    if (track == null) return null;
+
     final WritableMap json = new WritableNativeMap();
 
     json.putInt("id", (int) track.getId());

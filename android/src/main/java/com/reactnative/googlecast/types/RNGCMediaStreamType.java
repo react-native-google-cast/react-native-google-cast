@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaInfo;
 
 public class RNGCMediaStreamType {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "buffered":
       return MediaInfo.STREAM_TYPE_BUFFERED;
@@ -16,7 +18,7 @@ public class RNGCMediaStreamType {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case MediaInfo.STREAM_TYPE_BUFFERED:
       return "buffered";

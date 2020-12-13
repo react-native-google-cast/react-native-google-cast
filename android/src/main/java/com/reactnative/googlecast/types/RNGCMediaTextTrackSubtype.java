@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaTrack;
 
 public class RNGCMediaTextTrackSubtype {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "captions":
       return MediaTrack.SUBTYPE_CAPTIONS;
@@ -20,7 +22,7 @@ public class RNGCMediaTextTrackSubtype {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case MediaTrack.SUBTYPE_CAPTIONS:
       return "captions";

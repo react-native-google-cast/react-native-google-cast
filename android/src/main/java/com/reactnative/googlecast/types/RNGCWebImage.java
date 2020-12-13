@@ -1,5 +1,7 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -8,11 +10,15 @@ import com.google.android.gms.common.images.WebImage;
 import org.json.JSONObject;
 
 public class RNGCWebImage {
-  public static WebImage fromJson(final ReadableMap json) {
+  public static @Nullable WebImage fromJson(final @Nullable ReadableMap json) {
+    if (json == null) return null;
+
     return new WebImage(new JSONObject(json.toHashMap()));
   }
 
-  public static WritableMap toJson(final WebImage image) {
+  public static @Nullable WritableMap toJson(final @Nullable WebImage image) {
+    if (image == null) return null;
+
     final WritableMap json = new WritableNativeMap();
 
     json.putString("url", image.getUrl().toString());

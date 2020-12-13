@@ -75,8 +75,6 @@ public class RNGCSessionManager
 
   @Override
   public void onSessionEnded(CastSession session, int error) {
-    onDisconnected();
-
     WritableMap params = Arguments.createMap();
 
     params.putMap("session", RNGCCastSession.toJson((session)));
@@ -87,8 +85,6 @@ public class RNGCSessionManager
 
   @Override
   public void onSessionResumed(CastSession session, boolean wasSuspended) {
-    onConnected(session);
-
     WritableMap params = Arguments.createMap();
 
     params.putMap("session", RNGCCastSession.toJson((session)));
@@ -98,14 +94,11 @@ public class RNGCSessionManager
 
   @Override
   public void onSessionResumeFailed(CastSession session, int error) {
-    onDisconnected();
     // TODO: find corresponding iOS event
   }
 
   @Override
   public void onSessionStarted(CastSession session, String sessionId) {
-    onConnected(session);
-
     WritableMap params = Arguments.createMap();
 
     params.putMap("session", RNGCCastSession.toJson((session)));
@@ -115,8 +108,6 @@ public class RNGCSessionManager
 
   @Override
   public void onSessionStartFailed(CastSession session, int error) {
-    onDisconnected();
-
     WritableMap params = Arguments.createMap();
 
     params.putMap("session", RNGCCastSession.toJson((session)));
@@ -188,22 +179,10 @@ public class RNGCSessionManager
   public void onHostDestroy() {
   }
 
-  public void sendEvent(String eventName, @Nullable WritableMap params) {
+  private void sendEvent(String eventName, @Nullable WritableMap params) {
     getReactApplicationContext()
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
       .emit(eventName, params);
-  }
-
-  private void onConnected(final CastSession castSession) {
-//    this.castSession = castSession;
-
-//    remoteMediaClientListener = new RNGCRemoteMediaClientListener(module);
-//    castSession.getRemoteMediaClient().registerCallback(
-//        remoteMediaClientListener);
-  }
-
-  private void onDisconnected() {
-//    this.castSession = null;
   }
 
   private SessionManager getSessionManager() {

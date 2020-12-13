@@ -1,9 +1,11 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.TextTrackStyle;
 
 public class RNGCTextTrackStyleFontStyle {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "bold":
       return TextTrackStyle.FONT_STYLE_BOLD;
@@ -18,7 +20,7 @@ public class RNGCTextTrackStyleFontStyle {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case TextTrackStyle.FONT_STYLE_BOLD:
       return "bold";

@@ -2,6 +2,8 @@ package com.reactnative.googlecast.types;
 
 import android.graphics.Color;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -12,7 +14,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 public class RNGCTextTrackStyle {
-  public static TextTrackStyle fromJson(final ReadableMap json) {
+  public static @Nullable TextTrackStyle fromJson(final @Nullable ReadableMap json) {
+    if (json == null) return null;
+
     TextTrackStyle style = new TextTrackStyle();
 
     if (json.hasKey("backgroundColor")) {
@@ -67,7 +71,9 @@ public class RNGCTextTrackStyle {
     return style;
   }
 
-  public static WritableMap toJson(final TextTrackStyle style) {
+  public static @Nullable WritableMap toJson(final @Nullable TextTrackStyle style) {
+    if (style == null) return null;
+
     final WritableMap json = new WritableNativeMap();
 
     json.putString("backgroundColor",

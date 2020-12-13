@@ -1,10 +1,14 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.cast.MediaSeekOptions;
 
 public class RNGCMediaSeekOptions {
-  public static MediaSeekOptions fromJson(final ReadableMap json) {
+  public static @Nullable MediaSeekOptions fromJson(final @Nullable ReadableMap json) {
+    if (json == null) return null;
+
     final MediaSeekOptions.Builder builder = new MediaSeekOptions.Builder();
 
     if (json.hasKey("customData")) {

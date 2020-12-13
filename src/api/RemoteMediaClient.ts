@@ -12,6 +12,19 @@ const EventEmitter = new NativeEventEmitter(Native)
  * Class for controlling a media player application running on a Cast receiver.
  *
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_remote_media_client) _GCKRemoteMediaClient_  | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.RemotePlayer) _RemotePlayer_
+ *
+ * @example
+ * ```js
+ * import { useRemoteMediaClient } from 'react-native-google-cast'
+ *
+ * function MyComponent() {
+ *   const client = useRemoteMediaClient()
+ *
+ *   if (client) {
+ *     // ...
+ *   }
+ * }
+ * ```
  */
 export default class RemoteMediaClient {
   // getMediaQueue(): Promise<MediaQueue> {
@@ -214,23 +227,5 @@ export default class RemoteMediaClient {
    */
   onMediaStatusUpdated(handler: (mediaStatus: MediaStatus) => void) {
     return EventEmitter.addListener(Native.MEDIA_STATUS_UPDATED, handler)
-  }
-
-  /**
-   * Convenience event that is triggered in addition to `onMediaStatusUpdated` when `playerState` changes to `playing`.
-   *
-   * Note: If you're also subscribed to `onMediaStatusUpdated`, it will be triggered before this event.
-   */
-  onMediaPlaybackStarted(handler: (mediaStatus: MediaStatus) => void) {
-    return EventEmitter.addListener(Native.MEDIA_PLAYBACK_STARTED, handler)
-  }
-
-  /**
-   * Convenience event that is triggered in addition to `onMediaStatusUpdated` when `playerState` changes to `idle` and `idleReason` is `finished`.
-   *
-   * Note: If you're also subscribed to `onMediaStatusUpdated`, it will be triggered before this event.
-   */
-  onMediaPlaybackEnded(handler: (mediaStatus: MediaStatus) => void) {
-    return EventEmitter.addListener(Native.MEDIA_PLAYBACK_ENDED, handler)
   }
 }

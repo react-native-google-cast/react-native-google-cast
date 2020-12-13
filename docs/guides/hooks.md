@@ -13,7 +13,10 @@ Receive the current [CastState](../api/enums/caststate).
 ```js
 import { useCastState } from 'react-native-google-cast'
 
-const castState = useCastState()
+function MyComponent() {
+  const castState = useCastState()
+  // ...
+}
 ```
 
 ## Session Hook
@@ -23,7 +26,13 @@ Receive the current [CastSession](../api/classes/castsession).
 ```js
 import { useCastSession } from 'react-native-google-cast'
 
-const castSession = useCastSession()
+function MyComponent() {
+  const castSession = useCastSession()
+
+  if (castSession) {
+    // ...
+  }
+}
 ```
 
 ## Client Hook
@@ -33,5 +42,27 @@ Receive the current [RemoteMediaClient](../api/classes/remotemediaclient).
 ```js
 import { useClient } from 'react-native-google-cast'
 
-const client = useClient()
+function MyComponent() {
+  const client = useClient()
+
+  if (client) {
+    // ...
+  }
+}
+```
+
+## Media Status Hook
+
+Receive the current [MediaStatus](../api/interfaces/mediastatus).
+
+```js
+import { useMediaStatus } from 'react-native-google-cast'
+
+function MyComponent() {
+  const mediaStatus = useMediaStatus()
+
+  if (mediaStatus) {
+    // ...
+  }
+}
 ```

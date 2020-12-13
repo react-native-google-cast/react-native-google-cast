@@ -19,6 +19,8 @@ const EventEmitter = new NativeEventEmitter(Native)
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastContext) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_context) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastContext)
  */
 export default class CastContext {
+  static sessionManager = new SessionManager()
+
   /** The current casting state for the application. */
   static getCastState(): Promise<CastState> {
     return Native.getCastState()
@@ -28,7 +30,7 @@ export default class CastContext {
    * Returns the current session if it is an instance of {@link CastSession}, otherwise returns `null` (if you manually create a custom {@link Session} with the {@link SessionManager}).
    */
   static async getCurrentCastSession(): Promise<CastSession | null> {
-    return new SessionManager().getCurrentCastSession()
+    return this.sessionManager.getCurrentCastSession()
   }
 
   /**
@@ -37,6 +39,13 @@ export default class CastContext {
   static async getClient(): Promise<RemoteMediaClient | null> {
     const session = await this.getCurrentCastSession()
     return session ? session.client : null
+  }
+
+  /**
+   * Get the SessionManager to manage cast sessions.
+   */
+  static getSessionManager(): SessionManager {
+    return this.sessionManager
   }
 
   /**

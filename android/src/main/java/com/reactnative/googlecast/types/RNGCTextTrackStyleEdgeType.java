@@ -1,10 +1,12 @@
 package com.reactnative.googlecast.types;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.TextTrackStyle;
 
 public class RNGCTextTrackStyleEdgeType {
-  public static int fromJson(final String value) {
+  public static int fromJson(final @Nullable String value) {
     switch (value) {
     case "depressed":
       return TextTrackStyle.EDGE_TYPE_DEPRESSED;
@@ -21,7 +23,7 @@ public class RNGCTextTrackStyleEdgeType {
     }
   }
 
-  public static String toJson(final int value) {
+  public static @Nullable String toJson(final int value) {
     switch (value) {
     case TextTrackStyle.EDGE_TYPE_DEPRESSED:
       return "depressed";
