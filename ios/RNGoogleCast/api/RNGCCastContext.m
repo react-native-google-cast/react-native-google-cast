@@ -37,7 +37,7 @@ RCT_EXPORT_MODULE();
   // Set up any upstream listeners or background tasks as necessary
   [[NSNotificationCenter defaultCenter]
     addObserver:self
-       selector:@selector(castDeviceDidChange:)
+       selector:@selector(castStateDidChange:)
            name:kGCKCastStateDidChangeNotification
          object:[GCKCastContext sharedInstance]];
 }
@@ -93,7 +93,7 @@ RCT_EXPORT_METHOD(showIntroductoryOverlay:(id)options
   });
 }
 
-- (void)castDeviceDidChange:(NSNotification *)notification {
+- (void)castStateDidChange:(NSNotification *)notification {
   if (!hasListeners) return;
 
   GCKCastState state = [GCKCastContext sharedInstance].castState;
