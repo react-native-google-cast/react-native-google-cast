@@ -63,7 +63,7 @@ public class RNGCMediaInfo {
     }
 
     if (json.hasKey("streamDuration")) {
-      builder.setStreamDuration(json.getInt("streamDuration"));
+      builder.setStreamDuration(Math.round(json.getDouble("streamDuration") * 1000));
     }
 
     if (json.hasKey("streamType")) {
@@ -110,7 +110,7 @@ public class RNGCMediaInfo {
 
     json.putMap("metadata", RNGCMediaMetadata.toJson(info.getMetadata()));
 
-    json.putInt("streamDuration", (int) info.getStreamDuration());
+    json.putDouble("streamDuration", info.getStreamDuration() / 1000.0);
 
     json.putString("streamType", RNGCMediaStreamType.toJson(info.getStreamType()));
 

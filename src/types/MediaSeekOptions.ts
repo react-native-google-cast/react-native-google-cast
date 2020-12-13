@@ -5,7 +5,7 @@ export interface MediaSeekOptions {
   /** Whether seek to end of stream or live. _On iOS, only supported from SDK v4.4.1._ */
   infinite?: boolean
 
-  /** The position to seek to, in milliseconds from the beginning of the stream. Ignored if `infinite` is `true`. */
+  /** The position to seek to, in seconds from the beginning of the stream. Ignored if `infinite` is `true`. */
   position?: number
 
   /** The action to take after the seek operation has finished. If not specified, it will preserve current play state. */

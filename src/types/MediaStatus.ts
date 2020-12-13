@@ -48,7 +48,7 @@ export default interface MediaStatus {
   /** The repeat mode for playing the queue. */
   queueRepeatMode?: MediaRepeatMode
 
-  /** The current stream position from the start of the stream, in milliseconds */
+  /** The current stream position from the start of the stream, in seconds */
   streamPosition: number
 
   /** The video information. */

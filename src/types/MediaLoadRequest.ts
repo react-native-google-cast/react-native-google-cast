@@ -37,6 +37,6 @@ export default interface MediaLoadRequest {
   /** The metadata of media item or queue to load. Either this or `mediaInfo` is required. */
   queueData?: MediaQueueData
 
-  /** The initial playback position, in milliseconds from the beginning of the media. */
+  /** The initial playback position, in seconds from the beginning of the media. */
   startTime?: number
 }

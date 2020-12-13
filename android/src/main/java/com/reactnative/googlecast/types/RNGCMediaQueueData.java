@@ -57,7 +57,7 @@ public class RNGCMediaQueueData {
     }
 
     if (json.hasKey("startTime")) {
-      builder.setStartTime(json.getInt("startTime"));
+      builder.setStartTime(Math.round(json.getDouble("startTime") * 1000));
     }
 
     if (json.hasKey("type")) {
@@ -92,7 +92,7 @@ public class RNGCMediaQueueData {
 
     json.putInt("startIndex", data.getStartIndex());
 
-    json.putInt("startTime", (int) data.getStartTime());
+    json.putDouble("startTime", data.getStartTime() / 1000.0);
 
     json.putString("type", RNGCMediaQueueType.toJson(data.getQueueType()));
 

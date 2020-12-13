@@ -20,7 +20,7 @@ public class RNGCMediaSeekOptions {
     }
 
     if (json.hasKey("position")) {
-      builder.setPosition(json.getInt("position"));
+      builder.setPosition(Math.round(json.getDouble("position") * 1000));
     }
 
     if (json.hasKey("resumeState")) {

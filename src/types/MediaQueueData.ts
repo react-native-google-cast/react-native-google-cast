@@ -30,7 +30,7 @@ export default interface MediaQueueData {
   /** The index of the item in the queue that should be used to start playback first. */
   startIndex?: number
 
-  /** Milliseconds (since the beginning of content) to start playback of the first item. */
+  /** Seconds (since the beginning of content) to start playback of the first item. */
   startTime?: number
 
   /** Type of the queue. */

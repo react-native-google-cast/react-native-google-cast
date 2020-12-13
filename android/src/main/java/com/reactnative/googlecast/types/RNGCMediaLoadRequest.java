@@ -44,7 +44,7 @@ public class RNGCMediaLoadRequest {
     }
 
     if (json.hasKey("startTime")) {
-      builder.setCurrentTime(json.getInt("startTime"));
+      builder.setCurrentTime(Math.round(json.getDouble("startTime") * 1000));
     }
 
     return builder.build();
