@@ -1,6 +1,6 @@
 {
   "name": "react-native-google-cast",
-  "version": "4.0.0-beta.4",
+  "version": "4.0.0-beta.5",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "lib/commonjs/index",
   "react-native": "src/index",
@@ -121,7 +121,7 @@
     "git": {
       "changelog": "auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs",
       "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
+      "tagName": "${version}"
     },
     "github": {
       "release": true
@@ -139,10 +139,10 @@
         "out": [
           "package.json",
           "example/package.json",
-          "example/android/build.gradle",
+          "example/android/app/build.gradle",
           "example/ios/Podfile.lock",
           "playground/package.json",
-          "playground/android/build.gradle",
+          "playground/android/app/build.gradle",
           "playground/ios/Podfile.lock"
         ]
       },
