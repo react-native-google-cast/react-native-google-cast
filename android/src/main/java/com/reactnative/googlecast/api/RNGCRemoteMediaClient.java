@@ -80,21 +80,21 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   }
 
   @ReactMethod
-  public void pause(final Promise promise) {
+  public void pause(@Nullable final ReadableMap customData, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {
-        return client.pause();
+        return client.pause(RNGCJSONObject.fromJson(customData));
       }
     }, promise);
   }
 
   @ReactMethod
-  public void play(final Promise promise) {
+  public void play(@Nullable final ReadableMap customData, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {
-        return client.play();
+        return client.play(RNGCJSONObject.fromJson(customData));
       }
     }, promise);
   }
