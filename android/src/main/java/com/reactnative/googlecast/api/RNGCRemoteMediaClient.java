@@ -292,12 +292,6 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
 
     @Override
     public void onSessionEnding(Session session) {
-      with.withX(new With.WithX<RemoteMediaClient>() {
-        @Override
-        public void execute(RemoteMediaClient remoteMediaClient) {
-          remoteMediaClient.unregisterCallback(clientCallback);
-        }
-      });
     }
 
     @Override
