@@ -212,9 +212,7 @@ RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client
      didUpdateMediaStatus:(GCKMediaStatus *)mediaStatus {
   
-  [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{
-    @"mediaStatus": [RCTConvert fromGCKMediaStatus:mediaStatus]
-  }];
+  [self sendEventWithName:MEDIA_STATUS_UPDATED body:[RCTConvert fromGCKMediaStatus:mediaStatus]];
 }
 
 # pragma mark - GCKSessionManager events
