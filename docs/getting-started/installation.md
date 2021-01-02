@@ -34,7 +34,7 @@ If you're using RN >= 0.60 and you're fine with default settings (without guest 
      pod 'google-cast-sdk'
      ```
 
-     To finish setting up guest mode, don't forget step 4 in the [Setup](setup#ios).
+     To finish setting up guest mode, don't forget step 5 in the [Setup](setup#ios).
 
    - If you want to link the Google Cast SDK manually, add this and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup)
 

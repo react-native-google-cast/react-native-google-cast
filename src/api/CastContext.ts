@@ -1,6 +1,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native'
 import CastState from '../types/CastState'
 import CastSession from './CastSession'
+import DiscoveryManager from './DiscoveryManager'
 import RemoteMediaClient from './RemoteMediaClient'
 import SessionManager from './SessionManager'
 
@@ -19,6 +20,7 @@ const EventEmitter = new NativeEventEmitter(Native)
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastContext) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_context) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastContext)
  */
 export default class CastContext {
+  static discoveryManager = new DiscoveryManager()
   static sessionManager = new SessionManager()
 
   /** The current casting state for the application. */
@@ -39,6 +41,13 @@ export default class CastContext {
   static async getClient(): Promise<RemoteMediaClient | null> {
     const session = await this.getCurrentCastSession()
     return session ? session.client : null
+  }
+
+  /**
+   * (iOS only) Get the DiscoveryManager to manage device discovery.
+   */
+  static getDiscoveryManager(): DiscoveryManager {
+    return this.discoveryManager
   }
 
   /**

@@ -4,6 +4,10 @@ title: Troubleshooting
 sidebar_label: Troubleshooting
 ---
 
+- Can't see any devices (the Cast Button doesn't show up and the `castState` is `noDevicesAvailable`):
+
+  Check [Discovery Troubleshooting](https://developers.google.com/cast/docs/discovery) in the Google Cast documentation.
+
 ## Android
 
 - ```
@@ -35,8 +39,10 @@ sidebar_label: Troubleshooting
   clang: error: linker command failed with exit code 1 (use -v to see invocation)
   ```
 
-  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). It seems to affects Google SDK versions 4.3.x - 4.4.x. Please upgrade to `4.5.0` or use `react-native-google-cast/NoBluetooth`.
+  This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). It seems to affects Google SDK versions 4.3.x - 4.4.x. Please upgrade to the latest SDK (4.5+) or use `react-native-google-cast/NoBluetooth`.
 
 - Cast button isn't displayed on an iOS device
 
   If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, enable the [**Access WiFi Information** capability](https://developers.google.com/cast/docs/ios_sender/#xcode_10). Note: "Wireless Accessory Configuration" is unrelated.
+
+  Moreover, if you disabled discovery autostart in [iOS Setup](./setup#ios), make sure you call [startDiscovery](../api/classes/discoverymanager#startdiscovery) somewhere in your JS code.

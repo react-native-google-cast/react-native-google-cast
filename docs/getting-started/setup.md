@@ -40,14 +40,29 @@ sidebar_label: Setup
 
    You may also customize the local network usage description.
 
-   Furthermore, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened. If you want to wait before showing the dialog until the user taps the Cast button, disable autostart in `AppDelegate.m`:
+   Furthermore, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
 
-   ```obj-c
-   options.disableDiscoveryAutostart = true;
-   # insert before [GCKCastContext setSharedInstanceWithOptions:options];
-   ```
+4. (Optional iOS 14+) By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
 
-4. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
+   You may [customize this behavior](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#customizations) in `AppDelegate.m` by either:
+
+   - setting [`disableDiscoveryAutostart`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a6cfeb6f96487fd0e1fc68c31928d3e3d) to `true`:
+
+     ```obj-c
+     options.disableDiscoveryAutostart = true;
+     # insert before [GCKCastContext setSharedInstanceWithOptions:options];
+     ```
+
+     > Note: If you disable discovery autostart, you'll need to start it later by calling [startDiscovery](../api/classes/discoverymanager#startdiscovery).
+
+   - or setting [`startDiscoveryAfterFirstTapOnCastButton`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a1e701e7d1852d1e09ec2aee936b46413) to `false` (only available on Google Cast iOS SDK 4.5.3+). In this case, discovery will start as soon as the SDK is initialized.
+
+     ```obj-c
+     options.startDiscoveryAfterFirstTapOnCastButton = false;
+     # insert before [GCKCastContext setSharedInstanceWithOptions:options];
+     ```
+
+5. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
 
    ```xml
    <key>NSBluetoothAlwaysUsageDescription</key>
