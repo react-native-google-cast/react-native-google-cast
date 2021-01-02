@@ -6,21 +6,47 @@ sidebar_label: Setup
 
 ## iOS
 
-1. In `AppDelegate.m` add
+1. In `AppDelegate.m` (or `AppDelegate.swift`) add
 
-   ```obj-c
-   #import <GoogleCast/GoogleCast.h>
-   ```
+<!--DOCUSAURUS_CODE_TABS-->
+<!--Objective-C-->
 
-   and in the `didFinishLaunchingWithOptions` method add, ideally at the beginning (or right after Flipper initialization):
+```obj-c
+#import <GoogleCast/GoogleCast.h>
+```
 
-   ```obj-c
-   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:kGCKDefaultMediaReceiverApplicationID];
-   GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
-   [GCKCastContext setSharedInstanceWithOptions:options];
-   ```
+<!--Swift-->
 
-   If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
+```swift
+import GoogleCast
+```
+
+<!--END_DOCUSAURUS_CODE_TABS-->
+
+and insert the following in the `application:didFinishLaunchingWithOptions` method, ideally at the beginning (or right after Flipper initialization):
+
+<!--DOCUSAURUS_CODE_TABS-->
+<!--Objective-C-->
+
+```obj-c
+NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
+GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
+GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+[GCKCastContext setSharedInstanceWithOptions:options];
+```
+
+<!--Swift-->
+
+```swift
+let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
+let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
+let options = GCKCastOptions(discoveryCriteria: criteria)
+GCKCastContext.setSharedInstanceWith(options)
+```
+
+<!--END_DOCUSAURUS_CODE_TABS-->
+
+If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
 
 2. In Xcode, go to `Signing & Capabilities`, click `+ Capability` and select `Access WiFi Information`. (This is required since [iOS 12](https://developers.google.com/cast/docs/ios_sender/#ios_12).) Note that "Wireless Accessory Configuration" is unrelated.
 
@@ -49,17 +75,15 @@ sidebar_label: Setup
    - setting [`disableDiscoveryAutostart`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a6cfeb6f96487fd0e1fc68c31928d3e3d) to `true`:
 
      ```obj-c
-     options.disableDiscoveryAutostart = true;
-     # insert before [GCKCastContext setSharedInstanceWithOptions:options];
+     options.disableDiscoveryAutostart = true
      ```
 
      > Note: If you disable discovery autostart, you'll need to start it later by calling [startDiscovery](../api/classes/discoverymanager#startdiscovery).
 
    - or setting [`startDiscoveryAfterFirstTapOnCastButton`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a1e701e7d1852d1e09ec2aee936b46413) to `false` (only available on Google Cast iOS SDK 4.5.3+). In this case, discovery will start as soon as the SDK is initialized.
 
-     ```obj-c
-     options.startDiscoveryAfterFirstTapOnCastButton = false;
-     # insert before [GCKCastContext setSharedInstanceWithOptions:options];
+     ```swift
+     options.startDiscoveryAfterFirstTapOnCastButton = false
      ```
 
 5. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
