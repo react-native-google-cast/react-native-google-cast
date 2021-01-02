@@ -271,53 +271,20 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
     }
   };
 
-  private SessionManagerListener sessionListener = new SessionManagerListener() {
+  private SessionManagerListener sessionListener = new CastSessionManagerListener() {
     @Override
-    public void onSessionStarting(Session session) {
+    public void onSessionEnding(CastSession session) {
+      session.getRemoteMediaClient().unregisterCallback(clientCallback);
     }
 
     @Override
-    public void onSessionStarted(Session session, String s) {
-      with.withX(new With.WithX<RemoteMediaClient>() {
-        @Override
-        public void execute(RemoteMediaClient remoteMediaClient) {
-          remoteMediaClient.registerCallback(clientCallback);
-        }
-      });
+    public void onSessionResumed(CastSession session, boolean wasSuspended) {
+      session.getRemoteMediaClient().registerCallback(clientCallback);
     }
 
     @Override
-    public void onSessionStartFailed(Session session, int i) {
-    }
-
-    @Override
-    public void onSessionEnding(Session session) {
-    }
-
-    @Override
-    public void onSessionEnded(Session session, int i) {
-    }
-
-    @Override
-    public void onSessionResuming(Session session, String s) {
-    }
-
-    @Override
-    public void onSessionResumed(Session session, boolean b) {
-      with.withX(new With.WithX<RemoteMediaClient>() {
-        @Override
-        public void execute(RemoteMediaClient remoteMediaClient) {
-          remoteMediaClient.registerCallback(clientCallback);
-        }
-      });
-    }
-
-    @Override
-    public void onSessionResumeFailed(Session session, int i) {
-    }
-
-    @Override
-    public void onSessionSuspended(Session session, int i) {
+    public void onSessionStarted(CastSession session, String sessionId) {
+      session.getRemoteMediaClient().registerCallback(clientCallback);
     }
   };
 

@@ -3,6 +3,7 @@ import ActiveInputState from '../types/ActiveInputState'
 import ApplicationMetadata from '../types/ApplicationMetadata'
 import Device from '../types/Device'
 import StandbyState from '../types/StandbyState'
+import CastChannel from './CastChannel'
 import RemoteMediaClient from './RemoteMediaClient'
 
 const { RNGCCastSession: Native } = NativeModules
@@ -36,7 +37,19 @@ export default class CastSession {
     this.id = args.id
   }
 
-  /** Indicates whether a receiver device is currently the active video input. Active input state can only be reported when the Google cast device is connected to a TV or AVR with CEC support. */
+  /**
+   * Creates a channel for sending custom messages between this sender and the Cast receiver. Use when you've built a custom receiver and want to communicate with it.
+   *
+   * @param namespace A custom channel identifier starting with `urn:x-cast:`, for example `urn:x-cast:com.reactnative.googlecast.example`. The namespace name is arbitrary; just make sure it's unique.
+   */
+  addChannel(namespace: string): Promise<CastChannel> {
+    return CastChannel.add(this, namespace)
+  }
+
+  /**
+   * Indicates whether a receiver device is currently the active video input.
+   * Active input state can only be reported when the Google cast device is connected to a TV or AVR with CEC support.
+   */
   getActiveInputState(): Promise<ActiveInputState> {
     return Native.getActiveInputState()
   }
@@ -96,16 +109,6 @@ export default class CastSession {
   }
 
   /**
-   * Send a message to the Cast receiver using a custom namespace. Use when you've built a custom receiver and want to communicate with it.
-   *
-   * @param namespace A custom identifier starting with `urn:x-cast:`, for example `urn:x-cast:com.reactnative.googlecast.example`. The namespace name is arbitrary; just make sure it's unique.
-   * @param message message to be sent
-   */
-  sendMessage(namespace: string, message: string): Promise<void> {
-    return Native.sendMessage(namespace, message)
-  }
-
-  /**
    * Mutes or unmutes the device's audio.
    *
    * @param mute The new mute state.
@@ -131,19 +134,6 @@ export default class CastSession {
 
   onActiveInputStateChanged(listener: (state: ActiveInputState) => void) {
     return EventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
-  }
-
-  /**
-   * Registers a listener for messages send from a Cast receiver. Use when you've built a custom receiver and want to communicate with it.
-   *
-   * @param namespace A custom identifier starting with `urn:x-cast:`, for example `urn:x-cast:com.reactnative.googlecast.example`. The namespace name is arbitrary; just make sure it's unique.
-   * @param listener function to be invoked when a Cast receiver sends a message to this sender.
-   */
-  onMessage(namespace: string, listener: (message: string) => void) {
-    return EventEmitter.addListener(
-      Native.MESSAGE_RECEIVED,
-      (ns, message) => namespace === ns && listener(message)
-    )
   }
 
   onStandbyStateChanged(listener: (state: StandbyState) => void) {

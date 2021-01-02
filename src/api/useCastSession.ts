@@ -19,22 +19,20 @@ import SessionManager from './SessionManager'
  * ```
  */
 
-export default function useCastSession() {
+export default function useCastSession(): CastSession | null {
   const [castSession, setCastSession] = useState<CastSession | null>(null)
 
   useEffect(() => {
     manager.getCurrentCastSession().then(setCastSession)
 
     const started = manager.onSessionStarted(setCastSession)
-    const suspended = manager.onSessionSuspended(() => setCastSession(null))
     const resumed = manager.onSessionResumed(setCastSession)
-    const ending = manager.onSessionEnding(() => setCastSession(null))
+    const ended = manager.onSessionEnded(() => setCastSession(null))
 
     return () => {
       started.remove()
-      suspended.remove()
       resumed.remove()
-      ending.remove()
+      ended.remove()
     }
   }, [])
 

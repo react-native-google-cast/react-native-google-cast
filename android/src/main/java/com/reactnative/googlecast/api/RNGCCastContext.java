@@ -33,14 +33,6 @@ public class RNGCCastContext
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCCastContext";
 
-  private static final String CAST_STATE_CHANGED = "GoogleCast:CastStateChanged";
-  private CastStateListener castStateListener = new CastStateListener() {
-    @Override
-    public void onCastStateChanged(int i) {
-      sendEvent(CAST_STATE_CHANGED, RNGCCastState.toJson(i));
-    }
-  };
-
   public RNGCCastContext(final ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -51,6 +43,14 @@ public class RNGCCastContext
   public String getName() {
     return REACT_CLASS;
   }
+
+  private static final String CAST_STATE_CHANGED = "GoogleCast:CastStateChanged";
+  private CastStateListener castStateListener = new CastStateListener() {
+    @Override
+    public void onCastStateChanged(int i) {
+      sendEvent(CAST_STATE_CHANGED, RNGCCastState.toJson(i));
+    }
+  };
 
   @Override
   public Map<String, Object> getConstants() {
@@ -177,6 +177,5 @@ public class RNGCCastContext
 
   @Override
   public void onHostDestroy() {
-
   }
 }

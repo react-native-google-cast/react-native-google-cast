@@ -6,7 +6,7 @@ import {
   useMediaStatus,
 } from 'react-native-google-cast'
 
-export default function Events() {
+export default function Hooks() {
   const castState = useCastState()
   const castSession = useCastSession()
   const mediaStatus = useMediaStatus()
@@ -15,7 +15,14 @@ export default function Events() {
     <ScrollView>
       <Text>Cast State: {castState}</Text>
       <Text>Cast Session ID: {castSession?.id}</Text>
-      <Text>Media Status: {JSON.stringify(mediaStatus)}</Text>
+
+      {mediaStatus && (
+        <>
+          <Text>Current Item ID: {mediaStatus.currentItemId}</Text>
+          <Text>Player State: {mediaStatus.playerState}</Text>
+          <Text>Stream Position: {mediaStatus.streamPosition}</Text>
+        </>
+      )}
     </ScrollView>
   )
 }

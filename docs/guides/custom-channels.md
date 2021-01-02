@@ -4,32 +4,60 @@ title: Custom Channels
 sidebar_label: Custom Channels
 ---
 
-> Custom Channels have not been finalized for v4 beta yet. They will be added before v4 is released.
+If you've built a [custom web receiver](https://developers.google.com/cast/docs/web_receiver/basic) or an [Android TV receiver](https://developers.google.com/cast/docs/android_tv_receiver) and want to send custom messages between your Cast sender (the mobile app you're building with this library) and the Cast receiver (on Chromecast or Android TV), you need to establist a custom channel.
 
-For the sender app to communicate with the receiver app, your app needs to create a custom channel. The sender can use the custom channel to send string messages to the receiver. Each custom channel is defined by a unique namespace and must start with the prefix `urn:x-cast:`, for example, `urn:x-cast:com.example.custom`. It is possible to have multiple custom channels, each with a unique namespace. The receiver app can also send and receive messages using the same namespace.
+Each custom channel is defined by a unique namespace and must start with the prefix `urn:x-cast:`, for example, `urn:x-cast:com.example.custom`. It is possible to create multiple custom channels, each with a unique namespace. The receiver app can also send and receive messages using the same namespace.
 
-<!-- The custom channel is implemented with the Cast.MessageReceivedCallback interface:
+A [CastChannel](../api/classes/castchannel) can be created on a [CastSession](../api/classes/castsession) by calling:
 
-## Channel Events
+```ts
+const channel = castSession.addChannel('urn:x-cast:...')
+```
 
-A virtual communication channel for exchanging messages between a Cast sender (mobile app) and a Cast receiver (on Chromecast).
+Or, if you're using hooks:
 
-Each channel is tagged with a unique namespace, so multiple channels may be multiplexed over a single network connection between a sender and a receiver.
+```ts
+import { useCastChannel } from 'react-native-google-cast'
 
-A channel must be registered by calling `castSession.initChannel('urn:x-cast:...')` before it can be used. When the associated session is established, the channel will be connected automatically and can then send and receive messages.
+function MyComponent() {
+  // channel will be automatically created on the current castSession
+  const channel = useCastChannel('urn:x-cast:...')
+}
+```
 
-```js
-castSession.initChannel
+Once you have a channel, you can send a message:
 
-// Communication channel established
-castSession.onChannelConnected((channel) => {})
+```ts
+channel.sendMessage({ hello: 'world' })
+```
 
-// Communication channel terminated
-castSession.onChannelDisconnected((channel) => {})
+> Please note that, by default, the custom web receiver tries to parse the message as JSON. More information in [this issue, specifically #7](https://issuetracker.google.com/issues/117136854#comment7). That means you should send and read messages as JSON objects.
+>
+> Alternatively, [configure the cast receiver](https://developers.google.com/cast/docs/reference/caf_receiver/cast.framework.CastReceiverOptions#customNamespaces) to use string messages:
+>
+> ```
+> options.customNamespaces = { 'urn:x-cast:...': 'STRING' }
+> ```
 
-// Message received
-channel.onMessage((message) => {})
+To process incoming messages, add a listener:
 
-// Send message
-channel.sendMessage(message)
-``` -->
+```ts
+// either add as a second parameter when creating the channel
+castSession.addChannel('urn:x-cast:...', message => console.log('Received message', message))
+// (or when using hooks)
+useCastChannel('urn:x-cast:...', message => console.log('Received message', message))
+
+// or (re)define it after creating the channel
+channel.onMessage(message => { ... })
+
+// you may also remove the listener if no longer needed
+channel.offMessage()
+```
+
+When you no longer need the channel, you can remove it:
+
+```ts
+channel.remove()
+```
+
+Note that whenever the `castSession` is disconnected, the channel will also be removed.

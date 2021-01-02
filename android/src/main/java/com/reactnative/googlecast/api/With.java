@@ -42,22 +42,32 @@ abstract class With<X> {
       @Override
       public void run() {
         try {
-          PendingResult pendingResult = runnable.execute(getX());
+          final X x = getX();
+
+          if (x == null) {
+            if (promise != null) promise.resolve(null);
+            return;
+          }
+
+          PendingResult pendingResult = runnable.execute(x);
+
           if (pendingResult != null) {
             RNGCPendingResult.promisifyResult(pendingResult, promise);
+          } else if (promise != null) {
+            promise.resolve(null);
           }
         } catch (Exception e) {
-          if (promise != null) {
-            promise.reject(e);
-          } else {
-            throw e;
-          }
+//          if (promise != null) {
+//            promise.reject(e);
+//          } else {
+          throw e;
+//          }
         }
       }
     });
   }
 
-  abstract protected X getX() throws IllegalStateException;
+  abstract protected @Nullable X getX() throws IllegalStateException;
 
   abstract protected ReactContext getReactApplicationContext();
 }

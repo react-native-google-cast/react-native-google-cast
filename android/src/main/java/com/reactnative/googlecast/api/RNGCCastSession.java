@@ -1,6 +1,10 @@
 package com.reactnative.googlecast.api;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -9,9 +13,15 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.android.gms.cast.Cast;
+import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.Session;
+import com.google.android.gms.cast.framework.SessionManager;
+import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
@@ -23,27 +33,48 @@ import com.reactnative.googlecast.types.RNGCMediaTextTrackSubtype;
 import com.reactnative.googlecast.types.RNGCMediaTrackType;
 import com.reactnative.googlecast.types.RNGCStandbyState;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RNGCCastSession extends ReactContextBaseJavaModule {
+public class RNGCCastSession extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
-  @VisibleForTesting public static final String REACT_CLASS = "RNGCCastSession";
+  @VisibleForTesting
+  public static final String REACT_CLASS = "RNGCCastSession";
 
   public RNGCCastSession(ReactApplicationContext reactContext) {
     super(reactContext);
+
+    reactContext.addLifecycleEventListener(this);
   }
+
+  private @Nullable
+  CastSession castSession;
 
   @Override
   public String getName() {
     return REACT_CLASS;
   }
 
+  private static final String ACTIVE_INPUT_STATE_CHANGED = "GoogleCast:ActiveInputStateChanged";
+  private static final String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:ChannelMessageReceived";
+  private static final String STANDBY_STATE_CHANGED = "GoogleCast:StandbyStateChanged";
+
   @Override
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
 
+    constants.put("ACTIVE_INPUT_STATE_CHANGED", ACTIVE_INPUT_STATE_CHANGED);
+    constants.put("CHANNEL_MESSAGE_RECEIVED", CHANNEL_MESSAGE_RECEIVED);
+    constants.put("STANDBY_STATE_CHANGED", STANDBY_STATE_CHANGED);
+
     return constants;
+  }
+
+  private void sendEvent(@NonNull String eventName, @Nullable Object params) {
+    getReactApplicationContext()
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+      .emit(eventName, params);
   }
 
   @ReactMethod
@@ -52,7 +83,7 @@ public class RNGCCastSession extends ReactContextBaseJavaModule {
       @Override
       public void execute(CastSession castSession) {
         promise.resolve(
-            RNGCActiveInputState.toJson(castSession.getActiveInputState()));
+          RNGCActiveInputState.toJson(castSession.getActiveInputState()));
       }
     }, promise);
   }
@@ -63,7 +94,7 @@ public class RNGCCastSession extends ReactContextBaseJavaModule {
       @Override
       public void execute(CastSession castSession) {
         promise.resolve(RNGCApplicationMetadata.toJson(
-            castSession.getApplicationMetadata()));
+          castSession.getApplicationMetadata()));
       }
     }, promise);
   }
@@ -118,6 +149,38 @@ public class RNGCCastSession extends ReactContextBaseJavaModule {
     }, promise);
   }
 
+  // CHANNELS
+
+  @ReactMethod
+  public void addChannel(final String namespace, final Promise promise) {
+    with.withX(new With.WithX<CastSession>() {
+      @Override
+      public void execute(CastSession castSession) {
+        try {
+          castSession.setMessageReceivedCallbacks(namespace, messageCallback);
+          promise.resolve(null);
+        } catch (IOException e) {
+          promise.reject(e);
+        }
+      }
+    });
+  }
+
+  @ReactMethod
+  public void removeChannel(final String namespace, final Promise promise) {
+    with.withX(new With.WithX<CastSession>() {
+      @Override
+      public void execute(CastSession castSession) {
+        try {
+          castSession.removeMessageReceivedCallbacks(namespace);
+          promise.resolve(null);
+        } catch (IOException e) {
+          promise.reject(e);
+        }
+      }
+    });
+  }
+
   @ReactMethod
   public void sendMessage(final String namespace, final String message,
                           final Promise promise) {
@@ -132,20 +195,12 @@ public class RNGCCastSession extends ReactContextBaseJavaModule {
   private With<CastSession> with = new With<CastSession>() {
     @Override
     protected CastSession getX() {
-      final CastSession castSession = CastContext.getSharedInstance()
-        .getSessionManager()
-        .getCurrentCastSession();
-
-      if (castSession == null) {
-        throw new IllegalStateException(("No castSession!"));
-      }
-
       return castSession;
     }
 
     @Override
     protected ReactContext getReactApplicationContext() {
-      return getReactApplicationContext();
+      return RNGCCastSession.this.getReactApplicationContext();
     }
   };
 
@@ -153,9 +208,89 @@ public class RNGCCastSession extends ReactContextBaseJavaModule {
     if (castSession == null) return null;
 
     final WritableMap json = Arguments.createMap();
-
     json.putString("id", castSession.getSessionId());
-
     return json;
+  }
+
+  private Cast.Listener castListener = new Cast.Listener() {
+    @Override
+    public void onActiveInputStateChanged(int i) {
+      sendEvent(ACTIVE_INPUT_STATE_CHANGED, RNGCActiveInputState.toJson(i));
+    }
+
+    @Override
+    public void onStandbyStateChanged(int i) {
+      sendEvent(STANDBY_STATE_CHANGED, RNGCStandbyState.toJson(i));
+    }
+  };
+
+  private Cast.MessageReceivedCallback messageCallback = new Cast.MessageReceivedCallback() {
+    @Override
+    public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
+      WritableMap json = Arguments.createMap();
+      json.putString("namespace", namespace);
+      json.putString("message", message);
+      sendEvent(CHANNEL_MESSAGE_RECEIVED, json);
+    }
+  };
+
+  private SessionManagerListener sessionListener = new CastSessionManagerListener() {
+    @Override
+    public void onSessionEnding(CastSession castSession) {
+      castSession.removeCastListener(castListener);
+      RNGCCastSession.this.castSession = null;
+    }
+
+    @Override
+    public void onSessionResumed(CastSession castSession, boolean wasSuspended) {
+      castSession.addCastListener(castListener);
+      RNGCCastSession.this.castSession = castSession;
+    }
+
+    @Override
+    public void onSessionStarted(CastSession castSession, String s) {
+      castSession.addCastListener(castListener);
+      RNGCCastSession.this.castSession = castSession;
+    }
+  };
+
+  @Override
+  public void onHostResume() {
+    final ReactApplicationContext reactContext = getReactApplicationContext();
+
+    reactContext.runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        SessionManager sessionManager = CastContext.getSharedInstance(reactContext).getSessionManager();
+        sessionManager.addSessionManagerListener(sessionListener);
+
+        castSession = sessionManager.getCurrentCastSession();
+        if (castSession != null) {
+          castSession.addCastListener(castListener);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void onHostPause() {
+    final ReactApplicationContext reactContext = getReactApplicationContext();
+
+    reactContext.runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        SessionManager sessionManager = CastContext.getSharedInstance(reactContext).getSessionManager();
+        sessionManager.removeSessionManagerListener(sessionListener);
+
+        castSession = sessionManager.getCurrentCastSession();
+        if (castSession != null) {
+          castSession.removeCastListener(castListener);
+        }
+      }
+    });
+  }
+
+  @Override
+  public void onHostDestroy() {
   }
 }
