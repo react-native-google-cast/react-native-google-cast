@@ -32,6 +32,15 @@ const EventEmitter = new NativeEventEmitter(Native)
  * ```
  */
 export default class SessionManager {
+  /**
+   * End current session. This disconnects the sender from the receiver but the receiver will continue playing (unless `stopCasting` is set to `true`).
+   *
+   * @param stopCasting Should the receiver application be stopped?
+   */
+  async endCurrentSession(stopCasting: boolean = false): Promise<void> {
+    return Native.endCurrentSession(stopCasting)
+  }
+
   async getCurrentCastSession(): Promise<CastSession | null> {
     const session = await Native.getCurrentCastSession()
     if (session) return new CastSession(session)

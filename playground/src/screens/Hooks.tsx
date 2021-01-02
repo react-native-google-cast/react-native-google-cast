@@ -12,7 +12,7 @@ export default function Hooks() {
   const mediaStatus = useMediaStatus()
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ padding: 10 }}>
       <Text>Cast State: {castState}</Text>
       <Text>Cast Session ID: {castSession?.id}</Text>
 
@@ -21,6 +21,11 @@ export default function Hooks() {
           <Text>Current Item ID: {mediaStatus.currentItemId}</Text>
           <Text>Player State: {mediaStatus.playerState}</Text>
           <Text>Stream Position: {mediaStatus.streamPosition}</Text>
+
+          <Text>Queue:</Text>
+          {mediaStatus.queueItems.map((item) => (
+            <Text key={item.itemId}>&bull; {item.mediaInfo.contentId}</Text>
+          ))}
         </>
       )}
     </ScrollView>

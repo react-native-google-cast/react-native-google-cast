@@ -30,7 +30,6 @@ export default function Queue() {
           ],
         },
       })
-      .then(console.log)
       .catch(console.error)
   }
 

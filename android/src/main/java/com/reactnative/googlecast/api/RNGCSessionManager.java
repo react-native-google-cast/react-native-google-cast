@@ -64,6 +64,20 @@ public class RNGCSessionManager
   }
 
   @ReactMethod
+  public void endCurrentSession(final boolean stopCasting, final Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        SessionManager sessionManager =
+          CastContext.getSharedInstance(getReactApplicationContext())
+            .getSessionManager();
+        sessionManager.endCurrentSession(stopCasting);
+        promise.resolve(null);
+      }
+    });
+  }
+
+  @ReactMethod
   public void getCurrentCastSession(final Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override

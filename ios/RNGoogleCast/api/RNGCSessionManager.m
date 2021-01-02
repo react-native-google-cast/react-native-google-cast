@@ -59,28 +59,21 @@ RCT_EXPORT_MODULE()
   [self stopObserving];
 }
 
+RCT_EXPORT_METHOD(endCurrentSession: (BOOL)stopCasting
+                  resolver: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.sessionManager
+     endSessionAndStopCasting:stopCasting];
+    resolve(nil);
+  });
+}
+
 RCT_REMAP_METHOD(getCurrentCastSession,
                  getCurrentCastSessionResolver: (RCTPromiseResolveBlock) resolve
                  rejecter: (RCTPromiseRejectBlock) reject) {
   GCKSessionManager *sessionManager = GCKCastContext.sharedInstance.sessionManager;
   resolve([RCTConvert fromGCKCastSession:sessionManager.currentCastSession]);
-}
-
-RCT_EXPORT_METHOD(endSession
-                  : (BOOL)stopCasting resolver
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
-  dispatch_async(dispatch_get_main_queue(), ^{
-    if ([GCKCastContext.sharedInstance.sessionManager
-            endSessionAndStopCasting:stopCasting]) {
-      resolve(@(YES));
-    } else {
-      NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                           code:GCKErrorCodeNoMediaSession
-                                       userInfo:nil];
-      reject(@"no_session", @"No castSession!", error);
-    }
-  });
 }
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager

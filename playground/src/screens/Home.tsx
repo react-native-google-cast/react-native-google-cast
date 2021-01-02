@@ -9,6 +9,7 @@ export default function Home() {
 
   return (
     <SectionList
+      contentContainerStyle={{ padding: 10 }}
       keyExtractor={(item, index) => item.title + index}
       renderItem={({ item, index }) => (
         <View style={{ paddingVertical: 5, paddingHorizontal: 20 }}>
@@ -30,7 +31,7 @@ export default function Home() {
         },
         {
           title: 'API',
-          data: [{ title: 'Channels' }, { title: 'Hooks' }],
+          data: [{ title: 'Session' }, { title: 'Hooks' }],
         },
       ]}
     />

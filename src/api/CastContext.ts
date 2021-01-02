@@ -1,8 +1,6 @@
 import { NativeEventEmitter, NativeModules } from 'react-native'
 import CastState from '../types/CastState'
-import CastSession from './CastSession'
 import DiscoveryManager from './DiscoveryManager'
-import RemoteMediaClient from './RemoteMediaClient'
 import SessionManager from './SessionManager'
 
 const { RNGCCastContext: Native } = NativeModules
@@ -20,7 +18,9 @@ const EventEmitter = new NativeEventEmitter(Native)
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastContext) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_context) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastContext)
  */
 export default class CastContext {
+  /** The DiscoveryManager to manage device discovery (iOS only). */
   static discoveryManager = new DiscoveryManager()
+  /** The SessionManager that manages cast sessions. */
   static sessionManager = new SessionManager()
 
   /** The current casting state for the application. */
@@ -29,22 +29,7 @@ export default class CastContext {
   }
 
   /**
-   * Returns the current session if it is an instance of {@link CastSession}, otherwise returns `null` (if you manually create a custom {@link Session} with the {@link SessionManager}).
-   */
-  static async getCurrentCastSession(): Promise<CastSession | null> {
-    return this.sessionManager.getCurrentCastSession()
-  }
-
-  /**
-   * Convenience method to get the RemoteMediaClient associated with current session.
-   */
-  static async getClient(): Promise<RemoteMediaClient | null> {
-    const session = await this.getCurrentCastSession()
-    return session ? session.client : null
-  }
-
-  /**
-   * (iOS only) Get the DiscoveryManager to manage device discovery.
+   * Get the DiscoveryManager to manage device discovery (iOS only).
    */
   static getDiscoveryManager(): DiscoveryManager {
     return this.discoveryManager

@@ -273,11 +273,6 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
 
   private SessionManagerListener sessionListener = new CastSessionManagerListener() {
     @Override
-    public void onSessionEnding(CastSession session) {
-      session.getRemoteMediaClient().unregisterCallback(clientCallback);
-    }
-
-    @Override
     public void onSessionResumed(CastSession session, boolean wasSuspended) {
       session.getRemoteMediaClient().registerCallback(clientCallback);
     }

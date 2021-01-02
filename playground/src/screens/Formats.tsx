@@ -23,12 +23,12 @@ export default function Formats() {
 
     client
       .loadMedia({ autoplay: true, mediaInfo: item.mediaInfo })
-      .then(console.log)
       .catch(console.warn)
   }
 
   return (
     <FormatList
+      contentContainerStyle={{ padding: 10 }}
       renderItem={({ item }) => (
         <View style={{ paddingVertical: 5, paddingHorizontal: 20 }}>
           <Button
