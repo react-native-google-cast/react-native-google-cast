@@ -27,5 +27,8 @@
     <meta-data
       android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
       android:value="com.reactnative.googlecast.GoogleCastOptionsProvider" />
+    <meta-data
+      android:name="com.reactnative.googlecast.RECEIVER_APPLICATION_ID"
+      android:value="EA48D3FC" />
   </application>
 </manifest>

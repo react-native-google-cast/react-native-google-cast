@@ -6,6 +6,8 @@ sidebar_label: Custom Channels
 
 If you've built a [custom web receiver](https://developers.google.com/cast/docs/web_receiver/basic) or an [Android TV receiver](https://developers.google.com/cast/docs/android_tv_receiver) and want to send custom messages between your Cast sender (the mobile app you're building with this library) and the Cast receiver (on Chromecast or Android TV), you need to establist a custom channel.
 
+> Don't forget to set your custom receiver app ID as described in the [Setup](../getting-started/setup).
+
 Each custom channel is defined by a unique namespace and must start with the prefix `urn:x-cast:`, for example, `urn:x-cast:com.example.custom`. It is possible to create multiple custom channels, each with a unique namespace. The receiver app can also send and receive messages using the same namespace.
 
 A [CastChannel](../api/classes/castchannel) can be created on a [CastSession](../api/classes/castsession) by calling:

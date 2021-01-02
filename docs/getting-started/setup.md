@@ -104,9 +104,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
 
 ## Android
 
-1. Make sure the device you're using (also applies to emulators) has Google Play Services installed.
-
-2. Add to `AndroidManifest.xml` (in `android/app/src/main`):
+1. Add to `AndroidManifest.xml` (in `android/app/src/main`):
 
    ```xml
    <application ...>
@@ -117,34 +115,17 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
    </application>
    ```
 
-   Alternatively, you may provide your own `OptionsProvider` class. For example, to use a custom receiver app:
-
-   ```java
-   // assuming this is in package com.foo
-   package com.foo;
-
-   import com.reactnative.googlecast.GoogleCastOptionsProvider;
-
-   public class CastOptionsProvider extends GoogleCastOptionsProvider {
-     @Override
-     public CastOptions getCastOptions(Context context) {
-       CastOptions castOptions = new CastOptions.Builder()
-           .setReceiverApplicationId(context.getString(R.string.app_id))
-           .build();
-       return castOptions;
-     }
-   }
-   ```
-
-   and don't forget to set your `AndroidManifest.xml`:
+   Additionally, if you're using a custom receiver, also add (replace `ABCD1234` with your receiver app id):
 
    ```xml
-   <meta-data
-     android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-     android:value="com.foo.GoogleCastOptionsProvider" />
+     <meta-data
+       android:name="com.reactnative.googlecast.RECEIVER_APPLICATION_ID"
+       android:value="ABCD1234" />
    ```
 
-3. In your `MainActivity.java`, initialize CastContext by overriding the `onCreate` method.
+   Alternatively, you may provide your own `OptionsProvider` class. See `GoogleCastOptionsProvider.java` for inspiration.
+
+2. In your `MainActivity.java`, initialize CastContext by overriding the `onCreate` method.
 
    ```java
    // ...

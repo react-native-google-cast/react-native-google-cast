@@ -169,7 +169,7 @@ public class RNGCMediaMetadata {
         json.putDouble("longitude",
           metadata.getDouble(MediaMetadata.KEY_LOCATION_LONGITUDE));
         json.putString("title", metadata.getString(MediaMetadata.KEY_TITLE));
-        json.putString("width", metadata.getString(MediaMetadata.KEY_WIDTH));
+        json.putInt("width", metadata.getInt(MediaMetadata.KEY_WIDTH));
         break;
       case MediaMetadata.MEDIA_TYPE_TV_SHOW:
         json.putString("broadcastDate", RNGCCalendar.toJson(metadata.getDate(
