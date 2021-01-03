@@ -246,14 +246,14 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-google-cast (4.0.0-beta.6):
+  - react-native-google-cast (4.0.0):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.0.0-beta.6)
-  - react-native-google-cast/NoBluetooth (4.0.0-beta.6):
+    - react-native-google-cast/NoBluetooth (= 4.0.0)
+  - react-native-google-cast/NoBluetooth (4.0.0):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.0.0-beta.6):
+  - react-native-google-cast/RNGoogleCast (4.0.0):
     - PromisesObjC
     - React
   - react-native-video (4.4.5):

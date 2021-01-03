@@ -1,7 +1,7 @@
 {
   "name": "react-native-google-cast-example",
   "description": "Example app for react-native-google-cast",
-  "version": "4.0.0-beta.6",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
