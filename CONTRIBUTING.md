@@ -10,24 +10,24 @@ To get started with the project, run `yarn bootstrap` in the root directory to i
 yarn bootstrap
 ```
 
-While developing, you can run the [example app](/example/) to test your changes.
+While developing, you can run the [playground app](/playground/) to test your changes.
 
 To start the packager:
 
 ```sh
-yarn example start
+yarn playground start
 ```
 
-To run the example app on Android:
+To run the playground app on Android:
 
 ```sh
-yarn example android
+yarn playground android
 ```
 
-To run the example app on iOS:
+To run the playground app on iOS:
 
 ```sh
-yarn example ios
+yarn playground ios
 ```
 
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
@@ -49,9 +49,9 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
-To edit the Objective-C files, open `example/ios/GoogleCastExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-google-cast`.
+To edit the Objective-C files, open `playground/ios/CastVideos.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-google-cast`.
 
-To edit the Kotlin files, open `example/android` in Android studio and find the source files at `reactnativegooglecast` under `Android`.
+To edit the Java files, open `playground/android` in Android studio and find the source files at `com.reactnative.googlecast` under `Android`.
 
 ### Commit message convention
 
@@ -85,6 +85,9 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
+- `yarn playground start`: start the Metro server for the playground app.
+- `yarn playground android`: run the playground app on Android.
+- `yarn playground ios`: run the playground app on iOS.
 
 ### Sending a pull request
 

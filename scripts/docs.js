@@ -27,10 +27,9 @@ fs.writeFileSync(
         ],
         'Guides': listPages('guides'),
         'Components': listPages('components'),
-        'API': ['getting-started/api-overview'].concat(
-          listPages('api/classes')
-        ),
+        'API': listPages('api/classes'),
         'Types': listPages('api/interfaces'),
+        'Enums': listPages('api/enums'),
       },
     },
     null,

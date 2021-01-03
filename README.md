@@ -24,41 +24,17 @@ Refer to the [example](example/) folder to find a React Native version of the Ca
 
 ## Playground
 
-Refer to the [playground](playground/) folder to find a sample app demonstrating the available APIs provided by the library (⚠️ work in progress).
+Refer to the [playground](playground/) folder to find a sample app demonstrating the available APIs provided by the library.
 
 ## Troubleshooting
 
-- _Android:_ `com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.`
-
-  You don't have Google Play Services available on your device. Make sure to install them either from http://opengapps.org/ or follow tutorials online.
-
-  TODO: Handle gracefully and ignore the Cast library without crashing.
-
-- _Android:_ If you're having version conflicts of the appcompat (or google play services) libraries, make sure you set versions globally in your project's top-level `build.gradle`:
-
-  ```gradle
-  buildscript {
-    ext {
-      buildToolsVersion = '29.0.2'
-      minSdkVersion = 16
-      compileSdkVersion = 29
-      targetSdkVersion = 29
-      supportLibVersion = '29.0.0'
-      castFrameworkVersion = '19.0.0'
-    }
-    ...
-  }
-  ```
-
-- _Android\*_ `java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity`
-
-  Make sure your `MainActivity` extends `GoogleCastActivity`, `AppCompatActivity`, or some other descendant of `FragmentActivity`.
+See [Troubleshooting](https://react-native-google-cast.github.io/docs/getting-started/troubleshooting) in the docs.
 
 ## Contribution
 
-1. Contributions are welcome!
-2. Fork the repo.
-3. Implement your shiny new thing.
-4. Demonstrate how to use it in the example project.
-5. Document the functionality in the README (here).
-6. PR
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md)
+2. Fork the repo
+3. Implement your shiny new thing
+4. Demonstrate how to use it in the [playground project](playground/)
+5. Document the functionality in JSDoc and the [docs](docs/)
+6. Create a pull request
