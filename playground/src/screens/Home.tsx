@@ -31,7 +31,7 @@ export default function Home() {
         },
         {
           title: 'API',
-          data: [{ title: 'Session' }, { title: 'Hooks' }],
+          data: [{ title: 'Session' }, { title: 'Client' }],
         },
       ]}
     />

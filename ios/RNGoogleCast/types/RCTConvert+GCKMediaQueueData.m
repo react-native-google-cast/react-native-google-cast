@@ -21,7 +21,7 @@
   if (json[@"id"]) {
     builder.queueID = [RCTConvert NSString:json[@"id"]];
   }
-  
+
   if (json[@"items"]) {
     NSMutableArray<GCKMediaQueueItem *> *items = [[NSMutableArray alloc] init];
     for (id item in json[@"items"]) {
@@ -43,7 +43,7 @@
   }
 
   if (json[@"startTime"]) {
-    builder.startTime = [RCTConvert NSTimeInterval:json[@"startTime"]];
+    builder.startTime = [RCTConvert double:json[@"startTime"]];
   }
 
   if (json[@"type"]) {

@@ -1,4 +1,12 @@
-import { NativeEventEmitter, NativeModules } from 'react-native'
+import {
+  EmitterSubscription,
+  NativeEventEmitter,
+  NativeModules,
+} from 'react-native'
+import {
+  MediaPlayerIdleReason,
+  MediaPlayerState,
+} from 'react-native-google-cast'
 import MediaLoadRequest from 'src/types/MediaLoadRequest'
 import { MediaSeekOptions } from 'src/types/MediaSeekOptions'
 import TextTrackStyle from 'src/types/TextTrackStyle'
@@ -35,6 +43,13 @@ export default class RemoteMediaClient {
    */
   getMediaStatus(): Promise<MediaStatus | null> {
     return Native.getMediaStatus()
+  }
+
+  /**
+   * The current stream position, or `null` if there isn't a media session.
+   */
+  getStreamPosition(): Promise<number | null> {
+    return Native.getStreamPosition()
   }
 
   /**
@@ -222,10 +237,73 @@ export default class RemoteMediaClient {
   //   EVENTS   //
   // ========== //
 
-  /**
-   * Called when media status changes.
-   */
-  onMediaStatusUpdated(handler: (mediaStatus: MediaStatus) => void) {
+  /** Called when media status changes. */
+  onMediaStatusUpdated(handler: (mediaStatus: MediaStatus | null) => void) {
     return EventEmitter.addListener(Native.MEDIA_STATUS_UPDATED, handler)
+  }
+
+  /** Called when finished playback of an item. */
+  onMediaPlaybackEnded(handler: (mediaStatus: MediaStatus | null) => void) {
+    let currentItemId: number | undefined
+    let playbackEnded = false
+
+    return this.onMediaStatusUpdated((mediaStatus) => {
+      if (currentItemId !== mediaStatus?.currentItemId) {
+        currentItemId = mediaStatus?.currentItemId
+        playbackEnded = false
+      }
+      if (playbackEnded) return
+      if (mediaStatus?.idleReason !== MediaPlayerIdleReason.FINISHED) return
+
+      playbackEnded = true
+      handler(mediaStatus)
+    })
+  }
+
+  /** Called when started playback of an item. */
+  onMediaPlaybackStarted(handler: (mediaStatus: MediaStatus | null) => void) {
+    let currentItemId: number | undefined
+    let playbackStarted = false
+
+    return this.onMediaStatusUpdated((mediaStatus) => {
+      if (currentItemId !== mediaStatus?.currentItemId) {
+        currentItemId = mediaStatus?.currentItemId
+        playbackStarted = false
+      }
+      if (playbackStarted) return
+      if (mediaStatus?.playerState !== MediaPlayerState.PLAYING) return
+
+      playbackStarted = true
+      handler(mediaStatus)
+    })
+  }
+
+  private progressUpdateListener?: EmitterSubscription
+
+  /**
+   * Listen for updates on the progress of the currently playing media. Only one listener can be attached; when you attach another listener, the previous one will be removed. All times are in seconds.
+   *
+   * @param handler called when progress or duration of the currently playing media changes.
+   * @param interval update frequency (defaults to 1 second)
+   */
+  onMediaProgressUpdated(
+    handler: (progress: number, duration: number) => void,
+    interval: number = 1
+  ) {
+    Native.setProgressUpdateInterval(interval)
+
+    this.progressUpdateListener?.remove()
+    this.progressUpdateListener = EventEmitter.addListener(
+      Native.MEDIA_PROGRESS_UPDATED,
+      ([progress, duration]) => handler(progress, duration)
+    )
+
+    return {
+      remove: () => {
+        Native.setProgressUpdateInterval(0)
+        this.progressUpdateListener?.remove()
+        this.progressUpdateListener = undefined
+      },
+    }
   }
 }

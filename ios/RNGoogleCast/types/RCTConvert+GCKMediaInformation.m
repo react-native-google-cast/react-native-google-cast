@@ -10,7 +10,7 @@
 
 + (GCKMediaInformation *)GCKMediaInformation:(id)json {
   GCKMediaInformationBuilder *builder;
-  
+
   #if GCK_VERSION_IS_AT_LEAST(4, 3, 4)
     builder = [[GCKMediaInformationBuilder alloc] initWithContentURL:[NSURL URLWithString:json[@"contentUrl"]]];
   #else
@@ -24,7 +24,7 @@
 //    }
 //    builder.adBreakClips = adBreakClips;
 //  }
-  
+
   if (json[@"adBreaks"]) {
     NSMutableArray<GCKAdBreakInfo *> *adBreaks = [[NSMutableArray alloc] init];
     for (id adBreak in json[@"adBreaks"]) {
@@ -32,11 +32,11 @@
     }
     builder.adBreaks = adBreaks;
   }
-  
+
   if (json[@"contentType"]) {
     builder.contentType = [RCTConvert NSString:json[@"contentType"]];
   }
-  
+
   if (json[@"contentUrl"]) {
     builder.contentURL = [NSURL URLWithString:[RCTConvert NSString:json[@"contentUrl"]]];
   }
@@ -44,11 +44,11 @@
   if (json[@"customData"]) {
     builder.customData = [RCTConvert id:json[@"customData"]];
   }
-  
+
   if (json[@"entity"]) {
     builder.entity = [RCTConvert NSString:json[@"entity"]];
   }
-  
+
   if (json[@"mediaTracks"]) {
     NSMutableArray<GCKMediaTrack *> *mediaTracks = [[NSMutableArray alloc] init];
     for (id track in json[@"mediaTracks"]) {
@@ -56,19 +56,19 @@
     }
     builder.mediaTracks = mediaTracks;
   }
-  
+
   if (json[@"metadata"]) {
     builder.metadata = [RCTConvert GCKMediaMetadata:json[@"metadata"]];
   }
-  
+
   if (json[@"streamDuration"]) {
-    builder.streamDuration = [RCTConvert NSTimeInterval:json[@"streamDuration"]] * 1000;
+    builder.streamDuration = [RCTConvert double:json[@"streamDuration"]];
   }
-  
+
   if (json[@"streamType"]) {
     builder.streamType = [RCTConvert GCKMediaStreamType:json[@"streamType"]];
   }
-  
+
   //  if (json[@"textTrackStyle"]) {
   //      builder.textTrackStyle = json[@"textTrackStyle"];
   //  }
@@ -86,17 +86,17 @@
     [adBreakClips addObject:[RCTConvert fromGCKAdBreakClipInfo:clip]];
   };
   json[@"adBreakClips"] = adBreakClips;
-  
+
   NSMutableArray<id> *adBreaks = [[NSMutableArray alloc] init];
   for (GCKAdBreakInfo *adBreak in info.adBreaks) {
     [adBreaks addObject:[RCTConvert fromGCKAdBreakInfo:adBreak]];
   };
   json[@"adBreaks"] = adBreaks;
-  
+
   json[@"contentId"] = info.contentID ?: [NSNull null];
 
   json[@"contentUrl"] = info.contentURL ?: [NSNull null];
-  
+
   json[@"customData"] = info.customData ?: [NSNull null];
 
   json[@"contentType"] = info.contentType ?: [NSNull null];
@@ -108,7 +108,7 @@
     [mediaTracks addObject:[RCTConvert fromGCKMediaTrack:track]];
   };
   json[@"mediaTracks"] = mediaTracks;
-  
+
   json[@"metadata"] = [RCTConvert fromGCKMediaMetadata:info.metadata];
 
   if (!isinf(info.streamDuration)) {
@@ -116,7 +116,7 @@
   }
 
   json[@"streamType"] = [RCTConvert fromGCKMediaStreamType:info.streamType];
-  
+
   return json;
 }
 

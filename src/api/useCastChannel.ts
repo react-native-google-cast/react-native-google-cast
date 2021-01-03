@@ -3,8 +3,11 @@ import CastChannel from './CastChannel'
 import useCastSession from './useCastSession'
 
 /**
- * Hook that provides the current {@link CastChannel} (may be `null`).
+ * Hook that establishes a custom {@link CastChannel} on the current connected session.
  *
+ * @param namespace custom namespace starting with `urn:x-cast:`
+ * @param onMessage listener called when a message from the receiver was received
+ * @returns custom channel, or `null` if there's no session connected
  * @example
  * ```js
  * import { useCastChannel } from 'react-native-google-cast'

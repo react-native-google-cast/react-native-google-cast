@@ -6,7 +6,7 @@
 
 @implementation RCTConvert (GCKMediaMetadata)
 
-+ (GCKMediaMetadata *)GCKMediaMetadata:(id)json {
++ (nonnull GCKMediaMetadata *)GCKMediaMetadata:(nonnull id)json {
   GCKMediaMetadata *metadata;
 
   if (json[@"type"]) {

@@ -1,8 +1,9 @@
 import useCastSession from './useCastSession'
 
 /**
- * Hook that provides the current {@link RemoteMediaClient} (may be `null`).
+ * Hook that provides the current {@link RemoteMediaClient}.
  *
+ * @returns current client, or `null` if there's no session connected
  * @example
  * ```js
  * import { useRemoteMediaClient } from 'react-native-google-cast'

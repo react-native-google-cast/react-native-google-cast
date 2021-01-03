@@ -13,6 +13,7 @@ export { default as useCastState } from './api/useCastState'
 export { default as useCastSession } from './api/useCastSession'
 export { default as useMediaStatus } from './api/useMediaStatus'
 export { default as useRemoteMediaClient } from './api/useRemoteMediaClient'
+export { default as useStreamPosition } from './api/useStreamPosition'
 
 export { default as CastButton } from './components/CastButton'
 

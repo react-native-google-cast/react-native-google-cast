@@ -30,22 +30,22 @@
   if (json[@"customData"]) {
     builder.customData = [RCTConvert id:json[@"customData"]];
   }
-  
+
   if (json[@"mediaInfo"]) {
     builder.mediaInformation =
     [RCTConvert GCKMediaInformation:json[@"mediaInfo"]];
   }
 
   if (json[@"playbackDuration"]) {
-    builder.playbackDuration = [RCTConvert NSTimeInterval:json[@"playbackDuration"]];
+    builder.playbackDuration = [RCTConvert double:json[@"playbackDuration"]];
   }
 
   if (json[@"preloadTime"]) {
-    builder.preloadTime = [RCTConvert NSTimeInterval:json[@"preloadTime"]];
+    builder.preloadTime = [RCTConvert double:json[@"preloadTime"]];
   }
 
   if (json[@"startTime"]) {
-    builder.startTime = [RCTConvert NSTimeInterval:json[@"startTime"]];
+    builder.startTime = [RCTConvert double:json[@"startTime"]];
   }
 
   return [builder build];
@@ -65,7 +65,7 @@
   if (item.itemID != kGCKMediaQueueInvalidItemID) {
     json[@"itemId"] = @(item.itemID);
   }
-  
+
   json[@"mediaInfo"] =
   [RCTConvert fromGCKMediaInformation:item.mediaInformation];
 

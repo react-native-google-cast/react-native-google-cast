@@ -3,6 +3,7 @@ package com.reactnative.googlecast.api;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Promise;
+import com.google.android.gms.cast.CastStatusCodes;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
@@ -17,7 +18,8 @@ final class RNGCPendingResult {
         if (status.isSuccess()) {
           promise.resolve(null);
         } else {
-          promise.reject(new Exception(status.getStatusMessage()));
+          final String message = CastStatusCodes.getStatusCodeString(status.getStatusCode());
+          promise.reject(new Exception(message));
         }
       }
     });

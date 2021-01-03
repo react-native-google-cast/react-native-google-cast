@@ -53,7 +53,7 @@ public class RNGCMediaStatus {
     json.putString("queueRepeatMode",
       RNGCMediaRepeatMode.toJson(status.getQueueRepeatMode()));
 
-    json.putDouble("streamPosition",  status.getStreamPosition() / 1000.0);
+    json.putDouble("streamPosition", status.getStreamPosition() / 1000.0);
 
     json.putMap("videoInfo", RNGCVideoInfo.toJson(status.getVideoInfo()));
 

@@ -3,6 +3,7 @@ package com.reactnative.googlecast.api;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -11,9 +12,11 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.MediaQueueItem;
+import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.Session;
@@ -36,6 +39,8 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCRemoteMediaClient";
 
+  public static final String MEDIA_PROGRESS_UPDATED =
+    "GoogleCast:MediaProgressUpdated";
   public static final String MEDIA_STATUS_UPDATED =
     "GoogleCast:MediaStatusUpdated";
 
@@ -54,6 +59,7 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   public Map<String, Object> getConstants() {
     final Map<String, Object> constants = new HashMap<>();
 
+    constants.put("MEDIA_PROGRESS_UPDATED", MEDIA_PROGRESS_UPDATED);
     constants.put("MEDIA_STATUS_UPDATED", MEDIA_STATUS_UPDATED);
 
     return constants;
@@ -65,6 +71,21 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
       @Override
       public void execute(RemoteMediaClient client) {
         promise.resolve(RNGCMediaStatus.toJson(client.getMediaStatus()));
+      }
+    }, promise);
+  }
+
+  @ReactMethod
+  public void getStreamPosition(final Promise promise) {
+    with.withX(new With.WithX<RemoteMediaClient>() {
+      @Override
+      public void execute(RemoteMediaClient client) {
+        final MediaStatus status = client.getMediaStatus();
+        if (status == null || status.getPlayerState() == MediaStatus.PLAYER_STATE_IDLE || status.getPlayerState() == MediaStatus.PLAYER_STATE_UNKNOWN) {
+          promise.resolve(null);
+        } else {
+          promise.resolve(client.getApproximateStreamPosition() / 1000.0);
+        }
       }
     }, promise);
   }
@@ -186,6 +207,19 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
     }, promise);
   }
 
+
+  @ReactMethod
+  public void setProgressUpdateInterval(final Double interval, final Promise promise) {
+    with.withX(new With.WithX<RemoteMediaClient>() {
+      @Override
+      public void execute(RemoteMediaClient client) {
+        client.removeProgressListener(progressListener);
+        if (interval == null || interval <= 0) return;
+        client.addProgressListener(progressListener, Math.round(interval * 1000));
+      }
+    }, promise);
+  }
+
   @ReactMethod
   public void setStreamMuted(final boolean muted, final ReadableMap customData, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
@@ -263,11 +297,27 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
     public void onStatusUpdated() {
       with.withX(new With.WithX<RemoteMediaClient>() {
         @Override
-        public void execute(RemoteMediaClient c) {
+        public void execute(RemoteMediaClient client) {
+          final MediaStatus status = client.getMediaStatus();
+
           sendEvent(RNGCRemoteMediaClient.MEDIA_STATUS_UPDATED,
-            RNGCMediaStatus.toJson(c.getMediaStatus()));
+            RNGCMediaStatus.toJson(status));
+
+          if (status == null || status.getPlayerState() == MediaStatus.PLAYER_STATE_IDLE || status.getPlayerState() == MediaStatus.PLAYER_STATE_UNKNOWN) {
+            final WritableArray progress = Arguments.createArray();
+            progress.pushNull();
+            progress.pushNull();
+            sendEvent(MEDIA_PROGRESS_UPDATED, progress);
+          }
         }
       });
+    }
+  };
+
+  private RemoteMediaClient.ProgressListener progressListener = new RemoteMediaClient.ProgressListener() {
+    @Override
+    public void onProgressUpdated(long progressMs, long durationMs) {
+      sendEvent(MEDIA_PROGRESS_UPDATED, Arguments.fromArray(new double[]{progressMs / 1000.0, durationMs / 1000.0}));
     }
   };
 

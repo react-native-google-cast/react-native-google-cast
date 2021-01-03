@@ -17,7 +17,7 @@ const EventEmitter = new NativeEventEmitter(Native)
  * ```js
  * import { CastChannel } from 'react-native-google-cast'
  *
- * const channel = await CastChannel.add(castSession, 'urn:x-cast:com.example.custom')
+ * const channel = await castSession.addChannel('urn:x-cast:com.example.custom')
  *
  * channel.sendMessage('...')
  * ```

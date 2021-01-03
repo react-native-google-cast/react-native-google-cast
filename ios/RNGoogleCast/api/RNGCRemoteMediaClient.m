@@ -10,6 +10,8 @@
 
 @implementation RNGCRemoteMediaClient {
   bool hasListeners;
+  NSNumber *progressInterval;
+  NSTimer *progressTimer;
 }
 
 RCT_EXPORT_MODULE()
@@ -20,12 +22,14 @@ RCT_EXPORT_MODULE()
 
 - (NSDictionary *)constantsToExport {
   return @{
+    @"MEDIA_PROGRESS_UPDATED" : MEDIA_PROGRESS_UPDATED,
     @"MEDIA_STATUS_UPDATED" : MEDIA_STATUS_UPDATED,
   };
 }
 
 - (NSArray<NSString *> *)supportedEvents {
   return @[
+    MEDIA_PROGRESS_UPDATED,
     MEDIA_STATUS_UPDATED,
   ];
 }
@@ -35,7 +39,7 @@ RCT_EXPORT_MODULE()
   hasListeners = YES;
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance.sessionManager addListener:self];
-    
+
     GCKRemoteMediaClient *client = [self getClient];
     if (client != nil) {
       [client addListener:self];
@@ -46,9 +50,11 @@ RCT_EXPORT_MODULE()
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
   hasListeners = NO;
+  [progressTimer invalidate];
+  progressTimer = nil;
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance.sessionManager removeListener:self];
-    
+
     GCKRemoteMediaClient *client = [self getClient];
     if (client != nil) {
       [client removeListener:self];
@@ -66,12 +72,25 @@ RCT_REMAP_METHOD(getMediaStatus,
                  getMediaStatusResolver: (RCTPromiseResolveBlock) resolve
                  rejecter: (RCTPromiseRejectBlock) reject) {
 
-  [self withClientResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+  [self withClientResolve:resolve reject:reject perform:^id(GCKRemoteMediaClient *client) {
     GCKMediaStatus *status = [client mediaStatus];
     return status != nil ? [RCTConvert fromGCKMediaStatus:status] : [NSNull null];
   }];
 }
 
+RCT_REMAP_METHOD(getStreamPosition,
+                 getStreamPositionResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientResolve:resolve reject:reject perform:^id(GCKRemoteMediaClient *client) {
+    GCKMediaStatus *status = [client mediaStatus];
+    if (status == nil || status.playerState == GCKMediaPlayerStateIdle || status.playerState == GCKMediaPlayerStateUnknown) {
+      return [NSNull null];
+    } else {
+      return [NSNumber numberWithDouble:[client approximateStreamPosition]];
+    }
+  }];
+}
 
 RCT_EXPORT_METHOD(loadMedia: (GCKMediaLoadRequestData *) request
                   resolver: (RCTPromiseResolveBlock) resolve
@@ -169,7 +188,19 @@ RCT_EXPORT_METHOD(setPlaybackRate: (float) playbackRate
   }];
 }
 
-RCT_EXPORT_METHOD(setStreamMuted: (bool) muted
+RCT_EXPORT_METHOD(setProgressUpdateInterval: (nonnull NSNumber *) interval
+                 resolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+  if (interval == nil || interval <= 0) {
+    [progressTimer invalidate];
+    progressTimer = nil;
+    progressInterval = nil;
+  } else {
+    progressInterval = interval;
+  }
+}
+
+RCT_EXPORT_METHOD(setStreamMuted: (BOOL) muted
                   customData: (nullable NSDictionary *) customData
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
@@ -211,10 +242,38 @@ RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
 
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client
      didUpdateMediaStatus:(GCKMediaStatus *)mediaStatus {
+
+  [self sendEventWithName:MEDIA_STATUS_UPDATED body:[RCTConvert fromGCKMediaStatus:mediaStatus]];
   
-  [self sendEventWithName:MEDIA_STATUS_UPDATED body:@{
-    @"mediaStatus": [RCTConvert fromGCKMediaStatus:mediaStatus]
-  }];
+  NSTimeInterval duration = mediaStatus.mediaInformation.streamDuration;
+  
+  if (progressInterval != nil && mediaStatus != nil && mediaStatus.playerState != GCKMediaPlayerStateIdle && mediaStatus.playerState != GCKMediaPlayerStateUnknown) {
+    if (progressTimer) {
+      if ([progressTimer timeInterval] == progressInterval.doubleValue) return;
+      [progressTimer invalidate];
+    }
+    progressTimer = [NSTimer
+      scheduledTimerWithTimeInterval:progressInterval.doubleValue
+                              target:self
+                            selector:@selector(progressUpdated:)
+                            userInfo:@(duration)
+                             repeats:YES
+    ];
+  } else {
+    [progressTimer invalidate];
+    progressTimer = nil;
+    [self sendEventWithName:MEDIA_PROGRESS_UPDATED body:@[
+      [NSNull null], @(duration)
+    ]];
+  }
+}
+
+-(void) progressUpdated:(NSTimer*)timer {
+  double progress = [self.getClient approximateStreamPosition];
+  if (!progress || progress == INFINITY || progress == NAN) { return; }
+  [self sendEventWithName:MEDIA_PROGRESS_UPDATED body:@[
+    @(progress), timer.userInfo
+  ]];
 }
 
 # pragma mark - GCKSessionManager events
@@ -238,7 +297,7 @@ RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
       GCKCastContext.sharedInstance.sessionManager.currentSession;
 
   if (session == nil || session.remoteMediaClient == nil) { return nil; }
-  
+
   return session.remoteMediaClient;
 }
 
@@ -258,7 +317,7 @@ RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
 
 - (void)withClientResolve:(RCTPromiseResolveBlock)resolve
       reject:(RCTPromiseRejectBlock)reject
-     perform:(GCKRequest * (^)(GCKRemoteMediaClient *client))block {
+     perform:(id (^)(GCKRemoteMediaClient *client))block {
   [[[self getClientPromise] then:^id _Nullable(id _Nullable client) {
     resolve(block(client));
     return nil;

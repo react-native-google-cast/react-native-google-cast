@@ -57,11 +57,11 @@ abstract class With<X> {
             promise.resolve(null);
           }
         } catch (Exception e) {
-//          if (promise != null) {
-//            promise.reject(e);
-//          } else {
-          throw e;
-//          }
+          if (promise != null) {
+            promise.reject(e);
+          } else {
+            throw e;
+          }
         }
       }
     });

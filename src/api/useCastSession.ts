@@ -3,8 +3,9 @@ import CastSession from './CastSession'
 import SessionManager from './SessionManager'
 
 /**
- * Hook that provides the current {@link CastSession} (may be `null`).
+ * Hook that provides the current {@link CastSession}.
  *
+ * @returns current session, or `null` if there's no session connected
  * @example
  * ```js
  * import { useCastSession } from 'react-native-google-cast'

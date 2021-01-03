@@ -41,7 +41,7 @@
   }
 
   if (json[@"startTime"]) {
-    builder.startTime = [RCTConvert NSTimeInterval:json[@"startTime"]];
+    builder.startTime = [RCTConvert double:json[@"startTime"]];
   }
 
   return [builder build];

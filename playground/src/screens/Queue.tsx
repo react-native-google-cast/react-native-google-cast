@@ -1,9 +1,11 @@
 import React from 'react'
-import { Button } from 'react-native'
-import { useRemoteMediaClient } from 'react-native-google-cast'
+import { Button, Text } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
+import { useMediaStatus, useRemoteMediaClient } from 'react-native-google-cast'
 
 export default function Queue() {
   const client = useRemoteMediaClient()
+  const mediaStatus = useMediaStatus()
 
   function cast() {
     if (!client) return
@@ -33,5 +35,14 @@ export default function Queue() {
       .catch(console.error)
   }
 
-  return <Button onPress={() => cast()} title={'Play Queue'} />
+  return (
+    <ScrollView contentContainerStyle={{ padding: 10 }}>
+      <Button onPress={() => cast()} title={'Play Queue'} />
+
+      <Text>Queue:</Text>
+      {mediaStatus?.queueItems.map((item) => (
+        <Text key={item.itemId}>&bull; {item.mediaInfo.contentId}</Text>
+      ))}
+    </ScrollView>
+  )
 }

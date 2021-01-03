@@ -81,9 +81,30 @@ import { useMediaStatus } from 'react-native-google-cast'
 function MyComponent() {
   const mediaStatus = useMediaStatus()
 
-  // may be `null` if session is not connected
+  // may be `null` if there's no current media
   if (mediaStatus) {
     // ...
   }
 }
 ```
+
+Note that the media status is only updated when the status of the stream changes. Therefore, `mediaStatus.streamPosition` only reflects the time of the last status update.
+
+If you need to know the current progress in near real-time\*, see `useStreamPosition` instead:
+
+```js
+import { useStreamPosition } from 'react-native-google-cast'
+
+function MyComponent() {
+  const streamPosition = useStreamPosition()
+
+  // may be `null` if there's no current media
+  if (streamPosition) {
+    // ...
+  }
+}
+```
+
+By default, the position updates once per second. You may change the interval by passing a number of seconds. For example, `useStreamPosition(0.5)` updates twice per second while `useStreamPosition(10)` would only update every 10 seconds.
+
+> \* Note that the Cast device doesn't notify of the stream position in real-time. Hence, the stream position is an approximation as calculated from the last received stream information and the elapsed wall-time since that update. In practice, you should be seeing a close-enough estimate but it might be slightly delayed compared to the actual stream.

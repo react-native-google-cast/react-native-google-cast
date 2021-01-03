@@ -16,7 +16,11 @@
   }
 
   if (json[@"position"]) {
-    options.interval = [RCTConvert NSTimeInterval:json[@"position"]];
+    options.interval = [RCTConvert double:json[@"position"]];
+  }
+
+  if (json[@"relative"]) {
+    options.relative = [RCTConvert BOOL:json[@"relative"]];
   }
 
   if (json[@"resumeState"]) {
