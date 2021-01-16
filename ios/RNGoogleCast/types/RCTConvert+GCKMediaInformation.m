@@ -33,6 +33,12 @@
     builder.adBreaks = adBreaks;
   }
 
+  #if GCK_VERSION_IS_AT_LEAST(4, 3, 4)
+    if (json[@"contentId"]) {
+      builder.contentID = [RCTConvert NSString:json[@"contentId"]];
+    }
+  #endif
+
   if (json[@"contentType"]) {
     builder.contentType = [RCTConvert NSString:json[@"contentType"]];
   }
