@@ -18,6 +18,14 @@
 		914932DB231E9B4E001AE93B /* RCTConvert+GCKMediaTextTrackStyleWindowType.m in Sources */ = {isa = PBXBuildFile; fileRef = 914932DA231E9B4E001AE93B /* RCTConvert+GCKMediaTextTrackStyleWindowType.m */; };
 		914932DD231E9BBE001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = 914932DC231E9BBD001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m */; };
 		914932DF231E9CC0001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 914932DE231E9CC0001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontStyle.m */; };
+		914BA2C325BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2BC25BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m */; };
+		914BA2C425BF7545001FFA5E /* RCTConvert+GCKCastSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2BD25BF7545001FFA5E /* RCTConvert+GCKCastSession.m */; };
+		914BA2C525BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2BE25BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m */; };
+		914BA2C625BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2BF25BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m */; };
+		914BA2C725BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2C025BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m */; };
+		914BA2C825BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2C125BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m */; };
+		914BA2C925BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2C225BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m */; };
+		914BA2CD25BF7569001FFA5E /* RNGCDiscoveryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 914BA2CC25BF7569001FFA5E /* RNGCDiscoveryManager.m */; };
 		91829AC3227E1D6000906C0C /* RCTConvert+GCKImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AA2227E1D5E00906C0C /* RCTConvert+GCKImage.m */; };
 		91829AC4227E1D6000906C0C /* RCTConvert+GCKMediaMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AA3227E1D5E00906C0C /* RCTConvert+GCKMediaMetadata.m */; };
 		91829AC5227E1D6000906C0C /* RCTConvert+GCKMediaTrackType.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AA4227E1D5E00906C0C /* RCTConvert+GCKMediaTrackType.m */; };
@@ -28,7 +36,6 @@
 		91829ACA227E1D6000906C0C /* RCTConvert+GCKAdBreakStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AA9227E1D5E00906C0C /* RCTConvert+GCKAdBreakStatus.m */; };
 		91829ACB227E1D6000906C0C /* RCTConvert+GCKMediaSeekOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AAA227E1D5E00906C0C /* RCTConvert+GCKMediaSeekOptions.m */; };
 		91829ACC227E1D6000906C0C /* RCTConvert+GCKMediaRepeatMode.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AAB227E1D5E00906C0C /* RCTConvert+GCKMediaRepeatMode.m */; };
-		91829ACD227E1D6000906C0C /* RCTConvert+GCKMediaLoadOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AAC227E1D5E00906C0C /* RCTConvert+GCKMediaLoadOptions.m */; };
 		91829ACE227E1D6000906C0C /* RCTConvert+GCKMediaPlayerState.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AAD227E1D5E00906C0C /* RCTConvert+GCKMediaPlayerState.m */; };
 		91829ACF227E1D6000906C0C /* RNGCRemoteMediaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AAE227E1D5F00906C0C /* RNGCRemoteMediaClient.m */; };
 		91829AD0227E1D6000906C0C /* RCTConvert+GCKAdBreakClipInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AAF227E1D5F00906C0C /* RCTConvert+GCKAdBreakClipInfo.m */; };
@@ -41,7 +48,6 @@
 		91829AD7227E1D6000906C0C /* RCTConvert+GCKMediaTextTrackSubtype.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829AB9227E1D5F00906C0C /* RCTConvert+GCKMediaTextTrackSubtype.m */; };
 		91829AD8227E1D6000906C0C /* RCTConvert+GCKMediaInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829ABA227E1D5F00906C0C /* RCTConvert+GCKMediaInformation.m */; };
 		91829AD9227E1D6000906C0C /* RCTConvert+GCKMediaQueueItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829ABB227E1D5F00906C0C /* RCTConvert+GCKMediaQueueItem.m */; };
-		91829ADA227E1D6000906C0C /* RCTConvert+GCKMediaQueueLoadOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829ABC227E1D5F00906C0C /* RCTConvert+GCKMediaQueueLoadOptions.m */; };
 		91829ADB227E1D6000906C0C /* RNGCSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829ABD227E1D5F00906C0C /* RNGCSessionManager.m */; };
 		91829ADC227E1D6000906C0C /* RNGCRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829ABE227E1D5F00906C0C /* RNGCRequest.m */; };
 		91829ADD227E1D6000906C0C /* RCTConvert+GCKMediaStreamType.m in Sources */ = {isa = PBXBuildFile; fileRef = 91829ABF227E1D6000906C0C /* RCTConvert+GCKMediaStreamType.m */; };
@@ -77,6 +83,15 @@
 		914932DA231E9B4E001AE93B /* RCTConvert+GCKMediaTextTrackStyleWindowType.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaTextTrackStyleWindowType.m"; sourceTree = "<group>"; };
 		914932DC231E9BBD001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m"; sourceTree = "<group>"; };
 		914932DE231E9CC0001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontStyle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaTextTrackStyleFontStyle.m"; sourceTree = "<group>"; };
+		914BA2BC25BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaQueueData.m"; sourceTree = "<group>"; };
+		914BA2BD25BF7545001FFA5E /* RCTConvert+GCKCastSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKCastSession.m"; sourceTree = "<group>"; };
+		914BA2BE25BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaQueueContainerType.m"; sourceTree = "<group>"; };
+		914BA2BF25BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaLoadRequest.m"; sourceTree = "<group>"; };
+		914BA2C025BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaQueueType.m"; sourceTree = "<group>"; };
+		914BA2C125BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaQueueContainerMetadata.m"; sourceTree = "<group>"; };
+		914BA2C225BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKRemoteMediaClient.m"; sourceTree = "<group>"; };
+		914BA2CB25BF7569001FFA5E /* RNGCDiscoveryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGCDiscoveryManager.h; sourceTree = "<group>"; };
+		914BA2CC25BF7569001FFA5E /* RNGCDiscoveryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGCDiscoveryManager.m; sourceTree = "<group>"; };
 		91829AA2227E1D5E00906C0C /* RCTConvert+GCKImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKImage.m"; path = "RNGoogleCast/types/RCTConvert+GCKImage.m"; sourceTree = SOURCE_ROOT; };
 		91829AA3227E1D5E00906C0C /* RCTConvert+GCKMediaMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaMetadata.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaMetadata.m"; sourceTree = SOURCE_ROOT; };
 		91829AA4227E1D5E00906C0C /* RCTConvert+GCKMediaTrackType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaTrackType.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaTrackType.m"; sourceTree = SOURCE_ROOT; };
@@ -87,7 +102,6 @@
 		91829AA9227E1D5E00906C0C /* RCTConvert+GCKAdBreakStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKAdBreakStatus.m"; path = "RNGoogleCast/types/RCTConvert+GCKAdBreakStatus.m"; sourceTree = SOURCE_ROOT; };
 		91829AAA227E1D5E00906C0C /* RCTConvert+GCKMediaSeekOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaSeekOptions.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaSeekOptions.m"; sourceTree = SOURCE_ROOT; };
 		91829AAB227E1D5E00906C0C /* RCTConvert+GCKMediaRepeatMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaRepeatMode.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaRepeatMode.m"; sourceTree = SOURCE_ROOT; };
-		91829AAC227E1D5E00906C0C /* RCTConvert+GCKMediaLoadOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaLoadOptions.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaLoadOptions.m"; sourceTree = SOURCE_ROOT; };
 		91829AAD227E1D5E00906C0C /* RCTConvert+GCKMediaPlayerState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaPlayerState.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaPlayerState.m"; sourceTree = SOURCE_ROOT; };
 		91829AAE227E1D5F00906C0C /* RNGCRemoteMediaClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RNGCRemoteMediaClient.m; path = RNGoogleCast/api/RNGCRemoteMediaClient.m; sourceTree = SOURCE_ROOT; };
 		91829AAF227E1D5F00906C0C /* RCTConvert+GCKAdBreakClipInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKAdBreakClipInfo.m"; path = "RNGoogleCast/types/RCTConvert+GCKAdBreakClipInfo.m"; sourceTree = SOURCE_ROOT; };
@@ -103,7 +117,6 @@
 		91829AB9227E1D5F00906C0C /* RCTConvert+GCKMediaTextTrackSubtype.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaTextTrackSubtype.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaTextTrackSubtype.m"; sourceTree = SOURCE_ROOT; };
 		91829ABA227E1D5F00906C0C /* RCTConvert+GCKMediaInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaInformation.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaInformation.m"; sourceTree = SOURCE_ROOT; };
 		91829ABB227E1D5F00906C0C /* RCTConvert+GCKMediaQueueItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaQueueItem.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaQueueItem.m"; sourceTree = SOURCE_ROOT; };
-		91829ABC227E1D5F00906C0C /* RCTConvert+GCKMediaQueueLoadOptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaQueueLoadOptions.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaQueueLoadOptions.m"; sourceTree = SOURCE_ROOT; };
 		91829ABD227E1D5F00906C0C /* RNGCSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RNGCSessionManager.m; path = RNGoogleCast/api/RNGCSessionManager.m; sourceTree = SOURCE_ROOT; };
 		91829ABE227E1D5F00906C0C /* RNGCRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RNGCRequest.m; path = RNGoogleCast/api/RNGCRequest.m; sourceTree = SOURCE_ROOT; };
 		91829ABF227E1D6000906C0C /* RCTConvert+GCKMediaStreamType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RCTConvert+GCKMediaStreamType.m"; path = "RNGoogleCast/types/RCTConvert+GCKMediaStreamType.m"; sourceTree = SOURCE_ROOT; };
@@ -165,6 +178,8 @@
 		918B7BE421F0AAB100D669FF /* api */ = {
 			isa = PBXGroup;
 			children = (
+				914BA2CB25BF7569001FFA5E /* RNGCDiscoveryManager.h */,
+				914BA2CC25BF7569001FFA5E /* RNGCDiscoveryManager.m */,
 				911BE483201C8E7C00474413 /* RNGCCastContext.h */,
 				911BE484201C8E8200474413 /* RNGCCastContext.m */,
 				91829AB7227E1D5F00906C0C /* RNGCCastSession.h */,
@@ -182,6 +197,13 @@
 		91D99D8A231A73270081468C /* types */ = {
 			isa = PBXGroup;
 			children = (
+				914BA2BD25BF7545001FFA5E /* RCTConvert+GCKCastSession.m */,
+				914BA2BF25BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m */,
+				914BA2C125BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m */,
+				914BA2BE25BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m */,
+				914BA2BC25BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m */,
+				914BA2C025BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m */,
+				914BA2C225BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m */,
 				914932D0231C6EA8001AE93B /* RCTConvert+GCKActiveInputStatus.m */,
 				91829AAF227E1D5F00906C0C /* RCTConvert+GCKAdBreakClipInfo.m */,
 				91829AB5227E1D5F00906C0C /* RCTConvert+GCKAdBreakInfo.m */,
@@ -193,13 +215,11 @@
 				91829AB6227E1D5F00906C0C /* RCTConvert+GCKHLSSegmentFormat.m */,
 				91829AA2227E1D5E00906C0C /* RCTConvert+GCKImage.m */,
 				91829ABA227E1D5F00906C0C /* RCTConvert+GCKMediaInformation.m */,
-				91829AAC227E1D5E00906C0C /* RCTConvert+GCKMediaLoadOptions.m */,
 				91829AA3227E1D5E00906C0C /* RCTConvert+GCKMediaMetadata.m */,
 				91829AC2227E1D6000906C0C /* RCTConvert+GCKMediaMetadataType.m */,
 				91829AB0227E1D5F00906C0C /* RCTConvert+GCKMediaPlayerIdleReason.m */,
 				91829AAD227E1D5E00906C0C /* RCTConvert+GCKMediaPlayerState.m */,
 				91829ABB227E1D5F00906C0C /* RCTConvert+GCKMediaQueueItem.m */,
-				91829ABC227E1D5F00906C0C /* RCTConvert+GCKMediaQueueLoadOptions.m */,
 				91829AAB227E1D5E00906C0C /* RCTConvert+GCKMediaRepeatMode.m */,
 				91829AB4227E1D5F00906C0C /* RCTConvert+GCKMediaResumeState.m */,
 				91829AAA227E1D5E00906C0C /* RCTConvert+GCKMediaSeekOptions.m */,
@@ -278,10 +298,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				914BA2C625BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m in Sources */,
 				91829AC9227E1D6000906C0C /* RCTConvert+GCKMediaTrack.m in Sources */,
-				91829ACD227E1D6000906C0C /* RCTConvert+GCKMediaLoadOptions.m in Sources */,
 				914932DB231E9B4E001AE93B /* RCTConvert+GCKMediaTextTrackStyleWindowType.m in Sources */,
 				914932D7231E9978001AE93B /* RCTConvert+GCKMediaTextTrackStyle.m in Sources */,
+				914BA2C425BF7545001FFA5E /* RCTConvert+GCKCastSession.m in Sources */,
 				91829ADF227E1D6000906C0C /* RCTConvert+GCKMediaMetadataType.m in Sources */,
 				91829AD9227E1D6000906C0C /* RCTConvert+GCKMediaQueueItem.m in Sources */,
 				91829ACB227E1D6000906C0C /* RCTConvert+GCKMediaSeekOptions.m in Sources */,
@@ -299,6 +320,8 @@
 				91829AC8227E1D6000906C0C /* RCTConvert+GCKVideoInfo.m in Sources */,
 				91829AC4227E1D6000906C0C /* RCTConvert+GCKMediaMetadata.m in Sources */,
 				91829AC6227E1D6000906C0C /* RNGCCastSession.m in Sources */,
+				914BA2C325BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m in Sources */,
+				914BA2C825BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m in Sources */,
 				91829AD5227E1D6000906C0C /* RCTConvert+GCKAdBreakInfo.m in Sources */,
 				914932D9231E9A07001AE93B /* RCTConvert+GCKMediaTextTrackStyleEdgeType.m in Sources */,
 				91829ADD227E1D6000906C0C /* RCTConvert+GCKMediaStreamType.m in Sources */,
@@ -312,13 +335,16 @@
 				91829AD0227E1D6000906C0C /* RCTConvert+GCKAdBreakClipInfo.m in Sources */,
 				91829AD7227E1D6000906C0C /* RCTConvert+GCKMediaTextTrackSubtype.m in Sources */,
 				91829ACC227E1D6000906C0C /* RCTConvert+GCKMediaRepeatMode.m in Sources */,
-				91829ADA227E1D6000906C0C /* RCTConvert+GCKMediaQueueLoadOptions.m in Sources */,
 				91829ADC227E1D6000906C0C /* RNGCRequest.m in Sources */,
 				91829AE3227E1D9900906C0C /* RNGoogleCastButton.m in Sources */,
+				914BA2C925BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m in Sources */,
 				91829AD8227E1D6000906C0C /* RCTConvert+GCKMediaInformation.m in Sources */,
 				91829AD3227E1D6000906C0C /* RCTConvert+GCKVideoInfoHDRType.m in Sources */,
 				914932DD231E9BBE001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m in Sources */,
 				91829ACF227E1D6000906C0C /* RNGCRemoteMediaClient.m in Sources */,
+				914BA2C525BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m in Sources */,
+				914BA2C725BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m in Sources */,
+				914BA2CD25BF7569001FFA5E /* RNGCDiscoveryManager.m in Sources */,
 				914932DF231E9CC0001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontStyle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
