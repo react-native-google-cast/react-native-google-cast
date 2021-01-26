@@ -6,7 +6,12 @@
 #import "../types/RCTConvert+GCKRemoteMediaClient.m"
 #import "RNGCRequest.h"
 #import <Foundation/Foundation.h>
-#import <PromisesObjC/FBLPromises.h>
+
+#if __has_include(<FBLPromises/FBLPromises.h>)
+#import <FBLPromises/FBLPromises.h>
+#else
+#import "FBLPromises.h"
+#endif
 
 @implementation RNGCRemoteMediaClient {
   bool hasListeners;
