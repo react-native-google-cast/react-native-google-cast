@@ -169,7 +169,7 @@ RCT_EXPORT_METHOD(seek: (GCKMediaSeekOptions *) options
   }];
 }
 
-RCT_EXPORT_METHOD(setActiveTrackIds: (NSArray<NSNumber *> *) trackIds
+RCT_EXPORT_METHOD(setActiveMediaTracks: (NSArray<NSNumber *> *) trackIds
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
 
@@ -244,9 +244,9 @@ RCT_EXPORT_METHOD(stop: (nullable NSDictionary *) customData
      didUpdateMediaStatus:(GCKMediaStatus *)mediaStatus {
 
   [self sendEventWithName:MEDIA_STATUS_UPDATED body:[RCTConvert fromGCKMediaStatus:mediaStatus]];
-  
+
   NSTimeInterval duration = mediaStatus.mediaInformation.streamDuration;
-  
+
   if (progressInterval != nil && mediaStatus != nil && mediaStatus.playerState != GCKMediaPlayerStateIdle && mediaStatus.playerState != GCKMediaPlayerStateUnknown) {
     if (progressTimer) {
       if ([progressTimer timeInterval] == progressInterval.doubleValue) return;

@@ -176,7 +176,7 @@ export default class RemoteMediaClient {
    * @param trackIds The media track IDs. If `undefined` or an empty array, the current set of active trackIds will be removed.
    */
   setActiveMediaTracks(trackIds?: number[]): Promise<void> {
-    return Native.setActiveTrackIds(trackIds)
+    return Native.setActiveMediaTracks(trackIds)
   }
 
   /**
@@ -204,7 +204,7 @@ export default class RemoteMediaClient {
   /**
    * Sets the stream volume.
    *
-   * @param playbackRate The new volume, between `0.0` and `1.0`.
+   * @param volume The new volume, between `0.0` and `1.0`.
    * @param customData Custom application-specific data to pass along with the request.
    */
   setStreamVolume(volume: number, customData?: object): Promise<void> {
