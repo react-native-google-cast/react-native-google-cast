@@ -54,8 +54,8 @@ export default interface MediaStatus {
   /** The current stream position from the start of the stream, in seconds */
   streamPosition: number
 
-  /** The video information. */
-  videoInfo: VideoInfo
+  /** The video information. If the video information of the current media was not received from the cast receiver, `null` will be returned. */
+  videoInfo?: VideoInfo | null
 
   /** The stream's volume, between 0.0 and 1.0 */
   volume: number

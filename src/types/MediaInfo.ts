@@ -44,14 +44,14 @@ export default interface MediaInfo {
     | MediaMetadata.TvShow
     | MediaMetadata.User
 
-  /** The length of the stream, in seconds, or `null` if it is a live stream. */
+  /** The length of the stream, in seconds, or `undefined` if it is a live stream. */
   streamDuration?: number
 
   /** The stream type. One of `buffered`, `live`, `none`. */
   streamType?: MediaStreamType
 
   /** The text track style for this stream. */
-  textTrackStyle?: TextTrackStyle
+  textTrackStyle?: TextTrackStyle | null
 
   // /** The VMAP request configuration if any. */
   // vmapAdsRequest?: VastAdsRequest

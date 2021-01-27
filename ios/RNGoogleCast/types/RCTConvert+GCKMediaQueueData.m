@@ -74,10 +74,6 @@
 
   json[@"repeatMode"] = [RCTConvert fromGCKMediaRepeatMode:data.repeatMode];
 
-  json[@"startIndex"] = @(data.startIndex);
-
-  json[@"startTime"] = @(data.startTime);
-
   json[@"type"] = [RCTConvert fromGCKMediaQueueType:data.queueType];
 
   return json;

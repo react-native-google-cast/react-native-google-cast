@@ -27,10 +27,10 @@ export default interface MediaQueueData {
   /** How to repeat the queue. */
   repeatMode?: MediaRepeatMode
 
-  /** The index of the item in the queue that should be used to start playback first. */
+  /** The index of the item in the queue that should be used to start playback first. Only valid for load requests. */
   startIndex?: number
 
-  /** Seconds (since the beginning of content) to start playback of the first item. */
+  /** Seconds (since the beginning of content) to start playback of the first item. Only valid for load requests. */
   startTime?: number
 
   /** Type of the queue. */

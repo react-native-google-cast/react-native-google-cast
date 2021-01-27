@@ -90,10 +90,6 @@ public class RNGCMediaQueueData {
 
     json.putString("repeatMode", RNGCMediaRepeatMode.toJson(data.getRepeatMode()));
 
-    json.putInt("startIndex", data.getStartIndex());
-
-    json.putDouble("startTime", data.getStartTime() / 1000.0);
-
     json.putString("type", RNGCMediaQueueType.toJson(data.getQueueType()));
 
     return json;

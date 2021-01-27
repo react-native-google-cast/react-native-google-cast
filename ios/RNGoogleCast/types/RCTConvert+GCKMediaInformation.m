@@ -3,12 +3,13 @@
 #import "RCTConvert+GCKMediaMetadata.m"
 #import "RCTConvert+GCKMediaStreamType.m"
 #import "RCTConvert+GCKMediaTrack.m"
+#import "RCTConvert+GCKMediaTextTrackStyle.m"
 #import <GoogleCast/GoogleCast.h>
 #import <React/RCTConvert.h>
 
 @implementation RCTConvert (GCKMediaInformation)
 
-+ (GCKMediaInformation *)GCKMediaInformation:(id)json {
++ (nonnull GCKMediaInformation *)GCKMediaInformation:(nonnull id)json {
   GCKMediaInformationBuilder *builder;
 
   #if GCK_VERSION_IS_AT_LEAST(4, 3, 4)
@@ -101,11 +102,11 @@
 
   json[@"contentId"] = info.contentID ?: [NSNull null];
 
+  json[@"contentType"] = info.contentType ?: [NSNull null];
+
   json[@"contentUrl"] = info.contentURL ?: [NSNull null];
 
   json[@"customData"] = info.customData ?: [NSNull null];
-
-  json[@"contentType"] = info.contentType ?: [NSNull null];
 
   json[@"entity"] = info.entity ?: [NSNull null];
 
@@ -123,6 +124,8 @@
 
   json[@"streamType"] = [RCTConvert fromGCKMediaStreamType:info.streamType];
 
+  json[@"textTrackStyle"] = [RCTConvert fromGCKMediaTextTrackStyle:info.textTrackStyle];
+  
   return json;
 }
 

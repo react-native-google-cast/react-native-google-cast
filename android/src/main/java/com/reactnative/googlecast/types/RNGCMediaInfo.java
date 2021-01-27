@@ -110,7 +110,9 @@ public class RNGCMediaInfo {
 
     json.putMap("metadata", RNGCMediaMetadata.toJson(info.getMetadata()));
 
-    json.putDouble("streamDuration", info.getStreamDuration() / 1000.0);
+    if (info.getStreamDuration() != MediaInfo.UNKNOWN_DURATION) {
+      json.putDouble("streamDuration", info.getStreamDuration() / 1000.0);
+    }
 
     json.putString("streamType", RNGCMediaStreamType.toJson(info.getStreamType()));
 

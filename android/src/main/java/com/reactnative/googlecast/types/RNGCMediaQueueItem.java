@@ -85,15 +85,21 @@ public class RNGCMediaQueueItem {
 
     json.putMap("customData", RNGCJSONObject.toJson(item.getCustomData()));
 
-    json.putInt("itemId", item.getItemId());
+    if (item.getItemId() != MediaQueueItem.INVALID_ITEM_ID) {
+      json.putInt("itemId", item.getItemId());
+    }
 
     json.putMap("mediaInfo", RNGCMediaInfo.toJson(item.getMedia()));
 
-    json.putDouble("playbackDuration", item.getPlaybackDuration());
+    if (item.getPlaybackDuration() != MediaQueueItem.DEFAULT_PLAYBACK_DURATION) {
+      json.putDouble("playbackDuration", item.getPlaybackDuration());
+    }
 
     json.putDouble("preloadTime", item.getPreloadTime());
 
-    json.putDouble("startTime", item.getStartTime());
+    if (!Double.isNaN(item.getStartTime())) {
+      json.putDouble("startTime", item.getStartTime());
+    }
 
     return json;
   }

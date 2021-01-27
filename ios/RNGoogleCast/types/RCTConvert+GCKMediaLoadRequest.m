@@ -5,7 +5,7 @@
 
 @implementation RCTConvert (GCKMediaLoadRequest)
 
-+ (GCKMediaLoadRequestData *)GCKMediaLoadRequestData:(id)json {
++ (nonnull GCKMediaLoadRequestData *)GCKMediaLoadRequestData:(nonnull id)json {
   GCKMediaLoadRequestDataBuilder *builder = [[GCKMediaLoadRequestDataBuilder alloc] init];
 
   if (json[@"activeTrackIds"]) {

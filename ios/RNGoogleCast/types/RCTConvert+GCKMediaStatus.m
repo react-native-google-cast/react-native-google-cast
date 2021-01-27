@@ -33,7 +33,7 @@
   json[@"loadingItemId"] = @(status.loadingItemID);
 
   json[@"mediaInfo"] =
-  status.mediaInformation == nil ? [NSNull null] : [RCTConvert fromGCKMediaInformation:status.mediaInformation];
+  [RCTConvert fromGCKMediaInformation:status.mediaInformation];
   
 //  json[@"mediaSessionId"] = @(status.mediaSessionID);
 
@@ -66,7 +66,7 @@
 
   json[@"streamPosition"] = @(status.streamPosition);
   
-  json[@"videoInfo"] = status.videoInfo == nil ? [NSNull null] : [RCTConvert fromGCKVideoInfo:status.videoInfo];
+  json[@"videoInfo"] = [RCTConvert fromGCKVideoInfo:status.videoInfo];
 
   json[@"volume"] = @(status.volume);
 

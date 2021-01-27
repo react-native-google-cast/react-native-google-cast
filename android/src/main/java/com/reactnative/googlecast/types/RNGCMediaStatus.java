@@ -40,7 +40,9 @@ public class RNGCMediaStatus {
 
     json.putBoolean("isMuted", status.isMute());
 
-    json.putInt("loadingItemId", status.getLoadingItemId());
+    if (status.getLoadingItemId() != MediaQueueItem.INVALID_ITEM_ID) {
+      json.putInt("loadingItemId", status.getLoadingItemId());
+    }
 
     json.putMap("mediaInfo", RNGCMediaInfo.toJson(status.getMediaInfo()));
 
@@ -49,7 +51,9 @@ public class RNGCMediaStatus {
     json.putString("playerState",
       RNGCPlayerState.toJson(status.getPlayerState()));
 
-    json.putInt("preloadedItemId", status.getPreloadedItemId());
+    if (status.getPreloadedItemId() != MediaQueueItem.INVALID_ITEM_ID) {
+      json.putInt("preloadedItemId", status.getPreloadedItemId());
+    }
 
     final WritableArray queueItems = Arguments.createArray();
     if (status.getQueueItems() != null) {

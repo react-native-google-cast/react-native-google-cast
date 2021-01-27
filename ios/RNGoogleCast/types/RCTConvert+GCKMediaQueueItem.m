@@ -73,11 +73,11 @@
     json[@"playbackDuration"] = @(item.playbackDuration);
   }
 
-  if (!isnan(item.preloadTime)) {
+  if (GCKIsValidTimeInterval(item.preloadTime)) {
     json[@"preloadTime"] = @(item.preloadTime);
   }
 
-  if (!isnan(item.startTime)) {
+  if (GCKIsValidTimeInterval(item.startTime)) {
     json[@"startTime"] = @(item.startTime);
   }
 

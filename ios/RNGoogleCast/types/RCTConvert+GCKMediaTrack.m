@@ -5,7 +5,7 @@
 
 @implementation RCTConvert (GCKMediaTrack)
 
-+ (GCKMediaTrack *)GCKMediaTrack:(id)json {
++ (nonnull GCKMediaTrack *)GCKMediaTrack:(nonnull id)json {
   return [[GCKMediaTrack alloc]
       initWithIdentifier:[RCTConvert NSInteger:json[@"id"]]
        contentIdentifier:json[@"contentId"]
