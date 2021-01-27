@@ -59,7 +59,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
      <string>_ABCD1234._googlecast._tcp</string>
    </array>
    <key>NSLocalNetworkUsageDescription</key>
-   <string>${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network.</string>
+   <string>${APP_DISPLAY_NAME} uses the local network to discover Cast-enabled devices on your WiFi network.</string>
    ```
 
    Make sure to replace `ABCD1234` with your receiver app id. If using the default receiver, you may delete that line.
