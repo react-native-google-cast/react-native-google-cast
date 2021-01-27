@@ -246,14 +246,14 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-google-cast (4.0.0):
+  - react-native-google-cast (4.0.1):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.0.0)
-  - react-native-google-cast/NoBluetooth (4.0.0):
+    - react-native-google-cast/NoBluetooth (= 4.0.1)
+  - react-native-google-cast/NoBluetooth (4.0.1):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.0.0):
+  - react-native-google-cast/RNGoogleCast (4.0.1):
     - PromisesObjC
     - React
   - react-native-safe-area-context (3.1.9):
@@ -488,7 +488,7 @@ SPEC CHECKSUMS:
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   google-cast-sdk-no-bluetooth: 815df973d547e06a90768f4a72220950cd32d8cb
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
-  OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
+  OpenSSL-Universal: ff34003318d5e1163e9529b084.0.18e389ffcdd
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Protobuf: 0cde852566359049847168e51bd1c690e0f70056
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
