@@ -6,7 +6,9 @@ sidebar_label: Events
 
 The library emits events to inform you about current state.
 
-> The new Hooks API automatically handles native events and updates your component state. If you're using functional components, it's recommended you use hooks instead of events.
+> The new [Hooks API](./hooks) automatically handles native events and updates your component state. If you're using functional components, it's recommended you use hooks instead of events.
+
+> Important: Each `on`method returns a `listener`. Make sure you call `listener.remove()` when you no longer need it.
 
 ## Cast State Events
 
@@ -39,54 +41,29 @@ const listener = sessionManager.onSessionStarted((session) => {
 
 For a full list of events see [SessionManager](../api/classes/sessionmanager).
 
-## Client Events
+## Media Status Events
 
-[RemoteMediaClient](../api/classes/remotemediaclient) controls media playback on a Cast receiver.
+When multiple senders are connected to the same receiver, it is important for each sender to be aware of the changes in the receiver even if those changes were initiated from other senders.
+
+> Note: This is important for all apps, not only those that explicitly support multiple senders, because some Cast devices have control inputs (remotes, buttons) that behave as virtual senders, affecting the status on the receiver.
 
 ```js
 // Status of the media has changed. The `mediaStatus` object contains the new status.
 client.onMediaStatusUpdated((mediaStatus) => {})
+
+// For convenience, if you only want to be notified when the playback starts or ends, use one of these events:
+client.onMediaPlaybackStarted((mediaStatus) => {})
+client.onMediaPlaybackEnded((mediaStatus) => {})
 ```
 
-<!-- For convenience, the following events are triggered in addition to `onMediaStatusUpdated` in these special cases (they're called after `onMediaStatusUpdated` if you're subscribed to both).
+Note that the media status is only updated when the status of the stream changes. Therefore, `mediaStatus.streamPosition` only reflects the time of the last status update.
+
+If you need to know the current progress in near real-time\*, use `onMedia` instead:
 
 ```js
-// Media started playing
-client.onMediaPlaybackStarted((mediaStatus) => {})
+client.onMediaProgressUpdated((streamPosition) => { ... })
+```
 
-// Media finished playing
-client.onMediaPlaybackEnded((mediaStatus) => {})
-``` -->
+By default, the position updates once per second. You may change the interval by passing a number of seconds as a parameter. For example, `client.onMediaProgressUpdated(() => {}, 0.5)` updates twice per second while `client.onMediaProgressUpdated(() => {}, 10)` would only update every 10 seconds.
 
-<!-- ## Channel Events
-
-A virtual communication channel for exchanging messages between a Cast sender (mobile app) and a Cast receiver (on Chromecast).
-
-Each channel is tagged with a unique namespace, so multiple channels may be multiplexed over a single network connection between a sender and a receiver.
-
-A channel must be registered by calling `GoogleCast.initChannel('urn:x-cast:...')` before it can be used. When the associated session is established, the channel will be connected automatically and can then send and receive messages.
-
-⚠️ To process custom events, you will need to create a custom receiver (CAF) as demonstrated in the [example project](example/receiver/index.html). Please note that, by default, CAF tries to parse the message as JSON (only the receiver does this, not the sender). More information in [this issue, specifically comment #7](https://issuetracker.google.com/issues/117136854#comment7).
-
-```js
-// Communication channel established
-GoogleCast.EventEmitter.addListener(
-  GoogleCast.CHANNEL_CONNECTED,
-  ({ namespace }) => {}
-)
-
-// Communication channel terminated
-GoogleCast.EventEmitter.addListener(
-  GoogleCast.CHANNEL_DISCONNECTED,
-  ({ namespace }) => {}
-)
-
-// Message received
-GoogleCast.EventEmitter.addListener(
-  GoogleCast.CHANNEL_MESSAGE_RECEIVED,
-  ({ namespace, message }) => {}
-)
-
-// Send message
-GoogleCast.sendMessage(namespace, message)
-``` -->
+> \* Note that the Cast device doesn't notify of the stream position in real-time. Hence, the stream position is an approximation as calculated from the last received stream information and the elapsed wall-time since that update. In practice, you should be seeing a close-enough estimate but it might be slightly delayed compared to the actual stream.

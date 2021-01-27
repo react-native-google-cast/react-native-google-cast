@@ -36,7 +36,7 @@ public class RNGCMediaQueueItem {
       }
     }
 
-    if (json.hasKey("activeTrackIds")) {
+    if (json.hasKey("activeTrackIds") && json.getArray("activeTrackIds") != null) {
       ReadableArray trackIdsArray = json.getArray("activeTrackIds");
       long[] activeTrackIds = new long[trackIdsArray.size()];
       for (int i = 0; i < trackIdsArray.size(); i++) {
@@ -73,13 +73,13 @@ public class RNGCMediaQueueItem {
 
     final WritableMap json = new WritableNativeMap();
 
-    final WritableArray activeTrackIds = Arguments.createArray();
     if (item.getActiveTrackIds() != null) {
+      final WritableArray activeTrackIds = Arguments.createArray();
       for (long activeTrackId: item.getActiveTrackIds()) {
         activeTrackIds.pushInt((int) activeTrackId);
       }
+      json.putArray("activeTrackIds", activeTrackIds);
     }
-    json.putArray("activeTrackIds", activeTrackIds);
 
     json.putBoolean("autoplay", item.getAutoplay());
 

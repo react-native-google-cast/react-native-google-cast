@@ -3,6 +3,7 @@ package com.reactnative.googlecast.types;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -17,6 +18,14 @@ public class RNGCMediaStatus {
     if (status == null) return null;
 
     final WritableMap json = Arguments.createMap();
+
+    if (status.getActiveTrackIds() != null) {
+      final WritableArray activeTrackIds = Arguments.createArray();
+      for (long activeTrackId: status.getActiveTrackIds()) {
+        activeTrackIds.pushInt((int) activeTrackId);
+      }
+      json.putArray("activeTrackIds", activeTrackIds);
+    }
 
     json.putInt("currentItemId", status.getCurrentItemId());
 

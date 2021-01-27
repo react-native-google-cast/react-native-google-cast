@@ -7,6 +7,7 @@ import Formats from './screens/Formats'
 import Home from './screens/Home'
 import Queue from './screens/Queue'
 import Session from './screens/Session'
+import Tracks from './screens/Tracks'
 
 const Stack = createStackNavigator()
 
@@ -33,6 +34,7 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Queue" component={Queue} />
         <Stack.Screen name="Session" component={Session} />
+        <Stack.Screen name="Tracks" component={Tracks} />
       </Stack.Navigator>
     </NavigationContainer>
   )

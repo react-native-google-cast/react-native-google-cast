@@ -6,7 +6,7 @@ import MediaRepeatMode from './MediaRepeatMode'
 import VideoInfo from './VideoInfo'
 
 /**
- * A class that holds status information about some media or media queue. The current `MediaStatus` can be obtained from the {@link RemoteMediaClient}.
+ * A class that holds status information about some media or media queue. The current `MediaStatus` can be obtained using `getMediaStatus` or `onMediaStatusUpdated` in {@link RemoteMediaClient}, or using the `useMediaStatus` hook.
  *
  * Each media session is associated with a media queue on the receiver application. The list of media items in the current queue can be obtained from `queueItems`. Media items are assigned a unique item ID. Accessors for individual item and values of properties of the queue are also provided here.
  *
@@ -15,7 +15,10 @@ import VideoInfo from './VideoInfo'
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaStatus) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_status) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media)
  */
 export default interface MediaStatus {
-  /** The ID of the item that that is currently active in the queue (it may not be playing). */
+  /** The list of active {@link MediaTrack} IDs. */
+  activeTrackIds?: number[]
+
+  /** The itemId of the {@link MediaQueueItem} that that is currently active in the queue (it may not be playing). */
   currentItemId?: number
 
   /** Any custom data that is associated with the media item. */
@@ -27,7 +30,7 @@ export default interface MediaStatus {
   /** The stream's mute state. */
   isMuted: boolean
 
-  /** The ID of the item that is currently loading (but isn't active in the queue) on the receiver. */
+  /** The itemId of the {@link MediaQueueItem} that is currently loading (but isn't active in the queue) on the receiver. */
   loadingItemId?: number
 
   /** The current media information. */
@@ -39,7 +42,7 @@ export default interface MediaStatus {
   /** The current player state. */
   playerState: MediaPlayerState
 
-  /** ID of the next Item, only available if it has been preloaded. On the receiver media items can be preloaded and cached temporarily in memory, so when they are loaded later on, the process is faster (as the media does not have to be fetched from the network). */
+  /** ID of the next {@link MediaQueueItem}, only available if it has been preloaded. On the receiver media items can be preloaded and cached temporarily in memory, so when they are loaded later on, the process is faster (as the media does not have to be fetched from the network). */
   preloadedItemId?: number
 
   /** Readonly list of items in the queue. */

@@ -10,7 +10,7 @@ import MediaInfo from './MediaInfo'
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/MediaQueueItem) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_queue_item) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.QueueItem)
  */
 export default interface MediaQueueItem {
-  /** Array of trackIds that should be active. If the array is not provided, the default tracks will be active. If two incompatible trackIds are provided (for example two active audio tracks) the command will fail with INVALID_PARAMETER. */
+  /** Array of {@link MediaTrack} IDs that should be active. The provided trackIds need to be those from `mediaInfo.mediaTracks[].id`. If two incompatible trackIds are provided (for example two active audio tracks) the command will fail with INVALID_PARAMETER. */
   activeTrackIds?: number[]
 
   /** Whether the item should automatically start playback when it becomes the current item in the queue. If `false`, the queue will pause when it reaches this item. The default value is `true`. */

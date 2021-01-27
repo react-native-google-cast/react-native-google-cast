@@ -4,11 +4,11 @@ title: Installation
 sidebar_label: Installation
 ---
 
-`$ npm install react-native-google-cast@next --save`
+`$ npm install react-native-google-cast --save`
 
 or
 
-`$ yarn add react-native-google-cast@next`
+`$ yarn add react-native-google-cast`
 
 ## iOS
 

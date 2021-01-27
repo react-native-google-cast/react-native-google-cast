@@ -184,7 +184,7 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   }
 
   @ReactMethod
-  public void setActiveMediaTracks(final ReadableArray trackIds, final Promise promise) {
+  public void setActiveTrackIds(final ReadableArray trackIds, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {
       @Override
       public PendingResult execute(RemoteMediaClient client) {

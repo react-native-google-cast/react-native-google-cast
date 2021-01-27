@@ -169,7 +169,7 @@ RCT_EXPORT_METHOD(seek: (GCKMediaSeekOptions *) options
   }];
 }
 
-RCT_EXPORT_METHOD(setActiveMediaTracks: (NSArray<NSNumber *> *) trackIds
+RCT_EXPORT_METHOD(setActiveTrackIds: (NSArray<NSNumber *> *) trackIds
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
 

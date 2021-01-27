@@ -169,14 +169,21 @@ export default class RemoteMediaClient {
   }
 
   /**
+   * @deprecated Use `setActiveTrackIds` instead.
+   */
+  setActiveMediaTracks(trackIds: number[] = []): Promise<void> {
+    return Native.setActiveTrackIds(trackIds)
+  }
+
+  /**
    * Sets the active media tracks.
    *
    * The request will fail if there is no current media status.
    *
-   * @param trackIds The media track IDs. If `undefined` or an empty array, the current set of active trackIds will be removed.
+   * @param trackIds The media track IDs. If `undefined` or an empty array, the current set of active trackIds will be removed, and default ones will be used instead.
    */
-  setActiveMediaTracks(trackIds?: number[]): Promise<void> {
-    return Native.setActiveMediaTracks(trackIds)
+  setActiveTrackIds(trackIds: number[] = []): Promise<void> {
+    return Native.setActiveTrackIds(trackIds)
   }
 
   /**

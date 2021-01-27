@@ -15,7 +15,7 @@
 
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
-//  json[@"activeTrackIds"] = status.activeTrackIDs;
+  json[@"activeTrackIds"] = status.activeTrackIDs;
 
 //  json[@"adBreakStatus"] = [RCTConvert fromGCKAdBreakStatus: status.adBreakStatus];
 

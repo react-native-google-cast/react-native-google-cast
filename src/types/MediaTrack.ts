@@ -13,7 +13,7 @@ export default interface MediaTrack {
   /** The custom data object for this media track, or `undefined` if none was specified. */
   customData?: object
 
-  /** The unique ID of the media track. */
+  /** The unique ID of the media track. Used for setting `activeTrackIds`. */
   id: number
 
   /** The language of this media track in RFC-5464 format, or `undefined` if none was specified. Required for `subtitles` type but optional otherwise. */
