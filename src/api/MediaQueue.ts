@@ -18,8 +18,8 @@ export default class MediaQueue implements MediaQueueState {
 	count: number;
 	queuedIds: number[];
 
-	private itemPromises: Promise<MediaQueueItem>[] = [];
-	private itemResolvers: Resolvable<MediaQueueItem>[] = [];
+	private itemPromises: Array<Promise<MediaQueueItem>> = [];
+	private itemResolvers: Array<Resolvable<MediaQueueItem>> = [];
 
 	private constructor(state: MediaQueueState) {
 		this.count = state.count;
