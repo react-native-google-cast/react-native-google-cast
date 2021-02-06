@@ -6,7 +6,7 @@ const EventEmitter = new NativeEventEmitter(Native)
 
 type Resolvable<T> = {
 	resolve( value: T ): void,
-	reject( reason: any ): void,
+	reject(): void,
 }
 
 interface MediaQueueState {
@@ -32,7 +32,7 @@ export default class MediaQueue implements MediaQueueState {
 		});
 	}
 
-	static async getState(): Promise<MediaQueueState | null> {
+	static async getState(): Promise<MediaQueue | null> {
 		const state = await Native.getState();
 		if (!state) return null;
 

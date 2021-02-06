@@ -19,7 +19,7 @@ import MediaQueue from './MediaQueue';
  * ```
  */
 export default function useQueue() {
-  const [queue, setQueue] = useState<any>(null);
+  const [queue, setQueue] = useState<MediaQueue | null>(null);
   useEffect(() => {
     MediaQueue.getState().then(state => setQueue(state));
 
