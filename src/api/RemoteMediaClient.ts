@@ -35,9 +35,6 @@ const EventEmitter = new NativeEventEmitter(Native)
  * ```
  */
 export default class RemoteMediaClient {
-  // getMediaQueue(): Promise<MediaQueue> {
-  // }
-
   /**
    * The current media status, or `null` if there isn't a media session.
    */
