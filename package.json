@@ -47,7 +47,9 @@
     "pods:playground": "cd playground && pod-install --quiet",
     "release": "dotenv release-it",
     "test": "jest",
-    "typescript": "tsc --noEmit"
+    "typescript": "tsc --noEmit",
+    "prepare": "bob build",
+    "build": "bob build"
   },
   "peerDependencies": {
     "react": ">=15.1 || >=16.0.0",
