@@ -6,6 +6,7 @@
 
 @interface RCTConvert (GCKMediaPlayerIdleReason)
 
++ (GCKMediaPlayerIdleReason)GCKMediaPlayerIdleReason:(id)json;
 + (nonnull id)fromGCKMediaPlayerIdleReason:(GCKMediaPlayerIdleReason)reason;
 
 @end

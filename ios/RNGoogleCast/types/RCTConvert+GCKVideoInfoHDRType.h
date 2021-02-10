@@ -6,6 +6,7 @@
 
 @interface RCTConvert (GCKVideoInfoHDRType)
 
++ (GCKVideoInfoHDRType)GCKVideoInfoHDRType:(id)json;
 + (nonnull id)fromGCKVideoInfoHDRType:(GCKVideoInfoHDRType)type;
 
 @end

@@ -6,6 +6,7 @@
 
 @interface RCTConvert (GCKHLSSegmentFormat)
 
++ (GCKHLSSegmentFormat)GCKHLSSegmentFormat:(id)json;
 + (nonnull id)fromGCKHLSSegmentFormat:(GCKHLSSegmentFormat)trackType;
 
 @end

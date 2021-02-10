@@ -6,6 +6,7 @@
 
 @interface RCTConvert (GCKCastState)
 
++ (GCKCastState)GCKCastState:(id)json;
 + (nonnull id)fromGCKCastState:(GCKCastState)state;
 
 @end
