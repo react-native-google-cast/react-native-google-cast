@@ -1,7 +1,7 @@
-#import "RCTConvert+GCKMediaTextTrackSubtype.m"
-#import "RCTConvert+GCKMediaTrackType.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaTrack.h"
+
+#import "RCTConvert+GCKMediaTextTrackSubtype.h"
+#import "RCTConvert+GCKMediaTrackType.h"
 
 @implementation RCTConvert (GCKMediaTrack)
 

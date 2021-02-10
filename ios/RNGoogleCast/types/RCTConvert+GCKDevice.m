@@ -1,6 +1,6 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
-#import "RCTConvert+GCKImage.m"
+#import "RCTConvert+GCKDevice.h"
+
+#import "RCTConvert+GCKImage.h"
 
 @implementation RCTConvert (GCKDevice)
 

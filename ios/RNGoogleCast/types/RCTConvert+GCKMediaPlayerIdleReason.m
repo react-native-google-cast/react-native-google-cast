@@ -1,5 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaPlayerIdleReason.h"
 
 @implementation RCTConvert (GCKMediaPlayerIdleReason)
 

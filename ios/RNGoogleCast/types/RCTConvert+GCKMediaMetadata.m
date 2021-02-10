@@ -1,8 +1,8 @@
-#import "RCTConvert+GCKMediaMetadataType.m"
-#import "RCTConvert+GCKImage.m"
-#import "RCTConvert+ISO8601Date.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaMetadata.h"
+
+#import "RCTConvert+GCKMediaMetadataType.h"
+#import "RCTConvert+GCKImage.h"
+#import "RCTConvert+ISO8601Date.h"
 
 @implementation RCTConvert (GCKMediaMetadata)
 

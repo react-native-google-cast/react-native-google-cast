@@ -1,5 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaQueueContainerType.h"
 
 @implementation RCTConvert (GCKMediaQueueContainerType)
 

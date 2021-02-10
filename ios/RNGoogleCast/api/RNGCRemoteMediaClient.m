@@ -1,9 +1,9 @@
 #import "RNGCRemoteMediaClient.h"
-#import "../types/RCTConvert+GCKMediaInformation.m"
-#import "../types/RCTConvert+GCKMediaLoadRequest.m"
-#import "../types/RCTConvert+GCKMediaStatus.m"
-#import "../types/RCTConvert+GCKMediaTextTrackStyle.m"
-#import "../types/RCTConvert+GCKRemoteMediaClient.m"
+#import "../types/RCTConvert+GCKMediaInformation.h"
+#import "../types/RCTConvert+GCKMediaLoadRequest.h"
+#import "../types/RCTConvert+GCKMediaStatus.h"
+#import "../types/RCTConvert+GCKMediaTextTrackStyle.h"
+#import "../types/RCTConvert+GCKRemoteMediaClient.h"
 #import "RNGCRequest.h"
 #import <Foundation/Foundation.h>
 

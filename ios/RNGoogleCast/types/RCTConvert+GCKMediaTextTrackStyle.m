@@ -1,10 +1,10 @@
-#import "RCTConvert+GCKColor.m"
-#import "RCTConvert+GCKMediaTextTrackStyleEdgeType.m"
-#import "RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m"
-#import "RCTConvert+GCKMediaTextTrackStyleFontStyle.m"
-#import "RCTConvert+GCKMediaTextTrackStyleWindowType.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaTextTrackStyle.h"
+
+#import "RCTConvert+GCKColor.h"
+#import "RCTConvert+GCKMediaTextTrackStyleEdgeType.h"
+#import "RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.h"
+#import "RCTConvert+GCKMediaTextTrackStyleFontStyle.h"
+#import "RCTConvert+GCKMediaTextTrackStyleWindowType.h"
 
 @implementation RCTConvert (GCKMediaTextTrackStyle)
 

@@ -1,6 +1,6 @@
 #import "RNGCSessionManager.h"
 #import "RNGCRemoteMediaClient.h"
-#import "../types/RCTConvert+GCKCastSession.m"
+#import "../types/RCTConvert+GCKCastSession.h"
 #import <Foundation/Foundation.h>
 
 @implementation RNGCSessionManager {
