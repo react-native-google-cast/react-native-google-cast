@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaTextTrackStyleFontStyle)
 
-+ (GCKMediaTextTrackStyleFontStyle)GCKMediaTextTrackStyleFontStyle:(id)json;
++ (GCKMediaTextTrackStyleFontStyle)GCKMediaTextTrackStyleFontStyle:(nullable id)json;
 + (nonnull id)fromGCKMediaTextTrackStyleFontStyle:
 (GCKMediaTextTrackStyleFontStyle)type;
 

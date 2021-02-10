@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaTextTrackStyleEdgeType)
 
-+ (GCKMediaTextTrackStyleEdgeType)GCKMediaTextTrackStyleEdgeType:(id)json;
++ (GCKMediaTextTrackStyleEdgeType)GCKMediaTextTrackStyleEdgeType:(nullable id)json;
 + (nonnull id)fromGCKMediaTextTrackStyleEdgeType:(GCKMediaTextTrackStyleEdgeType)type;
 
 @end

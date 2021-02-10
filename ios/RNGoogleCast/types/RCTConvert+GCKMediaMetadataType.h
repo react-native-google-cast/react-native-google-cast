@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaMetadataType)
 
-+ (GCKMediaMetadataType)GCKMediaMetadataType:(id)json;
++ (GCKMediaMetadataType)GCKMediaMetadataType:(nullable id)json;
 + (nonnull id)fromGCKMediaMetadataType:(GCKMediaMetadataType)metadataType;
 
 @end

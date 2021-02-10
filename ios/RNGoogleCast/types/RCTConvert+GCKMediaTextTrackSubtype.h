@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaTextTrackSubtype)
 
-+ (GCKMediaTextTrackSubtype)GCKMediaTextTrackSubtype:(id)json;
++ (GCKMediaTextTrackSubtype)GCKMediaTextTrackSubtype:(nullable id)json;
 + (nonnull id)fromGCKMediaTextTrackSubtype:(GCKMediaTextTrackSubtype)subtype;
 
 @end

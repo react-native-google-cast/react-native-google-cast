@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaStreamType)
 
-+ (GCKMediaStreamType)GCKMediaStreamType:(id)json;
++ (GCKMediaStreamType)GCKMediaStreamType:(nullable id)json;
 + (nonnull id)fromGCKMediaStreamType:(GCKMediaStreamType)streamType;
 
 @end

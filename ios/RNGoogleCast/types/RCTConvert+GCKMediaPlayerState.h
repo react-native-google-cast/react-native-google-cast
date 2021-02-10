@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaPlayerState)
 
-+ (GCKMediaPlayerState)GCKMediaPlayerState:(id)json;
++ (GCKMediaPlayerState)GCKMediaPlayerState:(nullable id)json;
 + (nonnull id)fromGCKMediaPlayerState:(GCKMediaPlayerState)state;
 
 @end

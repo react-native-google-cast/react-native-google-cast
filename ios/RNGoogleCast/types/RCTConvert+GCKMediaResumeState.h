@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaResumeState)
 
-+ (GCKMediaResumeState)GCKMediaResumeState:(id)json;
++ (GCKMediaResumeState)GCKMediaResumeState:(nullable id)json;
 + (nonnull id)fromGCKMediaResumeState:(GCKMediaResumeState)state;
 
 @end

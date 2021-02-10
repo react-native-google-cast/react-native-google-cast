@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaRepeatMode)
 
-+ (GCKMediaRepeatMode)GCKMediaRepeatMode:(id)json;
++ (GCKMediaRepeatMode)GCKMediaRepeatMode:(nullable id)json;
 + (nonnull id)fromGCKMediaRepeatMode:(GCKMediaRepeatMode)mode;
 
 @end

@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaQueueType)
 
-+ (GCKMediaQueueType)GCKMediaQueueType:(id)json;
++ (GCKMediaQueueType)GCKMediaQueueType:(nullable id)json;
 + (nonnull id)fromGCKMediaQueueType:(GCKMediaQueueType)type;
 
 @end

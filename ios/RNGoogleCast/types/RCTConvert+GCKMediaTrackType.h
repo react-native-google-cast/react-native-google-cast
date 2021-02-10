@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaTrackType)
 
-+ (GCKMediaTrackType)GCKMediaTrackType:(id)json;
++ (GCKMediaTrackType)GCKMediaTrackType:(nullable id)json;
 + (nonnull id)fromGCKMediaTrackType:(GCKMediaTrackType)trackType;
 
 @end

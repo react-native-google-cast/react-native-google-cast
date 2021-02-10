@@ -6,7 +6,7 @@
 
 @interface RCTConvert (GCKMediaTextTrackStyleWindowType)
 
-+ (GCKMediaTextTrackStyleWindowType)GCKMediaTextTrackStyleWindowType:(id)json;
++ (GCKMediaTextTrackStyleWindowType)GCKMediaTextTrackStyleWindowType:(nullable id)json;
 + (nonnull id)fromGCKMediaTextTrackStyleWindowType:
 (GCKMediaTextTrackStyleWindowType)type;
 
