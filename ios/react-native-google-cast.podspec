@@ -17,6 +17,8 @@ Pod::Spec.new do |s|
   }
   s.default_subspec = 'NoBluetooth'
 
+  s.static_framework = true
+
   s.dependency 'React'
 
   s.subspec 'GuestMode' do |ss|
