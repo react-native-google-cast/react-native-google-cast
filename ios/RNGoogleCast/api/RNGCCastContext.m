@@ -1,6 +1,6 @@
 #import "RNGCCastContext.h"
 #import "RNGCSessionManager.h"
-#import "../types/RCTConvert+GCKCastState.m"
+#import "../types/RCTConvert+GCKCastState.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTConvert.h>

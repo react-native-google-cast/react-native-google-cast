@@ -1,5 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaPlayerState.h"
 
 @implementation RCTConvert (GCKMediaPlayerState)
 

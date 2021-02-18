@@ -1,6 +1,6 @@
-#import "RCTConvert+GCKMediaResumeState.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaSeekOptions.h"
+
+#import "RCTConvert+GCKMediaResumeState.h"
 
 @implementation RCTConvert (GCKMediaSeekOptions)
 

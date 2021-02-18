@@ -1,5 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKRemoteMediaClient.h"
 
 @implementation RCTConvert (GCKRemoteMediaClient)
 

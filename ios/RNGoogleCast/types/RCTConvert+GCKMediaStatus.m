@@ -1,12 +1,12 @@
-#import "RCTConvert+GCKMediaPlayerIdleReason.m"
-#import "RCTConvert+GCKMediaPlayerState.m"
-#import "RCTConvert+GCKMediaInformation.m"
-#import "RCTConvert+GCKMediaRepeatMode.m"
-#import "RCTConvert+GCKMediaQueueItem.m"
-#import "RCTConvert+GCKVideoInfo.m"
-#import "RCTConvert+GCKAdBreakStatus.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaStatus.h"
+
+#import "RCTConvert+GCKMediaPlayerIdleReason.h"
+#import "RCTConvert+GCKMediaPlayerState.h"
+#import "RCTConvert+GCKMediaInformation.h"
+#import "RCTConvert+GCKMediaRepeatMode.h"
+#import "RCTConvert+GCKMediaQueueItem.h"
+#import "RCTConvert+GCKVideoInfo.h"
+#import "RCTConvert+GCKAdBreakStatus.h"
 
 @implementation RCTConvert (GCKMediaStatus)
 

@@ -1,5 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKCastSession.h"
 
 @implementation RCTConvert (GCKCastSession)
 
