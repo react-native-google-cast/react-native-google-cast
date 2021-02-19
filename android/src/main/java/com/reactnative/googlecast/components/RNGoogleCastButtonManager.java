@@ -16,15 +16,21 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class RNGoogleCastButtonManager
     extends SimpleViewManager<MediaRouteButton> {
 
   public static final String REACT_CLASS = "RNGoogleCastButton";
   private Integer mColor = null;
-  private static MediaRouteButton currentInstance;
 
+  protected static List<MediaRouteButton> currentInstances = new ArrayList<>();
+
+  // there can be multiple screens that have a cast button, we use the latest one
   public static MediaRouteButton getCurrent() {
-    return currentInstance;
+    return currentInstances.get(currentInstances.size() - 1);
   }
 
   @Override
@@ -38,8 +44,6 @@ public class RNGoogleCastButtonManager
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
     CastButtonFactory.setUpMediaRouteButton(context, button);
-
-    currentInstance = button;
 
     updateButtonState(button, castContext.getCastState());
 
@@ -100,6 +104,18 @@ public class RNGoogleCastButtonManager
 
       Drawable wrapDrawable = DrawableCompat.wrap(mRemoteIndicatorDrawable);
       DrawableCompat.setTint(wrapDrawable, color);
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+      super.onDetachedFromWindow();
+      RNGoogleCastButtonManager.currentInstances.remove(this);
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+      super.onAttachedToWindow();
+      RNGoogleCastButtonManager.currentInstances.add(this);
     }
   }
 }
