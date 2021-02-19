@@ -33,6 +33,8 @@ public class RNGCCastContext
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCCastContext";
 
+  private boolean mListenersAttached = false;
+
   public RNGCCastContext(final ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -136,6 +138,9 @@ public class RNGCCastContext
 
   @Override
   public void onHostResume() {
+    if(mListenersAttached) {
+      return;
+    }
     final ReactApplicationContext reactContext = getReactApplicationContext();
 
     reactContext.runOnUiQueueThread(new Runnable() {
@@ -146,10 +151,11 @@ public class RNGCCastContext
       }
     });
 
+    mListenersAttached = true;
   }
 
   @Override
-  public void onHostPause() {
+  public void onHostDestroy() {
     final ReactApplicationContext reactContext = getReactApplicationContext();
 
     reactContext.runOnUiQueueThread(new Runnable() {
@@ -159,9 +165,10 @@ public class RNGCCastContext
         castContext.removeCastStateListener(castStateListener);
       }
     });
+    mListenersAttached = false;
   }
 
   @Override
-  public void onHostDestroy() {
+  public void onHostPause() {
   }
 }
