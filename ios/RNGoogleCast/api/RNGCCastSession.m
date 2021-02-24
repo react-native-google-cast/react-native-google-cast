@@ -59,6 +59,7 @@ RCT_EXPORT_MODULE();
 }
 
 - (void)stopObserving {
+  if (!hasListeners) { return; }
   hasListeners = NO;
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKCastSession *session = [GCKCastContext.sharedInstance.sessionManager currentCastSession];
