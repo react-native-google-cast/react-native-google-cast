@@ -44,6 +44,7 @@ RCT_EXPORT_MODULE();
 
 // Called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
+  if (!hasListeners) { return; }
   hasListeners = NO;
   // Remove upstream listeners, stop unnecessary background tasks
   [[NSNotificationCenter defaultCenter]
