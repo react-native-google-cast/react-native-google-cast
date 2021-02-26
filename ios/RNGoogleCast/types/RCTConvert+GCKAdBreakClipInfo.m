@@ -1,6 +1,6 @@
-#import "RCTConvert+GCKHLSSegmentFormat.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKAdBreakClipInfo.h"
+
+#import "RCTConvert+GCKHLSSegmentFormat.h"
 
 @implementation RCTConvert (GCKAdBreakClipInfo)
 

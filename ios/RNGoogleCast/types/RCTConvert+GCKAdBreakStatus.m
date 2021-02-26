@@ -1,5 +1,4 @@
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKAdBreakStatus.h"
 
 @implementation RCTConvert (GCKAdBreakStatus)
 

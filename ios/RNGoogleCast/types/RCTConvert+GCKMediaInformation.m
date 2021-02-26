@@ -1,11 +1,11 @@
-#import "RCTConvert+GCKAdBreakClipInfo.m"
-#import "RCTConvert+GCKAdBreakInfo.m"
-#import "RCTConvert+GCKMediaMetadata.m"
-#import "RCTConvert+GCKMediaStreamType.m"
-#import "RCTConvert+GCKMediaTrack.m"
-#import "RCTConvert+GCKMediaTextTrackStyle.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaInformation.h"
+
+#import "RCTConvert+GCKAdBreakClipInfo.h"
+#import "RCTConvert+GCKAdBreakInfo.h"
+#import "RCTConvert+GCKMediaMetadata.h"
+#import "RCTConvert+GCKMediaStreamType.h"
+#import "RCTConvert+GCKMediaTrack.h"
+#import "RCTConvert+GCKMediaTextTrackStyle.h"
 
 @implementation RCTConvert (GCKMediaInformation)
 

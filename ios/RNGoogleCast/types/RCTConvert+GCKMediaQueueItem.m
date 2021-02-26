@@ -1,6 +1,6 @@
-#import "RCTConvert+GCKMediaInformation.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKMediaQueueItem.h"
+
+#import "RCTConvert+GCKMediaInformation.h"
 
 @implementation RCTConvert (GCKMediaQueueItem)
 

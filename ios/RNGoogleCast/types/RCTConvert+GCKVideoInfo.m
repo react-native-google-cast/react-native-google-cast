@@ -1,6 +1,6 @@
-#import "RCTConvert+GCKVideoInfoHDRType.m"
-#import <GoogleCast/GoogleCast.h>
-#import <React/RCTConvert.h>
+#import "RCTConvert+GCKVideoInfo.h"
+
+#import "RCTConvert+GCKVideoInfoHDRType.h"
 
 @implementation RCTConvert (GCKVideoInfo)
 
