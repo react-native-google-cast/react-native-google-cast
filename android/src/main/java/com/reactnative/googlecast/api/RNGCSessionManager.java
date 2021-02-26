@@ -36,6 +36,8 @@ public class RNGCSessionManager
   public static final String SESSION_ENDING = "GoogleCast:SessionEnding";
   public static final String SESSION_ENDED = "GoogleCast:SessionEnded";
 
+  private boolean mListenersAttached = false;
+
   public RNGCSessionManager(ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -169,6 +171,9 @@ public class RNGCSessionManager
 
   @Override
   public void onHostResume() {
+    if(mListenersAttached) {
+      return;
+    }
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
@@ -176,10 +181,11 @@ public class RNGCSessionManager
           CastSession.class);
       }
     });
+    mListenersAttached = true;
   }
 
   @Override
-  public void onHostPause() {
+  public void onHostDestroy() {
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
@@ -187,10 +193,11 @@ public class RNGCSessionManager
           CastSession.class);
       }
     });
+    mListenersAttached = false;
   }
 
   @Override
-  public void onHostDestroy() {
+  public void onHostPause() {
   }
 
   private void sendEvent(String eventName, @Nullable WritableMap params) {

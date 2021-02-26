@@ -39,6 +39,8 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCRemoteMediaClient";
 
+  private boolean mListenersAttached = false;
+
   public static final String MEDIA_PROGRESS_UPDATED =
     "GoogleCast:MediaProgressUpdated";
   public static final String MEDIA_STATUS_UPDATED =
@@ -335,6 +337,9 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
 
   @Override
   public void onHostResume() {
+    if(mListenersAttached) {
+      return;
+    }
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
@@ -348,10 +353,11 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
         }
       }
     });
+    mListenersAttached = true;
   }
 
   @Override
-  public void onHostPause() {
+  public void onHostDestroy() {
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
@@ -365,9 +371,10 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
         }
       }
     });
+    mListenersAttached = false;
   }
 
   @Override
-  public void onHostDestroy() {
+  public void onHostPause() {
   }
 }

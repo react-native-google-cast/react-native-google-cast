@@ -42,6 +42,8 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
   @VisibleForTesting
   public static final String REACT_CLASS = "RNGCCastSession";
 
+  private boolean mListenersAttached = false;
+
   public RNGCCastSession(ReactApplicationContext reactContext) {
     super(reactContext);
 
@@ -256,6 +258,9 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
 
   @Override
   public void onHostResume() {
+    if(mListenersAttached) {
+      return;
+    }
     final ReactApplicationContext reactContext = getReactApplicationContext();
 
     reactContext.runOnUiQueueThread(new Runnable() {
@@ -270,10 +275,11 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
         }
       }
     });
+    mListenersAttached = true;
   }
 
   @Override
-  public void onHostPause() {
+  public void onHostDestroy() {
     final ReactApplicationContext reactContext = getReactApplicationContext();
 
     reactContext.runOnUiQueueThread(new Runnable() {
@@ -288,9 +294,10 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
         }
       }
     });
+    mListenersAttached = false;
   }
 
   @Override
-  public void onHostDestroy() {
+  public void onHostPause() {
   }
 }
