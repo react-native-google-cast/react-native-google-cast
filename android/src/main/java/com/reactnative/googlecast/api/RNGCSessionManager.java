@@ -171,9 +171,8 @@ public class RNGCSessionManager
 
   @Override
   public void onHostResume() {
-    if(mListenersAttached) {
-      return;
-    }
+    if (mListenersAttached) { return; }
+
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {

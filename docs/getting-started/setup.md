@@ -56,13 +56,13 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
    <key>NSBonjourServices</key>
    <array>
      <string>_googlecast._tcp</string>
-     <string>_ABCD1234._googlecast._tcp</string>
+     <string>_CC1AD845._googlecast._tcp</string>
    </array>
    <key>NSLocalNetworkUsageDescription</key>
    <string>${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network.</string>
    ```
 
-   Make sure to replace `ABCD1234` with your receiver app id. If using the default receiver, you may delete that line.
+   If using a custom receiver, make sure to replace `CC1AD845` with your custom receiver app id.
 
    You may also customize the local network usage description.
 
@@ -82,7 +82,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
 
    - or setting [`startDiscoveryAfterFirstTapOnCastButton`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a1e701e7d1852d1e09ec2aee936b46413) to `false` (only available on Google Cast iOS SDK 4.5.3+). In this case, discovery will start as soon as the SDK is initialized.
 
-     ```swift
+     ```obj-c
      options.startDiscoveryAfterFirstTapOnCastButton = false
      ```
 

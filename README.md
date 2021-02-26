@@ -26,6 +26,10 @@ Refer to the [example](example/) folder to find a React Native version of the Ca
 
 Refer to the [playground](playground/) folder to find a sample app demonstrating the available APIs provided by the library.
 
+## Expo
+
+As this library requires native dependencies that are not available in the default Expo bundle, you'll need to [eject to bare workflow](https://docs.expo.io/bare/customizing/). That will enable you to continue using Expo for the parts of the app that don't need casting, and then test Cast-specific functionality in a standalone build.
+
 ## Troubleshooting
 
 See [Troubleshooting](https://react-native-google-cast.github.io/docs/getting-started/troubleshooting) in the docs.

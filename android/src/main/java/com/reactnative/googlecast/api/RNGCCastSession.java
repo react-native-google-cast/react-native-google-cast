@@ -258,9 +258,8 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
 
   @Override
   public void onHostResume() {
-    if(mListenersAttached) {
-      return;
-    }
+    if (mListenersAttached) { return; }
+
     final ReactApplicationContext reactContext = getReactApplicationContext();
 
     reactContext.runOnUiQueueThread(new Runnable() {

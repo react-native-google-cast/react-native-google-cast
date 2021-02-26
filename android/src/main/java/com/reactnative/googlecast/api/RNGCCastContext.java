@@ -138,9 +138,8 @@ public class RNGCCastContext
 
   @Override
   public void onHostResume() {
-    if(mListenersAttached) {
-      return;
-    }
+    if (mListenersAttached) { return; }
+
     final ReactApplicationContext reactContext = getReactApplicationContext();
 
     reactContext.runOnUiQueueThread(new Runnable() {
