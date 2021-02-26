@@ -246,14 +246,14 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-google-cast (4.0.1):
+  - react-native-google-cast (4.0.2):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.0.1)
-  - react-native-google-cast/NoBluetooth (4.0.1):
+    - react-native-google-cast/NoBluetooth (= 4.0.2)
+  - react-native-google-cast/NoBluetooth (4.0.2):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.0.1):
+  - react-native-google-cast/RNGoogleCast (4.0.2):
     - PromisesObjC
     - React
   - react-native-video (4.4.5):
@@ -512,7 +512,7 @@ SPEC CHECKSUMS:
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
   React-RCTImage: c1b1f2d3f43a4a528c8946d6092384b5c880d2f0
-  React-RCTLinking: 35ae4ab9dc0410d1fcbdce4d7623194a27214fb2
+  React-RCTLinking: 35ae4ab9dc04.0.2fcbdce4d7623194a27214fb2
   React-RCTNetwork: 29ec2696f8d8cfff7331fac83d3e893c95ef43ae
   React-RCTSettings: 60f0691bba2074ef394f95d4c2265ec284e0a46a
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
