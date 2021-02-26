@@ -33,6 +33,7 @@ RCT_EXPORT_MODULE()
 
 // Will be called when this module's last listener is removed, or on dealloc.
 - (void)stopObserving {
+  if (!hasListeners) { return; }
   hasListeners = NO;
   dispatch_async(dispatch_get_main_queue(), ^{
     [GCKCastContext.sharedInstance.discoveryManager removeListener:self];
