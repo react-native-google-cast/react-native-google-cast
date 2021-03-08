@@ -63,7 +63,7 @@ export default class CastContext {
   /**
    * If it has not been shown before, presents a fullscreen modal view controller that calls attention to the Cast button and displays some brief instructional text about its use.
    *
-   * By default, the overlay is only displayed once. To change this, pass `once: false` in the options.
+   * By default, the overlay is only displayed once. To change this on Android, pass `once: false` in the options. Note iOS will always display once only.
    *
    * @returns Promise that becomes `true` if the view controller was shown, `false` if it was not shown because it had already been shown before, or if the Cast Button was not found.
    */
