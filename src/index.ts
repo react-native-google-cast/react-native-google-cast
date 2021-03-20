@@ -5,6 +5,7 @@ export { CastContext }
 export { default as CastChannel } from './api/CastChannel'
 export { default as CastSession } from './api/CastSession'
 export { default as DiscoveryManager } from './api/DiscoveryManager'
+export { default as MediaQueue } from './api/MediaQueue'
 export { default as RemoteMediaClient } from './api/RemoteMediaClient'
 export { default as SessionManager } from './api/SessionManager'
 
@@ -12,6 +13,7 @@ export { default as useCastChannel } from './api/useCastChannel'
 export { default as useCastState } from './api/useCastState'
 export { default as useCastSession } from './api/useCastSession'
 export { default as useMediaStatus } from './api/useMediaStatus'
+export { default as useQueue } from './api/useQueue'
 export { default as useRemoteMediaClient } from './api/useRemoteMediaClient'
 export { default as useStreamPosition } from './api/useStreamPosition'
 
