@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
   s.authors  = package['author']
   s.homepage = package['homepage']
   s.platform = :ios, '10.0'
+  s.static_framework = true
 
   s.source = {
     :git => 'https://github.com/react-native-google-cast/react-native-google-cast.git',
