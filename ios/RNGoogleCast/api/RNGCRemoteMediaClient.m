@@ -197,7 +197,7 @@ RCT_EXPORT_METHOD(setPlaybackRate: (float) playbackRate
 RCT_EXPORT_METHOD(setProgressUpdateInterval: (nonnull NSNumber *) interval
                  resolver: (RCTPromiseResolveBlock) resolve
                  rejecter: (RCTPromiseRejectBlock) reject) {
-  if (interval == nil || interval <= 0) {
+  if (interval == nil || interval.doubleValue <= 0) {
     [progressTimer invalidate];
     progressTimer = nil;
     progressInterval = nil;
