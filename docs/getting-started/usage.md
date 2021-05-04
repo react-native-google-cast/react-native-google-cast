@@ -100,7 +100,7 @@ client.loadMedia({
       subtitle:
         'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
       studio: 'Blender Foundation',
-      type: 'Movie',
+      type: 'movie',
     },
     streamDuration: 596, // seconds
   },
