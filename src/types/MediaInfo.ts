@@ -31,10 +31,10 @@ export default interface MediaInfo {
   /** The custom data, if any */
   customData?: object
 
-  /**  The format of HLS audio segments. One of `aac`, `ac3`, `e-ac3`, `fmp4`, `mp3`, `ts`, `ts_aac` */
+  /**  The format of HLS audio segments. One of `aac`, `ac3`, `e-ac3`, `fmp4`, `mp3`, `ts`, `ts_aac`. Android only */
   hlsSegmentFormat?: MediaHlsSegmentFormat
 
-  /**  The format of HLS video segments. One of `fmp4`, `mpeg2_ts` */
+  /**  The format of HLS video segments. One of `fmp4`, `mpeg2_ts. Android only */
   hlsVideoSegmentFormat?: MediaHlsVideoSegmentFormat
 
   /** The deep link for the media as used by Google Assistant, if any. */
