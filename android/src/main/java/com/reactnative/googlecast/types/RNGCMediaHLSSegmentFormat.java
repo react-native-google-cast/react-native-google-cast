@@ -7,19 +7,19 @@ import com.google.android.gms.cast.HlsSegmentFormat;
 public class RNGCMediaHlsSegmentFormat {
   public static int fromJson(final @Nullable String value) {
     switch (value) {
-      case "aac":
+      case "AAC":
         return HlsSegmentFormat.AAC;
-      case "ac3":
+      case "AC3":
         return HlsSegmentFormat.AC3;
-      case "e-ac3":
+      case "E-AC3":
         return HlsSegmentFormat.E_AC3;
-      case "fmp4":
+      case "FMP4":
         return HlsSegmentFormat.FMP4;
-      case "mp3":
+      case "MP3":
         return HlsSegmentFormat.MP3;
-      case "ts":
+      case "TS":
         return HlsSegmentFormat.TS;
-      case "ts_aac":
+      case "TS-AAC":
         return HlsSegmentFormat.TS_AAC;
       default:
         return HlsSegmentFormat.AAC;
@@ -29,19 +29,19 @@ public class RNGCMediaHlsSegmentFormat {
   public static @Nullable String toJson(final string value) {
     switch (value) {
       case HlsSegmentFormat.AAC:
-        return "aac";
+        return "AAC";
       case HlsSegmentFormat.AC3:
-        return "ac3";
+        return "AC3";
       case HlsSegmentFormat.E_AC3:
-        return "e-ac3";
+        return "E-AC3";
       case HlsSegmentFormat.FMP4:
-        return "fmp4";
+        return "FMP4";
       case HlsSegmentFormat.MP3:
-        return "mp3";
+        return "MP3";
       case HlsSegmentFormat.TS:
-        return "ts";
+        return "TS";
       case HlsSegmentFormat.TS_AAC:
-        return "ts_aac";
+        return "TS-AAC";
       default:
         return null;
     }

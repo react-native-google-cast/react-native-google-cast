@@ -7,9 +7,9 @@ import com.google.android.gms.cast.HlsVideoSegmentFormat;
 public class RNGCMediaHlsVideoSegmentFormat {
   public static int fromJson(final @Nullable String value) {
     switch (value) {
-      case "fmp4":
+      case "FMP4":
         return HlsVideoSegmentFormat.FMP4;
-      case "mpeg2_ts":
+      case "MPEG2-TS":
         return HlsVideoSegmentFormat.MPEG2_TS;
       default:
         return HlsVideoSegmentFormat.FMP4;
@@ -19,9 +19,9 @@ public class RNGCMediaHlsVideoSegmentFormat {
   public static @Nullable String toJson(final string value) {
     switch (value) {
       case HlsVideoSegmentFormat.FMP4:
-        return "fmp4";
+        return "FMP4";
       case HlsVideoSegmentFormat.MPEG2_TS:
-        return "mpeg2_ts";
+        return "MPEG2-TS";
       default:
         return null;
     }

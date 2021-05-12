@@ -1,24 +1,24 @@
 enum MediaHlsSegmentFormat {
   /** AAC packed audio elementary stream. */
-  AAC = 'aac',
+  AAC = 'AAC',
 
   /** AC3 packed audio elementary stream. */
-  AC3 = 'ac3',
+  AC3 = 'AC3',
 
   /** E-AC3 packed audio elementary stream. */
-  E_AC3 = 'e-ac3',
+  E_AC3 = 'E-AC3',
 
   /** Audio packed in ISO BMPP CMAF Fragmented MP4. */
-  FMP4 = 'fmp4',
+  FMP4 = 'FMP4',
 
   /** MP3 packed audio elementary stream. */
-  MP3 = 'mp3',
+  MP3 = 'MP3',
 
   /** MPEG-2 transport stream. */
-  TS = 'ts',
+  TS = 'TS',
 
   /** AAC packed MPEG-2 transport stream. */
-  TS_AAC = 'ts_aac',
+  TS_AAC = 'TS-AAC',
 }
 
 export default MediaHlsSegmentFormat
