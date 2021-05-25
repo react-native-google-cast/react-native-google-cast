@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
-
+import android.content.res.TypedArray;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.mediarouter.app.MediaRouteButton;
-
+import android.view.ContextThemeWrapper;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -43,10 +43,20 @@ public class RNGoogleCastButtonManager
     CastContext castContext = CastContext.getSharedInstance(context);
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
+     Context otherContext = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
+               Drawable drawable = null;
+        TypedArray a = otherContext.obtainStyledAttributes(null,
+                       androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+       drawable = a.getDrawable(
+                     androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+       a.recycle();
+    
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
     updateButtonState(button, castContext.getCastState());
 
+    button.setRemoteIndicatorDrawable(drawable);
+    
     castContext.addCastStateListener(new CastStateListener() {
       @Override
       public void onCastStateChanged(int newState) {
