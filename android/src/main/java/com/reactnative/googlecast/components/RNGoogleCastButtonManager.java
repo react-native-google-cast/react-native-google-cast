@@ -43,10 +43,20 @@ public class RNGoogleCastButtonManager
     CastContext castContext = CastContext.getSharedInstance(context);
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
+     Context otherContext = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
+               Drawable drawable = null;
+        TypedArray a = otherContext.obtainStyledAttributes(null,
+                       androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+       drawable = a.getDrawable(
+                     androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+       a.recycle();
+    
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
     updateButtonState(button, castContext.getCastState());
 
+    button.setRemoteIndicatorDrawable(drawable);
+    
     castContext.addCastStateListener(new CastStateListener() {
       @Override
       public void onCastStateChanged(int newState) {
