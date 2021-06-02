@@ -20,7 +20,7 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManager;
-import com.reactnative.googlecast.RNGCExpandedControllerActivity;
+import com.reactnative.googlecast.GoogleCastExpandedControlsActivity;
 import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
 import com.reactnative.googlecast.types.RNGCCastState;
 
@@ -101,7 +101,7 @@ public class RNGCCastContext
   public void showExpandedControls() {
     ReactApplicationContext context = getReactApplicationContext();
     Intent intent =
-      new Intent(context, RNGCExpandedControllerActivity.class);
+      new Intent(context, GoogleCastExpandedControlsActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
   }

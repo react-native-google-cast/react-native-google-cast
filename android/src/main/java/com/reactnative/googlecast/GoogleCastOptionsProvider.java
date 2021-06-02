@@ -40,7 +40,7 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
     NotificationOptions notificationOptions =
       new NotificationOptions.Builder()
         .setTargetActivityClassName(
-          RNGCExpandedControllerActivity.class.getName())
+          GoogleCastExpandedControlsActivity.class.getName())
         .setNotificationActionsProvider(new NotificationActionsProvider(context) {
           @Override
           public List<NotificationAction> getNotificationActions() {
@@ -104,7 +104,7 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
         .setImagePicker(new ImagePickerImpl())
         .setNotificationOptions(notificationOptions)
         .setExpandedControllerActivityClassName(
-          RNGCExpandedControllerActivity.class.getName())
+          GoogleCastExpandedControlsActivity.class.getName())
         .build();
 
     return new CastOptions.Builder()
