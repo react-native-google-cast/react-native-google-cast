@@ -1,8 +1,10 @@
 package com.reactnative.googlecast.components;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -43,9 +45,16 @@ public class RNGoogleCastButtonManager
     CastContext castContext = CastContext.getSharedInstance(context);
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
+    Context otherContext = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
+
+    TypedArray styleAttrs = otherContext.obtainStyledAttributes(null, androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+    Drawable drawable = styleAttrs.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+    styleAttrs.recycle();
+
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
     updateButtonState(button, castContext.getCastState());
+    button.setRemoteIndicatorDrawable(drawable);
 
     castContext.addCastStateListener(new CastStateListener() {
       @Override
