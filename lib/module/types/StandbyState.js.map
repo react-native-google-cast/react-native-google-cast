@@ -1,0 +1,1 @@
+{"version":3,"sources":["StandbyState.ts"],"names":["StandbyState"],"mappings":"IAAKA,Y;;WAAAA,Y;AAAAA,EAAAA,Y;AAAAA,EAAAA,Y;AAAAA,EAAAA,Y;GAAAA,Y,KAAAA,Y;;AAML,eAAeA,YAAf","sourcesContent":["enum StandbyState {\n  UNKNOWN = 'unknown',\n  INACTIVE = 'inactive',\n  ACTIVE = 'active',\n}\n\nexport default StandbyState\n"]}
