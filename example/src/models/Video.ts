@@ -1,5 +1,4 @@
-import { MediaInfo } from 'react-native-google-cast'
-import MediaTrack from 'src/types/MediaTrack'
+import { MediaInfo, MediaTrack } from 'react-native-google-cast'
 
 const CAST_VIDEOS_URL =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json'
