@@ -4,8 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.cast.HlsVideoSegmentFormat;
 
-public class RNGCMediaHlsVideoSegmentFormat {
-  public static int fromJson(final @Nullable String value) {
+public class RNGCHlsVideoSegmentFormat {
+  public static String fromJson(final @Nullable String value) {
     switch (value) {
       case "FMP4":
         return HlsVideoSegmentFormat.FMP4;
@@ -16,7 +16,7 @@ public class RNGCMediaHlsVideoSegmentFormat {
     }
   }
 
-  public static @Nullable String toJson(final string value) {
+  public static @Nullable String toJson(final String value) {
     switch (value) {
       case HlsVideoSegmentFormat.FMP4:
         return "FMP4";
