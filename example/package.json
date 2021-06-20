@@ -9,20 +9,20 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "react": "16.13.1",
-    "react-native": "0.63.4",
-    "react-native-draggable-flatlist": "^2.4.0",
-    "react-native-gesture-handler": "^1.8.0",
-    "react-native-navigation": "^7.1.0",
-    "react-native-popup-menu": "^0.15.9",
-    "react-native-reanimated": "^1.13.1",
-    "react-native-video": "4"
+    "react": "17.0.2",
+    "react-native": "0.64.2",
+    "react-native-draggable-flatlist": "^2.6.2",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-navigation": "^7.16.0",
+    "react-native-popup-menu": "^0.15.11",
+    "react-native-reanimated": "2.2.0",
+    "react-native-video": "5.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/runtime": "^7.12.1",
-    "@types/react-native-video": "^5.0.3",
+    "@babel/core": "^7.14.6",
+    "@babel/runtime": "^7.14.6",
+    "@types/react-native-video": "^5.0.6",
     "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.64.0"
+    "metro-react-native-babel-preset": "^0.66.0"
   }
 }

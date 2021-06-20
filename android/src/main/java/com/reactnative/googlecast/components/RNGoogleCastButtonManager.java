@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.mediarouter.app.MediaRouteButton;
 
@@ -31,23 +33,24 @@ public class RNGoogleCastButtonManager
   protected static List<MediaRouteButton> currentInstances = new ArrayList<>();
 
   // there can be multiple screens that have a cast button, we use the latest one
-  public static MediaRouteButton getCurrent() {
+  public static @Nullable MediaRouteButton getCurrent() {
+    if (currentInstances.size() == 0) return null;
     return currentInstances.get(currentInstances.size() - 1);
   }
 
   @Override
-  public String getName() {
+  public @NonNull String getName() {
     return REACT_CLASS;
   }
 
   @Override
-  public MediaRouteButton createViewInstance(ThemedReactContext context) {
+  public @NonNull MediaRouteButton createViewInstance(@NonNull ThemedReactContext context) {
     CastContext castContext = CastContext.getSharedInstance(context);
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
-    Context otherContext = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
 
-    TypedArray styleAttrs = otherContext.obtainStyledAttributes(null, androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+    Context contextThemeWrapper = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
+    TypedArray styleAttrs = contextThemeWrapper.obtainStyledAttributes(null, androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
     Drawable drawable = styleAttrs.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
     styleAttrs.recycle();
 

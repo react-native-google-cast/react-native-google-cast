@@ -88,8 +88,7 @@ export default function Formats() {
                     {
                       height: 1000,
                       width: 706,
-                      url:
-                        'https://m.media-amazon.com/images/M/MV5BNjRjYjRhNmQtNWE0YS00NWIwLWFhYjUtMTkzZTUwYTE4MTBiXkEyXkFqcGdeQXVyNjA3OTI5MjA@._V1_SY1000_CR0,0,706,1000_AL_.jpg',
+                      url: 'https://m.media-amazon.com/images/M/MV5BNjRjYjRhNmQtNWE0YS00NWIwLWFhYjUtMTkzZTUwYTE4MTBiXkEyXkFqcGdeQXVyNjA3OTI5MjA@._V1_SY1000_CR0,0,706,1000_AL_.jpg',
                     },
                   ],
                   title: 'Big Buck Bunny',
