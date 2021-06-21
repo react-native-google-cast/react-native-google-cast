@@ -71,6 +71,6 @@ When the receiver loads a media queue item, it assigns a unique ID to the item w
 
 > Note: To provide the best user experience, the sender app must show the next autoplay item in the queue in the sender UI.
 
-<!-- ## Edit the queue
+<!-- ## Edit the queue ->
 
-To work with the items in the queue, use the queue methods of [RemoteMediaClient](../api/classes/remotemediaclient). These let you load an array of items into a new queue, insert items into an existing queue, update the properties of items in the queue, make an item jump forward or backward in the queue, set the properties of the queue itself (for example, change the `repeatMode` that selects the next item), remove items from the queue, and reorder the items in the queue. -->
+<!-- To work with the items in the queue, use the queue methods of [RemoteMediaClient](../api/classes/remotemediaclient). These let you load an array of items into a new queue, insert items into an existing queue, update the properties of items in the queue, make an item jump forward or backward in the queue, set the properties of the queue itself (for example, change the `repeatMode` that selects the next item), remove items from the queue, and reorder the items in the queue. -->
