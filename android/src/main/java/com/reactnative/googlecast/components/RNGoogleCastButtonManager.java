@@ -56,15 +56,7 @@ public class RNGoogleCastButtonManager
 
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
-    updateButtonState(button, castContext.getCastState());
     button.setRemoteIndicatorDrawable(drawable);
-
-    castContext.addCastStateListener(new CastStateListener() {
-      @Override
-      public void onCastStateChanged(int newState) {
-        RNGoogleCastButtonManager.this.updateButtonState(button, newState);
-      }
-    });
 
     return button;
   }
@@ -75,16 +67,6 @@ public class RNGoogleCastButtonManager
       return;
     button.applyTint(color);
     mColor = color;
-  }
-
-  private void updateButtonState(MediaRouteButton button, int state) {
-    // hide the button when no device available (default behavior is show it
-    // disabled)
-    if (CastState.NO_DEVICES_AVAILABLE == state) {
-      button.setVisibility(View.GONE);
-    } else {
-      button.setVisibility(View.VISIBLE);
-    }
   }
 
   // https://stackoverflow.com/a/41496796/384349
