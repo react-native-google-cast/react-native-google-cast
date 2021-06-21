@@ -1,4 +1,6 @@
 #import "RNGCDiscoveryManager.h"
+#import "../types/RCTConvert+GCKDevice.h"
+
 #import <Foundation/Foundation.h>
 
 @implementation RNGCDiscoveryManager {
@@ -42,20 +44,60 @@ RCT_EXPORT_MODULE()
 
 - (void)invalidate {
   [self stopObserving];
+  [super invalidate];
 }
 
-RCT_REMAP_METHOD(startDiscovery,
-                 startDiscoveryResolver: (RCTPromiseResolveBlock) resolve
-                 rejecter: (RCTPromiseRejectBlock) reject) {
+RCT_EXPORT_METHOD(getDevices: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve([self getDevices]);
+  });
+}
+
+-(void)didUpdateDeviceList {
+  [self sendEventWithName:DEVICES_UPDATED body:[self getDevices]];
+}
+
+RCT_EXPORT_METHOD(isPassiveScan: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  resolve(@([GCKCastContext.sharedInstance.discoveryManager passiveScan]));
+}
+
+RCT_EXPORT_METHOD(isRunning: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  resolve(@([GCKCastContext.sharedInstance.discoveryManager discoveryActive]));
+}
+
+RCT_EXPORT_METHOD(setPassiveScan: (BOOL) on
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+  [GCKCastContext.sharedInstance.discoveryManager setPassiveScan:on];
+  resolve(nil);
+}
+
+RCT_EXPORT_METHOD(startDiscovery: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
   [GCKCastContext.sharedInstance.discoveryManager startDiscovery];
   resolve(nil);
 }
 
-RCT_REMAP_METHOD(stopDiscovery,
-                 stopDiscoveryResolver: (RCTPromiseResolveBlock) resolve
-                 rejecter: (RCTPromiseRejectBlock) reject) {
+RCT_EXPORT_METHOD(stopDiscovery: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
   [GCKCastContext.sharedInstance.discoveryManager stopDiscovery];
   resolve(nil);
+}
+
+-(NSMutableArray<id> *)getDevices {
+  NSMutableArray<id> *devices = [[NSMutableArray alloc] init];
+
+  GCKDiscoveryManager *discoveryManager = GCKCastContext.sharedInstance.discoveryManager;
+  NSUInteger deviceCount = [discoveryManager deviceCount];
+  for (int i = 0; i < deviceCount; i++) {
+    GCKDevice *device = [discoveryManager deviceAtIndex:i];
+    [devices addObject:[RCTConvert fromGCKDevice:device]];
+  }
+  
+  return devices;
 }
 
 @end

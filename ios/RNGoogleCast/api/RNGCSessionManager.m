@@ -58,6 +58,7 @@ RCT_EXPORT_MODULE()
 
 - (void)invalidate {
   [self stopObserving];
+  [super invalidate];
 }
 
 RCT_EXPORT_METHOD(endCurrentSession: (BOOL)stopCasting
@@ -70,12 +71,36 @@ RCT_EXPORT_METHOD(endCurrentSession: (BOOL)stopCasting
   });
 }
 
-RCT_REMAP_METHOD(getCurrentCastSession,
-                 getCurrentCastSessionResolver: (RCTPromiseResolveBlock) resolve
-                 rejecter: (RCTPromiseRejectBlock) reject) {
+RCT_EXPORT_METHOD(getCurrentCastSession: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   GCKSessionManager *sessionManager = GCKCastContext.sharedInstance.sessionManager;
   resolve([RCTConvert fromGCKCastSession:sessionManager.currentCastSession]);
 }
+
+RCT_EXPORT_METHOD(startSession: (NSString *)deviceId
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    GCKDiscoveryManager *discoveryManager = GCKCastContext.sharedInstance.discoveryManager;
+
+    GCKDevice *device;
+    for (int i = 0; i < [discoveryManager deviceCount]; i++) {
+      GCKDevice *d = [discoveryManager deviceAtIndex:i];
+      if ([d.deviceID isEqualToString:deviceId]) {
+        device = d;
+        break;
+      }
+    }
+
+    if (device) {
+      GCKSessionManager *sessionManager = GCKCastContext.sharedInstance.sessionManager;
+      resolve(@([sessionManager startSessionWithDevice:device]));
+    } else {
+      resolve(FALSE);
+    }
+  });
+}
+
 
 - (void)sessionManager:(GCKSessionManager *)sessionManager
     willStartCastSession:(GCKCastSession *)session {

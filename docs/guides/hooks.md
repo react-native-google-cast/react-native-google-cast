@@ -20,6 +20,29 @@ function MyComponent() {
 }
 ```
 
+## Device Hook
+
+Receive a list of available [Device](../api/interfaces/device)s.
+
+```js
+import { useDevices } from 'react-native-google-cast'
+
+function MyComponent() {
+  const devices = useDevices()
+
+  // present the devices, for example:
+  return devices.map((device) => (
+    <Button
+      key={device.deviceId}
+      onPress={() =>
+        GoogleCast.getSessionManager().startSession(device.deviceId)
+      }
+      title={device.friendlyName}
+    />
+  ))
+}
+```
+
 ## Session Hook
 
 Receive the current [CastSession](../api/classes/castsession).

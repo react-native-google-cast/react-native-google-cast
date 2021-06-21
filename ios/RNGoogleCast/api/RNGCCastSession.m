@@ -75,49 +75,43 @@ RCT_EXPORT_MODULE();
     self->castSession = nil;
     [GCKCastContext.sharedInstance.sessionManager removeListener:self];
   });
+  [super invalidate];
 }
 
 # pragma mark - GCKCastSession methods
 
-RCT_EXPORT_METHOD(getActiveInputState
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(getActiveInputState: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve([RCTConvert fromGCKActiveInputStatus:[castSession activeInputStatus]]);
 }
 
-RCT_EXPORT_METHOD(getApplicationMetadata
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(getApplicationMetadata: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve([RCTConvert fromGCKApplicationMetadata:[castSession applicationMetadata]]);
 }
 
-RCT_EXPORT_METHOD(getApplicationStatus
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(getApplicationStatus: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve([castSession deviceStatusText]);
 }
 
-RCT_EXPORT_METHOD(getCastDevice
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(getCastDevice: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve([RCTConvert fromGCKDevice:[castSession device]]);
 }
 
-RCT_EXPORT_METHOD(getStandbyState
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(getStandbyState: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve([RCTConvert fromGCKStandbyStatus:[castSession standbyStatus]]);
 }
 
-RCT_EXPORT_METHOD(getVolume
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(getVolume: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve(@([castSession currentDeviceVolume]));
 }
 
-RCT_EXPORT_METHOD(isMute
-                  : (RCTPromiseResolveBlock)resolve rejecter
-                  : (RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(isMute: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
   resolve(@([castSession currentDeviceMuted]));
 }
 

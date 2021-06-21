@@ -109,6 +109,36 @@ export default class CastSession {
   }
 
   /**
+   * Listen for changes to the active input state.
+   *
+   * @example
+   * ```js
+   * const subscription = session.onActiveInputStateChanged(state => { ... })
+   *
+   * // later, to stop listening
+   * subscription.remove()
+   * ```
+   */
+  onActiveInputStateChanged(listener: (state: ActiveInputState) => void) {
+    return EventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
+  }
+
+  /**
+   * Listen for changes to the standby state.
+   *
+   * @example
+   * ```js
+   * const subscription = session.onStandbyStateChanged(state => { ... })
+   *
+   * // later, to stop listening
+   * subscription.remove()
+   * ```
+   */
+  onStandbyStateChanged(listener: (state: StandbyState) => void) {
+    return EventEmitter.addListener(Native.STANDBY_STATE_CHANGED, listener)
+  }
+
+  /**
    * Mutes or unmutes the device's audio.
    *
    * @param mute The new mute state.
@@ -126,17 +156,5 @@ export default class CastSession {
    */
   setVolume(volume: number): Promise<void> {
     return Native.setMute(volume)
-  }
-
-  // ========== //
-  //   EVENTS   //
-  // ========== //
-
-  onActiveInputStateChanged(listener: (state: ActiveInputState) => void) {
-    return EventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
-  }
-
-  onStandbyStateChanged(listener: (state: StandbyState) => void) {
-    return EventEmitter.addListener(Native.STANDBY_STATE_CHANGED, listener)
   }
 }

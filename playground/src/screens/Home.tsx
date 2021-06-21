@@ -32,6 +32,7 @@ export default function Home() {
         {
           title: 'API',
           data: [
+            { title: 'Devices' },
             { title: 'Session' },
             { title: 'Client' },
             { title: 'Tracks' },

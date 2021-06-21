@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.cast.HlsSegmentFormat;
 
 public class RNGCHlsSegmentFormat {
-  public static String fromJson(final @Nullable String value) {
+  public static @Nullable String fromJson(final @Nullable String value) {
+    if (value == null) return null;
+
     switch (value) {
       case "AAC":
         return HlsSegmentFormat.AAC;
@@ -22,11 +24,13 @@ public class RNGCHlsSegmentFormat {
       case "TS-AAC":
         return HlsSegmentFormat.TS_AAC;
       default:
-        return HlsSegmentFormat.AAC;
+        return null;
     }
   }
 
-  public static @Nullable String toJson(final String value) {
+  public static @Nullable String toJson(@Nullable final String value) {
+    if (value == null) return null;
+
     switch (value) {
       case HlsSegmentFormat.AAC:
         return "AAC";
