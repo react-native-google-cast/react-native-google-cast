@@ -25,7 +25,7 @@ function MyComponent() {
 Receive a list of available [Device](../api/interfaces/device)s.
 
 ```js
-import { useDevices } from 'react-native-google-cast'
+import GoogleCast, { useDevices } from 'react-native-google-cast'
 
 function MyComponent() {
   const devices = useDevices()

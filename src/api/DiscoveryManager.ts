@@ -11,7 +11,7 @@ const EventEmitter = new NativeEventEmitter(Native)
  *
  * If the application is using the framework's Cast dialog, then that dialog will use `DiscoveryManager` to populate its list of available devices. If however the application is providing its own device selection/control dialog UI, then it should use `getDevices` and `onDevicesUpdated` to populate and update its list of available devices.
  *
- * @see [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_discovery_manager)
+ * @see [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_discovery_manager) | [Android](https://developer.android.com/reference/androidx/mediarouter/media/MediaRouter)
  *
  * @example
  * ```ts
@@ -24,7 +24,7 @@ const EventEmitter = new NativeEventEmitter(Native)
  * ```
  */
 export default class DiscoveryManager {
-  /** List of available devices. */
+  /** List currently available devices. */
   getDevices(): Promise<Device[]> {
     return Native.getDevices()
   }
@@ -45,6 +45,8 @@ export default class DiscoveryManager {
 
   /**
    * Listen for changes to the list of devices.
+   *
+   * *Hint* Use the `useDevices` hook instead that manages `getDevices` and `onDevicesUpdated` for you.
    *
    * @example
    * ```js
