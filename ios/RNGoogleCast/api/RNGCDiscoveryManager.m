@@ -44,7 +44,6 @@ RCT_EXPORT_MODULE()
 
 - (void)invalidate {
   [self stopObserving];
-  [super invalidate];
 }
 
 RCT_EXPORT_METHOD(getDevices: (RCTPromiseResolveBlock) resolve

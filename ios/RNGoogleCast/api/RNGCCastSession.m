@@ -75,7 +75,6 @@ RCT_EXPORT_MODULE();
     self->castSession = nil;
     [GCKCastContext.sharedInstance.sessionManager removeListener:self];
   });
-  [super invalidate];
 }
 
 # pragma mark - GCKCastSession methods

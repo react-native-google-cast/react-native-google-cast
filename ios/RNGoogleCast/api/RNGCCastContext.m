@@ -56,7 +56,6 @@ RCT_EXPORT_MODULE();
 // Called when the native bridge is invalidated (ie: on devmode reload).
 - (void)invalidate {
   [self stopObserving];
-  [super invalidate];
 }
 
 # pragma mark - GCKCastContext methods
