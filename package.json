@@ -1,6 +1,6 @@
 {
   "name": "react-native-google-cast",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "React Native wrapper for the Google Cast SDK for iOS and Android",
   "main": "lib/commonjs/index",
   "react-native": "src/index",
@@ -129,8 +129,7 @@
       "after:bump": "auto-changelog -p"
     },
     "npm": {
-      "publish": true,
-      "skipChecks": true
+      "publish": true
     },
     "plugins": {
       "@release-it/bumper": {

@@ -270,14 +270,14 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
-  - react-native-google-cast (4.1.0):
+  - react-native-google-cast (4.1.1):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.1.0)
-  - react-native-google-cast/NoBluetooth (4.1.0):
+    - react-native-google-cast/NoBluetooth (= 4.1.1)
+  - react-native-google-cast/NoBluetooth (4.1.1):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.1.0):
+  - react-native-google-cast/RNGoogleCast (4.1.1):
     - PromisesObjC
     - React
   - react-native-safe-area-context (3.2.0):
@@ -536,7 +536,7 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: 37a8a8452936822d3d55481d03f616baea3d86e4
+  FBReactNativeSpec: 37a8a8452936822d3d554.1.13f616baea3d86e4
   Flipper: 1bd2db48dcc31e4b167b9a33ec1df01c2ded4893
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
