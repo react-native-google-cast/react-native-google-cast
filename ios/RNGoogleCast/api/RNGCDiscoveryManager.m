@@ -59,19 +59,25 @@ RCT_EXPORT_METHOD(getDevices: (RCTPromiseResolveBlock) resolve
 
 RCT_EXPORT_METHOD(isPassiveScan: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
-  resolve(@([GCKCastContext.sharedInstance.discoveryManager passiveScan]));
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve(@([GCKCastContext.sharedInstance.discoveryManager passiveScan]));
+  });
 }
 
 RCT_EXPORT_METHOD(isRunning: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
-  resolve(@([GCKCastContext.sharedInstance.discoveryManager discoveryActive]));
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve(@([GCKCastContext.sharedInstance.discoveryManager discoveryActive]));
+  });
 }
 
 RCT_EXPORT_METHOD(setPassiveScan: (BOOL) on
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {
-  [GCKCastContext.sharedInstance.discoveryManager setPassiveScan:on];
-  resolve(nil);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [GCKCastContext.sharedInstance.discoveryManager setPassiveScan:on];
+    resolve(nil);
+  });
 }
 
 RCT_EXPORT_METHOD(startDiscovery: (RCTPromiseResolveBlock) resolve

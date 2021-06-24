@@ -1,4 +1,5 @@
 #import "RNGCCastSession.h"
+#import "RNGCRequest.h"
 #import "../types/RCTConvert+GCKActiveInputStatus.h"
 #import "../types/RCTConvert+GCKApplicationMetadata.h"
 #import "../types/RCTConvert+GCKCastSession.h"
@@ -81,37 +82,69 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(getActiveInputState: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve([RCTConvert fromGCKActiveInputStatus:[castSession activeInputStatus]]);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve([RCTConvert fromGCKActiveInputStatus:[self->castSession activeInputStatus]]);
+  });
 }
 
 RCT_EXPORT_METHOD(getApplicationMetadata: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve([RCTConvert fromGCKApplicationMetadata:[castSession applicationMetadata]]);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve([RCTConvert fromGCKApplicationMetadata:[self->castSession applicationMetadata]]);
+  });
 }
 
 RCT_EXPORT_METHOD(getApplicationStatus: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve([castSession deviceStatusText]);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve([self->castSession deviceStatusText]);
+  });
 }
 
 RCT_EXPORT_METHOD(getCastDevice: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve([RCTConvert fromGCKDevice:[castSession device]]);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve([RCTConvert fromGCKDevice:[self->castSession device]]);
+  });
 }
 
 RCT_EXPORT_METHOD(getStandbyState: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve([RCTConvert fromGCKStandbyStatus:[castSession standbyStatus]]);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve([RCTConvert fromGCKStandbyStatus:[self->castSession standbyStatus]]);
+  });
 }
 
 RCT_EXPORT_METHOD(getVolume: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve(@([castSession currentDeviceVolume]));
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve(@([self->castSession currentDeviceVolume]));
+  });
 }
 
 RCT_EXPORT_METHOD(isMute: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject) {
-  resolve(@([castSession currentDeviceMuted]));
+  dispatch_async(dispatch_get_main_queue(), ^{
+    resolve(@([self->castSession currentDeviceMuted]));
+  });
+}
+
+RCT_EXPORT_METHOD(setMute: (BOOL)mute
+                  resolver: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    GCKRequest *request = [self->castSession setDeviceMuted:mute];
+    [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
+  });
+}
+
+RCT_EXPORT_METHOD(setVolume: (float)volume
+                  resolver: (RCTPromiseResolveBlock)resolve
+                  rejecter: (RCTPromiseRejectBlock)reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    GCKRequest *request = [self->castSession setDeviceVolume:volume];
+    [RNGCRequest promisifyRequest:request resolve:resolve reject:reject];
+  });
 }
 
 # pragma mark - GCKCastDeviceStatusListener events
@@ -201,5 +234,5 @@ RCT_EXPORT_METHOD(sendMessage: (NSString *)namespace
   self->castSession = nil;
   [session removeDeviceStatusListener:self];
 }
-
+   
 @end
