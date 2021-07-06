@@ -92,11 +92,11 @@ const textTrackStyle = {
 client.setTextTrackStyle(textTrackStyle)
 ```
 
-<!-- You should register your app to be notified when system-wide closed caption settings are updated. To this end, you need to implement CaptioningManager.CaptioningChangeListener in your app and register this listener by calling:
+<!-- You should register your app to be notified when system-wide closed caption settings are updated. To this end, you need to implement CaptioningManager.CaptioningChangeListener in your app and register this listener by calling: ->
 
-CaptioningManager.addCaptioningChangeListener(yourChangeListener);
+<!-- CaptioningManager.addCaptioningChangeListener(yourChangeListener); -->
 
-When your app receives a callback that the caption settings have changed, you would then need to extract the new settings and update the style of the text caption for the media that is currently playing by calling [client.setTextTrackStyle](../api/classes/remotemediaclient#settexttrackstyle) and passing in the new style. -->
+<!-- When your app receives a callback that the caption settings have changed, you would then need to extract the new settings and update the style of the text caption for the media that is currently playing by calling [client.setTextTrackStyle](../api/classes/remotemediaclient#settexttrackstyle) and passing in the new style. -->
 
 ## Satisfy CORS requirements
 

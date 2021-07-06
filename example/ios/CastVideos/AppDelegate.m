@@ -8,7 +8,9 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
+#if RCT_DEV
+#import <React/RCTDevLoadingView.h>
+#endif
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
 
 #import <GoogleCast/GoogleCast.h>
@@ -50,8 +52,13 @@ static void InitializeFlipper(UIApplication *application) {
       [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
   [GCKCastContext setSharedInstanceWithOptions:options];
 
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self
+                                            launchOptions:launchOptions];
+#if RCT_DEV
+  [bridge moduleForClass:[RCTDevLoadingView class]];
+#endif
   // start React Native Navigation instead of a regular React Native app
-  [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
+  [ReactNativeNavigation bootstrapWithBridge:bridge];
 
   return YES;
 }

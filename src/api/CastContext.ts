@@ -18,8 +18,9 @@ const EventEmitter = new NativeEventEmitter(Native)
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastContext) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_context) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastContext)
  */
 export default class CastContext {
-  /** The DiscoveryManager to manage device discovery (iOS only). */
+  /** The DiscoveryManager to manage device discovery. */
   static discoveryManager = new DiscoveryManager()
+
   /** The SessionManager that manages cast sessions. */
   static sessionManager = new SessionManager()
 
@@ -29,7 +30,7 @@ export default class CastContext {
   }
 
   /**
-   * Get the DiscoveryManager to manage device discovery (iOS only).
+   * Get the DiscoveryManager to manage device discovery.
    */
   static getDiscoveryManager(): DiscoveryManager {
     return this.discoveryManager

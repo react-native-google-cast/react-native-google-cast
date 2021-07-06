@@ -151,6 +151,36 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
     }, promise);
   }
 
+  @ReactMethod
+  public void setMute(final boolean mute, final Promise promise) {
+    with.withX(new With.WithX<CastSession>() {
+      @Override
+      public void execute(CastSession castSession) {
+        try {
+          castSession.setMute(mute);
+          promise.resolve(null);
+        } catch (IOException e) {
+          promise.reject(e);
+        }
+      }
+    }, promise);
+  }
+
+  @ReactMethod
+  public void setVolume(final double volume, final Promise promise) {
+    with.withX(new With.WithX<CastSession>() {
+      @Override
+      public void execute(CastSession castSession) {
+        try {
+          castSession.setVolume(volume);
+          promise.resolve(null);
+        } catch (IOException e) {
+          promise.reject(e);
+        }
+      }
+    }, promise);
+  }
+
   // CHANNELS
 
   @ReactMethod

@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.reactnative.googlecast.api.RNGCCastContext;
 import com.reactnative.googlecast.api.RNGCCastSession;
+import com.reactnative.googlecast.api.RNGCDiscoveryManager;
 import com.reactnative.googlecast.api.RNGCRemoteMediaClient;
 import com.reactnative.googlecast.api.RNGCSessionManager;
 import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
@@ -24,6 +25,7 @@ public class GoogleCastPackage implements ReactPackage {
 
     modules.add(new RNGCCastContext(reactContext));
     modules.add(new RNGCCastSession(reactContext));
+    modules.add(new RNGCDiscoveryManager(reactContext));
     modules.add(new RNGCRemoteMediaClient(reactContext));
     modules.add(new RNGCSessionManager(reactContext));
 

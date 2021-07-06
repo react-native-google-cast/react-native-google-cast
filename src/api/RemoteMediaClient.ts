@@ -7,9 +7,9 @@ import {
   MediaPlayerIdleReason,
   MediaPlayerState,
 } from 'react-native-google-cast'
-import MediaLoadRequest from 'src/types/MediaLoadRequest'
-import { MediaSeekOptions } from 'src/types/MediaSeekOptions'
-import TextTrackStyle from 'src/types/TextTrackStyle'
+import MediaLoadRequest from '../types/MediaLoadRequest'
+import { MediaSeekOptions } from '../types/MediaSeekOptions'
+import TextTrackStyle from '../types/TextTrackStyle'
 import MediaQueueItem from '../types/MediaQueueItem'
 import MediaStatus from '../types/MediaStatus'
 

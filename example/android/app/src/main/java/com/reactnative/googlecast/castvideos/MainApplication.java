@@ -7,9 +7,11 @@ import androidx.multidex.MultiDex;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.bridge.JSIModulePackage;
 import com.reactnative.googlecast.GoogleCastPackage;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
+import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 
 import java.util.List;
 
@@ -35,6 +37,11 @@ public class MainApplication extends NavigationApplication {
       @Override
       protected String getJSMainModuleName() {
         return "index";
+      }
+
+      @Override
+      protected JSIModulePackage getJSIModulePackage() {
+        return new ReanimatedJSIModulePackage();
       }
     };
 

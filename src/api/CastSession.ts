@@ -109,34 +109,56 @@ export default class CastSession {
   }
 
   /**
+   * Listen for changes to the active input state.
+   *
+   * @example
+   * ```js
+   * const subscription = session.onActiveInputStateChanged(state => { ... })
+   *
+   * // later, to stop listening
+   * subscription.remove()
+   * ```
+   */
+  onActiveInputStateChanged(listener: (state: ActiveInputState) => void) {
+    return EventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
+  }
+
+  /**
+   * Listen for changes to the standby state.
+   *
+   * @example
+   * ```js
+   * const subscription = session.onStandbyStateChanged(state => { ... })
+   *
+   * // later, to stop listening
+   * subscription.remove()
+   * ```
+   */
+  onStandbyStateChanged(listener: (state: StandbyState) => void) {
+    return EventEmitter.addListener(Native.STANDBY_STATE_CHANGED, listener)
+  }
+
+  /**
    * Mutes or unmutes the device's audio.
+   *
+   * Note that this method doesn't currently resolve a promise. You may instead call `client.setStreamMuted()` which handles promises correctly.
    *
    * @param mute The new mute state.
    * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession.html#setMute(boolean)) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session#aac1dc4461b6d7ae6f1f5f9dc93cafebd)
    */
-  setMute(mute: boolean): Promise<void> {
+  setMute(mute: boolean): void {
     return Native.setMute(mute)
   }
 
   /**
    * Sets the device volume.
    *
+   * Note that this method doesn't currently resolve a promise. You may instead call `client.setStreamVolume()` which handles promises correctly.
+   *
    * @param volume If volume is outside of the range [0.0, 1.0], then the value will be clipped.
    * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession.html#setVolume(double)) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session#a68dcca2fdf1f4aebee394f0af56e7fb8)
    */
-  setVolume(volume: number): Promise<void> {
-    return Native.setMute(volume)
-  }
-
-  // ========== //
-  //   EVENTS   //
-  // ========== //
-
-  onActiveInputStateChanged(listener: (state: ActiveInputState) => void) {
-    return EventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
-  }
-
-  onStandbyStateChanged(listener: (state: StandbyState) => void) {
-    return EventEmitter.addListener(Native.STANDBY_STATE_CHANGED, listener)
+  setVolume(volume: number): void {
+    return Native.setVolume(volume)
   }
 }

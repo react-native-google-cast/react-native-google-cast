@@ -45,6 +45,14 @@ public class RNGCMediaInfo {
         RNGCJSONObject.fromJson(json.getMap("customData")));
     }
 
+    if (json.hasKey("hlsSegmentFormat")) {
+      builder.setHlsSegmentFormat(RNGCHlsSegmentFormat.fromJson(json.getString("hlsSegmentFormat")));
+    }
+
+    if (json.hasKey("hlsVideoSegmentFormat")) {
+      builder.setHlsVideoSegmentFormat(RNGCHlsVideoSegmentFormat.fromJson(json.getString("hlsVideoSegmentFormat")));
+    }
+
     if (json.hasKey("entity")) {
       builder.setEntity(json.getString(("entity")));
     }
@@ -97,6 +105,10 @@ public class RNGCMediaInfo {
     json.putString("contentUrl", info.getContentUrl());
 
     json.putMap("customData", RNGCJSONObject.toJson(info.getCustomData()));
+
+    json.putString("hlsSegmentFormat", RNGCHlsSegmentFormat.toJson(info.getHlsSegmentFormat()));
+
+    json.putString("hlsVideoSegmentFormat", RNGCHlsVideoSegmentFormat.toJson(info.getHlsVideoSegmentFormat()));
 
     json.putString("entity", info.getEntity());
 

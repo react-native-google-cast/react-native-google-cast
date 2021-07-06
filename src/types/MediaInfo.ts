@@ -1,5 +1,7 @@
 import * as MediaMetadata from './MediaMetadata'
 import MediaStreamType from './MediaStreamType'
+import MediaHlsSegmentFormat from './MediaHlsSegmentFormat'
+import MediaHlsVideoSegmentFormat from './MediaHlsVideoSegmentFormat'
 import MediaTrack from './MediaTrack'
 import TextTrackStyle from './TextTrackStyle'
 
@@ -31,6 +33,12 @@ export default interface MediaInfo {
 
   /** The deep link for the media as used by Google Assistant, if any. */
   entity?: string
+
+  /** The format of HLS audio segments. One of `AAC`, `AC3`, `E-AC3`, `FMP4`, `MP3`, `TS`, `TS-AAC`. */
+  hlsSegmentFormat?: MediaHlsSegmentFormat
+
+  /** The format of HLS video segments. One of `FMP4`, `MPEG2-TS`. */
+  hlsVideoSegmentFormat?: MediaHlsVideoSegmentFormat
 
   /** The media tracks for this stream. */
   mediaTracks?: MediaTrack[]

@@ -1,10 +1,14 @@
 package com.reactnative.googlecast.components;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.content.res.TypedArray;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.mediarouter.app.MediaRouteButton;
 import android.view.ContextThemeWrapper;
@@ -29,40 +33,30 @@ public class RNGoogleCastButtonManager
   protected static List<MediaRouteButton> currentInstances = new ArrayList<>();
 
   // there can be multiple screens that have a cast button, we use the latest one
-  public static MediaRouteButton getCurrent() {
+  public static @Nullable MediaRouteButton getCurrent() {
+    if (currentInstances.size() == 0) return null;
     return currentInstances.get(currentInstances.size() - 1);
   }
 
   @Override
-  public String getName() {
+  public @NonNull String getName() {
     return REACT_CLASS;
   }
 
   @Override
-  public MediaRouteButton createViewInstance(ThemedReactContext context) {
+  public @NonNull MediaRouteButton createViewInstance(@NonNull ThemedReactContext context) {
     CastContext castContext = CastContext.getSharedInstance(context);
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
-     Context otherContext = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
-               Drawable drawable = null;
-        TypedArray a = otherContext.obtainStyledAttributes(null,
-                       androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
-       drawable = a.getDrawable(
-                     androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
-       a.recycle();
-    
+
+    Context contextThemeWrapper = new ContextThemeWrapper(context, androidx.mediarouter.R.style.Theme_MediaRouter);
+    TypedArray styleAttrs = contextThemeWrapper.obtainStyledAttributes(null, androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+    Drawable drawable = styleAttrs.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+    styleAttrs.recycle();
+
     CastButtonFactory.setUpMediaRouteButton(context, button);
 
-    updateButtonState(button, castContext.getCastState());
-
     button.setRemoteIndicatorDrawable(drawable);
-    
-    castContext.addCastStateListener(new CastStateListener() {
-      @Override
-      public void onCastStateChanged(int newState) {
-        RNGoogleCastButtonManager.this.updateButtonState(button, newState);
-      }
-    });
 
     return button;
   }
@@ -73,16 +67,6 @@ public class RNGoogleCastButtonManager
       return;
     button.applyTint(color);
     mColor = color;
-  }
-
-  private void updateButtonState(MediaRouteButton button, int state) {
-    // hide the button when no device available (default behavior is show it
-    // disabled)
-    if (CastState.NO_DEVICES_AVAILABLE == state) {
-      button.setVisibility(View.GONE);
-    } else {
-      button.setVisibility(View.VISIBLE);
-    }
   }
 
   // https://stackoverflow.com/a/41496796/384349

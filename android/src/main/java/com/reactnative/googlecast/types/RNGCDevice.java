@@ -10,14 +10,16 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.common.images.WebImage;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 public class RNGCDevice {
-  public static @Nullable
-  WritableMap toJson(final @Nullable CastDevice device) {
+  public static @Nullable WritableMap toJson(final @Nullable CastDevice device) {
     if (device == null) return null;
 
     final WritableMap json = new WritableNativeMap();
