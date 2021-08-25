@@ -6,7 +6,7 @@ import CastSession from './CastSession';
  *
  * 1. A user opens the Cast dialog by pressing the [CastButton](../../components/CastButton) and selects a device to cast to. An instance of {@link CastSession} is created automatically by the SessionManager.
  *
- * 2. A session is created manually by calling {@link SessionManager.startSession} _(This is not implemented yet)_
+ * 2. A session is created manually by calling {@link SessionManager.startSession}
  *
  * SessionManager handles automatic resumption of suspended sessions (that is, resuming sessions that were ended when the application went to the background, or in the event that the application crashed or was forcibly terminated by the user). When the application resumes or restarts, the session manager will wait for a short time for the device provider of the suspended session's device to discover that device again, and if it does, it will attempt to reconnect to that device and re-establish the session automatically.
  *
@@ -44,4 +44,6 @@ export default class SessionManager {
     onSessionEnding(handler: (session: CastSession) => void): import("react-native").EmitterSubscription;
     /** Called when a session has ended, either by request or due to an error. */
     onSessionEnded(handler: (session: CastSession, error?: string) => void): import("react-native").EmitterSubscription;
+    /** Start a casting session with a specific device. You can get a list of available devices from {@link DiscoveryManager.getDevices}. */
+    startSession(deviceId: string): Promise<boolean>;
 }

@@ -13,14 +13,14 @@ import SessionManager from './SessionManager';
  * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastContext) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_context) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastContext)
  */
 export default class CastContext {
-    /** The DiscoveryManager to manage device discovery (iOS only). */
+    /** The DiscoveryManager to manage device discovery. */
     static discoveryManager: DiscoveryManager;
     /** The SessionManager that manages cast sessions. */
     static sessionManager: SessionManager;
     /** The current casting state for the application. */
     static getCastState(): Promise<CastState>;
     /**
-     * Get the DiscoveryManager to manage device discovery (iOS only).
+     * Get the DiscoveryManager to manage device discovery.
      */
     static getDiscoveryManager(): DiscoveryManager;
     /**

@@ -74,19 +74,45 @@ export default class CastSession {
      */
     isMute(): Promise<boolean>;
     /**
+     * Listen for changes to the active input state.
+     *
+     * @example
+     * ```js
+     * const subscription = session.onActiveInputStateChanged(state => { ... })
+     *
+     * // later, to stop listening
+     * subscription.remove()
+     * ```
+     */
+    onActiveInputStateChanged(listener: (state: ActiveInputState) => void): import("react-native").EmitterSubscription;
+    /**
+     * Listen for changes to the standby state.
+     *
+     * @example
+     * ```js
+     * const subscription = session.onStandbyStateChanged(state => { ... })
+     *
+     * // later, to stop listening
+     * subscription.remove()
+     * ```
+     */
+    onStandbyStateChanged(listener: (state: StandbyState) => void): import("react-native").EmitterSubscription;
+    /**
      * Mutes or unmutes the device's audio.
+     *
+     * Note that this method doesn't currently resolve a promise. You may instead call `client.setStreamMuted()` which handles promises correctly.
      *
      * @param mute The new mute state.
      * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession.html#setMute(boolean)) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session#aac1dc4461b6d7ae6f1f5f9dc93cafebd)
      */
-    setMute(mute: boolean): Promise<void>;
+    setMute(mute: boolean): void;
     /**
      * Sets the device volume.
+     *
+     * Note that this method doesn't currently resolve a promise. You may instead call `client.setStreamVolume()` which handles promises correctly.
      *
      * @param volume If volume is outside of the range [0.0, 1.0], then the value will be clipped.
      * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession.html#setVolume(double)) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session#a68dcca2fdf1f4aebee394f0af56e7fb8)
      */
-    setVolume(volume: number): Promise<void>;
-    onActiveInputStateChanged(listener: (state: ActiveInputState) => void): import("react-native").EmitterSubscription;
-    onStandbyStateChanged(listener: (state: StandbyState) => void): import("react-native").EmitterSubscription;
+    setVolume(volume: number): void;
 }
