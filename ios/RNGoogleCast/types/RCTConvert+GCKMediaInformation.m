@@ -7,6 +7,11 @@
 #import "RCTConvert+GCKMediaTrack.h"
 #import "RCTConvert+GCKMediaTextTrackStyle.h"
 
+#if GCK_VERSION_IS_AT_LEAST(4, 6, 0)
+#import "RCTConvert+GCKHLSSegmentFormat.h"
+#import "RCTConvert+GCKHLSVideoSegmentFormat.h"
+#endif
+
 @implementation RCTConvert (GCKMediaInformation)
 
 + (nonnull GCKMediaInformation *)GCKMediaInformation:(nonnull id)json {
@@ -55,6 +60,16 @@
   if (json[@"entity"]) {
     builder.entity = [RCTConvert NSString:json[@"entity"]];
   }
+
+#if GCK_VERSION_IS_AT_LEAST(4, 6, 0)
+  if (json[@"hlsSegmentFormat"]) {
+    builder.hlsSegmentFormat = [RCTConvert GCKHLSSegmentFormat:json[@"hlsSegmentFormat"]];
+  }
+
+  if (json[@"hlsVideoSegmentFormat"]) {
+    builder.hlsVideoSegmentFormat = [RCTConvert GCKHLSVideoSegmentFormat:json[@"hlsVideoSegmentFormat"]];
+  }
+#endif
 
   if (json[@"mediaTracks"]) {
     NSMutableArray<GCKMediaTrack *> *mediaTracks = [[NSMutableArray alloc] init];
@@ -109,6 +124,12 @@
   json[@"customData"] = info.customData ?: [NSNull null];
 
   json[@"entity"] = info.entity ?: [NSNull null];
+  
+#if GCK_VERSION_IS_AT_LEAST(4, 6, 0)
+  json[@"hlsSegmentFormat"] = [RCTConvert fromGCKHLSSegmentFormat:info.hlsSegmentFormat];
+
+  json[@"hlsVideoSegmentFormat"] = [RCTConvert fromGCKHLSVideoSegmentFormat:info.hlsVideoSegmentFormat];
+#endif
 
   NSMutableArray<id> *mediaTracks = [[NSMutableArray alloc] init];
   for (GCKMediaTrack *track in info.mediaTracks) {

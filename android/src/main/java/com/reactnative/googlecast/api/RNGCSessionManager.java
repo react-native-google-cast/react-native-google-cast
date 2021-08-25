@@ -1,6 +1,8 @@
 package com.reactnative.googlecast.api;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.mediarouter.media.MediaRouter;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -8,14 +10,17 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastStatusCodes;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.reactnative.googlecast.types.RNGCDevice;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +90,25 @@ public class RNGCSessionManager
       @Override
       public void run() {
         promise.resolve(RNGCCastSession.toJson(getSessionManager().getCurrentCastSession()));
+      }
+    });
+  }
+
+  @ReactMethod
+  public void startSession(final String deviceId, final Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        MediaRouter router = MediaRouter.getInstance(getReactApplicationContext());
+        for (MediaRouter.RouteInfo routeInfo : router.getRoutes()) {
+          CastDevice device = CastDevice.getFromBundle(routeInfo.getExtras());
+          if (device != null && device.getDeviceId().equals(deviceId)) {
+            router.selectRoute(routeInfo);
+            promise.resolve(true);
+            return;
+          }
+        }
+        promise.resolve(false);
       }
     });
   }

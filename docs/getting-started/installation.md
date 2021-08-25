@@ -88,12 +88,12 @@ By default, the latest version (`+`) of the Cast SDK is used. To use a specific 
 ```java
 buildscript {
   ext {
-    buildToolsVersion = "29.0.2"
+    buildToolsVersion = "29.0.3"
     minSdkVersion = 16
     compileSdkVersion = 29
     targetSdkVersion = 29
     supportLibVersion = "29.0.0"
-    castFrameworkVersion = "19.0.0" // <-- Cast SDK version
+    castFrameworkVersion = "20.0.0" // <-- Cast SDK version
   }
 }
 ```
