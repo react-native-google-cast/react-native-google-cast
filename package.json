@@ -45,7 +45,7 @@
     "pods": "yarn pods:example && yarn pods:playground",
     "pods:example": "cd example && pod-install --quiet",
     "pods:playground": "cd playground && pod-install --quiet",
-    "prepare": "bob build",
+    "build": "bob build",
     "release": "dotenv release-it",
     "test": "jest",
     "typescript": "tsc --noEmit"
