@@ -1,10 +1,18 @@
 package com.reactnative.googlecast;
 
+import static android.content.Context.UI_MODE_SERVICE;
+
+import android.app.UiModeManager;
+import android.content.Context;
+import android.content.res.Configuration;
+
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.reactnative.googlecast.api.RNGCCastContext;
 import com.reactnative.googlecast.api.RNGCCastSession;
 import com.reactnative.googlecast.api.RNGCDiscoveryManager;
@@ -22,6 +30,8 @@ public class GoogleCastPackage implements ReactPackage {
   public List<NativeModule>
   createNativeModules(ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
+
+    if(!isCastApiAvailable(reactContext)) return modules;
 
     modules.add(new RNGCCastContext(reactContext));
     modules.add(new RNGCCastSession(reactContext));
@@ -45,4 +55,20 @@ public class GoogleCastPackage implements ReactPackage {
 
     return managers;
   }
+
+
+  private boolean isCastApiAvailable(Context context){
+      if(isTv(context)) return false;
+      return isPlayStoreServicesAvailable(context);
+  }
+
+  private boolean isTv(Context context){
+      UiModeManager uiModeManager = (UiModeManager) context.getSystemService(UI_MODE_SERVICE);
+      return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+  }
+
+  private boolean isPlayStoreServicesAvailable(Context context){
+      return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+  }
+  
 }
