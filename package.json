@@ -21,9 +21,9 @@
     "!**/__mocks__",
     "lib/**/*"
   ],
-  "author": "Petr Bela <github@petrbela.com>",
   "contributors": [
-    "Charlie L <carlyeah@me.com>"
+    "Charlie L <charliesbot@gmail.com>",
+    "Petr Bela <github@petrbela.com>"
   ],
   "homepage": "https://github.com/react-native-google-cast/react-native-google-cast",
   "repository": {
