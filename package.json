@@ -5,6 +5,10 @@
   "main": "lib/commonjs/index",
   "react-native": "src/index",
   "module": "lib/module/index",
+  "author": {
+    "name": "CuriosityStream",
+    "email": "mobile@curiositystream.com"
+  },
   "types": "lib/typescript/src/index.d.ts",
   "source": "src/index",
   "files": [
