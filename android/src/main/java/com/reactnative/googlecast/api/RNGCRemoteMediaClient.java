@@ -155,6 +155,17 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
     }, promise);
   }
 
+ @ReactMethod
+   public void removeFromQueue(final int itemId, final Promise promise) {
+      with.withX(new With.WithXPromisify<RemoteMediaClient>() {
+      @Override
+      public PendingResult execute(RemoteMediaClient client) {
+        return client.queueRemoveItem(itemId,null);
+      }
+    }, promise);
+    }
+
+
   @ReactMethod
   public void queueNext(@Nullable final ReadableMap customData, final Promise promise) {
     with.withX(new With.WithXPromisify<RemoteMediaClient>() {

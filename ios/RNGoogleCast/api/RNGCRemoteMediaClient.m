@@ -148,6 +148,15 @@ RCT_EXPORT_METHOD(queueInsertItems: (NSArray<GCKMediaQueueItem *> *) items
   }];
 }
 
+
+RCT_EXPORT_METHOD(removeFromQueue: (NSUInteger) itemID
+                  resolver: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+    [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+        return [client queueRemoveItemWithID: itemID];
+    }];
+}
+
 RCT_EXPORT_METHOD(queueNext: (nullable NSDictionary *) customData
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {

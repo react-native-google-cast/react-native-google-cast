@@ -143,6 +143,14 @@ export default class RemoteMediaClient {
     return Native.queueInsertItems(items, beforeItemId || 0, customData)
   }
 
+
+  /*Removes an item from the queue by ItemId*/ 
+  removeFromQueue(itemId: number):Promise<void> {
+    return Native.removeFromQueue(itemId)
+  }
+
+
+
   /**
    * Moves to the next item in the queue.
    *
