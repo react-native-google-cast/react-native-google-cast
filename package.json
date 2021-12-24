@@ -21,6 +21,7 @@
     "!**/__mocks__",
     "lib/**/*"
   ],
+  "author": [""],
   "contributors": [
     "Charlie L <charliesbot@gmail.com>",
     "Petr Bela <github@petrbela.com>"
