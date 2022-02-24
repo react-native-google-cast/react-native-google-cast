@@ -2,13 +2,15 @@
 
 @implementation RCTConvert (GCKColor)
 
-+ (GCKColor *)GCKColor:(id)json {
++ (nullable GCKColor *)GCKColor:(nullable id)json {
+  if (json == nil) return nil;
+
   return [[GCKColor alloc] initWithCSSString:json];
 }
 
-+ (nonnull id)fromGCKColor:(nullable GCKColor *)color {
-  if (color == nil) return [NSNull null];
-  
++ (nullable id)fromGCKColor:(nullable GCKColor *)color {
+  if (color == nil) return nil;
+
   return color.CSSString;
 }
 

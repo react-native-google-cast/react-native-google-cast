@@ -6,8 +6,8 @@
 
 @interface RCTConvert (GCKColor)
 
-+ (GCKColor *)GCKColor:(id)json;
-+ (nonnull id)fromGCKColor:(nullable GCKColor *)color;
++ (nullable GCKColor *)GCKColor:(nullable id)json;
++ (nullable id)fromGCKColor:(nullable GCKColor *)color;
 
 @end
 

@@ -79,7 +79,7 @@ public class RNGCMediaInfo {
     }
 
     if (json.hasKey("textTrackStyle")) {
-      builder.setEntity(json.getString(("textTrackStyle")));
+      builder.setTextTrackStyle(RNGCTextTrackStyle.fromJson(json.getMap("textTrackStyle")));
     }
 
     // if (json.hasKey("vmapAdsRequest")) {
