@@ -54,9 +54,11 @@ public class RNGoogleCastButtonManager
     Drawable drawable = styleAttrs.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
     styleAttrs.recycle();
 
-    CastButtonFactory.setUpMediaRouteButton(context, button);
-
+    // the drawable needs to be set before calling CastButtonFactory.setupMediaRouteButton()
+    // otherwise it won't initiate with the correct visual state
     button.setRemoteIndicatorDrawable(drawable);
+
+    CastButtonFactory.setUpMediaRouteButton(context, button);
 
     return button;
   }
