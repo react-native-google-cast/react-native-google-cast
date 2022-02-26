@@ -8,6 +8,8 @@ sidebar_label: Troubleshooting
 
 This is by far the most common problem with this library. Before creating an issue, please read through this list of known solutions to see if anything helps:
 
+- Try the Google Home, YouTube, or another Cast-enabled app to make sure they can see the Cast device you're trying to connect to.
+
 - Make sure you've completed all the steps in [Installation](./installation) and [Setup](./setup).
 
 - Read through [Discovery Troubleshooting](https://developers.google.com/cast/docs/discovery) in the Google Cast documentation.
@@ -17,6 +19,8 @@ This is by far the most common problem with this library. Before creating an iss
 - Check the Debug log in Xcode or Android Studio for any warnings and errors.
 
 - (Android) Make sure the device has Google Play Services available and that you initialize `CastContext.getSharedInstance(this);` in your `MainActivity`'s `onCreate`.
+
+- (Android) If using an emulator, due to it running as a virtual machine with its own network, you might need to configure NAT for the virtual device. If you cannot see any Cast devices on the emulator, please test with a real Android device before reporting an issue.
 
 - (iOS) Make sure you've enabled the **Access WiFi Information** capability.
 
@@ -58,3 +62,5 @@ This is by far the most common problem with this library. Before creating an iss
   ```
 
   This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). It seems to affects Google SDK versions 4.3.x - 4.4.x. Please upgrade to the latest SDK (4.5+) or use `react-native-google-cast/NoBluetooth`.
+
+- (Android) Using `tools:node="replace"` in AndroidManifest may cause media to not load on the Cast device [#349](https://github.com/react-native-google-cast/react-native-google-cast/issues/349). See [firebase/quickstart-android#477](https://github.com/firebase/quickstart-android/issues/477) for options how to resolve this.

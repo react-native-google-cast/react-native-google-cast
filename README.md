@@ -28,7 +28,7 @@ Refer to the [playground](playground/) folder to find a sample app demonstrating
 
 ## Expo
 
-As this library requires native dependencies that are not available in the default Expo bundle, you'll need to [eject to bare workflow](https://docs.expo.io/bare/customizing/). That will enable you to continue using Expo for the parts of the app that don't need casting, and then test Cast-specific functionality in a standalone build.
+This library can by used by custom built Expo apps since Expo SDK 42. See [@config-plugins/react-native-google-cast](https://github.com/expo/config-plugins/tree/master/packages/react-native-google-cast) for more information.
 
 ## Troubleshooting
 

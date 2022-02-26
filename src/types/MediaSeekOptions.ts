@@ -1,4 +1,4 @@
-export interface MediaSeekOptions {
+export default interface MediaSeekOptions {
   /** Custom application-specific data to pass along with the request. */
   customData?: object
 

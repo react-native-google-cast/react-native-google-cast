@@ -10,9 +10,19 @@ or
 
 `$ yarn add react-native-google-cast`
 
+## Expo
+
+Since Expo SDK 42, you can use this library in a custom-built Expo app.
+
+Simply follow instructions at [@config-plugins/react-native-google-cast](https://github.com/expo/config-plugins/tree/master/packages/react-native-google-cast) which will take care of all the installation and setup steps.
+
+Then ignore the rest of this page and jump straight to [Usage](usage).
+
 ## iOS
 
-If you're using RN >= 0.60 and you're fine with default settings (without guest mode), you can just run `cd ios && pod install`. Otherwise read below.
+If you're using RN >= 0.60 and you're fine with default settings (without guest mode), you can just run `cd ios && pod install`. Note that the latest Google Cast SDK (currently [4.7.0](https://developers.google.com/cast/docs/release-notes#november-19,-2021)) only supports iOS 12 or newer.
+
+If you need to support iOS 10/11, or enable guest mode, read below.
 
 #### Using CocoaPods (RN >= 0.60, or <= 0.59 with CocoaPods)
 
@@ -25,6 +35,8 @@ If you're using RN >= 0.60 and you're fine with default settings (without guest 
      ```
      pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
      pod 'google-cast-sdk-no-bluetooth'
+     # or for iOS 10/11 support
+     # pod 'google-cast-sdk-no-bluetooth', '4.6.1'
      ```
 
    - If you [want to support guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
@@ -32,6 +44,8 @@ If you're using RN >= 0.60 and you're fine with default settings (without guest 
      ```
      pod 'react-native-google-cast/GuestMode', path: '../node_modules/react-native-google-cast/ios/'
      pod 'google-cast-sdk'
+     # or for iOS 10/11 support
+     # pod 'google-cast-sdk', '4.6.1'
      ```
 
      To finish setting up guest mode, don't forget step 5 in the [Setup](setup#ios).
@@ -88,12 +102,12 @@ By default, the latest version (`+`) of the Cast SDK is used. To use a specific 
 ```java
 buildscript {
   ext {
-    buildToolsVersion = "29.0.3"
+    buildToolsVersion = "31.0.0"
     minSdkVersion = 16
-    compileSdkVersion = 29
-    targetSdkVersion = 29
-    supportLibVersion = "29.0.0"
-    castFrameworkVersion = "20.0.0" // <-- Cast SDK version
+    compileSdkVersion = 31
+    targetSdkVersion = 31
+    supportLibVersion = "31.0.0"
+    castFrameworkVersion = "21.0.0" // <-- Cast SDK version
   }
 }
 ```

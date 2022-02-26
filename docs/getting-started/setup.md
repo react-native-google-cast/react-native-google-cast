@@ -4,6 +4,10 @@ title: Setup
 sidebar_label: Setup
 ---
 
+## Expo
+
+If you're using Expo, follow instructions at [@config-plugins/react-native-google-cast](https://github.com/expo/config-plugins/tree/master/packages/react-native-google-cast) and then continue to [Usage](usage).
+
 ## iOS
 
 1. In `AppDelegate.m` (or `AppDelegate.swift`) add
@@ -64,7 +68,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
 
    If using a custom receiver, make sure to replace `CC1AD845` with your custom receiver app id.
 
-   You may also customize the local network usage description.
+   You may also customize the local network usage description (See [#355](https://github.com/react-native-google-cast/react-native-google-cast/issues/355#issuecomment-906520304)).
 
    Furthermore, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
 
