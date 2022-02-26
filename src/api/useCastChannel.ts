@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import CastChannel from './CastChannel'
-import useCastSession from './useCastSession'
+import useCastSession, { UseCastSessionOptions } from './useCastSession'
 
 /**
  * Hook that establishes a custom {@link CastChannel} on the current connected session.
@@ -29,10 +29,11 @@ import useCastSession from './useCastSession'
  */
 export default function useCastChannel(
   namespace: string,
-  onMessage?: (message: Record<string, any> | string) => void
+  onMessage?: (message: Record<string, any> | string) => void,
+  useCastSessionOptions?: UseCastSessionOptions
 ): CastChannel | null {
   const [castChannel, setCastChannel] = useState<CastChannel | null>(null)
-  const castSession = useCastSession()
+  const castSession = useCastSession(useCastSessionOptions)
 
   useEffect(() => {
     let channel: CastChannel | null

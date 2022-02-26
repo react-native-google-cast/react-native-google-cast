@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Device from '../types/Device'
-import useCastSession from './useCastSession'
+import useCastSession, { UseCastSessionOptions } from './useCastSession'
 
 /**
  * Hook that provides the currently connected {@link Device}.
@@ -20,9 +20,11 @@ import useCastSession from './useCastSession'
  * ```
  */
 
-export default function useCastDevice(): Device | null {
+export default function useCastDevice(
+  options?: UseCastSessionOptions
+): Device | null {
   const [device, setDevice] = useState<Device | null>(null)
-  const session = useCastSession()
+  const session = useCastSession(options)
 
   useEffect(() => {
     if (!session) setDevice(null)

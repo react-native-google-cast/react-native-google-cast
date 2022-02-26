@@ -1,4 +1,4 @@
-import useCastSession from './useCastSession'
+import useCastSession, { UseCastSessionOptions } from './useCastSession'
 
 /**
  * Hook that provides the current {@link RemoteMediaClient}.
@@ -17,7 +17,7 @@ import useCastSession from './useCastSession'
  * }
  * ```
  */
-export default function useRemoteMediaClient() {
-  const castSession = useCastSession()
+export default function useRemoteMediaClient(options?: UseCastSessionOptions) {
+  const castSession = useCastSession(options)
   return castSession ? castSession.client : null
 }
