@@ -6,7 +6,7 @@ export interface UseCastSessionOptions {
   /**
    * Skip updating the session when the app is suspended to background or resumed back.
    */
-  ignoreBackgrounding?: boolean
+  ignoreSessionUpdatesInBackground?: boolean
 }
 
 /**
@@ -30,7 +30,7 @@ export interface UseCastSessionOptions {
 export default function useCastSession(
   options?: UseCastSessionOptions
 ): CastSession | null {
-  const ignoreBackgrounding = options?.ignoreBackgrounding
+  const ignoreBackground = options?.ignoreSessionUpdatesInBackground
 
   const [castSession, setCastSession] = useState<CastSession | null>(null)
 
@@ -39,12 +39,12 @@ export default function useCastSession(
 
     const started = manager.onSessionStarted(setCastSession)
 
-    const suspended = ignoreBackgrounding
+    const suspended = ignoreBackground
       ? null
       : manager.onSessionSuspended(() => setCastSession(null))
 
     const resumed = manager.onSessionResumed((session) => {
-      if (ignoreBackgrounding) {
+      if (ignoreBackground) {
         // only update the session if it's different from previous one
         setCastSession((s) => (s?.id === session.id ? s : session))
       } else {
@@ -60,7 +60,7 @@ export default function useCastSession(
       resumed?.remove()
       ended.remove()
     }
-  }, [ignoreBackgrounding])
+  }, [ignoreBackground])
 
   return castSession
 }
