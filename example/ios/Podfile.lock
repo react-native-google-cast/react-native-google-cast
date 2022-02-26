@@ -73,6 +73,7 @@ PODS:
     - Protobuf (~> 3.13)
   - google-cast-sdk-no-bluetooth/Core (4.6.1):
     - Protobuf (~> 3.13)
+  - HMSegmentedControl (1.5.6)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.180)
   - PromisesObjC (2.0.0)
@@ -349,12 +350,14 @@ PODS:
     - React-cxxreact (= 0.64.2)
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
-  - ReactNativeNavigation (7.16.0):
+  - ReactNativeNavigation (7.25.4):
+    - HMSegmentedControl
     - React-Core
     - React-RCTImage
     - React-RCTText
-    - ReactNativeNavigation/Core (= 7.16.0)
-  - ReactNativeNavigation/Core (7.16.0):
+    - ReactNativeNavigation/Core (= 7.25.4)
+  - ReactNativeNavigation/Core (7.25.4):
+    - HMSegmentedControl
     - React-Core
     - React-RCTImage
     - React-RCTText
@@ -461,6 +464,7 @@ SPEC REPOS:
     - Flipper-RSocket
     - FlipperKit
     - google-cast-sdk-no-bluetooth
+    - HMSegmentedControl
     - libevent
     - OpenSSL-Universal
     - PromisesObjC
@@ -550,6 +554,7 @@ SPEC CHECKSUMS:
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   google-cast-sdk-no-bluetooth: b3037c14fdf07a794326502e799beb0875ab2029
+  HMSegmentedControl: 34c1f54d822d8308e7b24f5d901ec674dfa31352
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
@@ -579,7 +584,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 24600e3b1aaa77126989bc58b6747509a1ba14f3
   React-runtimeexecutor: a9904c6d0218fb9f8b19d6dd88607225927668f9
   ReactCommon: 149906e01aa51142707a10665185db879898e966
-  ReactNativeNavigation: 5303d00327dab4e26f74c3164b23ba3119664e77
+  ReactNativeNavigation: 146bec8f834564f05637b43f469b9ca6e1cbe94f
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: 9c13c86454bfd54dab7505c1a054470bfecd2563
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac

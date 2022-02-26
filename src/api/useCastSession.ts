@@ -5,6 +5,8 @@ import SessionManager from './SessionManager'
 export interface UseCastSessionOptions {
   /**
    * Skip updating the session when the app is suspended to background or resumed back.
+   *
+   * This is primarily targeted at iOS which by default [suspends sessions when backgrounded](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a0edf44953049a7d888847745a387c9dc). Alternatively, you can set `options.suspendSessionsWhenBackgrounded = false` when initializing the CastContext in `AppDelegate`.
    */
   ignoreSessionUpdatesInBackground?: boolean
 }
