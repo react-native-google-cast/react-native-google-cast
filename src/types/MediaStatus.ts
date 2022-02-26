@@ -25,7 +25,7 @@ export default interface MediaStatus {
   customData?: object
 
   /** The current idle reason. This value is only meaningful if the `playerState` is `idle`. */
-  idleReason: MediaPlayerIdleReason
+  idleReason?: MediaPlayerIdleReason | null
 
   /** The stream's mute state. */
   isMuted: boolean
@@ -34,13 +34,13 @@ export default interface MediaStatus {
   loadingItemId?: number
 
   /** The current media information. */
-  mediaInfo: MediaInfo
+  mediaInfo?: MediaInfo | null
 
   /** Gets the current stream playback rate. This will be negative if the stream is seeking backwards, 0 if the stream is paused, 1 if the stream is playing normally, and some other positive value if the stream is seeking forwards. */
   playbackRate: number
 
   /** The current player state. */
-  playerState: MediaPlayerState
+  playerState: MediaPlayerState | null
 
   /** ID of the next {@link MediaQueueItem}, only available if it has been preloaded. On the receiver media items can be preloaded and cached temporarily in memory, so when they are loaded later on, the process is faster (as the media does not have to be fetched from the network). */
   preloadedItemId?: number
@@ -49,7 +49,7 @@ export default interface MediaStatus {
   queueItems: MediaQueueItem[]
 
   /** The repeat mode for playing the queue. */
-  queueRepeatMode?: MediaRepeatMode
+  queueRepeatMode?: MediaRepeatMode | null
 
   /** The current stream position from the start of the stream, in seconds */
   streamPosition: number
