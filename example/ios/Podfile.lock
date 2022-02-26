@@ -76,7 +76,7 @@ PODS:
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.180)
   - PromisesObjC (2.0.0)
-  - Protobuf (3.17.0)
+  - Protobuf (3.19.4)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -270,14 +270,14 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
-  - react-native-google-cast (4.1.2):
+  - react-native-google-cast (4.1.3):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.1.2)
-  - react-native-google-cast/NoBluetooth (4.1.2):
+    - react-native-google-cast/NoBluetooth (= 4.1.3)
+  - react-native-google-cast/NoBluetooth (4.1.3):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.1.2):
+  - react-native-google-cast/RNGoogleCast (4.1.3):
     - PromisesObjC
     - React
   - react-native-video (5.1.1):
@@ -553,7 +553,7 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  Protobuf: 7327d4444215b5f18e560a97f879ff5503c4581c
+  Protobuf: 235750e4696ff59fb07d949a9dbbc92b3c0700fe
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
   RCTTypeSafety: c1f31d19349c6b53085766359caac425926fafaa
@@ -565,7 +565,7 @@ SPEC CHECKSUMS:
   React-jsi: 67747b9722f6dab2ffe15b011bcf6b3f2c3f1427
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
-  react-native-google-cast: 8538c321da08b2289d24c173cbdfb1bacf8d3be8
+  react-native-google-cast: d6c28bd81b8f32b41d02a9730388fea88a968d39
   react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737
   React-RCTActionSheet: af7796ba49ffe4ca92e7277a5d992d37203f7da5
@@ -587,4 +587,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 6bbd83d8cbbb5bcddf49990fbd8733d16828f0a0
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

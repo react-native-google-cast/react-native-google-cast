@@ -31,13 +31,13 @@ public class GoogleCastPackage implements ReactPackage {
   createNativeModules(ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
 
-    if(!isCastApiAvailable(reactContext)) return modules;
-
-    modules.add(new RNGCCastContext(reactContext));
-    modules.add(new RNGCCastSession(reactContext));
-    modules.add(new RNGCDiscoveryManager(reactContext));
-    modules.add(new RNGCRemoteMediaClient(reactContext));
-    modules.add(new RNGCSessionManager(reactContext));
+    if (isCastApiAvailable(reactContext)) {
+      modules.add(new RNGCCastContext(reactContext));
+      modules.add(new RNGCCastSession(reactContext));
+      modules.add(new RNGCDiscoveryManager(reactContext));
+      modules.add(new RNGCRemoteMediaClient(reactContext));
+      modules.add(new RNGCSessionManager(reactContext));
+    }
 
     return modules;
   }
@@ -56,19 +56,17 @@ public class GoogleCastPackage implements ReactPackage {
     return managers;
   }
 
-
   private boolean isCastApiAvailable(Context context){
-      if(isTv(context)) return false;
-      return isPlayStoreServicesAvailable(context);
+    if (isTv(context)) return false;
+    return isPlayStoreServicesAvailable(context);
   }
 
   private boolean isTv(Context context){
-      UiModeManager uiModeManager = (UiModeManager) context.getSystemService(UI_MODE_SERVICE);
-      return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+    UiModeManager uiModeManager = (UiModeManager) context.getSystemService(UI_MODE_SERVICE);
+    return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
   }
 
   private boolean isPlayStoreServicesAvailable(Context context){
-      return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+    return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
   }
-  
 }
