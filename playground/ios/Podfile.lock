@@ -270,14 +270,14 @@ PODS:
     - React-jsi (= 0.64.3)
     - React-perflogger (= 0.64.3)
   - React-jsinspector (0.64.3)
-  - react-native-google-cast (4.1.3):
+  - react-native-google-cast (4.2.0):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.1.3)
-  - react-native-google-cast/NoBluetooth (4.1.3):
+    - react-native-google-cast/NoBluetooth (= 4.2.0)
+  - react-native-google-cast/NoBluetooth (4.2.0):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.1.3):
+  - react-native-google-cast/RNGoogleCast (4.2.0):
     - PromisesObjC
     - React
   - react-native-safe-area-context (3.4.1):
@@ -560,7 +560,7 @@ SPEC CHECKSUMS:
   React-jsi: a8b09c29521c798f1783348b37b511ba7b3dbeb3
   React-jsiexecutor: df6abc9fafbecb8e5b7a5fbc5e6d4bd017d594d5
   React-jsinspector: 34e23860273a23695342f58eed3ffd3ba10c31e0
-  react-native-google-cast: d6c28bd81b8f32b41d02a9730388fea88a968d39
+  react-native-google-cast: d9331296ed4e675aa2b7d33c833ac4d1d4c506cb
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   React-perflogger: cc76a4254d19640f1d8ad1c66fdee800414b805c
   React-RCTActionSheet: 7448f049318d8d7e8a9a1ebb742ada721757eea8

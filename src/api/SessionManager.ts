@@ -50,7 +50,6 @@ export default class SessionManager {
   /** Called when a session is about to be started. */
   onSessionStarting(handler: (session: CastSession) => void) {
     return EventEmitter.addListener(Native.SESSION_STARTING, ({ session }) => {
-      console.log('session starting', session)
       handler(new CastSession(session))
     })
   }
