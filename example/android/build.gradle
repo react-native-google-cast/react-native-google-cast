@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        RNNKotlinVersion = "1.3.61"
+        RNNKotlinVersion = "1.6.10"
         RNNKotlinStdlib = "kotlin-stdlib-jdk8"
         buildToolsVersion = "31.0.0"
         minSdkVersion = 21 // required by React Native Navigation
@@ -19,8 +19,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61'
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
+        classpath 'com.android.tools.build:gradle:4.1.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -29,6 +29,8 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
+        jcenter()
         mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -38,9 +40,6 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
-
-        google()
-        jcenter()
         maven { url 'https://jitpack.io' }
     }
 }
