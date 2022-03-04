@@ -1,5 +1,15 @@
 import WebImage from './WebImage'
 
+
+
+/**
+ * String representing a Cast receiver device's capabilties
+ * "DynamicGroup" and "MultiChannelGroup" only available on iOS
+ *
+ * @see [Android](https://developers.google.cn/android/reference/com/google/android/gms/cast/CastDevice?hl=it-IT#hasCapabilities(int%5B%5D)) | [iOS](https://developers.google.cn/cast/docs/reference/ios/interface_g_c_k_device?hl=it-IT#ad2d54d60517308097ae26ff555062803) | [Chrome](https://developers.google.cn/cast/docs/reference/web_sender/chrome.cast?hl=it-IT#.Capability)
+ */
+export type DeviceCapability = "VideoOut" | "VideoIn" | "AudioOut" | "AudioIn" | "DynamicGroup" | "MultizoneGroup" | "MultiChannelGroup"
+
 /**
  * An object representing a Cast receiver device.
  *
@@ -26,4 +36,7 @@ export default interface Device {
 
   /** Gets the model name for the device. */
   modelName: string
+
+  /** List of capabilities available on this device */
+  capabilities: DeviceCapability[]
 }
