@@ -27,6 +27,31 @@
 
   json[@"modelName"] = device.modelName;
 
+  //Capabilities
+  NSMutableArray<NSString *> *capabilities = [NSMutableArray array];
+  if ([device hasCapabilities:GCKDeviceCapabilityVideoOut]) {
+    [capabilities addObject:@"VideoOut"];
+  }
+  if ([device hasCapabilities:GCKDeviceCapabilityAudioOut]) {
+    [capabilities addObject:@"AudioOut"];
+  }
+  if ([device hasCapabilities:GCKDeviceCapabilityVideoIn]) {
+    [capabilities addObject:@"VideoIn"];
+  }
+  if ([device hasCapabilities:GCKDeviceCapabilityAudioIn]) {
+    [capabilities addObject:@"AudioIn"];
+  }
+  if ([device hasCapabilities:GCKDeviceCapabilityDynamicGroup]) {
+    [capabilities addObject:@"DynamicGroup"];
+  }
+  if ([device hasCapabilities:GCKDeviceCapabilityMultizoneGroup]) {
+    [capabilities addObject:@"MultizoneGroup"];
+  }
+  if ([device hasCapabilities:GCKDeviceCapabilityMultiChannelGroup]) {
+    [capabilities addObject:@"MultiChannelGroup"];
+  }
+  json[@"capabilities"] = capabilities;
+
   return json;
 }
 
