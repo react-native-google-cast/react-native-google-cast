@@ -9,25 +9,6 @@
 
   NSMutableDictionary *json = [[NSMutableDictionary alloc] init];
 
-  json[@"deviceId"] = device.deviceID;
-
-  json[@"deviceVersion"] = device.deviceVersion;
-
-  json[@"friendlyName"] = device.friendlyName;
-
-  NSMutableArray<id> *icons;
-  for (GCKImage *icon in device.icons) {
-    [icons addObject:[RCTConvert fromGCKImage:icon]];
-  };
-  json[@"icons"] = icons;
-
-  json[@"ipAddress"] = device.networkAddress.ipAddress;
-
-  json[@"isOnLocalNetwork"] = @(device.isOnLocalNetwork);
-
-  json[@"modelName"] = device.modelName;
-
-  //Capabilities
   NSMutableArray<NSString *> *capabilities = [NSMutableArray array];
   if ([device hasCapabilities:GCKDeviceCapabilityVideoOut]) {
     [capabilities addObject:@"VideoOut"];
@@ -51,6 +32,24 @@
     [capabilities addObject:@"MultiChannelGroup"];
   }
   json[@"capabilities"] = capabilities;
+
+  json[@"deviceId"] = device.deviceID;
+
+  json[@"deviceVersion"] = device.deviceVersion;
+
+  json[@"friendlyName"] = device.friendlyName;
+
+  NSMutableArray<id> *icons;
+  for (GCKImage *icon in device.icons) {
+    [icons addObject:[RCTConvert fromGCKImage:icon]];
+  };
+  json[@"icons"] = icons;
+
+  json[@"ipAddress"] = device.networkAddress.ipAddress;
+
+  json[@"isOnLocalNetwork"] = @(device.isOnLocalNetwork);
+
+  json[@"modelName"] = device.modelName;
 
   return json;
 }

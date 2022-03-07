@@ -20,7 +20,7 @@ This is by far the most common problem with this library. Before creating an iss
 
 - (Android) Make sure the device has Google Play Services available and that you initialize `CastContext.getSharedInstance(this);` in your `MainActivity`'s `onCreate`.
 
-- (Android) If using an emulator, due to it running as a virtual machine with its own network, you might need to configure NAT for the virtual device. If you cannot see any Cast devices on the emulator, please test with a real Android device before reporting an issue.
+- (Android) If using an **emulator**, due to it running as a virtual machine with its own network, you might need to configure NAT for the virtual device. If you cannot see any Cast devices on the emulator, please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
 
 - (iOS) Make sure you've enabled the **Access WiFi Information** capability.
 

@@ -24,6 +24,24 @@ public class RNGCDevice {
 
     final WritableMap json = new WritableNativeMap();
 
+    final WritableArray capabilities = new WritableNativeArray();
+    if (device.hasCapability(CastDevice.CAPABILITY_AUDIO_IN)) {
+      capabilities.pushString("AudioIn");
+    }
+    if (device.hasCapability(CastDevice.CAPABILITY_AUDIO_OUT)) {
+      capabilities.pushString("AudioOut");
+    }
+    if (device.hasCapability(CastDevice.CAPABILITY_VIDEO_IN)) {
+      capabilities.pushString("VideoIn");
+    }
+    if (device.hasCapability(CastDevice.CAPABILITY_VIDEO_OUT)) {
+      capabilities.pushString("VideoOut");
+    }
+    if (device.hasCapability(CastDevice.CAPABILITY_MULTIZONE_GROUP)) {
+      capabilities.pushString("MultizoneGroup");
+    }
+    json.putArray("capabilities", capabilities);
+
     json.putString("deviceId", device.getDeviceId());
 
     json.putString("deviceVersion", device.getDeviceVersion());
@@ -45,25 +63,6 @@ public class RNGCDevice {
     json.putString("modelName", device.getModelName());
 
 
-    // Capabilities
-    final WritableArray capabilities = new WritableNativeArray();
-    if (device.hasCapability(CastDevice.CAPABILITY_AUDIO_IN)) {
-      capabilities.pushString("AudioIn");
-    }
-    if (device.hasCapability(CastDevice.CAPABILITY_AUDIO_OUT)) {
-      capabilities.pushString("AudioOut");
-    }
-    if (device.hasCapability(CastDevice.CAPABILITY_VIDEO_IN)) {
-      capabilities.pushString("VideoIn");
-    }
-    if (device.hasCapability(CastDevice.CAPABILITY_VIDEO_OUT)) {
-      capabilities.pushString("VideoOut");
-    }
-    if (device.hasCapability(CastDevice.CAPABILITY_MULTIZONE_GROUP)) {
-      capabilities.pushString("MultizoneGroup");
-    }
-
-    json.putArray("capabilities", capabilities);
     return json;
   }
 }
