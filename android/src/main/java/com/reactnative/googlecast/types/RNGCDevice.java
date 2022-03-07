@@ -1,20 +1,12 @@
 package com.reactnative.googlecast.types;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.google.android.gms.cast.CastDevice;
-import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.common.images.WebImage;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Nullable;
 
