@@ -135,7 +135,7 @@ android {
 //        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative60"
         multiDexEnabled true
         versionCode 1
-        versionName "4.2.1"
+        versionName "4.2.2"
     }
     splits {
         abi {
