@@ -28,7 +28,7 @@ function MyComponent() {
 
   // This will render native Cast button.
   // When a user presses it, a Cast dialog will prompt them to select a Cast device to connect to.
-  return <CastButton style={{ width: 24, height: 24 }} />
+  return <CastButton style={{ width: 24, height: 24, tintColor: 'black' }} />
 }
 ```
 
@@ -43,8 +43,7 @@ client.loadMedia({
     metadata: {
       images: [
         {
-          url:
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/BigBuckBunny.jpg',
+          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/BigBuckBunny.jpg',
         },
       ],
       title: 'Big Buck Bunny',
