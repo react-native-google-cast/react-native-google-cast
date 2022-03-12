@@ -18,6 +18,8 @@ const channel = castSession.addChannel('urn:x-cast:...')
 
 Or, if you're using hooks:
 
+> Note that a channel with the same namespace can only be registered once at a time (you'd need to unregister previous one to create the same one again). If you need to access the channel from multiple screens, either move the call to their parent (e.g. navigator), or don't use the hook and instead call `addChannel` in a global store (e.g. Redux or Mobx). More info in [issue #316](https://github.com/react-native-google-cast/react-native-google-cast/issues/316#issuecomment-1065734844).
+
 ```ts
 import { useCastChannel } from 'react-native-google-cast'
 
