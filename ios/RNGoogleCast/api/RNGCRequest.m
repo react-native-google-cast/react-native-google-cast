@@ -7,12 +7,18 @@
   RCTPromiseRejectBlock reject;
 }
 
+// store pointers so that the requests don't dealloc before resolving
+static NSMutableDictionary *requests;
+
 + (id)promisifyRequest:(GCKRequest *)request
                resolve:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {
-  return [[RNGCRequest alloc] initWithRequest:request
+  RNGCRequest *req = [[RNGCRequest alloc] initWithRequest:request
                                       resolve:resolve
                                        reject:reject];
+  if (requests == nil) requests = [[NSMutableDictionary alloc] init];
+  [requests setObject:req forKey:[@([request requestID]) stringValue]];
+  return req;
 }
 
 - initWithRequest:(GCKRequest *)request
@@ -27,10 +33,12 @@
 
 - (void)requestDidComplete:(GCKRequest *)request {
   resolve(nil);
+  [requests removeObjectForKey:[@([request requestID]) stringValue]];
 }
 
 - (void)request:(GCKRequest *)request didFailWithError:(GCKError *)error {
   reject([error localizedDescription], [error localizedFailureReason], error);
+  [requests removeObjectForKey:[@([request requestID]) stringValue]];
 }
 
 - (void)request:(GCKRequest *)request
@@ -52,6 +60,7 @@
   }
   
   reject(message, message, nil);
+  [requests removeObjectForKey:[@([request requestID]) stringValue]];
 }
 
 @end
