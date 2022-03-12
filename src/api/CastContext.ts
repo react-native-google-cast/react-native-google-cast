@@ -46,6 +46,10 @@ export default class CastContext {
   /**
    * Displays the Cast Dialog programmatically. Users can also open the Cast Dialog by clicking on a Cast Button.
    *
+   * Notes:
+   * - on Android, the Cast Button needs to be rendered somewhere on the screen (can be hidden) in order for this method to work.
+   * - on iOS 14+, the user has to first press the Cast Button manually and grant permissions (once per app install). Until then, this method will not work.
+   *
    * @returns `true` if the Cast Dialog was shown, `false` if it was not shown.
    */
   static showCastDialog(): Promise<boolean> {
