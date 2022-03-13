@@ -1,5 +1,7 @@
 package com.reactnative.googlecast.api;
 
+import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.mediarouter.media.MediaRouteSelector;
 import androidx.mediarouter.media.MediaRouter;
@@ -143,10 +145,18 @@ public class RNGCDiscoveryManager
     MediaRouter router = MediaRouter.getInstance(getReactApplicationContext());
 
     for (MediaRouter.RouteInfo routeInfo : router.getRoutes()) {
-      CastDevice device = CastDevice.getFromBundle(routeInfo.getExtras());
-      if (device != null) {
-        devices.pushMap(RNGCDevice.toJson(device));
-      }
+      // https://stackoverflow.com/a/57748577/384349
+      Bundle extras = routeInfo.getExtras();
+      CastDevice device = CastDevice.getFromBundle(extras);
+
+      if (device == null) continue;
+      if (extras == null) continue;
+      if (routeInfo.isDefault()) continue;
+      if (routeInfo.getDescription().equals("Google Cast Multizone Member")) continue;
+      if (routeInfo.getPlaybackType() != MediaRouter.RouteInfo.PLAYBACK_TYPE_REMOTE) continue;
+      if (extras.getString("com.google.android.gms.cast.EXTRA_SESSION_ID") != null) continue;
+
+      devices.pushMap(RNGCDevice.toJson(device));
     }
 
     return devices;
