@@ -45,7 +45,8 @@ public class RNGoogleCastButtonManager
 
   @Override
   public @NonNull MediaRouteButton createViewInstance(@NonNull ThemedReactContext context) {
-    CastContext castContext = CastContext.getSharedInstance(context);
+    // ensure context gets initialized
+    CastContext.getSharedInstance(context);
 
     final MediaRouteButton button = new ColorableMediaRouteButton(context);
 

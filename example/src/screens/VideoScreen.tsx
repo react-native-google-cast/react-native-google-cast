@@ -40,26 +40,28 @@ export default function VideoScreen({ componentId, video }: VideoScreenProps) {
     return () => listener.remove()
   }, [componentId])
 
-  Navigation.mergeOptions(componentId, {
-    topBar: {
-      rightButtons: [
-        {
-          id: 'cast',
-          component: {
-            name: 'castvideos.CastButton',
+  React.useEffect(() => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: [
+          {
+            id: 'cast',
+            component: {
+              name: 'castvideos.CastButton',
+            },
           },
-        },
-        ...(castState === CastState.CONNECTED
-          ? [
-              {
-                id: 'queue',
-                icon: require('../assets/playlist.png'),
-              },
-            ]
-          : []),
-      ],
-    },
-  })
+          ...(castState === CastState.CONNECTED
+            ? [
+                {
+                  id: 'queue',
+                  icon: require('../assets/playlist.png'),
+                },
+              ]
+            : []),
+        ],
+      },
+    })
+  }, [castState, componentId])
 
   function cast() {
     client
