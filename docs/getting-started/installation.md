@@ -20,11 +20,15 @@ Then ignore the rest of this page and jump straight to [Usage](usage).
 
 ## iOS
 
-If you're using RN >= 0.60 and you're fine with default settings (without guest mode), you can just run `cd ios && pod install`. Note that the latest Google Cast SDK (currently [4.7.0](https://developers.google.com/cast/docs/release-notes#november-19,-2021)) only supports iOS 12 or newer.
+#### a. Autolinking (recommended)
 
-If you need to support iOS 10/11, or enable guest mode, read below.
+If you're using RN >= 0.60 and you're fine with default settings (without guest mode), you can just run
 
-#### Using CocoaPods (RN >= 0.60, or <= 0.59 with CocoaPods)
+`cd ios && pod install`
+
+Note that the latest Google Cast SDK (currently [4.7.0](https://developers.google.com/cast/docs/release-notes#november-19,-2021)) only supports iOS 12 or newer. If your `Podfile` specifies a lower version (e.g. `platform :ios, '11.0'`), then Cast SDK v4.6.1 will be installed instead.
+
+#### b. Custom version or guest mode (RN >= 0.60, or <= 0.59 with CocoaPods)
 
 1. If you don't have [CocoaPods](https://cocoapods.org/) set up yet (RN <=0.59), follow instructions in the [react-native documentation](https://reactnative.dev/docs/integration-with-existing-apps#configuring-cocoapods-dependencies).
 
@@ -72,7 +76,7 @@ If you need to support iOS 10/11, or enable guest mode, read below.
 
 4. Finally, run `pod install`.
 
-#### Manually (RN <=0.59)
+#### c. Manually (RN <=0.59)
 
 - In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
 
@@ -112,11 +116,11 @@ buildscript {
 }
 ```
 
-#### RN >= 0.60
+#### a. RN >= 0.60
 
 No additional setup needed thanks to autolinking.
 
-#### RN <= 0.59
+#### b. RN <= 0.59
 
 1. Open up `android/app/src/main/java/[...]/MainApplication.java`
 

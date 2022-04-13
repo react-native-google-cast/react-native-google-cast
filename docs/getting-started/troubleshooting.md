@@ -8,7 +8,17 @@ sidebar_label: Troubleshooting
 
 This is by far the most common problem with this library. Before creating an issue, please read through this list of known solutions to see if anything helps:
 
-- Try the Google Home, YouTube, or another Cast-enabled app to make sure they can see the Cast device you're trying to connect to.
+- Most TVs don't support the native Cast SDK protocol, so even if it appears that apps like YouTube are able to Cast, they're in fact communicating directly with their counterpart app on the TV, not using the Cast SDK. Officially, only Chromecast, Android TV, and devices with the official Chromecast logo are supported by the SDK.
+
+  To check if your device is supported:
+
+  - Test if you can [Cast from Chrome browser](https://support.google.com/chromecast/answer/3228332).
+
+  - Test with the reference [CastVideos-ios](https://github.com/googlecast/CastVideos-ios) or [CastVideos-android](https://github.com/googlecast/CastVideos-android) apps.
+
+  - Try the Google Home, Google Photos, or another Cast-enabled app to make sure they can see the Cast device you're trying to connect to.
+
+  If any of the above don't see the device, it doesn't support the Google Cast SDK, and you won't be able to cast to it using this library.
 
 - Make sure you've completed all the steps in [Installation](./installation) and [Setup](./setup).
 
