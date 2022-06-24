@@ -18,17 +18,17 @@
   if (info == nil) return [NSNull null];
 
   return @{
-    @"adBreakClipId" : info.adBreakClipID,
-    @"duration" : @(info.duration),
-    @"title" : info.title,
+    @"adBreakClipId" : info.adBreakClipID  ?: [NSNull null],
+    @"duration" : @(info.duration)  ?: [NSNull null],
+    @"title" : info.title  ?: [NSNull null],
     @"clickThroughUrl" : info.clickThroughURL ?: [NSNull null],
     @"contentUrl" : info.contentURL ?: [NSNull null],
     @"mimeType" : info.mimeType ?: [NSNull null],
     @"contentId" : info.contentID ?: [NSNull null],
     @"posterUrl" : info.posterURL ?: [NSNull null],
-    @"whenSkippable" : @(info.whenSkippable),
+    @"whenSkippable" : @(info.whenSkippable)  ?: [NSNull null],
     @"hlsSegmentFormat" :
-        [RCTConvert fromGCKHLSSegmentFormat:info.hlsSegmentFormat],
+        [RCTConvert fromGCKHLSSegmentFormat:info.hlsSegmentFormat] ?: [NSNull null],
     //    @"vastAdsRequest" : ,
     @"customData" : info.customData ?: [NSNull null],
   };
