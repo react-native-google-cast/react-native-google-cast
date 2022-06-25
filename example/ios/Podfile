@@ -11,7 +11,7 @@ target 'CastVideos' do
     hermes_enabled: false
   )
 
-  pod 'react-native-google-cast', path: '../../ios/'
+  pod 'react-native-google-cast', path: '../../'
 
   # Enables Flipper.
   #

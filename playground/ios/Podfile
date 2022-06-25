@@ -11,7 +11,7 @@ target 'RNGCPlayground' do
     hermes_enabled: false
   )
 
-  pod 'react-native-google-cast', path: '../../ios/'
+  pod 'react-native-google-cast', path: '../../'
 
   target 'RNGCPlaygroundTests' do
     inherit! :complete
