@@ -271,14 +271,14 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
-  - react-native-google-cast (4.2.4):
+  - react-native-google-cast (4.2.5):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.2.4)
-  - react-native-google-cast/NoBluetooth (4.2.4):
+    - react-native-google-cast/NoBluetooth (= 4.2.5)
+  - react-native-google-cast/NoBluetooth (4.2.5):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.2.4):
+  - react-native-google-cast/RNGoogleCast (4.2.5):
     - PromisesObjC
     - React
   - react-native-video (5.1.1):
