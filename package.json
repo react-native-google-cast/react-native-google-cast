@@ -19,7 +19,8 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "lib/**/*"
+    "lib/**/*",
+    "react-native-google-cast.podspec"
   ],
   "contributors": [
     "Charlie L <charliesbot@gmail.com>",
