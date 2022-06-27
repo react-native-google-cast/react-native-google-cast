@@ -20,6 +20,8 @@ Then ignore the rest of this page and jump straight to [Usage](usage).
 
 ## iOS
 
+> Support for building for the iOS Simulator on **M1 Macs** is in beta. It's not published to CocoaPods yet so the process is rather manual. See https://developers.google.com/cast/docs/ios_sender#xcframework_beta for installation instructions. You'll also need to disable autolinking (see b.3) and add this library pod in Manual mode (b.2.iii).
+
 #### a. Autolinking (recommended)
 
 If you're using RN >= 0.60 and you're fine with default settings (without guest mode), you can just run
@@ -34,19 +36,19 @@ Note that the latest Google Cast SDK (currently [4.7.0](https://developers.googl
 
 2. In your `ios/Podfile`, add **one** of these snippets:
 
-   - If you [don't need guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_remove_guest_mode_support), add
+   - i. If you [don't need guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_remove_guest_mode_support), add
 
      ```
-     pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/ios/'
+     pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/'
      pod 'google-cast-sdk-no-bluetooth'
      # or for iOS 10/11 support
      # pod 'google-cast-sdk-no-bluetooth', '4.6.1'
      ```
 
-   - If you [want to support guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
+   - ii. If you [want to support guest mode](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#need_to_keep_guest_mode_support), add
 
      ```
-     pod 'react-native-google-cast/GuestMode', path: '../node_modules/react-native-google-cast/ios/'
+     pod 'react-native-google-cast/GuestMode', path: '../node_modules/react-native-google-cast/'
      pod 'google-cast-sdk'
      # or for iOS 10/11 support
      # pod 'google-cast-sdk', '4.6.1'
@@ -54,10 +56,10 @@ Note that the latest Google Cast SDK (currently [4.7.0](https://developers.googl
 
      To finish setting up guest mode, don't forget step 5 in the [Setup](setup#ios).
 
-   - If you want to link the Google Cast SDK manually, add this and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup)
+   - iii. If you want to link the Google Cast SDK manually, add this and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup)
 
      ```
-     pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/ios/'
+     pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/'
      ```
 
 3. If you're using RN >= 0.60, and your `ios/Podfile` contains `use_native_modules!`, you'll need to disable autolinking for this package, otherwise the dependency you added in the previous step will conflict with the autolinked one. To do so, create `react-native.config.js` in the root of your project with this content:
