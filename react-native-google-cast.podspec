@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'RNGoogleCast' do |ss|
-    ss.source_files = 'RNGoogleCast/**/*.{h,m}'
+    ss.source_files = 'ios/RNGoogleCast/**/*.{h,m}'
     ss.dependency 'PromisesObjC'
   end
 end
