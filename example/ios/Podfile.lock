@@ -271,14 +271,14 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
-  - react-native-google-cast (4.2.6):
+  - react-native-google-cast (4.2.7):
     - React
-    - react-native-google-cast/NoBluetooth (= 4.2.6)
-  - react-native-google-cast/NoBluetooth (4.2.6):
+    - react-native-google-cast/NoBluetooth (= 4.2.7)
+  - react-native-google-cast/NoBluetooth (4.2.7):
     - google-cast-sdk-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.2.6):
+  - react-native-google-cast/RNGoogleCast (4.2.7):
     - PromisesObjC
     - React
   - react-native-video (5.1.1):
@@ -553,7 +553,7 @@ SPEC CHECKSUMS:
   Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
-  google-cast-sdk-no-bluetooth: b3037c14fdf07a794.2.602e799beb0875ab2029
+  google-cast-sdk-no-bluetooth: b3037c14fdf07a794.2.702e799beb0875ab2029
   HMSegmentedControl: 34c1f54d822d8308e7b24f5d901ec674dfa31352
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
@@ -565,7 +565,7 @@ SPEC CHECKSUMS:
   React: bda6b6d7ae912de97d7a61aa5c160db24aa2ad69
   React-callinvoker: 9840ea7e8e88ed73d438edb725574820b29b5baa
   React-Core: b5e385da7ce5f16a220fc60fd0749eae2c6120f0
-  React-CoreModules: 17071a4.2.6239b01585f4aa8070141168ab298f
+  React-CoreModules: 17071a4.2.7239b01585f4aa8070141168ab298f
   React-cxxreact: 9be7b6340ed9f7c53e53deca7779f07cd66525ba
   React-jsi: 67747b9722f6dab2ffe15b011bcf6b3f2c3f1427
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
