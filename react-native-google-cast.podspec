@@ -16,7 +16,6 @@ Pod::Spec.new do |s|
     git: 'https://github.com/react-native-google-cast/react-native-google-cast.git',
     tag: s.version.to_s
   }
-  s.source_files = 'ios/**/*.{h,m}'
   s.default_subspec = 'NoBluetooth'
 
   s.dependency 'React'
