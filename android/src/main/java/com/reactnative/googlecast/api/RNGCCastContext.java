@@ -74,9 +74,13 @@ public class RNGCCastContext
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext =
-          CastContext.getSharedInstance(getReactApplicationContext());
-        promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
+        try {
+          CastContext castContext =
+            CastContext.getSharedInstance(getReactApplicationContext());
+          promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
+        } catch (Exception e) {
+          promise.reject("Error initialising CastContext");
+        }
       }
     });
   }
@@ -145,8 +149,10 @@ public class RNGCCastContext
     reactContext.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext = CastContext.getSharedInstance(reactContext);
-        castContext.addCastStateListener(castStateListener);
+        try {
+          CastContext castContext = CastContext.getSharedInstance(reactContext);
+          castContext.addCastStateListener(castStateListener);
+        } catch (Exception e) {}
       }
     });
 
@@ -160,8 +166,10 @@ public class RNGCCastContext
     reactContext.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext = CastContext.getSharedInstance(reactContext);
-        castContext.removeCastStateListener(castStateListener);
+        try {
+          CastContext castContext = CastContext.getSharedInstance(reactContext);
+          castContext.removeCastStateListener(castStateListener);
+        } catch (Exception e) { }
       }
     });
     mListenersAttached = false;
