@@ -2,7 +2,6 @@ import { NativeEventEmitter, NativeModules } from 'react-native'
 import Device from '../types/Device'
 
 const { RNGCDiscoveryManager: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
 
 /**
  * A class that manages the device discovery process.
@@ -59,7 +58,8 @@ export default class DiscoveryManager {
    * ```
    */
   onDevicesUpdated(listener: (devices: Device[]) => void) {
-    return EventEmitter.addListener(Native.DEVICES_UPDATED, listener)
+    const eventEmitter = new NativeEventEmitter(Native)
+    return eventEmitter.addListener(Native.DEVICES_UPDATED, listener)
   }
 
   /** *(iOS only)* Set whether to use "passive" scan for discovery. */

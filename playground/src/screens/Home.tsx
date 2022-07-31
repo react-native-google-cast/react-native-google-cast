@@ -16,7 +16,7 @@ export default function Home() {
           <Button
             key={index}
             testID={item.title}
-            onPress={() => navigation.navigate(item.title)}
+            onPress={() => navigation.navigate({ key: item.title })}
             title={item.title}
           />
         </View>

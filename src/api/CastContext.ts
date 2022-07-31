@@ -4,7 +4,6 @@ import DiscoveryManager from './DiscoveryManager'
 import SessionManager from './SessionManager'
 
 const { RNGCCastContext: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
 
 /**
  * A root class containing global objects and state for the Cast SDK. It is the default export of this library.
@@ -94,6 +93,7 @@ export default class CastContext {
    * ```
    */
   static onCastStateChanged(listener: (castState: CastState) => void) {
-    return EventEmitter.addListener(Native.CAST_STATE_CHANGED, listener)
+    const eventEmitter = new NativeEventEmitter(Native)
+    return eventEmitter.addListener(Native.CAST_STATE_CHANGED, listener)
   }
 }

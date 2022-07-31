@@ -20,7 +20,7 @@ Then ignore the rest of this page and jump straight to [Usage](usage).
 
 ## iOS
 
-> Support for building for the iOS Simulator on **M1 Macs** is in beta. It's not published to CocoaPods yet so the process is rather manual. See https://developers.google.com/cast/docs/ios_sender#xcframework_beta for installation instructions. You'll also need to disable autolinking (see b.3) and add this library pod in Manual mode (b.2.iii).
+> Support for **Arm Macs** is in beta. Make sure you follow steps b.2.iii and b.3.
 
 #### a. Autolinking (recommended)
 
@@ -40,8 +40,8 @@ Note that the latest Google Cast SDK (currently [4.7.0](https://developers.googl
 
      ```
      pod 'react-native-google-cast/NoBluetooth', path: '../node_modules/react-native-google-cast/'
-     pod 'google-cast-sdk-no-bluetooth'
-     # or for iOS 10/11 support
+
+     # or for iOS 10/11 support add
      # pod 'google-cast-sdk-no-bluetooth', '4.6.1'
      ```
 
@@ -49,18 +49,20 @@ Note that the latest Google Cast SDK (currently [4.7.0](https://developers.googl
 
      ```
      pod 'react-native-google-cast/GuestMode', path: '../node_modules/react-native-google-cast/'
-     pod 'google-cast-sdk'
-     # or for iOS 10/11 support
+
+     # or for iOS 10/11 support add
      # pod 'google-cast-sdk', '4.6.1'
      ```
 
      To finish setting up guest mode, don't forget step 5 in the [Setup](setup#ios).
 
-   - iii. If you want to link the Google Cast SDK manually, add this and follow [Manual Setup](https://developers.google.com/cast/docs/ios_sender#manual_setup)
+   - iii. If you're using Arm (M1/M2) Macs, use the `NoBluetoothArm` dependency instead.
 
      ```
-     pod 'react-native-google-cast/Manual', path: '../node_modules/react-native-google-cast/'
+     pod 'react-native-google-cast/NoBluetoothArm', path: '../node_modules/react-native-google-cast/'
      ```
+
+     If you need Guest Mode support, please create an issue.
 
 3. If you're using RN >= 0.60, and your `ios/Podfile` contains `use_native_modules!`, you'll need to disable autolinking for this package, otherwise the dependency you added in the previous step will conflict with the autolinked one. To do so, create `react-native.config.js` in the root of your project with this content:
 

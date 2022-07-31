@@ -6,7 +6,6 @@ import {
 import CastSession from './CastSession'
 
 const { RNGCCastSession: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
 
 /**
  * A channel for sending custom messages between this sender and the Cast receiver. Use when you've built a custom receiver and want to communicate with it.
@@ -66,7 +65,8 @@ export default class CastChannel {
    */
   onMessage(listener: (message: Record<string, any> | string) => void) {
     this.offMessage()
-    this.messageListener = EventEmitter.addListener(
+    const eventEmitter = new NativeEventEmitter(Native)
+    this.messageListener = eventEmitter.addListener(
       Native.CHANNEL_MESSAGE_RECEIVED,
       ({ namespace, message }) => {
         this.namespace === namespace && listener(message)

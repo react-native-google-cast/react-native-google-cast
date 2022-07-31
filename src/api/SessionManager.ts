@@ -2,7 +2,6 @@ import { NativeEventEmitter, NativeModules } from 'react-native'
 import CastSession from './CastSession'
 
 const { RNGCSessionManager: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
 
 //  * The method {@link SessionManager.startSession} is used to create a new session with a given {@link Device}. The session manager uses the DeviceProvider for that device type to construct a new {@link Session} object, to which it then delegates all session requests.
 // * If the application has created a [CastButton](../../components/CastButton) without providing a target and selector, then a user tap on the button will display the default Cast dialog and it will automatically start and stop sessions based on user selection or disconnection of a device. If however the application is providing its own device selection/control dialog UI, then it should use the SessionManager directly to create and control sessions.
@@ -47,56 +46,69 @@ export default class SessionManager {
     else return null
   }
 
+  get eventEmitter() {
+    return new NativeEventEmitter(Native)
+  }
+
   /** Called when a session is about to be started. */
   onSessionStarting(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_STARTING, ({ session }) => {
-      handler(new CastSession(session))
-    })
+    return this.eventEmitter.addListener(
+      Native.SESSION_STARTING,
+      ({ session }) => {
+        handler(new CastSession(session))
+      }
+    )
   }
 
   /** Called when a session has been successfully started. */
   onSessionStarted(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_STARTED, ({ session }) => {
-      handler(new CastSession(session))
-    })
+    return this.eventEmitter.addListener(
+      Native.SESSION_STARTED,
+      ({ session }) => {
+        handler(new CastSession(session))
+      }
+    )
   }
 
   /** Called when a session has failed to start. */
   onSessionStartFailed(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(
+    return this.eventEmitter.addListener(
       Native.SESSION_START_FAILED,
       ({ session }) => handler(new CastSession(session))
     )
   }
 
   onSessionSuspended(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_SUSPENDED, ({ session }) =>
-      handler(new CastSession(session))
+    return this.eventEmitter.addListener(
+      Native.SESSION_SUSPENDED,
+      ({ session }) => handler(new CastSession(session))
     )
   }
 
   onSessionResuming(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_RESUMING, ({ session }) =>
-      handler(new CastSession(session))
+    return this.eventEmitter.addListener(
+      Native.SESSION_RESUMING,
+      ({ session }) => handler(new CastSession(session))
     )
   }
 
   onSessionResumed(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_RESUMED, ({ session }) =>
-      handler(new CastSession(session))
+    return this.eventEmitter.addListener(
+      Native.SESSION_RESUMED,
+      ({ session }) => handler(new CastSession(session))
     )
   }
 
   /** Called when a session is about to be ended, either by request or due to an error. */
   onSessionEnding(handler: (session: CastSession) => void) {
-    return EventEmitter.addListener(Native.SESSION_ENDING, ({ session }) =>
+    return this.eventEmitter.addListener(Native.SESSION_ENDING, ({ session }) =>
       handler(new CastSession(session))
     )
   }
 
   /** Called when a session has ended, either by request or due to an error. */
   onSessionEnded(handler: (session: CastSession, error?: string) => void) {
-    return EventEmitter.addListener(
+    return this.eventEmitter.addListener(
       Native.SESSION_ENDED,
       ({ session, error }) => handler(new CastSession(session), error)
     )

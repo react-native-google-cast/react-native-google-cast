@@ -15,6 +15,7 @@ export interface Props extends ViewProps {
  * @see [CastButtonFactory](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastButtonFactory) & [MediaRouteButton](https://developer.android.com/reference/android/support/v7/app/MediaRouteButton.html) (Android)
  */
 export default function CastButton(props: Props) {
+  // @ts-ignore FIXME
   return <GoogleCastButton {...props} />
 }
 

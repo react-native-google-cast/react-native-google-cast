@@ -71,6 +71,16 @@ public class RNGCSessionManager
   }
 
   @ReactMethod
+  public void addListener(String eventName) {
+    // Set up any upstream listeners or background tasks as necessary
+  }
+
+  @ReactMethod
+  public void removeListeners(Integer count) {
+    // Remove upstream listeners, stop unnecessary background tasks
+  }
+
+  @ReactMethod
   public void endCurrentSession(final boolean stopCasting, final Promise promise) {
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override

@@ -7,7 +7,6 @@ import CastChannel from './CastChannel'
 import RemoteMediaClient from './RemoteMediaClient'
 
 const { RNGCCastSession: Native } = NativeModules
-const EventEmitter = new NativeEventEmitter(Native)
 
 /**
  * Cast sessions are created and managed automatically by the {@link SessionManager}, for example when the user selects a Cast device from the media route controller dialog. The current active CastSession can be accessed by {@link CastContext.getCurrentCastSession}.
@@ -120,7 +119,8 @@ export default class CastSession {
    * ```
    */
   onActiveInputStateChanged(listener: (state: ActiveInputState) => void) {
-    return EventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
+    const eventEmitter = new NativeEventEmitter(Native)
+    return eventEmitter.addListener(Native.ACTIVE_INPUT_STATE_CHANGED, listener)
   }
 
   /**
@@ -135,7 +135,8 @@ export default class CastSession {
    * ```
    */
   onStandbyStateChanged(listener: (state: StandbyState) => void) {
-    return EventEmitter.addListener(Native.STANDBY_STATE_CHANGED, listener)
+    const eventEmitter = new NativeEventEmitter(Native)
+    return eventEmitter.addListener(Native.STANDBY_STATE_CHANGED, listener)
   }
 
   /**
