@@ -286,11 +286,11 @@ PODS:
   - React-jsinspector (0.69.3)
   - React-logger (0.69.3):
     - glog
-  - react-native-google-cast/NoBluetoothArm (4.3.0):
+  - react-native-google-cast/NoBluetoothArm (4.4.0):
     - google-cast-sdk-dynamic-xcframework-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.3.0):
+  - react-native-google-cast/RNGoogleCast (4.4.0):
     - PromisesObjC
     - React
   - react-native-safe-area-context (4.3.1):
@@ -601,8 +601,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 1842ca163b160aeb224d2c65b2a60c393b273c67
   React-jsinspector: bb2605f98aada5d81f3494690da3ef3b4ff3b716
   React-logger: 23a50ef4c18bf9adbb51e2c979318e6b3a2e44a1
-  react-native-google-cast: c41f678adb6c82db80eb44059f73121c390296d1
-  react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb8584.3.0de
+  react-native-google-cast: 6fffd46cf1025ee851992c5542067c07d8c8bd41
+  react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   React-perflogger: 39d2ba8cbcac54d1bb1d9a980dab348e96aef467
   React-RCTActionSheet: b1ad907a2c8f8e4d037148ca507b7f2d6ab1c66d
   React-RCTAnimation: 914a9ba46fb6e7376f7709c7ce825d53b47ca2ee

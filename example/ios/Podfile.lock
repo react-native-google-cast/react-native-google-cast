@@ -289,11 +289,11 @@ PODS:
   - React-jsinspector (0.69.3)
   - React-logger (0.69.3):
     - glog
-  - react-native-google-cast/NoBluetoothArm (4.3.0):
+  - react-native-google-cast/NoBluetoothArm (4.4.0):
     - google-cast-sdk-dynamic-xcframework-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.3.0):
+  - react-native-google-cast/RNGoogleCast (4.4.0):
     - PromisesObjC
     - React
   - react-native-video (6.0.0-alpha.1):
@@ -611,7 +611,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 1842ca163b160aeb224d2c65b2a60c393b273c67
   React-jsinspector: bb2605f98aada5d81f3494690da3ef3b4ff3b716
   React-logger: 23a50ef4c18bf9adbb51e2c979318e6b3a2e44a1
-  react-native-google-cast: c41f678adb6c82db80eb44059f73121c390296d1
+  react-native-google-cast: 6fffd46cf1025ee851992c5542067c07d8c8bd41
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   React-perflogger: 39d2ba8cbcac54d1bb1d9a980dab348e96aef467
   React-RCTActionSheet: b1ad907a2c8f8e4d037148ca507b7f2d6ab1c66d
@@ -632,6 +632,6 @@ SPEC CHECKSUMS:
   Yoga: 44c64131616253fa83366295acdbce3d14926041
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ce05da05ac09aacd2dd89835bfce7f59e18fbe56
+PODFILE CHECKSUM: 1f38a9ac992d7dd16f4474a8a00f08665db7bc57
 
 COCOAPODS: 1.11.3
