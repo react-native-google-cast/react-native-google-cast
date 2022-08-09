@@ -21,7 +21,11 @@ public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    CastContext.getSharedInstance(this);
+    try {
+      CastContext.getSharedInstance(this);
+    } catch (Exception e) {
+      // cast framework not supported
+    }
   }
 
   /**

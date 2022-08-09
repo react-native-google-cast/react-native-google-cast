@@ -1,6 +1,11 @@
 package com.reactnative.googlecast.api;
 
+import static android.content.Context.UI_MODE_SERVICE;
+
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -20,9 +25,13 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.Task;
 import com.reactnative.googlecast.RNGCExpandedControllerActivity;
 import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
 import com.reactnative.googlecast.types.RNGCCastState;
+import com.reactnative.googlecast.types.RNGCPlayServicesState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,12 +90,29 @@ public class RNGCCastContext
 
   @ReactMethod
   public void getCastState(final Promise promise) {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    final ReactApplicationContext context = getReactApplicationContext();
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext =
-          CastContext.getSharedInstance(getReactApplicationContext());
-        promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
+        if (isCastApiAvailable(context)) {
+          CastContext castContext =
+            CastContext.getSharedInstance(context);
+          promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
+        } else {
+          promise.resolve(null);
+        }
+      }
+    });
+  }
+
+  @ReactMethod
+  public void getPlayServicesState(final Promise promise) {
+    final ReactApplicationContext context = getReactApplicationContext();
+    context.runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        int state = getGooglePlayServicesState(context);
+        promise.resolve(RNGCPlayServicesState.toJson(state));
       }
     });
   }
@@ -146,16 +172,27 @@ public class RNGCCastContext
     }
   }
 
-  @Override
-  public void onHostResume() {
-    if (mListenersAttached) { return; }
-
-    final ReactApplicationContext reactContext = getReactApplicationContext();
-
-    reactContext.runOnUiQueueThread(new Runnable() {
+  @ReactMethod
+  public void showPlayServicesErrorDialog(final String state, final Promise promise) {
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext = CastContext.getSharedInstance(reactContext);
+        final boolean shown = GoogleApiAvailability.getInstance().showErrorDialogFragment(getCurrentActivity(), RNGCPlayServicesState.fromJson(state), 0);
+        promise.resolve(shown);
+      }
+    });
+  }
+
+  @Override
+  public void onHostResume() {
+    final ReactApplicationContext context = getReactApplicationContext();
+
+    if (mListenersAttached || !isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        CastContext castContext = CastContext.getSharedInstance(context);
         castContext.addCastStateListener(castStateListener);
       }
     });
@@ -165,12 +202,14 @@ public class RNGCCastContext
 
   @Override
   public void onHostDestroy() {
-    final ReactApplicationContext reactContext = getReactApplicationContext();
+    final ReactApplicationContext context = getReactApplicationContext();
 
-    reactContext.runOnUiQueueThread(new Runnable() {
+    if (!isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext = CastContext.getSharedInstance(reactContext);
+        CastContext castContext = CastContext.getSharedInstance(context);
         castContext.removeCastStateListener(castStateListener);
       }
     });
@@ -179,5 +218,23 @@ public class RNGCCastContext
 
   @Override
   public void onHostPause() {
+  }
+
+  protected static boolean isCastApiAvailable(Context context) {
+    return !isTv(context) && isGooglePlayServiceAvailable(context);
+  }
+
+  private static boolean isTv(Context context) {
+    UiModeManager uiModeManager = (UiModeManager) context.getSystemService(UI_MODE_SERVICE);
+    return uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+  }
+
+  private static boolean isGooglePlayServiceAvailable(Context context) {
+    int state = getGooglePlayServicesState(context);
+    return state == ConnectionResult.SUCCESS;
+  }
+
+  private static int getGooglePlayServicesState(Context context) {
+    return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
   }
 }

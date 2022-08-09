@@ -22,6 +22,7 @@ function MyComponent() {
       mediaInfo: {
         contentUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
+        contentType: 'video/mp4',
       },
     })
   }
@@ -59,3 +60,14 @@ client.loadMedia({
 ```
 
 Please see the [MediaLoadRequest](../api/interfaces/medialoadrequest) documentation for available options.
+
+## (Android) Handle missing Google Play Services
+
+On Android, you can use `CastContext.getPlayServicesState()` to check if Google Play Services are installed on the device. You can then call `CastContext.showPlayServicesErrorDialog` to inform the user and prompt them to install.
+
+```ts
+CastContext.getPlayServicesState().then((state) => {
+  if (state && state !== PlayServicesState.SUCCESS)
+    CastContext.showPlayServicesErrorDialog(state)
+})
+```

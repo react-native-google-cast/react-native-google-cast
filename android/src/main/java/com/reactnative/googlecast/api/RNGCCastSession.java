@@ -23,6 +23,8 @@ import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.reactnative.googlecast.types.RNGCActiveInputState;
@@ -298,14 +300,14 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
 
   @Override
   public void onHostResume() {
-    if (mListenersAttached) { return; }
+    final ReactApplicationContext context = getReactApplicationContext();
 
-    final ReactApplicationContext reactContext = getReactApplicationContext();
+    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
 
-    reactContext.runOnUiQueueThread(new Runnable() {
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(reactContext).getSessionManager();
+        SessionManager sessionManager = CastContext.getSharedInstance(context).getSessionManager();
         sessionManager.addSessionManagerListener(sessionListener);
 
         castSession = sessionManager.getCurrentCastSession();
@@ -319,12 +321,14 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
 
   @Override
   public void onHostDestroy() {
-    final ReactApplicationContext reactContext = getReactApplicationContext();
+    final ReactApplicationContext context = getReactApplicationContext();
 
-    reactContext.runOnUiQueueThread(new Runnable() {
+    if (!RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(reactContext).getSessionManager();
+        SessionManager sessionManager = CastContext.getSharedInstance(context).getSessionManager();
         sessionManager.removeSessionManagerListener(sessionListener);
 
         castSession = sessionManager.getCurrentCastSession();

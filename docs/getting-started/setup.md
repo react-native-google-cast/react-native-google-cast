@@ -144,13 +144,19 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
      protected void onCreate(@Nullable Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
 
-       // lazy load Google Cast context
-       CastContext.getSharedInstance(this);
+       try {
+         // lazy load Google Cast context
+         CastContext.getSharedInstance(this);
+       } catch (Exception e) {
+         // cast framework not supported
+       }
      }
    }
    ```
 
    This works if you're extending `ReactActivity` (or `NavigationActivity` if you're using react-native-navigation). If you're extending a different activity, make sure it is a descendant of `androidx.appcompat.app.AppCompatActivity`.
+
+   > The Cast framework requires Google Play Services to be available on your device. If your device doesn't have them by default, you can install them either from the [Play Store](<(https://play.google.com/store/apps/details?id=com.google.android.gms&hl=en_US&gl=US)>), from [OpenGApps](http://opengapps.org/) or follow tutorials online.
 
 ## Chrome
 

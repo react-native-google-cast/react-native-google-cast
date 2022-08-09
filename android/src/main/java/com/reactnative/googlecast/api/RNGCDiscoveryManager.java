@@ -120,15 +120,15 @@ public class RNGCDiscoveryManager
 
   @Override
   public void onHostResume() {
-    if (mListenersAttached) {
-      return;
-    }
+    final ReactApplicationContext context = getReactApplicationContext();
 
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
         MediaRouteSelector selector = CastContext.getSharedInstance().getMergedSelector();
-        MediaRouter.getInstance(getReactApplicationContext()).addCallback(selector, mediaRouterCallback);
+        MediaRouter.getInstance(context).addCallback(selector, mediaRouterCallback);
       }
     });
     mListenersAttached = true;
@@ -136,10 +136,14 @@ public class RNGCDiscoveryManager
 
   @Override
   public void onHostDestroy() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    final ReactApplicationContext context = getReactApplicationContext();
+
+    if (!RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        MediaRouter.getInstance(getReactApplicationContext()).removeCallback(mediaRouterCallback);
+        MediaRouter.getInstance(context).removeCallback(mediaRouterCallback);
       }
     });
     mListenersAttached = false;

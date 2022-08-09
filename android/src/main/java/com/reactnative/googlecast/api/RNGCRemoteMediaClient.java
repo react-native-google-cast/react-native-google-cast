@@ -23,6 +23,8 @@ import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.PendingResult;
 import com.reactnative.googlecast.types.RNGCJSONObject;
 import com.reactnative.googlecast.types.RNGCMediaLoadRequest;
@@ -347,12 +349,14 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
 
   @Override
   public void onHostResume() {
-    if (mListenersAttached) { return; }
+    final ReactApplicationContext context = getReactApplicationContext();
 
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext())
+        SessionManager sessionManager = CastContext.getSharedInstance(context)
           .getSessionManager();
         sessionManager.addSessionManagerListener(sessionListener);
 
@@ -367,10 +371,14 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
 
   @Override
   public void onHostDestroy() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    final ReactApplicationContext context = getReactApplicationContext();
+
+    if (!RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(getReactApplicationContext())
+        SessionManager sessionManager = CastContext.getSharedInstance(context)
           .getSessionManager();
         sessionManager.removeSessionManagerListener(sessionListener);
 

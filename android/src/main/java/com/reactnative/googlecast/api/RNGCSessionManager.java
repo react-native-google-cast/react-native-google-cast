@@ -20,6 +20,8 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.reactnative.googlecast.types.RNGCDevice;
 
 import java.util.HashMap;
@@ -99,7 +101,12 @@ public class RNGCSessionManager
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        promise.resolve(RNGCCastSession.toJson(getSessionManager().getCurrentCastSession()));
+        int state = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactApplicationContext());
+        if (state == ConnectionResult.SUCCESS) {
+          promise.resolve(RNGCCastSession.toJson(getSessionManager().getCurrentCastSession()));
+        } else {
+          promise.resolve(null);
+        }
       }
     });
   }
@@ -205,9 +212,11 @@ public class RNGCSessionManager
 
   @Override
   public void onHostResume() {
-    if (mListenersAttached) { return; }
+    final ReactApplicationContext context = getReactApplicationContext();
 
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
         getSessionManager().addSessionManagerListener(RNGCSessionManager.this,
@@ -219,7 +228,11 @@ public class RNGCSessionManager
 
   @Override
   public void onHostDestroy() {
-    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+    final ReactApplicationContext context = getReactApplicationContext();
+
+    if (!RNGCCastContext.isCastApiAvailable(context)) return;
+
+    context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
         getSessionManager().removeSessionManagerListener(RNGCSessionManager.this,

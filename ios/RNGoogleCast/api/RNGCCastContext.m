@@ -69,6 +69,12 @@ RCT_REMAP_METHOD(getCastState,
   });
 }
 
+RCT_REMAP_METHOD(getPlayServicesState,
+                 getPlayServicesStateWithResolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+  resolve(nil);
+}
+
 RCT_REMAP_METHOD(showCastDialog,
                  showCastDialogWithResolver: (RCTPromiseResolveBlock) resolve
                  rejecter: (RCTPromiseRejectBlock) reject) {
@@ -97,6 +103,12 @@ RCT_EXPORT_METHOD(showIntroductoryOverlay:(id)options
 
     resolve(@([GCKCastContext.sharedInstance presentCastInstructionsViewControllerOnce]));
   });
+}
+
+RCT_EXPORT_METHOD(showPlayServicesErrorDialog:(id)state
+                 resolver: (RCTPromiseResolveBlock) resolve
+                 rejecter: (RCTPromiseRejectBlock) reject) {
+  resolve(@(NO));
 }
 
 - (void)castStateDidChange:(NSNotification *)notification {

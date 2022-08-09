@@ -1,11 +1,22 @@
 import { useNavigation } from '@react-navigation/native'
-import React from 'react'
+import { StackNavigationProp } from '@react-navigation/stack'
+import React, { useEffect } from 'react'
 import { Button, SectionList, Text, View } from 'react-native'
+import CastContext, { PlayServicesState } from 'react-native-google-cast'
+import { RootStackParamList } from './types'
 
 export interface HomeProps {}
 
 export default function Home() {
-  const navigation = useNavigation()
+  const navigation =
+    useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>()
+
+  useEffect(() => {
+    CastContext.getPlayServicesState().then((state) => {
+      if (state && state !== PlayServicesState.SUCCESS)
+        CastContext.showPlayServicesErrorDialog(state)
+    })
+  }, [])
 
   return (
     <SectionList
@@ -16,7 +27,9 @@ export default function Home() {
           <Button
             key={index}
             testID={item.title}
-            onPress={() => navigation.navigate({ key: item.title })}
+            onPress={() =>
+              navigation.navigate(item.title as keyof RootStackParamList)
+            }
             title={item.title}
           />
         </View>

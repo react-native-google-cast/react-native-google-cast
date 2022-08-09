@@ -50,8 +50,6 @@ This is by far the most common problem with this library. Before creating an iss
 
   You don't have Google Play Services available on your device. Make sure to install them either from the [Play Store](<(https://play.google.com/store/apps/details?id=com.google.android.gms&hl=en_US&gl=US)>), from [OpenGApps](http://opengapps.org/) or follow tutorials online.
 
-  TODO: Handle gracefully and ignore the Cast library without crashing.
-
 - ```
   java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity
   ```
