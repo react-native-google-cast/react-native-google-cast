@@ -115,12 +115,17 @@ export default function Formats() {
             {
               title: 'HLS',
               mediaInfo: {
+                // hlsSegmentFormat: MediaHlsSegmentFormat.TS,
+                // hlsVideoSegmentFormat: MediaHlsVideoSegmentFormat.MPEG2_TS,
                 contentUrl:
                   // 'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8',
-                  'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8',
+                  // 'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8',
+                  'https://cdn-trinity-christian-centre-01.akamaized.net/Content/HLS/Live/channel(play1)/index.m3u8',
+                // 'https://d3txc6btij3mru.cloudfront.net/June/trailers/2/master.m3u8',
                 // 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
                 // 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8',
                 contentType: 'application/x-mpegURL',
+                // contentType: 'video/m3u8',
                 // contentType: 'application/vnd.apple.mpegurl',
                 metadata: {
                   type: 'movie',

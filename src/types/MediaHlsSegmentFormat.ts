@@ -18,7 +18,7 @@ enum MediaHlsSegmentFormat {
   TS = 'TS',
 
   /** AAC packed MPEG-2 transport stream. */
-  TS_AAC = 'TS-AAC',
+  TS_AAC = 'TS_AAC',
 }
 
 export default MediaHlsSegmentFormat

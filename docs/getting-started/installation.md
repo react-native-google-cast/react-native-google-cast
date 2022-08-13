@@ -18,9 +18,11 @@ Simply follow instructions at [@config-plugins/react-native-google-cast](https:/
 
 Then ignore the rest of this page and jump straight to [Usage](usage).
 
+If you're unsure please check the [example Expo app](https://github.com/react-native-google-cast/RNGCExpo).
+
 ## iOS
 
-> Support for **Arm Macs** is in beta. Make sure you follow steps b.2.iii and b.3.
+> Support for **Arm Macs** is in beta. Make sure you follow steps b.2.iii and b.3, or check out the [example](https://github.com/react-native-google-cast/RNGCArm).
 
 #### a. Autolinking (recommended)
 

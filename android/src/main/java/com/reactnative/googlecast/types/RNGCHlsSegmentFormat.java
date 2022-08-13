@@ -21,7 +21,7 @@ public class RNGCHlsSegmentFormat {
         return HlsSegmentFormat.MP3;
       case "TS":
         return HlsSegmentFormat.TS;
-      case "TS-AAC":
+      case "TS_AAC":
         return HlsSegmentFormat.TS_AAC;
       default:
         return null;
@@ -45,7 +45,7 @@ public class RNGCHlsSegmentFormat {
       case HlsSegmentFormat.TS:
         return "TS";
       case HlsSegmentFormat.TS_AAC:
-        return "TS-AAC";
+        return "TS_AAC";
       default:
         return null;
     }

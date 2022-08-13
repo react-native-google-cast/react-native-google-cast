@@ -70,6 +70,7 @@ RCT_EXPORT_MODULE()
 
 - (void)invalidate {
   [self stopObserving];
+  [super invalidate];
 }
 
 # pragma mark - GCKRemoteMediaClient methods
