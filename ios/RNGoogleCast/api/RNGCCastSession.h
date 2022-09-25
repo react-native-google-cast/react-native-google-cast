@@ -5,6 +5,7 @@
 static NSString *const ACTIVE_INPUT_STATE_CHANGED =
     @"GoogleCast:ActiveInputStateChanged";
 static NSString *const CHANNEL_MESSAGE_RECEIVED = @"GoogleCast:ChannelMessageReceived";
+static NSString *const CHANNEL_UPDATED = @"GoogleCast:ChannelUpdated";
 static NSString *const STANDBY_STATE_CHANGED = @"GoogleCast:StandbyStateChanged";
 
 @interface RNGCCastSession

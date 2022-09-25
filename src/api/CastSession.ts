@@ -42,7 +42,7 @@ export default class CastSession {
    * @param namespace A custom channel identifier starting with `urn:x-cast:`, for example `urn:x-cast:com.reactnative.googlecast.example`. The namespace name is arbitrary; just make sure it's unique.
    */
   addChannel(namespace: string): Promise<CastChannel> {
-    return CastChannel.add(this, namespace)
+    return CastChannel.add(namespace)
   }
 
   /**

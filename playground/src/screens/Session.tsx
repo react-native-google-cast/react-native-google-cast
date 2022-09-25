@@ -28,7 +28,7 @@ export default function Session() {
     }
   }, [session])
 
-  if (!castChannel)
+  if (!session)
     return (
       <Text style={{ margin: 10 }}>
         Connect to a Cast device to establish a session
@@ -76,22 +76,24 @@ export default function Session() {
       </View>
 
       <Button
-        onPress={() => CastContext.getSessionManager().endCurrentSession()}
-        title="End Session"
-      />
+        onPress={() => {
+          console.log('channel', castChannel)
 
-      <Text style={{ marginBottom: 10, marginTop: 20 }}>Custom Channel</Text>
-
-      <Button
-        onPress={() =>
-          castChannel?.sendMessage(JSON.stringify({ message: 'Hello, world!' }))
-        }
+          castChannel
+            ?.sendMessage({ message: 'Hello, world!' })
+            .catch(console.error)
+        }}
         title="Send Message"
       />
 
       {lastMessage && (
         <Text>Last received message: {JSON.stringify(lastMessage)}</Text>
       )}
+
+      <Button
+        onPress={() => CastContext.getSessionManager().endCurrentSession()}
+        title="End Session"
+      />
     </ScrollView>
   )
 }

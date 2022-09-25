@@ -2,6 +2,7 @@
 #import "RNGCRequest.h"
 #import "../types/RCTConvert+GCKActiveInputStatus.h"
 #import "../types/RCTConvert+GCKApplicationMetadata.h"
+#import "../types/RCTConvert+GCKCastChannel.h"
 #import "../types/RCTConvert+GCKCastSession.h"
 #import "../types/RCTConvert+GCKDevice.h"
 #import "../types/RCTConvert+GCKStandbyStatus.h"
@@ -24,7 +25,7 @@ RCT_EXPORT_MODULE();
 - (instancetype)init {
   if (self = [super init]) {
     channels = [[NSMutableDictionary alloc] init];
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
       self->castSession = [GCKCastContext.sharedInstance.sessionManager currentCastSession];
       [GCKCastContext.sharedInstance.sessionManager addListener:self];
@@ -37,6 +38,7 @@ RCT_EXPORT_MODULE();
   return @{
     @"ACTIVE_INPUT_STATE_CHANGED": ACTIVE_INPUT_STATE_CHANGED,
     @"CHANNEL_MESSAGE_RECEIVED": CHANNEL_MESSAGE_RECEIVED,
+    @"CHANNEL_UPDATED": CHANNEL_UPDATED,
     @"STANDBY_STATE_CHANGED": STANDBY_STATE_CHANGED,
   };
 }
@@ -45,6 +47,7 @@ RCT_EXPORT_MODULE();
   return @[
     ACTIVE_INPUT_STATE_CHANGED,
     CHANNEL_MESSAGE_RECEIVED,
+    CHANNEL_UPDATED,
     STANDBY_STATE_CHANGED,
   ];
 }
@@ -167,9 +170,9 @@ RCT_EXPORT_METHOD(addChannel: (NSString *)namespace
   dispatch_async(dispatch_get_main_queue(), ^{
     GCKGenericChannel *channel = [[GCKGenericChannel alloc] initWithNamespace:namespace];
     channel.delegate = self;
-    [self->channels setObject:channel forKey:namespace];
     [self->castSession addChannel:channel];
-    resolve(nil);
+    [self->channels setObject:channel forKey:namespace];
+    resolve([RCTConvert fromGCKCastChannel:channel]);
   });
 }
 
@@ -178,7 +181,6 @@ RCT_EXPORT_METHOD(removeChannel: (NSString *)namespace
                   rejecter: (RCTPromiseRejectBlock) reject) {
   GCKCastChannel *channel = self->channels[namespace];
   if (channel == nil) { return resolve(nil); }
-  
   dispatch_async(dispatch_get_main_queue(), ^{
     [self->channels removeObjectForKey:namespace];
     [self->castSession removeChannel:channel];
@@ -195,7 +197,7 @@ RCT_EXPORT_METHOD(sendMessage: (NSString *)namespace
     NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain code:GCKErrorCodeChannelNotConnected userInfo:nil];
     return reject(@"no_channel", [NSString stringWithFormat:@"Channel for namespace %@ does not exist. Did you forget to call addChannel?", namespace], error);
   }
-  
+
   NSError *error;
   [channel sendTextMessage:message error:&error];
   if (error == nil) {
@@ -207,15 +209,28 @@ RCT_EXPORT_METHOD(sendMessage: (NSString *)namespace
 
 # pragma mark - GCKCastChannel events
 
+- (void)castChannelDidConnect:(GCKGenericChannel *)channel {
+  if (!hasListeners) return;
+  [self sendEventWithName:CHANNEL_UPDATED body:[RCTConvert fromGCKCastChannel:channel]];
+}
+
+- (void)castChannelDidDisconnect:(GCKGenericChannel *)channel {
+  if (!hasListeners) return;
+  [self sendEventWithName:CHANNEL_UPDATED body:[RCTConvert fromGCKCastChannel:channel]];
+}
+
 - (void)castChannel:(GCKGenericChannel *)channel
     didReceiveTextMessage:(NSString *)message
             withNamespace:(NSString *)protocolNamespace {
   if (!hasListeners) return;
-  [self sendEventWithName:CHANNEL_MESSAGE_RECEIVED
-                     body:@{
-                       @"namespace": protocolNamespace,
-                       @"message": message
-                     }];
+  id body = [RCTConvert fromGCKCastChannel:channel];
+  body[@"message"] = message;
+  [self sendEventWithName:CHANNEL_MESSAGE_RECEIVED body:body];
+}
+
+- (void)castChannel:(GCKCastChannel *)channel didChangeWritableState:(BOOL)writable {
+  if (!hasListeners) return;
+  [self sendEventWithName:CHANNEL_UPDATED body:[RCTConvert fromGCKCastChannel:channel]];
 }
 
 # pragma mark - GCKSessionManager events
@@ -234,5 +249,5 @@ RCT_EXPORT_METHOD(sendMessage: (NSString *)namespace
   self->castSession = nil;
   [session removeDeviceStatusListener:self];
 }
-   
+
 @end

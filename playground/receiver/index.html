@@ -9,17 +9,17 @@
   <body>
     <cast-media-player></cast-media-player>
     <script>
-      ;(function() {
+      ;(function () {
         const context = cast.framework.CastReceiverContext.getInstance()
         let e2eSocket
 
         const CHANNEL = 'urn:x-cast:com.reactnative.googlecast.playground'
 
-        context.addCustomMessageListener(CHANNEL, function(customEvent) {
+        context.addCustomMessageListener(CHANNEL, function (customEvent) {
           console.log(customEvent)
 
           context.sendCustomMessage(CHANNEL, customEvent.senderId, {
-            message: 'World',
+            message: `Current time: ${new Date().toDateString()}`,
           })
         })
 

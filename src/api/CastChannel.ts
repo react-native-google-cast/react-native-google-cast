@@ -3,7 +3,6 @@ import {
   NativeEventEmitter,
   NativeModules,
 } from 'react-native'
-import CastSession from './CastSession'
 
 const { RNGCCastSession: Native } = NativeModules
 
@@ -22,40 +21,54 @@ const { RNGCCastSession: Native } = NativeModules
  * ```
  */
 export default class CastChannel {
-  public castSession: CastSession
+  private channelListener: EventSubscription | undefined
   private messageListener: EventSubscription | undefined
+
+  /** A flag indicating whether this channel is currently connected. */
+  connected?: boolean
 
   /** A custom channel identifier starting with `urn:x-cast:`. */
   namespace: string
 
+  /** A flag indicating whether this channel is currently writable. */
+  writable?: boolean
+
   private constructor(
-    castSession: CastSession,
-    namespace: string,
+    data: CastChannel,
     onMessage?: (message: Record<string, any> | string) => void
   ) {
-    this.castSession = castSession
-    this.namespace = namespace
+    this.connected = data.connected
+    this.namespace = data.namespace
+    this.writable = data.writable
 
-    if (onMessage) {
-      this.onMessage(onMessage)
-    }
+    if (onMessage) this.onMessage(onMessage)
+    this.onUpdate()
   }
 
   /**
    * Add a custom channel to a connected session. This method is equivalent to {@link CastSession#addChannel}.
    *
-   * @param castSession connected session
    * @param namespace A custom channel identifier starting with `urn:x-cast:`, for example `urn:x-cast:com.reactnative.googlecast.example`. The namespace name is arbitrary; just make sure it's unique.
    * @param onMessage function to be invoked when we receive a message from the connected Cast receiver.
    */
   public static async add(
-    castSession: CastSession,
     namespace: string,
     onMessage?: (message: Record<string, any> | string) => void
   ): Promise<CastChannel> {
-    await Native.addChannel(namespace)
+    if (namespace === 'urn:x-cast:com.google.cast.media')
+      throw new Error(
+        'The namespace "urn:x-cast:com.google.cast.media" is reserved. Please use a different name.'
+      )
 
-    return new CastChannel(castSession, namespace, onMessage)
+    const channel = await Native.addChannel(namespace)
+
+    if (!channel.connected) {
+      console.warn(
+        `Channel ${namespace} not connected. Make sure a session is established and you've set a listener in your custom receiver https://developers.google.com/cast/docs/web_receiver/core_features#custom_messages`
+      )
+    }
+
+    return new CastChannel(channel, onMessage)
   }
 
   /**
@@ -82,12 +95,30 @@ export default class CastChannel {
     this.messageListener = undefined
   }
 
+  private onUpdate() {
+    const eventEmitter = new NativeEventEmitter(Native)
+    this.channelListener = eventEmitter.addListener(
+      Native.CHANNEL_UPDATED,
+      (ch) => {
+        if (this.namespace !== ch.namespace) return
+        this.connected = ch.connected
+        this.writable = ch.writable
+      }
+    )
+  }
+
+  private offUpdate() {
+    this.channelListener?.remove()
+    this.channelListener = undefined
+  }
+
   /**
    * Remove the channel when it's no longer needed.
    * By calling this method, the underlying channel will be destroyed.
    */
   remove(): Promise<void> {
     this.offMessage()
+    this.offUpdate()
     return Native.removeChannel(this.namespace)
   }
 

@@ -62,6 +62,7 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
 
   private static final String ACTIVE_INPUT_STATE_CHANGED = "GoogleCast:ActiveInputStateChanged";
   private static final String CHANNEL_MESSAGE_RECEIVED = "GoogleCast:ChannelMessageReceived";
+  private static final String CHANNEL_UPDATED = "GoogleCast:ChannelUpdated";
   private static final String STANDBY_STATE_CHANGED = "GoogleCast:StandbyStateChanged";
 
   @Override
@@ -70,6 +71,7 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
 
     constants.put("ACTIVE_INPUT_STATE_CHANGED", ACTIVE_INPUT_STATE_CHANGED);
     constants.put("CHANNEL_MESSAGE_RECEIVED", CHANNEL_MESSAGE_RECEIVED);
+    constants.put("CHANNEL_UPDATED", CHANNEL_UPDATED);
     constants.put("STANDBY_STATE_CHANGED", STANDBY_STATE_CHANGED);
 
     return constants;
@@ -202,7 +204,11 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
       public void execute(CastSession castSession) {
         try {
           castSession.setMessageReceivedCallbacks(namespace, messageCallback);
-          promise.resolve(null);
+          final WritableMap json = Arguments.createMap();
+          json.putBoolean("connected", true);
+          json.putString("namespace", namespace);
+          json.putBoolean("writable", true);
+          promise.resolve(json);
         } catch (IOException e) {
           promise.reject(e);
         }

@@ -39,7 +39,7 @@ export default function useCastChannel(
     let channel: CastChannel | null
 
     if (castSession) {
-      CastChannel.add(castSession, namespace).then((c) => {
+      castSession.addChannel(namespace).then((c) => {
         channel = c
         setCastChannel(c)
       })
@@ -54,13 +54,11 @@ export default function useCastChannel(
   }, [castSession, namespace])
 
   useEffect(() => {
-    if (!onMessage) return // don't call offMessage when removing the effect
+    if (!castChannel || !onMessage) return
 
-    castChannel?.onMessage(onMessage)
+    castChannel.onMessage(onMessage)
 
-    return () => {
-      castChannel?.offMessage()
-    }
+    return () => castChannel.offMessage()
   }, [castChannel, onMessage])
 
   return castChannel
