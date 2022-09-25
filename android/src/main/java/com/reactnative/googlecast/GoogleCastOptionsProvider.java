@@ -39,8 +39,6 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
   public CastOptions getCastOptions(Context context) {
     NotificationOptions notificationOptions =
       new NotificationOptions.Builder()
-        .setTargetActivityClassName(
-          RNGCExpandedControllerActivity.class.getName())
         .setNotificationActionsProvider(new NotificationActionsProvider(context) {
           @Override
           public List<NotificationAction> getNotificationActions() {
