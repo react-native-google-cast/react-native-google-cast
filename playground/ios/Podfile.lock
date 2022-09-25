@@ -286,11 +286,11 @@ PODS:
   - React-jsinspector (0.69.3)
   - React-logger (0.69.3):
     - glog
-  - react-native-google-cast/NoBluetoothArm (4.4.1):
+  - react-native-google-cast/NoBluetoothArm (4.5.0):
     - google-cast-sdk-dynamic-xcframework-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.4.1):
+  - react-native-google-cast/RNGoogleCast (4.5.0):
     - PromisesObjC
     - React
   - react-native-safe-area-context (4.3.1):
