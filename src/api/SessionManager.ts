@@ -71,10 +71,10 @@ export default class SessionManager {
   }
 
   /** Called when a session has failed to start. */
-  onSessionStartFailed(handler: (session: CastSession) => void) {
+  onSessionStartFailed(handler: (session: CastSession, error: string) => void) {
     return this.eventEmitter.addListener(
       Native.SESSION_START_FAILED,
-      ({ session }) => handler(new CastSession(session))
+      ({ session, error }) => handler(new CastSession(session), error)
     )
   }
 
