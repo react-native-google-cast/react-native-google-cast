@@ -5,7 +5,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import com.google.android.gms.cast.CastMediaControlIntent;
+import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastOptions;
 import com.google.android.gms.cast.framework.CastSession;
@@ -75,25 +77,28 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
           }
 
           private boolean hasQueue() {
-            CastContext castContext = CastContext.getSharedInstance(getApplicationContext());
-            CastSession castSession = castContext.getSessionManager().getCurrentCastSession();
-            if (castSession == null) {
-              return false;
-            }
-            RemoteMediaClient client = castSession.getRemoteMediaClient();
-            return client != null && client.getMediaStatus().getQueueItemCount() > 1;
+            MediaStatus mediaStatus = getMediaStatus();
+            return mediaStatus != null && mediaStatus.getQueueItemCount() > 1;
           }
 
           private boolean isPhoto() {
-            CastContext castContext = CastContext.getSharedInstance(getApplicationContext());
-            CastSession castSession = castContext.getSessionManager().getCurrentCastSession();
-            if (castSession == null) {
-              return false;
-            }
-            RemoteMediaClient client = castSession.getRemoteMediaClient();
-            return client != null && client.getMediaStatus().getMediaInfo().getMetadata().getMediaType() == MediaMetadata.MEDIA_TYPE_PHOTO;
+            MediaStatus mediaStatus = getMediaStatus();
+            if (mediaStatus == null) return false;
+            final MediaInfo mediaInfo = mediaStatus.getMediaInfo();
+            if (mediaInfo == null) return false;
+            final MediaMetadata metadata = mediaInfo.getMetadata();
+            if (metadata == null) return false;
+            return metadata.getMediaType() == MediaMetadata.MEDIA_TYPE_PHOTO;
           }
 
+          private MediaStatus getMediaStatus() {
+            CastContext castContext = CastContext.getSharedInstance(getApplicationContext());
+            CastSession castSession = castContext.getSessionManager().getCurrentCastSession();
+            if (castSession == null) return null;
+            RemoteMediaClient client = castSession.getRemoteMediaClient();
+            if (client == null) return null;
+            return client.getMediaStatus();
+          }
         })
         .build();
 
