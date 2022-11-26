@@ -75,25 +75,29 @@ export default function Session() {
         </View>
       </View>
 
-      <Button
-        onPress={() => {
-          console.log('channel', castChannel)
+      <View style={{ marginTop: 10 }}>
+        <Button
+          onPress={() => {
+            console.log('channel', castChannel)
 
-          castChannel
-            ?.sendMessage({ message: 'Hello, world!' })
-            .catch(console.error)
-        }}
-        title="Send Message"
-      />
+            castChannel
+              ?.sendMessage({ message: 'Hello, world!' })
+              .catch(console.error)
+          }}
+          title="Send Message"
+        />
+      </View>
 
       {lastMessage && (
         <Text>Last received message: {JSON.stringify(lastMessage)}</Text>
       )}
 
-      <Button
-        onPress={() => CastContext.getSessionManager().endCurrentSession()}
-        title="End Session"
-      />
+      <View style={{ marginTop: 10 }}>
+        <Button
+          onPress={() => CastContext.getSessionManager().endCurrentSession()}
+          title="End Session"
+        />
+      </View>
     </ScrollView>
   )
 }
