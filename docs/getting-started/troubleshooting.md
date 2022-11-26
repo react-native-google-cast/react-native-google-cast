@@ -8,11 +8,9 @@ sidebar_label: Troubleshooting
 
 This is by far the most common problem with this library. Before creating an issue, please read through this list of known solutions to see if anything helps:
 
-- Most TVs don't support the native Cast SDK protocol, so even if it appears that apps like YouTube are able to Cast, they're in fact communicating directly with their counterpart app on the TV, not using the Cast SDK. Officially, only Chromecast, Android TV, and devices with the official Chromecast logo are supported by the SDK.
+- Most TVs don't support the native Cast SDK protocol, so even if it appears that apps like YouTube and Netflix (and the Chrome browser) are able to Cast, they're in fact communicating directly with their counterpart app on the TV using [DIAL](https://www.howtogeek.com/215791/use-your-tv%E2%80%99s-hidden-%E2%80%9Cdial%E2%80%9D-feature-to-cast-netflix-and-youtube-without-a-chromecast/#:~:text=and%20Privacy%20Policy.-,Use%20Your%20TV's%20Hidden%20%E2%80%9CDIAL%E2%80%9D%20Feature%20to%20Cast%20Netflix,and%20YouTube%20Without%20a%20Chromecast&text=Many%20modern%20smart%20TVs%20have,computer%20%E2%80%94%20without%20getting%20a%20Chromecast), not the Cast SDK. Officially, only Chromecast, Android TV, and devices with the official Chromecast logo are supported by the SDK.
 
   To check if your device is supported:
-
-  - Test if you can [Cast from Chrome browser](https://support.google.com/chromecast/answer/3228332).
 
   - Test with the reference [CastVideos-ios](https://github.com/googlecast/CastVideos-ios) or [CastVideos-android](https://github.com/googlecast/CastVideos-android) apps.
 
@@ -30,7 +28,7 @@ This is by far the most common problem with this library. Before creating an iss
 
 - (Android) Make sure the device has Google Play Services available and that you initialize `CastContext.getSharedInstance(this);` in your `MainActivity`'s `onCreate`.
 
-- (Android) If using an **emulator**, due to it running as a virtual machine with its own network, you might need to configure NAT for the virtual device. If you cannot see any Cast devices on the emulator, please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
+- (Android) **emulators** are [not supported](https://github.com/googlecast/CastVideos-android/issues/104#issuecomment-816290407). Please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
 
 - (iOS) Make sure you've enabled the **Access WiFi Information** capability.
 
@@ -70,5 +68,11 @@ This is by far the most common problem with this library. Before creating an iss
   ```
 
   This is caused by Google introducing a [dynamic SDK build in 4.3.1](https://issuetracker.google.com/issues/113069508). It seems to affects Google SDK versions 4.3.x - 4.4.x. Please upgrade to the latest SDK (4.5+) or use `react-native-google-cast/NoBluetooth`.
+
+- ```
+  building for iOS Simulator, but linking in object file built for iOS, file '.../ios/Pods/google-cast-sdk-no-bluetooth/GoogleCastSDK-ios-4.7.0_static/GoogleCast.framework/GoogleCast' for architecture arm64
+  ```
+
+  When building on M1/ARM Macs, you need to edit your `ios/Podfile` as described in [Installation](https://react-native-google-cast.github.io/docs/getting-started/installation.html#ios).
 
 - (Android) Using `tools:node="replace"` in AndroidManifest may cause media to not load on the Cast device [#349](https://github.com/react-native-google-cast/react-native-google-cast/issues/349). See [firebase/quickstart-android#477](https://github.com/firebase/quickstart-android/issues/477) for options how to resolve this.
