@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
+    "@expo/config-plugins": "^5.0.4",
     "@react-native-community/eslint-config": "^3.0.0",
     "@release-it/bumper": "^2.0.0",
     "@release-it/conventional-changelog": "^3.0.1",
