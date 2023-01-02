@@ -74,7 +74,7 @@ export default class CastSession {
   /**
    * @see [Android](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/CastSession.html#getCastDevice()) | [iOS](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_session#a30d6130e558b235e37f1cbded2d27ce8) | [Chrome](https://developers.google.com/cast/docs/reference/chrome/cast.framework.CastSession#getCastDevice)
    */
-  getCastDevice(): Promise<Device> {
+  getCastDevice(): Promise<Device | null> {
     return Native.getCastDevice()
   }
 
