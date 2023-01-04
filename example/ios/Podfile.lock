@@ -289,11 +289,11 @@ PODS:
   - React-jsinspector (0.69.3)
   - React-logger (0.69.3):
     - glog
-  - react-native-google-cast/NoBluetoothArm (4.6.0):
+  - react-native-google-cast/NoBluetoothArm (4.6.1):
     - google-cast-sdk-dynamic-xcframework-no-bluetooth
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.6.0):
+  - react-native-google-cast/RNGoogleCast (4.6.1):
     - PromisesObjC
     - React
   - react-native-video (6.0.0-alpha.1):
@@ -611,7 +611,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 1842ca163b160aeb224d2c65b2a60c393b273c67
   React-jsinspector: bb2605f98aada5d81f3494690da3ef3b4ff3b716
   React-logger: 23a50ef4c18bf9adbb51e2c979318e6b3a2e44a1
-  react-native-google-cast: bbbdbeae552d0b55b59031ed7e12ae832e8c5a53
+  react-native-google-cast: 03a17bb1b810355978af2b6105029a2197cb0b86
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   React-perflogger: 39d2ba8cbcac54d1bb1d9a980dab348e96aef467
   React-RCTActionSheet: b1ad907a2c8f8e4d037148ca507b7f2d6ab1c66d
