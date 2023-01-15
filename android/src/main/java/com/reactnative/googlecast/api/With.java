@@ -45,7 +45,7 @@ abstract class With<X> {
           final X x = getX();
 
           if (x == null) {
-            if (promise != null) promise.resolve(null);
+            if (promise != null) promise.reject(new IllegalStateException("No session"));
             return;
           }
 
@@ -57,17 +57,13 @@ abstract class With<X> {
             promise.resolve(null);
           }
         } catch (Exception e) {
-          if (promise != null) {
-            promise.reject(e);
-          } else {
-            throw e;
-          }
+          if (promise != null) promise.reject(e);
         }
       }
     });
   }
 
-  abstract protected @Nullable X getX() throws IllegalStateException;
+  abstract protected @Nullable X getX();
 
   abstract protected ReactContext getReactApplicationContext();
 }

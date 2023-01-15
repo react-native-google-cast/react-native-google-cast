@@ -213,7 +213,7 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
           promise.reject(e);
         }
       }
-    });
+    }, promise);
   }
 
   @ReactMethod
@@ -228,7 +228,7 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
           promise.reject(e);
         }
       }
-    });
+    }, promise);
   }
 
   @ReactMethod

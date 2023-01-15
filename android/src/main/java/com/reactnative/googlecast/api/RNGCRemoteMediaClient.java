@@ -276,22 +276,14 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
 
   protected With<RemoteMediaClient> with = new With<RemoteMediaClient>() {
     @Override
-    protected RemoteMediaClient getX() {
+    protected @Nullable RemoteMediaClient getX() {
       final CastSession castSession = CastContext.getSharedInstance(getReactApplicationContext())
         .getSessionManager()
         .getCurrentCastSession();
 
-      if (castSession == null) {
-        throw new IllegalStateException(("No castSession!"));
-      }
+      if (castSession == null) return null;
 
-      final RemoteMediaClient client = castSession.getRemoteMediaClient();
-
-      if (client == null) {
-        throw new IllegalStateException(("No remoteMediaClient!"));
-      }
-
-      return client;
+      return castSession.getRemoteMediaClient();
     }
 
     @Override
