@@ -17,6 +17,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastStatusCodes;
 import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastReasonCodes;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
@@ -26,6 +27,7 @@ import com.reactnative.googlecast.types.RNGCDevice;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RNGCSessionManager
   extends ReactContextBaseJavaModule implements LifecycleEventListener, SessionManagerListener<CastSession> {
@@ -135,6 +137,15 @@ public class RNGCSessionManager
     WritableMap params = Arguments.createMap();
 
     params.putMap("session", RNGCCastSession.toJson((session)));
+
+    try {
+      Integer reasonCode = Objects.requireNonNull(CastContext.getSharedInstance()).getCastReasonCodeForCastStatusCode(error);
+      if (reasonCode.equals(CastReasonCodes.CASTING_STOPPED)) {
+        sendEvent(SESSION_ENDED, params);
+        return;
+      }
+    } catch (Exception ignored) {}
+
     params.putString("error", CastStatusCodes.getStatusCodeString(error));
 
     sendEvent(SESSION_ENDED, params);
