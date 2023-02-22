@@ -31,6 +31,7 @@ If applicable, add screenshots to help explain your problem.
 **Checklist:**
  - [ ] I have followed [Installation](https://react-native-google-cast.github.io/docs/getting-started/installation) and [Setup](https://react-native-google-cast.github.io/docs/getting-started/setup)
  - [ ] My problem is not described in [Troubleshooting](https://react-native-google-cast.github.io/docs/getting-started/troubleshooting)
+ - [ ] I believe the bug is in the React Native Google Cast library, not in the Google Cast SDK. Otherwise please use the official [Google Cast Support](https://developers.google.com/cast/support) as I'm not able to help with native SDK issues.
  - [ ] I have searched [existing issues](https://github.com/react-native-google-cast/react-native-google-cast/issues?q=is%3Aissue) and have not found a similar one
 
 **Additional context**
