@@ -99,6 +99,14 @@ RCT_REMAP_METHOD(getStreamPosition,
   }];
 }
 
+RCT_EXPORT_METHOD(requestStatus: (RCTPromiseResolveBlock) resolve
+                  rejecter: (RCTPromiseRejectBlock) reject) {
+
+  [self withClientPromisifyResolve:resolve reject:reject perform:^GCKRequest *(GCKRemoteMediaClient *client) {
+    return [client requestStatus];
+  }];
+}
+
 RCT_EXPORT_METHOD(loadMedia: (GCKMediaLoadRequestData *) request
                   resolver: (RCTPromiseResolveBlock) resolve
                   rejecter: (RCTPromiseRejectBlock) reject) {

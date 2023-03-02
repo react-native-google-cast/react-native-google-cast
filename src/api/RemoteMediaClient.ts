@@ -50,6 +50,13 @@ export default class RemoteMediaClient {
   }
 
   /**
+   * Requests updated media status information from the receiver.
+   */
+  requestStatus(): Promise<void> {
+    return Native.requestStatus()
+  }
+
+  /**
    * Loads and starts playback of a media item or a queue of media items with a request data.
    *
    * @example
