@@ -40,6 +40,10 @@ public class RNGCMediaStatus {
 
     json.putBoolean("isMuted", status.isMute());
 
+    if (status.getLiveSeekableRange() != null) {
+      json.putMap("liveSeekableRange", RNGCMediaLiveSeekableRange.toJson(status.getLiveSeekableRange()));
+    }
+
     if (status.getLoadingItemId() != MediaQueueItem.INVALID_ITEM_ID) {
       json.putInt("loadingItemId", status.getLoadingItemId());
     }

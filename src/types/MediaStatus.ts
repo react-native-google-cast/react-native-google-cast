@@ -1,4 +1,5 @@
 import MediaInfo from './MediaInfo'
+import MediaLiveSeekableRange from './MediaLiveSeekableRange'
 import MediaPlayerIdleReason from './MediaPlayerIdleReason'
 import MediaPlayerState from './MediaPlayerState'
 import MediaQueueItem from './MediaQueueItem'
@@ -29,6 +30,9 @@ export default interface MediaStatus {
 
   /** The stream's mute state. */
   isMuted: boolean
+
+  /** The seekable range of a live media stream */
+  liveSeekableRange?: MediaLiveSeekableRange | null
 
   /** The itemId of the {@link MediaQueueItem} that is currently loading (but isn't active in the queue) on the receiver. */
   loadingItemId?: number
