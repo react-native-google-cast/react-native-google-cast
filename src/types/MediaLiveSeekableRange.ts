@@ -9,7 +9,7 @@
  */
 export default interface MediaLiveSeekableRange {
   /** End of the seekable range in seconds. */
-  end: number
+  endTime: number
 
   /** A boolean value indicates whether the live seekable range is a moving window. */
   isMovingWindow: boolean
@@ -18,5 +18,5 @@ export default interface MediaLiveSeekableRange {
   isLiveDone: boolean
 
   /** Start of the seekable range in seconds. */
-  start: number
+  startTime: number
 }
