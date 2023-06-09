@@ -87,6 +87,11 @@ public class RNGCSessionManager
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
+        if (!RNGCCastContext.isCastApiAvailable(getReactApplicationContext())) {
+          promise.resolve(null);
+          return;
+        }
+
         SessionManager sessionManager =
           CastContext.getSharedInstance(getReactApplicationContext())
             .getSessionManager();
