@@ -1,24 +1,9 @@
 import {
   ConfigPlugin,
   withAppDelegate,
-  withEntitlementsPlist,
   withInfoPlist,
 } from '@expo/config-plugins'
 import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
-
-/**
- * In Xcode, go to Signing & Capabilities, click + Capability and select Access WiFi Information. (This is required since iOS 12.)
- * Note that "Wireless Accessory Configuration" is unrelated.
- *
- * @param {*} config
- * @returns
- */
-const withIosWifiEntitlements: ConfigPlugin = (config) => {
-  return withEntitlementsPlist(config, (config) => {
-    config.modResults['com.apple.developer.networking.wifi-info'] = true
-    return config
-  })
-}
 
 const LOCAL_NETWORK_USAGE =
   '${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network'
@@ -111,7 +96,6 @@ export const withIosGoogleCast: ConfigPlugin<{
   disableDiscoveryAutostart?: boolean
   startDiscoveryAfterFirstTapOnCastButton?: boolean
 }> = (config, props) => {
-  config = withIosWifiEntitlements(config)
   config = withIosLocalNetworkPermissions(config, props)
   config = withIosAppDelegateLoaded(config, props)
 

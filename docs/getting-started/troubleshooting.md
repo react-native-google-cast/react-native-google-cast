@@ -30,8 +30,6 @@ This is by far the most common problem with this library. Before creating an iss
 
 - (Android) **emulators** are [not supported](https://github.com/googlecast/CastVideos-android/issues/104#issuecomment-816290407). Please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
 
-- (iOS) Make sure you've enabled the **Access WiFi Information** capability.
-
 - (iOS) If you disabled discovery autostart in [iOS Setup](./setup#ios), make sure you call [startDiscovery](../api/classes/discoverymanager#startdiscovery) somewhere in your JS code.
 
 - (iOS 14+) Double check that you've configured Bonjour services in `Info.plist`.
@@ -39,6 +37,8 @@ This is by far the most common problem with this library. Before creating an iss
 - (iOS 14+) If calling `showCastDialog`, note that the user has to tap the Cast Button and grant permissions first before you can programmatically open the dialog.
 
 - (iOS 14+) You may want to set `options.startDiscoveryAfterFirstTapOnCastButton = false` if you're not explicitly requiring the user to tap the Cast Button first and instead want to start discovery immediately after launching the app.
+-
+- (iOS 12) Make sure you've enabled the **Access WiFi Information** capability.
 
 ## Other Issues
 

@@ -52,9 +52,7 @@ GCKCastContext.setSharedInstanceWith(options)
 
 If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
 
-2. In Xcode, go to `Signing & Capabilities`, click `+ Capability` and select `Access WiFi Information`. (This is required since [iOS 12](https://developers.google.com/cast/docs/ios_sender/#ios_12).) Note that "Wireless Accessory Configuration" is unrelated.
-
-3. For iOS 14+, you need to add [local network permissions](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#updating_your_app_on_ios_14) to `Info.plist`:
+1. For iOS 14+, you need to add [local network permissions](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#updating_your_app_on_ios_14) to `Info.plist`:
 
    ```xml
    <key>NSBonjourServices</key>
@@ -72,7 +70,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
 
    Furthermore, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
 
-4. (Optional iOS 14+) By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
+2. (Optional iOS 14+) By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
 
    You may [customize this behavior](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#customizations) in `AppDelegate.m` by either:
 
@@ -90,7 +88,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
      options.startDiscoveryAfterFirstTapOnCastButton = false
      ```
 
-5. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
+3. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
 
    ```xml
    <key>NSBluetoothAlwaysUsageDescription</key>

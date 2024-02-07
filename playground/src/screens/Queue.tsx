@@ -45,11 +45,19 @@ export default function Queue() {
               contentUrl:
                 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
               contentType: 'video/mp4',
+              metadata: {
+                type: 'movie',
+                title: 'Big Buck Bunny',
+              },
             },
             {
               contentUrl:
                 'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8',
               contentType: 'application/x-mpegURL',
+              metadata: {
+                type: 'generic',
+                title: 'HLS test',
+              },
             },
           ])
 
@@ -65,15 +73,27 @@ export default function Queue() {
               contentUrl:
                 'https://live.staticflickr.com/8705/16603055778_794f879d83_b.jpg',
               contentType: 'image/jpeg',
+              metadata: {
+                type: 'photo',
+                title: 'Image 1',
+              },
             },
             {
               contentUrl:
                 'https://live.staticflickr.com/7073/7269798634_b92cdcc0bf_b.jpg',
               contentType: 'image/jpeg',
+              metadata: {
+                type: 'photo',
+                title: 'Image 2',
+              },
             },
             {
               contentUrl: 'http://i.stack.imgur.com/EZvw8.jpg',
               contentType: 'image/jpeg',
+              metadata: {
+                type: 'photo',
+                title: 'Image 3',
+              },
             },
           ])
 
@@ -84,7 +104,9 @@ export default function Queue() {
 
       <Text>Queue:</Text>
       {mediaStatus?.queueItems.map((item) => (
-        <Text key={item.itemId}>&bull; {item.mediaInfo.contentType}</Text>
+        <Text key={item.itemId}>
+          &bull; {item.mediaInfo.metadata?.title} ({item.mediaInfo.contentType})
+        </Text>
       ))}
     </ScrollView>
   )

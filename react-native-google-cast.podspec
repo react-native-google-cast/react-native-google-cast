@@ -25,6 +25,11 @@ Pod::Spec.new do |s|
     ss.dependency 'google-cast-sdk'
   end
 
+  s.subspec 'GuestModeArm' do |ss|
+    ss.dependency "#{package['name']}/RNGoogleCast"
+    ss.dependency 'google-cast-sdk-xcframework'
+  end
+
   s.subspec 'NoBluetooth' do |ss|
     ss.dependency "#{package['name']}/RNGoogleCast"
     ss.dependency 'google-cast-sdk-no-bluetooth'
@@ -32,7 +37,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'NoBluetoothArm' do |ss|
     ss.dependency "#{package['name']}/RNGoogleCast"
-    ss.dependency 'google-cast-sdk-dynamic-xcframework-no-bluetooth'
+    ss.dependency 'google-cast-sdk-no-bluetooth-xcframework'
   end
 
   s.subspec 'RNGoogleCast' do |ss|
