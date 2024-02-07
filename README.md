@@ -6,13 +6,16 @@ This library wraps the native Google Cast SDK for Android and iOS (and maybe web
 
 It is written in TypeScript so types will always be up-to-date.
 
-## Version overview
+## Version History
 
-| RNGC | React Native | Purpose                                                                                                                                               |
-| ---- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.x  | 🤷‍♂️           | Old version implemented for Google Cast SDK v2 with manual discoverability. Not maintained anymore.                                                   |
-| 3.x  | >=0.40       | Rewrite of the library for Google Cast SDK v3 with automatic session management. Only bug fixes will be merged.                                       |
-| 4.x  | >=0.60       | Current version with a completely rewritten API, closely resembling native Android/iOS(/Chrome?) APIs. We highly recommend to use the latest version. |
+| RNGC | React Native | iOS | Android | Maintained | Notes                                                                            |
+| ---- | ------------ | --- | ------- | ---------- | -------------------------------------------------------------------------------- |
+| 1.x  | 🤷‍♂️           | 🤷‍♂️  | 🤷‍♂️      | 🛑         | Old version implemented for Google Cast SDK v2 with manual discoverability.      |
+| 3.x  | >=0.40       | 🤷‍♂️  | 🤷‍♂️      | 🛑         | Rewrite of the library for Google Cast SDK v3 with automatic session management. |
+| 4.x  | >=0.60       | 10+ |         | 🐜         | Completely rewritten API, closely resembling native Android/iOS APIs.            |
+| 5.x  | >=0.68       | 13+ |         | ✅         | Rewritten using React Native's New Architecture                                  |
+
+> Version 5.x is currently in development.
 
 ## Documentation
 

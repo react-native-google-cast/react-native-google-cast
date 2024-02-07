@@ -294,11 +294,11 @@ PODS:
   - React-jsinspector (0.69.9)
   - React-logger (0.69.9):
     - glog
-  - react-native-google-cast/GuestMode (4.6.2):
+  - react-native-google-cast/GuestMode (4.7.0):
     - google-cast-sdk
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.6.2):
+  - react-native-google-cast/RNGoogleCast (4.7.0):
     - PromisesObjC
     - React
   - react-native-video (6.0.0-alpha.1):
