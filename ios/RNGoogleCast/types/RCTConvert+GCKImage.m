@@ -9,11 +9,14 @@
 }
 
 + (nonnull id)fromGCKImage:(nullable GCKImage *)image {
-  if (image == nil) return [NSNull null];
+  if (image == nil || image.URL == nil) return [NSNull null];
+
+  NSString *url = [image.URL absoluteString];
+  if (url == nil) return [NSNull null];
 
   return @{
     @"height" : @(image.height),
-    @"url" : [image.URL absoluteString],
+    @"url" : url,
     @"width" : @(image.width),
   };
 }
