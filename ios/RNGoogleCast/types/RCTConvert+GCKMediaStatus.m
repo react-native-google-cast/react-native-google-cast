@@ -7,6 +7,7 @@
 #import "RCTConvert+GCKMediaQueueItem.h"
 #import "RCTConvert+GCKVideoInfo.h"
 #import "RCTConvert+GCKAdBreakStatus.h"
+#import "RCTConvert+GCKMediaLiveSeekableRange.h"
 
 @implementation RCTConvert (GCKMediaStatus)
 
@@ -29,6 +30,9 @@
   [RCTConvert fromGCKMediaPlayerIdleReason:status.idleReason];
 
   json[@"isMuted"] = @(status.isMuted);
+
+  json[@"liveSeekableRange"] =
+  [RCTConvert fromGCKMediaLiveSeekableRange:status.liveSeekableRange];
 
   json[@"loadingItemId"] = @(status.loadingItemID);
 

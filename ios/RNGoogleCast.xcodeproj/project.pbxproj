@@ -70,6 +70,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0AA36BA329CB398E009A7241 /* RCTConvert+GCKMediaLiveSeekableRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+GCKMediaLiveSeekableRange.h"; sourceTree = "<group>"; };
+		0AA36BA429CB39A8009A7241 /* RCTConvert+GCKMediaLiveSeekableRange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+GCKMediaLiveSeekableRange.m"; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libRNGoogleCast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleCast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		911BE483201C8E7C00474413 /* RNGCCastContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGCCastContext.h; sourceTree = "<group>"; };
 		911BE484201C8E8200474413 /* RNGCCastContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGCCastContext.m; sourceTree = "<group>"; };
@@ -237,20 +239,6 @@
 		91D99D8A231A73270081468C /* types */ = {
 			isa = PBXGroup;
 			children = (
-				F5A8B31225CDE17B001CD915 /* RCTConvert+GCKCastSession.h */,
-				914BA2BD25BF7545001FFA5E /* RCTConvert+GCKCastSession.m */,
-				F5A8B37F25CDE68B001CD915 /* RCTConvert+GCKMediaLoadRequest.h */,
-				914BA2BF25BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m */,
-				F5A8B38125CDE6EF001CD915 /* RCTConvert+GCKMediaQueueContainerMetadata.h */,
-				914BA2C125BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m */,
-				F5A8B38225CDE72E001CD915 /* RCTConvert+GCKMediaQueueContainerType.h */,
-				914BA2BE25BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m */,
-				F5A8B38425CDE90A001CD915 /* RCTConvert+GCKMediaQueueData.h */,
-				914BA2BC25BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m */,
-				F5A8B38525CDE916001CD915 /* RCTConvert+GCKMediaQueueType.h */,
-				914BA2C025BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m */,
-				F5A8B38625CDE929001CD915 /* RCTConvert+GCKRemoteMediaClient.h */,
-				914BA2C225BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m */,
 				F5A8B38725CDE932001CD915 /* RCTConvert+GCKActiveInputStatus.h */,
 				914932D0231C6EA8001AE93B /* RCTConvert+GCKActiveInputStatus.m */,
 				F5A8B38825CDE93B001CD915 /* RCTConvert+GCKAdBreakClipInfo.h */,
@@ -261,6 +249,8 @@
 				91829AA9227E1D5E00906C0C /* RCTConvert+GCKAdBreakStatus.m */,
 				F5A8B38B25CDE956001CD915 /* RCTConvert+GCKApplicationMetadata.h */,
 				914932D2231D7554001AE93B /* RCTConvert+GCKApplicationMetadata.m */,
+				F5A8B31225CDE17B001CD915 /* RCTConvert+GCKCastSession.h */,
+				914BA2BD25BF7545001FFA5E /* RCTConvert+GCKCastSession.m */,
 				F5A8B38C25CDE962001CD915 /* RCTConvert+GCKCastState.h */,
 				9143E4D4231B1659008A23D9 /* RCTConvert+GCKCastState.m */,
 				F5A8B38D25CDE96D001CD915 /* RCTConvert+GCKColor.h */,
@@ -273,6 +263,10 @@
 				91829AA2227E1D5E00906C0C /* RCTConvert+GCKImage.m */,
 				F5A8B39125CDE9E0001CD915 /* RCTConvert+GCKMediaInformation.h */,
 				91829ABA227E1D5F00906C0C /* RCTConvert+GCKMediaInformation.m */,
+				0AA36BA329CB398E009A7241 /* RCTConvert+GCKMediaLiveSeekableRange.h */,
+				0AA36BA429CB39A8009A7241 /* RCTConvert+GCKMediaLiveSeekableRange.m */,
+				F5A8B37F25CDE68B001CD915 /* RCTConvert+GCKMediaLoadRequest.h */,
+				914BA2BF25BF7545001FFA5E /* RCTConvert+GCKMediaLoadRequest.m */,
 				F5A8B39225CDE9E8001CD915 /* RCTConvert+GCKMediaMetadata.h */,
 				91829AA3227E1D5E00906C0C /* RCTConvert+GCKMediaMetadata.m */,
 				F5A8B39325CDE9F1001CD915 /* RCTConvert+GCKMediaMetadataType.h */,
@@ -281,8 +275,16 @@
 				91829AB0227E1D5F00906C0C /* RCTConvert+GCKMediaPlayerIdleReason.m */,
 				F5A8B39525CDE9FF001CD915 /* RCTConvert+GCKMediaPlayerState.h */,
 				91829AAD227E1D5E00906C0C /* RCTConvert+GCKMediaPlayerState.m */,
+				F5A8B38125CDE6EF001CD915 /* RCTConvert+GCKMediaQueueContainerMetadata.h */,
+				914BA2C125BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerMetadata.m */,
+				F5A8B38225CDE72E001CD915 /* RCTConvert+GCKMediaQueueContainerType.h */,
+				914BA2BE25BF7545001FFA5E /* RCTConvert+GCKMediaQueueContainerType.m */,
+				F5A8B38425CDE90A001CD915 /* RCTConvert+GCKMediaQueueData.h */,
+				914BA2BC25BF7545001FFA5E /* RCTConvert+GCKMediaQueueData.m */,
 				F5A8B39625CDEA05001CD915 /* RCTConvert+GCKMediaQueueItem.h */,
 				91829ABB227E1D5F00906C0C /* RCTConvert+GCKMediaQueueItem.m */,
+				F5A8B38525CDE916001CD915 /* RCTConvert+GCKMediaQueueType.h */,
+				914BA2C025BF7545001FFA5E /* RCTConvert+GCKMediaQueueType.m */,
 				F5A8B39725CDEA10001CD915 /* RCTConvert+GCKMediaRepeatMode.h */,
 				91829AAB227E1D5E00906C0C /* RCTConvert+GCKMediaRepeatMode.m */,
 				F5A8B39825CDEA19001CD915 /* RCTConvert+GCKMediaResumeState.h */,
@@ -299,16 +301,18 @@
 				914932D8231E9A07001AE93B /* RCTConvert+GCKMediaTextTrackStyleEdgeType.m */,
 				F5A8B39E25CDEA64001CD915 /* RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.h */,
 				914932DC231E9BBD001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontGenericFamily.m */,
-				F5A8B39F25CDEA6D001CD915 /* RCTConvert+GCKMediaTextTrackStyleWindowType.h */,
-				914932DA231E9B4E001AE93B /* RCTConvert+GCKMediaTextTrackStyleWindowType.m */,
 				F5A8B3A025CDEA76001CD915 /* RCTConvert+GCKMediaTextTrackStyleFontStyle.h */,
 				914932DE231E9CC0001AE93B /* RCTConvert+GCKMediaTextTrackStyleFontStyle.m */,
+				F5A8B39F25CDEA6D001CD915 /* RCTConvert+GCKMediaTextTrackStyleWindowType.h */,
+				914932DA231E9B4E001AE93B /* RCTConvert+GCKMediaTextTrackStyleWindowType.m */,
 				F5A8B3A125CDEA7F001CD915 /* RCTConvert+GCKMediaTextTrackSubtype.h */,
 				91829AB9227E1D5F00906C0C /* RCTConvert+GCKMediaTextTrackSubtype.m */,
 				F5A8B3A225CDEA87001CD915 /* RCTConvert+GCKMediaTrack.h */,
 				91829AA8227E1D5E00906C0C /* RCTConvert+GCKMediaTrack.m */,
 				F5A8B3A325CDEA8E001CD915 /* RCTConvert+GCKMediaTrackType.h */,
 				91829AA4227E1D5E00906C0C /* RCTConvert+GCKMediaTrackType.m */,
+				F5A8B38625CDE929001CD915 /* RCTConvert+GCKRemoteMediaClient.h */,
+				914BA2C225BF7545001FFA5E /* RCTConvert+GCKRemoteMediaClient.m */,
 				F5A8B3A425CDEA9D001CD915 /* RCTConvert+GCKStandbyStatus.h */,
 				91829AB2227E1D5F00906C0C /* RCTConvert+GCKStandbyStatus.m */,
 				F5A8B3A525CDEAA4001CD915 /* RCTConvert+GCKVideoInfo.h */,
