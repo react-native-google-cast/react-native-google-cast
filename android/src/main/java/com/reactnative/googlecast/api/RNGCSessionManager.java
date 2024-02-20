@@ -133,27 +133,27 @@ public class RNGCSessionManager
           }
         }
         promise.resolve(false);
-      }
+      };
     });
   }
 
   @Override
   public void onSessionEnded(CastSession session, int error) {
-    WritableMap params = Arguments.createMap();
+    getReactApplicationContext().runOnUiQueueThread(new Runnable() {
+      @Override
+      public void run() {
+        WritableMap params = Arguments.createMap();
 
-    params.putMap("session", RNGCCastSession.toJson((session)));
+        params.putMap("session", RNGCCastSession.toJson((session)));
 
-    try {
-      Integer reasonCode = Objects.requireNonNull(CastContext.getSharedInstance()).getCastReasonCodeForCastStatusCode(error);
-      if (reasonCode.equals(CastReasonCodes.CASTING_STOPPED)) {
+        CastContext castContext = CastContext.getSharedInstance();
+        if (castContext == null || CastReasonCodes.CASTING_STOPPED != castContext.getCastReasonCodeForCastStatusCode(error)) {
+          params.putString("error", CastStatusCodes.getStatusCodeString(error));
+        }
+
         sendEvent(SESSION_ENDED, params);
-        return;
       }
-    } catch (Exception ignored) {}
-
-    params.putString("error", CastStatusCodes.getStatusCodeString(error));
-
-    sendEvent(SESSION_ENDED, params);
+    });
   }
 
   @Override

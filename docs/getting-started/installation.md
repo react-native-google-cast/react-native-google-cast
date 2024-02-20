@@ -96,42 +96,14 @@ By default, the latest version (`+`) of the Cast SDK is used. To use a specific 
 ```java
 buildscript {
   ext {
-    buildToolsVersion = "31.0.0"
-    minSdkVersion = 16
-    compileSdkVersion = 31
-    targetSdkVersion = 31
-    supportLibVersion = "31.0.0"
-    castFrameworkVersion = "21.0.0" // <-- Cast SDK version
+    buildToolsVersion = "34.0.0"
+    minSdkVersion = 22
+    compileSdkVersion = 34
+    targetSdkVersion = 34
+    castFrameworkVersion = "21.4.0" // <-- Cast SDK version
   }
 }
 ```
-
-#### a. RN >= 0.60
-
-No additional setup needed thanks to autolinking.
-
-#### b. RN <= 0.59
-
-1. Open up `android/app/src/main/java/[...]/MainApplication.java`
-
-   - Add `import com.reactnative.googlecast.GoogleCastPackage;` to the imports at the top of the file
-   - Add `new GoogleCastPackage()` to the list returned by the `getPackages()` method
-
-2. Append the following lines to `android/settings.gradle`:
-
-   ```java
-   include ':react-native-google-cast'
-   project(':react-native-google-cast').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-cast/android')
-   ```
-
-3. Insert the following line inside the `dependencies` block in `android/app/build.gradle` (in addition to the `play-service-cast-framework` from above):
-
-   ```java
-   dependencies {
-     ...
-     implementation project(':react-native-google-cast')
-   }
-   ```
 
 ## Chrome
 
