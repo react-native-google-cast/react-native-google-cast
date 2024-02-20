@@ -294,11 +294,11 @@ PODS:
   - React-jsinspector (0.69.9)
   - React-logger (0.69.9):
     - glog
-  - react-native-google-cast/GuestMode (4.7.0):
+  - react-native-google-cast/GuestMode (4.8.0):
     - google-cast-sdk
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.7.0):
+  - react-native-google-cast/RNGoogleCast (4.8.0):
     - PromisesObjC
     - React
   - react-native-video (6.0.0-alpha.1):
@@ -618,7 +618,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 3b506d7fc50275bf44f8fd5624f23eaedd78bf78
   React-jsinspector: 5b92a5a30e02e1a21802f293cc71e05d887c7378
   React-logger: 96d904c5bc87c2660d48e6a36fb2edf65f9cfb11
-  react-native-google-cast: d79dbdf334fba4f92efb6c9580e133e526bfa0a6
+  react-native-google-cast: 2f8616caaaa5d063529dbdc680f8bcdae6ae896d
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   React-perflogger: f6f4b3c63629ead2e8a5a22eaedd06368c31617a
   React-RCTActionSheet: 5e95058e99c53313d778d96b7f37697ce3a9418e
