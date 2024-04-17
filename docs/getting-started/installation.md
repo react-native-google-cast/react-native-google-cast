@@ -13,7 +13,7 @@ or
 ## Expo
 
 Since Expo SDK 42, you can use this library in a custom-built Expo app.
-The is a config plugin included to auto-configure `react-native-google-cast` when the native code is generated (`npx expo prebuild`).
+There is a config plugin included to auto-configure `react-native-google-cast` when the native code is generated (`npx expo prebuild`).
 
 > This package cannot be used in the "Expo Go" app because [it requires custom native code](https://docs.expo.io/workflow/customizing/).
 
