@@ -31,7 +31,7 @@ Refer to the [playground](playground/) folder to find a sample app demonstrating
 
 ## Expo
 
-This library can by used by custom built Expo apps since Expo SDK 42. See [@config-plugins/react-native-google-cast](https://github.com/expo/config-plugins/tree/master/packages/react-native-google-cast) for more information.
+This library can by used by custom built Expo apps since Expo SDK 42. The config plugin is included in this project. There is no need to install an additional config plugin from Expo.
 
 ## Troubleshooting
 

@@ -13,12 +13,23 @@ or
 ## Expo
 
 Since Expo SDK 42, you can use this library in a custom-built Expo app.
+The is a config plugin included to auto-configure `react-native-google-cast` when the native code is generated (`npx expo prebuild`).
 
-Simply follow instructions at [@config-plugins/react-native-google-cast](https://github.com/expo/config-plugins/tree/master/packages/react-native-google-cast) which will take care of all the installation and setup steps.
+> This package cannot be used in the "Expo Go" app because [it requires custom native code](https://docs.expo.io/workflow/customizing/).
+
+Add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`plugins`](https://docs.expo.io/versions/latest/config/app/#plugins) array of your `app.json` or `app.config.js`:
+
+```json
+{
+  "expo": {
+    "plugins": ["react-native-google-cast"]
+  }
+}
+```
+
+Next, rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
 Then ignore the rest of this page and jump straight to [Usage](usage).
-
-If you're unsure please check the [example Expo app](https://github.com/react-native-google-cast/RNGCExpo).
 
 ## iOS
 

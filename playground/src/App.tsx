@@ -2,7 +2,7 @@ import 'react-native-gesture-handler'
 
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { CastButton } from 'react-native-google-cast'
 import Client from './screens/Client'
 import Devices from './screens/Devices'
@@ -15,21 +15,26 @@ import Tracks from './screens/Tracks'
 const Stack = createStackNavigator()
 
 export default function App() {
+  const headerRight = useCallback(
+    () => (
+      <CastButton
+        style={{
+          tintColor: 'black',
+          width: 24,
+          height: 24,
+          marginRight: 10,
+        }}
+      />
+    ),
+    []
+  )
+
   return (
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
-          headerRight: () => (
-            <CastButton
-              style={{
-                tintColor: 'black',
-                width: 24,
-                height: 24,
-                marginRight: 10,
-              }}
-            />
-          ),
+          headerRight,
         }}
       >
         <Stack.Screen name="Client" component={Client} />

@@ -6,7 +6,35 @@ sidebar_label: Setup
 
 ## Expo
 
-If you're using Expo, follow instructions at [@config-plugins/react-native-google-cast](https://github.com/expo/config-plugins/tree/master/packages/react-native-google-cast) and then continue to [Usage](usage).
+If you're using Expo, you can configure your build using the included plugin (see below) and then continue to [Usage](usage).
+
+#### API
+
+The plugin provides props for extra customization. Every time you change the props or plugins, you'll need to rebuild (and `prebuild`) the native app. If no extra properties are added, defaults will be used.
+
+- `iosReceiverAppId` (_string_): unknown. Default `CC1AD845`
+- `androidReceiverAppId` (_string_): unknown.
+- `androidPlayServicesCastFrameworkVersion` (_string_): Version for the gradle package. Default `+`
+
+#### Example
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-google-cast",
+        {
+          "iosReceiverAppId": "...",
+          "iosSuspendSessionsWhenBackgrounded": false,
+          "androidReceiverAppId": "...",
+          "androidPlayServicesCastFrameworkVersion": "..."
+        }
+      ]
+    ]
+  }
+}
+```
 
 ## iOS
 
