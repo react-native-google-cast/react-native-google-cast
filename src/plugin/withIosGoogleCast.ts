@@ -1,9 +1,24 @@
+import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
 import {
   ConfigPlugin,
   withAppDelegate,
+  withEntitlementsPlist,
   withInfoPlist,
 } from '@expo/config-plugins'
-import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
+
+/**
+ * In Xcode, go to Signing & Capabilities, click + Capability and select Access WiFi Information. (This is required since iOS 12.)
+ * Note that "Wireless Accessory Configuration" is unrelated.
+ *
+ * @param {*} config
+ * @returns
+ */
+const withIosWifiEntitlements: ConfigPlugin = (config) => {
+  return withEntitlementsPlist(config, (config_) => {
+    config_.modResults['com.apple.developer.networking.wifi-info'] = true
+    return config_
+  })
+}
 
 const LOCAL_NETWORK_USAGE =
   '${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network'
@@ -24,34 +39,28 @@ const LOCAL_NETWORK_USAGE =
 const withIosLocalNetworkPermissions: ConfigPlugin<{
   receiverAppId?: string
 }> = (config, { receiverAppId = 'CC1AD845' } = {}) => {
-  return withInfoPlist(config, (config) => {
-    if (!Array.isArray(config.modResults.NSBonjourServices)) {
-      config.modResults.NSBonjourServices = []
+  return withInfoPlist(config, (config_) => {
+    if (!Array.isArray(config_.modResults.NSBonjourServices)) {
+      config_.modResults.NSBonjourServices = []
     }
     // Add required values
-    config.modResults.NSBonjourServices.push(
+    config_.modResults.NSBonjourServices.push(
       '_googlecast._tcp',
       `_${receiverAppId}._googlecast._tcp`
     )
 
     // Remove duplicates
-    config.modResults.NSBonjourServices = [
-      ...new Set(config.modResults.NSBonjourServices),
+    config_.modResults.NSBonjourServices = [
+      ...new Set(config_.modResults.NSBonjourServices),
     ]
 
     // For iOS 14+, you need to add local network permissions to Info.plist:
     // https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#updating_your_app_on_ios_14
-    config.modResults.NSLocalNetworkUsageDescription =
-      config.modResults.NSLocalNetworkUsageDescription || LOCAL_NETWORK_USAGE
-    return config
+    config_.modResults.NSLocalNetworkUsageDescription =
+      config_.modResults.NSLocalNetworkUsageDescription || LOCAL_NETWORK_USAGE
+    return config_
   })
 }
-
-// const withIosPodfile: ConfigPlugin<> = (config, {}) => {
-//   return withPodfileProperties(config, config => {
-
-//   })
-// }
 
 // const withIosGuestMode: ConfigPlugin = (config) => {
 //   return withInfoPlist(config, (config) => {
@@ -69,22 +78,22 @@ const withIosLocalNetworkPermissions: ConfigPlugin<{
 
 // TODO: Use AppDelegate swizzling
 const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
-  return withAppDelegate(config, (config) => {
-    if (!['objc', 'objcpp'].includes(config.modResults.language)) {
+  return withAppDelegate(config, (config_) => {
+    if (!['objc', 'objcpp'].includes(config_.modResults.language)) {
       throw new Error(
         "react-native-google-cast config plugin does not support AppDelegate' that aren't Objective-C(++) yet."
       )
     }
-    config.modResults.contents =
+    config_.modResults.contents =
       addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
-        config.modResults.contents,
+        config_.modResults.contents,
         props
       ).contents
-    config.modResults.contents = addGoogleCastAppDelegateImport(
-      config.modResults.contents
+    config_.modResults.contents = addGoogleCastAppDelegateImport(
+      config_.modResults.contents
     ).contents
 
-    return config
+    return config_
   })
 }
 
@@ -93,11 +102,21 @@ export const withIosGoogleCast: ConfigPlugin<{
    * @default 'CC1AD845'
    */
   receiverAppId?: string
-  disableDiscoveryAutostart?: boolean
-  startDiscoveryAfterFirstTapOnCastButton?: boolean
+  /**
+   * @default true
+   */
+  suspendSessionsWhenBackgrounded?: boolean
 }> = (config, props) => {
-  config = withIosLocalNetworkPermissions(config, props)
-  config = withIosAppDelegateLoaded(config, props)
+  config = withIosWifiEntitlements(config)
+  config = withIosLocalNetworkPermissions(config, {
+    receiverAppId: props.receiverAppId,
+  })
+  config = withIosAppDelegateLoaded(config, {
+    receiverAppId: props.receiverAppId,
+    suspendSessionsWhenBackgrounded: props.suspendSessionsWhenBackgrounded,
+    // disableDiscoveryAutostart?: boolean;
+    // startDiscoveryAfterFirstTapOnCastButton?: boolean;
+  })
 
   // TODO
   //   config = withIosGuestMode(config)
@@ -107,11 +126,12 @@ export const withIosGoogleCast: ConfigPlugin<{
 
 // From expo-cli RNMaps setup
 export const MATCH_INIT =
-  /(?:(self\.|_)(\w+)\s?=\s?\[\[UMModuleRegistryAdapter alloc\])|(?:RCTBridge\s?\*\s?(\w+)\s?=\s?\[\[RCTBridge alloc\])|(\[self\.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions\])/g
+  /-\s*\(BOOL\)\s*application:\s*\(UIApplication\s*\*\s*\)\s*\w+\s+didFinishLaunchingWithOptions:/g
 
 type IosProps = {
   receiverAppId?: string | null
-  disableDiscoveryAutostart?: boolean
+  suspendSessionsWhenBackgrounded?: boolean
+  // disableDiscoveryAutostart?: boolean
   startDiscoveryAfterFirstTapOnCastButton?: boolean
 }
 
@@ -119,7 +139,8 @@ export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
   src: string,
   {
     receiverAppId = null,
-    disableDiscoveryAutostart = false,
+    suspendSessionsWhenBackgrounded = true,
+    // disableDiscoveryAutostart = false,
     startDiscoveryAfterFirstTapOnCastButton = true,
   }: IosProps = {}
 ) {
@@ -135,11 +156,13 @@ export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
     };`,
     '  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];',
     '  GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];',
-    `  options.disableDiscoveryAutostart = ${String(
-      !!disableDiscoveryAutostart
-    )};`,
+    // TODO: Same as above, read statically
+    // `  options.disableDiscoveryAutostart = ${String(!!disableDiscoveryAutostart)};`,
     `  options.startDiscoveryAfterFirstTapOnCastButton = ${String(
       !!startDiscoveryAfterFirstTapOnCastButton
+    )};`,
+    `  options.suspendSessionsWhenBackgrounded = ${String(
+      !!suspendSessionsWhenBackgrounded
     )};`,
     '  [GCKCastContext setSharedInstanceWithOptions:options];',
     '#endif'
@@ -152,7 +175,7 @@ export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
     src,
     newSrc: newSrc.join('\n'),
     anchor: MATCH_INIT,
-    offset: 0,
+    offset: 2,
     comment: '//',
   })
 }

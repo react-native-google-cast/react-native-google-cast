@@ -41,8 +41,8 @@ export default function Session() {
               track.type === 'video'
                 ? '🎥'
                 : track.type === 'audio'
-                ? '🔊'
-                : '💬'
+                  ? '🔊'
+                  : '💬'
             } ${track.id} ${track.name} ${
               track.language ? `(${track.language})` : ''
             }`}
