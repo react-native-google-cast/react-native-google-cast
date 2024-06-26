@@ -2,6 +2,7 @@ package com.castvideos;
 
 import android.app.Application;
 import android.content.Context;
+
 import com.facebook.react.PackageList;
 import com.reactnativenavigation.NavigationApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -11,6 +12,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.castvideos.newarchitecture.MainApplicationReactNativeHost;
+import com.reactnative.googlecast.GoogleCastPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class MainApplication extends NavigationApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          packages.add(new GoogleCastPackage());
           return packages;
         }
 
@@ -55,7 +58,7 @@ public class MainApplication extends NavigationApplication {
     super.onCreate();
     // If you opted-in for the New Architecture, we enable the TurboModule system
     ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
-    
+
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 
