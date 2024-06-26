@@ -22,7 +22,7 @@ This is by far the most common problem with this library. Before creating an iss
 
 - Read through [Discovery Troubleshooting](https://developers.google.com/cast/docs/discovery) in the Google Cast documentation.
 
-- If using a custom receiver application in the [Google Cast SDK Developer Console](https://cast.google.com/publish) that's Unpublished, make sure you register your device in the **Cast Receiver Devices**. Once you do that, you need to wait about 15 minutes and then restart your Cast device.
+- If you're creating a [custom web receiver](https://developers.google.com/cast/docs/web_receiver) and its status is Unpublished in the [Google Cast SDK Developer Console](https://cast.google.com/publish), make sure you register your device in the **Cast Receiver Devices**. Once you do that, you need to wait about 15 minutes and then restart your Cast device.
 
 - Check the Debug log in Xcode or Android Studio for any warnings and errors.
 
@@ -32,13 +32,11 @@ This is by far the most common problem with this library. Before creating an iss
 
 - (iOS) If you disabled discovery autostart in [iOS Setup](./setup#ios), make sure you call [startDiscovery](../api/classes/discoverymanager#startdiscovery) somewhere in your JS code.
 
-- (iOS 14+) Double check that you've configured Bonjour services in `Info.plist`.
+- (iOS) Double check that you've configured Bonjour services in `Info.plist`.
 
-- (iOS 14+) If calling `showCastDialog`, note that the user has to tap the Cast Button and grant permissions first before you can programmatically open the dialog.
+- (iOS) If calling `showCastDialog`, note that the user has to tap the Cast Button and grant permissions first before you can programmatically open the dialog.
 
-- (iOS 14+) You may want to set `options.startDiscoveryAfterFirstTapOnCastButton = false` if you're not explicitly requiring the user to tap the Cast Button first and instead want to start discovery immediately after launching the app.
--
-- (iOS 12) Make sure you've enabled the **Access WiFi Information** capability.
+- (iOS) You may want to set `options.startDiscoveryAfterFirstTapOnCastButton = false` if you're not explicitly requiring the user to tap the Cast Button first and instead want to start discovery immediately after launching the app.
 
 ## Other Issues
 

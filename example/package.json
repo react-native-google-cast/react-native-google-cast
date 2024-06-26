@@ -12,7 +12,7 @@
     "react": "18.0.0",
     "react-native": "0.69.9",
     "react-native-draggable-flatlist": "^3.1.2",
-    "react-native-gesture-handler": "^2.5.0",
+    "react-native-gesture-handler": "^2.17.1",
     "react-native-navigation": "^7.16.0",
     "react-native-popup-menu": "instea/react-native-popup-menu",
     "react-native-reanimated": "^2.9.1",
