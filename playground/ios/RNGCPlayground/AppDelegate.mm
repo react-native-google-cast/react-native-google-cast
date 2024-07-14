@@ -39,6 +39,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
       initWithApplicationID:@"EA48D3FC"];
   GCKCastOptions *options =
       [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+  options.startDiscoveryAfterFirstTapOnCastButton = false;
   [GCKCastContext setSharedInstanceWithOptions:options];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];

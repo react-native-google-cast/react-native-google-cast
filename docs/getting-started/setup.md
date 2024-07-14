@@ -40,47 +40,47 @@ The plugin provides props for extra customization. Every time you change the pro
 
 1. In `AppDelegate.m` (or `AppDelegate.swift`) add
 
-<!--DOCUSAURUS_CODE_TABS-->
-<!--Objective-C-->
+   <!--DOCUSAURUS_CODE_TABS-->
+   <!--Swift-->
 
-```obj-c
-#import <GoogleCast/GoogleCast.h>
-```
+   ```swift
+   import GoogleCast
+   ```
 
-<!--Swift-->
+   <!--Objective-C-->
 
-```swift
-import GoogleCast
-```
+   ```obj-c
+   #import <GoogleCast/GoogleCast.h>
+   ```
 
-<!--END_DOCUSAURUS_CODE_TABS-->
+   <!--END_DOCUSAURUS_CODE_TABS-->
 
-and insert the following in the `application:didFinishLaunchingWithOptions` method, ideally at the beginning (or right after Flipper initialization):
+   and insert the following in the `application:didFinishLaunchingWithOptions` method:
 
-<!--DOCUSAURUS_CODE_TABS-->
-<!--Objective-C-->
+   <!--DOCUSAURUS_CODE_TABS-->
+   <!--Swift-->
 
-```obj-c
-NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
-GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
-GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
-[GCKCastContext setSharedInstanceWithOptions:options];
-```
+   ```swift
+   let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
+   let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
+   let options = GCKCastOptions(discoveryCriteria: criteria)
+   GCKCastContext.setSharedInstanceWith(options)
+   ```
 
-<!--Swift-->
+   <!--Objective-C-->
 
-```swift
-let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
-let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
-let options = GCKCastOptions(discoveryCriteria: criteria)
-GCKCastContext.setSharedInstanceWith(options)
-```
+   ```obj-c
+   NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
+   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
+   GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+   [GCKCastContext setSharedInstanceWithOptions:options];
+   ```
 
-<!--END_DOCUSAURUS_CODE_TABS-->
+   <!--END_DOCUSAURUS_CODE_TABS-->
 
-If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
+   If using a [custom web receiver](https://developers.google.com/cast/docs/web_receiver), replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
 
-1. For iOS 14+, you need to add [local network permissions](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#updating_your_app_on_ios_14) to `Info.plist`:
+2. You need to add [local network permissions](https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery) to `Info.plist`:
 
    ```xml
    <key>NSBonjourServices</key>
@@ -98,7 +98,7 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
 
    Furthermore, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
 
-2. (Optional iOS 14+) By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
+3. By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
 
    You may [customize this behavior](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#customizations) in `AppDelegate.m` by either:
 
@@ -110,27 +110,13 @@ If using a custom receiver, replace `kGCKDefaultMediaReceiverApplicationID` with
 
      > Note: If you disable discovery autostart, you'll need to start it later by calling [startDiscovery](../api/classes/discoverymanager#startdiscovery).
 
-   - or setting [`startDiscoveryAfterFirstTapOnCastButton`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a1e701e7d1852d1e09ec2aee936b46413) to `false` (only available on Google Cast iOS SDK 4.5.3+). In this case, discovery will start as soon as the SDK is initialized.
+   - or setting [`startDiscoveryAfterFirstTapOnCastButton`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options#a1e701e7d1852d1e09ec2aee936b46413) to `false`. In this case, discovery will start as soon as the SDK is initialized.
 
      ```obj-c
      options.startDiscoveryAfterFirstTapOnCastButton = false
      ```
 
-3. If using iOS 13+ and you need [guest mode support](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_13), add
-
-   ```xml
-   <key>NSBluetoothAlwaysUsageDescription</key>
-   <string>${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices.</string>
-   <key>NSBluetoothPeripheralUsageDescription</key>
-   <string>${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices.</string>
-   <key>NSMicrophoneUsageDescription</key>
-   <string>${PRODUCT_NAME} uses microphone access to listen for ultrasonic tokens
-   when pairing with nearby Cast devices.</string>
-   ```
-
-   Also make sure you've installed guest mode in step 2 of the [Installation](installation#ios).
-
-   The [official Guest Mode documentation](https://developers.google.com/cast/docs/guest_mode) explains how guest mode works. Note that most use cases work fine without guest mode so you may decide you don't need it if it's not worth asking for the extra privacy permissions.
+   > Warning: Due to a [bug](https://issuetracker.google.com/issues/298066142?pli=1) in the Google Cast SDK v4.8.0 and v4.8.1, pressing the Cast button for the first time doesn't start the discovery process and no Cast dialog is shown (at least on some devices). A workaround is to either set `options.startDiscoveryAfterFirstTapOnCastButton = false` to initialize discovery as soon as the app is opened, or to explicitly call [startDiscovery](../api/classes/discoverymanager#startdiscovery), as described above. This should be fixed in the next release of the SDK.
 
 ## Android
 

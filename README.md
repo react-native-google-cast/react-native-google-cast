@@ -13,9 +13,9 @@ It is written in TypeScript so types will always be up-to-date.
 | 1.x  | 🤷‍♂️           | 🤷‍♂️  | 🤷‍♂️      | 🛑         | Old version implemented for Google Cast SDK v2 with manual discoverability.      |
 | 3.x  | >=0.40       | 🤷‍♂️  | 🤷‍♂️      | 🛑         | Rewrite of the library for Google Cast SDK v3 with automatic session management. |
 | 4.x  | >=0.60       | 10+ |         | 🐜         | Completely rewritten API, closely resembling native Android/iOS APIs.            |
-| 5.x  | >=0.68       | 13+ |         | ✅         | Rewritten using React Native's New Architecture                                  |
 
-> Version 5.x is currently in development.
+<!-- | 5.x  | >=0.68       | 14+ |         | ✅         | Rewritten using React Native's New Architecture                                  | -->
+<!-- > Version 5.x is currently in development. -->
 
 ## Documentation
 
