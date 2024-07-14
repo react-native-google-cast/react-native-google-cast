@@ -25,7 +25,8 @@ The plugin provides props for extra customization. Every time you change the pro
       [
         "react-native-google-cast",
         {
-          "receiverAppId": "..."
+          "receiverAppId": "...",
+          "iosStartDiscoveryAfterFirstTapOnCastButton": false
         }
       ]
     ]

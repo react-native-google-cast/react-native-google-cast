@@ -22,10 +22,15 @@ Add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`pl
 ```json
 {
   "expo": {
-    "plugins": ["react-native-google-cast"]
+    "plugins": [
+      "react-native-google-cast",
+      ["expo-build-properties", { "ios": { "deploymentTarget": "14.0" } }]
+    ]
   }
 }
 ```
+
+> The latest Google Cast SDK (currently [4.8.1](https://developers.google.com/cast/docs/release-notes#april-18,-2024)) only supports iOS 14 or newer, which we can configure using `expo-build-properties`. If you need to support older iOS versions, use an older version of the library but note that some features might not be available.
 
 Next, rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
@@ -35,7 +40,7 @@ Then ignore the rest of this page and continue to [Setup](setup#expo).
 
 Thanks to autolinking, the package and its Google Cast SDK dependency are automatically installed when you run `pod install`.
 
-> The latest Google Cast SDK (currently [4.8.1](https://developers.google.com/cast/docs/release-notes#april-18,-2024)) only supports iOS 14 or newer. If you need to support older iOS versions, use an older version of the library but note that some features might not be available.
+> The latest Google Cast SDK (currently [4.8.1](https://developers.google.com/cast/docs/release-notes#april-18,-2024)) only supports iOS 14 or newer. **Ensure that you set deployment target to iOS 14 or higher.** Otherwise, an older version of the SDK will be installed and some features might not be available.
 
 > Before v4.8.1, Google Cast used to publish different variants of the SDK based on whether they included Guest Mode support. That feature has been removed in the latest versions so now there's only a single SDK variant.
 
