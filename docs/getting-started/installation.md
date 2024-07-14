@@ -29,7 +29,7 @@ Add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`pl
 
 Next, rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
-Then ignore the rest of this page and jump straight to [Usage](usage).
+Then ignore the rest of this page and continue to [Setup](setup#expo).
 
 ## iOS
 

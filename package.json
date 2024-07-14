@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
-    "@expo/config-plugins": "^5.0.4",
+    "@expo/config-plugins": "^8.0.8",
     "@react-native/eslint-config": "^0.74.81",
     "@release-it/bumper": "^2.0.0",
     "@release-it/conventional-changelog": "^3.0.1",
@@ -164,8 +164,7 @@
           "singleQuote": true,
           "tabWidth": 2,
           "trailingComma": "es5",
-          "useTabs": false,
-          "endOfLine": "auto"
+          "useTabs": false
         }
       ],
       "react-native/no-inline-styles": 0

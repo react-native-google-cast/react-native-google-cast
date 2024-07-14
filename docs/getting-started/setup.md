@@ -8,15 +8,15 @@ sidebar_label: Setup
 
 If you're using Expo, you can configure your build using the included plugin (see below) and then continue to [Usage](usage).
 
-#### API
-
 The plugin provides props for extra customization. Every time you change the props or plugins, you'll need to rebuild (and `prebuild`) the native app. If no extra properties are added, defaults will be used.
 
-- `iosReceiverAppId` (_string_): unknown. Default `CC1AD845`
-- `androidReceiverAppId` (_string_): unknown.
-- `androidPlayServicesCastFrameworkVersion` (_string_): Version for the gradle package. Default `+`
-
-#### Example
+- `receiverAppId` (_string_): custom receiver app id. Default `CC1AD845`. Sets both `iosReceiverAppId` and `androidReceiverAppId`.
+- `androidReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
+- `androidPlayServicesCastFrameworkVersion` (_string_): Version for the Android Cast SDK. Default `+` (latest).
+- `iosReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
+- `iosDisableDiscoveryAutostart` (_boolean_): Whether the discovery of Cast devices should not start automatically at context initialization time. Default `false`.
+- `iosStartDiscoveryAfterFirstTapOnCastButton` (_boolean_): Whether cast devices discovery start only after a user taps on the Cast button the first time. Default `false`.
+- `iosSuspendSessionsWhenBackgrounded` (_boolean_): Whether sessions should be suspended when the sender application goes into the background (and resumed when it returns to the foreground). Default `true`.
 
 ```json
 {
@@ -25,10 +25,7 @@ The plugin provides props for extra customization. Every time you change the pro
       [
         "react-native-google-cast",
         {
-          "iosReceiverAppId": "...",
-          "iosSuspendSessionsWhenBackgrounded": false,
-          "androidReceiverAppId": "...",
-          "androidPlayServicesCastFrameworkVersion": "..."
+          "receiverAppId": "..."
         }
       ]
     ]

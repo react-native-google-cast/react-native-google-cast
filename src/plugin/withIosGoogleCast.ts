@@ -2,32 +2,11 @@ import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
 import {
   ConfigPlugin,
   withAppDelegate,
-  withEntitlementsPlist,
   withInfoPlist,
 } from '@expo/config-plugins'
 
-/**
- * In Xcode, go to Signing & Capabilities, click + Capability and select Access WiFi Information. (This is required since iOS 12.)
- * Note that "Wireless Accessory Configuration" is unrelated.
- *
- * @param {*} config
- * @returns
- */
-const withIosWifiEntitlements: ConfigPlugin = (config) => {
-  return withEntitlementsPlist(config, (config_) => {
-    config_.modResults['com.apple.developer.networking.wifi-info'] = true
-    return config_
-  })
-}
-
 const LOCAL_NETWORK_USAGE =
   '${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network'
-// const BLUETOOTH_ALWAYS_USAGE =
-//   "${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices";
-// const BLUETOOTH_PERIPHERAL_USAGE =
-//   "${PRODUCT_NAME} uses Bluetooth to discover nearby Cast devices";
-// const MICROPHONE_USAGE =
-//   "${PRODUCT_NAME} uses microphone access to listen for ultrasonic tokens when pairing with nearby Cast devices";
 
 /**
  * On iOS, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
@@ -62,26 +41,12 @@ const withIosLocalNetworkPermissions: ConfigPlugin<{
   })
 }
 
-// const withIosGuestMode: ConfigPlugin = (config) => {
-//   return withInfoPlist(config, (config) => {
-//     config.modResults.NSBluetoothAlwaysUsageDescription =
-//       config.modResults.NSBluetoothAlwaysUsageDescription ||
-//       BLUETOOTH_ALWAYS_USAGE;
-//     config.modResults.NSBluetoothPeripheralUsageDescription =
-//       config.modResults.NSBluetoothPeripheralUsageDescription ||
-//       BLUETOOTH_PERIPHERAL_USAGE;
-//     config.modResults.NSMicrophoneUsageDescription =
-//       config.modResults.NSMicrophoneUsageDescription || MICROPHONE_USAGE;
-//     return config;
-//   });
-// };
-
 // TODO: Use AppDelegate swizzling
 const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
   return withAppDelegate(config, (config_) => {
     if (!['objc', 'objcpp'].includes(config_.modResults.language)) {
       throw new Error(
-        "react-native-google-cast config plugin does not support AppDelegate' that aren't Objective-C(++) yet."
+        "react-native-google-cast config plugin does not support AppDelegates that aren't Objective-C(++) yet."
       )
     }
     config_.modResults.contents =
@@ -98,28 +63,21 @@ const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
 }
 
 export const withIosGoogleCast: ConfigPlugin<{
-  /**
-   * @default 'CC1AD845'
-   */
   receiverAppId?: string
-  /**
-   * @default true
-   */
+  disableDiscoveryAutostart?: boolean
+  startDiscoveryAfterFirstTapOnCastButton?: boolean
   suspendSessionsWhenBackgrounded?: boolean
 }> = (config, props) => {
-  config = withIosWifiEntitlements(config)
   config = withIosLocalNetworkPermissions(config, {
     receiverAppId: props.receiverAppId,
   })
   config = withIosAppDelegateLoaded(config, {
     receiverAppId: props.receiverAppId,
+    disableDiscoveryAutostart: props.disableDiscoveryAutostart,
+    startDiscoveryAfterFirstTapOnCastButton:
+      props.startDiscoveryAfterFirstTapOnCastButton,
     suspendSessionsWhenBackgrounded: props.suspendSessionsWhenBackgrounded,
-    // disableDiscoveryAutostart?: boolean;
-    // startDiscoveryAfterFirstTapOnCastButton?: boolean;
   })
-
-  // TODO
-  //   config = withIosGuestMode(config)
 
   return config
 }
@@ -130,18 +88,18 @@ export const MATCH_INIT =
 
 type IosProps = {
   receiverAppId?: string | null
-  suspendSessionsWhenBackgrounded?: boolean
-  // disableDiscoveryAutostart?: boolean
+  disableDiscoveryAutostart?: boolean
   startDiscoveryAfterFirstTapOnCastButton?: boolean
+  suspendSessionsWhenBackgrounded?: boolean
 }
 
 export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
   src: string,
   {
     receiverAppId = null,
-    suspendSessionsWhenBackgrounded = true,
-    // disableDiscoveryAutostart = false,
+    disableDiscoveryAutostart = false,
     startDiscoveryAfterFirstTapOnCastButton = true,
+    suspendSessionsWhenBackgrounded = true,
   }: IosProps = {}
 ) {
   let newSrc = []
@@ -156,8 +114,7 @@ export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
     };`,
     '  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];',
     '  GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];',
-    // TODO: Same as above, read statically
-    // `  options.disableDiscoveryAutostart = ${String(!!disableDiscoveryAutostart)};`,
+    `  options.disableDiscoveryAutostart = ${String(!!disableDiscoveryAutostart)};`,
     `  options.startDiscoveryAfterFirstTapOnCastButton = ${String(
       !!startDiscoveryAfterFirstTapOnCastButton
     )};`,

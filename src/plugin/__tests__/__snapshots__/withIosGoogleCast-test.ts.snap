@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`addGoogleCastAppDelegateDidFinishLaunchingWithOptions adds maps import to Expo Modules SDK 48 AppDelegate 1`] = `
+exports[`addGoogleCastAppDelegateDidFinishLaunchingWithOptions adds maps import to Expo Modules AppDelegate 1`] = `
 "#import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
@@ -10,11 +10,12 @@ exports[`addGoogleCastAppDelegateDidFinishLaunchingWithOptions adds maps import 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-// @generated begin react-native-google-cast-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-7c4d7719024c020cbdbdec17652c4a5824b61c18
+// @generated begin react-native-google-cast-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-7a14b082a9257b8360d6e8a28eeaabb1245c3e8b
 #if __has_include(<GoogleCast/GoogleCast.h>)
   NSString *receiverAppID = @"foobar-bacon";
   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
   GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+  options.disableDiscoveryAutostart = false;
   options.startDiscoveryAfterFirstTapOnCastButton = true;
   options.suspendSessionsWhenBackgrounded = false;
   [GCKCastContext setSharedInstanceWithOptions:options];

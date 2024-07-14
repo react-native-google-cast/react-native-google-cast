@@ -1,14 +1,15 @@
-import { addGoogleCastAppDelegateDidFinishLaunchingWithOptions } from '../withIosGoogleCast'
 import fs from 'fs'
 import path from 'path'
+import { addGoogleCastAppDelegateDidFinishLaunchingWithOptions } from '../withIosGoogleCast'
 
 describe(addGoogleCastAppDelegateDidFinishLaunchingWithOptions, () => {
-  it(`adds maps import to Expo Modules SDK 48 AppDelegate`, () => {
+  it(`adds maps import to Expo Modules AppDelegate`, () => {
     const results = addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
       fs.readFileSync(path.join(__dirname, 'AppDelegate.mm'), 'utf8'),
       {
         receiverAppId: 'foobar-bacon',
         suspendSessionsWhenBackgrounded: false,
+        startDiscoveryAfterFirstTapOnCastButton: true,
       }
     )
     // matches a static snapshot
