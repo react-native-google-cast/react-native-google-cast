@@ -14,9 +14,9 @@ The plugin provides props for extra customization. Every time you change the pro
 - `androidReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
 - `androidPlayServicesCastFrameworkVersion` (_string_): Version for the Android Cast SDK. Default `+` (latest).
 - `iosReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
-- `iosDisableDiscoveryAutostart` (_boolean_): Whether the discovery of Cast devices should not start automatically at context initialization time. Default `false`.
-- `iosStartDiscoveryAfterFirstTapOnCastButton` (_boolean_): Whether cast devices discovery start only after a user taps on the Cast button the first time. Default `false`.
-- `iosSuspendSessionsWhenBackgrounded` (_boolean_): Whether sessions should be suspended when the sender application goes into the background (and resumed when it returns to the foreground). Default `true`.
+- `iosDisableDiscoveryAutostart` (_boolean_): Whether the discovery of Cast devices should not start automatically at context initialization time. Default `false`. if set to `true`, you'll need to start it later by calling [DiscoveryManager.startDiscovery](../api/classes/discoverymanager#startdiscovery).
+- `iosStartDiscoveryAfterFirstTapOnCastButton` (_boolean_): Whether cast devices discovery start only after a user taps on the Cast button for the first time. Default `true`. If set to `false`, discovery will start as soon as the SDK is initialized. Note that this will ask the user for network permissions immediately when the app is opened for the first time.
+- `iosSuspendSessionsWhenBackgrounded` (_boolean_): Whether sessions should be suspended when the sender application goes into the background (and resumed when it returns to the foreground). Default `true`. It is appropriate to set this to `false` in applications that are able to maintain network connections indefinitely while in the background.
 
 ```json
 {
@@ -33,6 +33,8 @@ The plugin provides props for extra customization. Every time you change the pro
   }
 }
 ```
+
+> Warning: Due to a [bug](https://issuetracker.google.com/issues/298066142?pli=1) in the Google Cast SDK v4.8.0 and v4.8.1, pressing the Cast button for the first time doesn't start the discovery process and no Cast dialog is shown (at least on some devices). A workaround is to either set `iosStartDiscoveryAfterFirstTapOnCastButton: false` to initialize discovery as soon as the app is opened, or to explicitly call [DiscoveryManager.startDiscovery](../api/classes/discoverymanager#startdiscovery). This should be fixed in the next release of the SDK.
 
 ## iOS
 

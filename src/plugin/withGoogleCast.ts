@@ -27,7 +27,7 @@ const withGoogleCast: ConfigPlugin<
     /**
      * Whether cast devices discovery start only after a user taps on the Cast button the first time.
      *
-     * @default false
+     * @default true
      * @see https://react-native-google-cast.github.io/docs/getting-started/setup#ios
      */
     iosStartDiscoveryAfterFirstTapOnCastButton?: boolean
