@@ -17,7 +17,7 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - Protobuf (3.27.1)
+  - Protobuf (3.27.2)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -227,7 +227,7 @@ PODS:
   - React-jsinspector (0.69.9)
   - React-logger (0.69.9):
     - glog
-  - react-native-google-cast (4.8.1):
+  - react-native-google-cast (4.8.2):
     - google-cast-sdk
     - PromisesObjC
     - React
@@ -481,7 +481,7 @@ SPEC CHECKSUMS:
   HMSegmentedControl: 34c1f54d822d8308e7b24f5d901ec674dfa31352
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  Protobuf: f1b82a3ffb1c8f13d20e141a838c411840e1c223
+  Protobuf: fb2c13674723f76ff6eede14f78847a776455fa2
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: fe80e9f71dd15939e5399dd94d0aa0e5e069d592
   RCTTypeSafety: 4c802f7c4b9e7c55470e7fc56d50385cbfcce89b
@@ -496,7 +496,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 3b506d7fc50275bf44f8fd5624f23eaedd78bf78
   React-jsinspector: 5b92a5a30e02e1a21802f293cc71e05d887c7378
   React-logger: 96d904c5bc87c2660d48e6a36fb2edf65f9cfb11
-  react-native-google-cast: 13e7c561c033778601a3698c3ad16aa68ae35b49
+  react-native-google-cast: 77c4a3acca9eab527328f8b65257d952be5f220f
   react-native-video: bb6f12a7198db53b261fefb5d609dc77417acc8b
   React-perflogger: f6f4b3c63629ead2e8a5a22eaedd06368c31617a
   React-RCTActionSheet: 5e95058e99c53313d778d96b7f37697ce3a9418e
