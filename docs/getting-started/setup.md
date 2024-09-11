@@ -35,8 +35,6 @@ The plugin provides props for extra customization. Every time you change the pro
 }
 ```
 
-> Warning: Due to a [bug](https://issuetracker.google.com/issues/298066142?pli=1) in the Google Cast SDK v4.8.0 and v4.8.1, pressing the Cast button for the first time doesn't start the discovery process and no Cast dialog is shown (at least on some devices). A workaround is to either set `iosStartDiscoveryAfterFirstTapOnCastButton: false` to initialize discovery as soon as the app is opened, or to explicitly call [DiscoveryManager.startDiscovery](../api/classes/discoverymanager#startdiscovery). This should be fixed in the next release of the SDK.
-
 ## iOS
 
 1. In `AppDelegate.m` (or `AppDelegate.swift`) add
@@ -116,8 +114,6 @@ The plugin provides props for extra customization. Every time you change the pro
      ```obj-c
      options.startDiscoveryAfterFirstTapOnCastButton = false
      ```
-
-   > Warning: Due to a [bug](https://issuetracker.google.com/issues/298066142?pli=1) in the Google Cast SDK v4.8.0 and v4.8.1, pressing the Cast button for the first time doesn't start the discovery process and no Cast dialog is shown (at least on some devices). A workaround is to either set `options.startDiscoveryAfterFirstTapOnCastButton = false` to initialize discovery as soon as the app is opened, or to explicitly call [startDiscovery](../api/classes/discoverymanager#startdiscovery), as described above. This should be fixed in the next release of the SDK.
 
 ## Android
 
