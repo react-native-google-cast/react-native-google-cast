@@ -10,7 +10,8 @@ If you're using Expo, you can configure your build using the included plugin (se
 
 The plugin provides props for extra customization. Every time you change the props or plugins, you'll need to rebuild (and `prebuild`) the native app. If no extra properties are added, defaults will be used.
 
-- `receiverAppId` (_string_): custom receiver app id. Default `CC1AD845`. Sets both `iosReceiverAppId` and `androidReceiverAppId`.
+- `receiverAppId` (_string_): custom receiver app id. Default `CC1AD845` (default receiver provided by Google). Sets both `iosReceiverAppId` and `androidReceiverAppId`.
+- `expandedController` (_boolean_): Whether to use the default expanded controller. Default `true`.
 - `androidReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
 - `androidPlayServicesCastFrameworkVersion` (_string_): Version for the Android Cast SDK. Default `+` (latest).
 - `iosReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.

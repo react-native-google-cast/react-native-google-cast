@@ -10,6 +10,24 @@ The [expanded controller](https://developers.google.com/cast/docs/design_checkli
 
 To use the default expanded controller:
 
+#### Expo
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-google-cast",
+        {
+          // ...
+          "expandedController": true
+        }
+      ]
+    ]
+  }
+}
+```
+
 #### iOS
 
 In `AppDelegate`'s `application:didFinishLaunchingWithOptions` method add
@@ -49,4 +67,4 @@ The expanded controller will also be shown automatically when the user taps the 
 
 ## Customizing expanded controller
 
-TODO
+Not implemented yet

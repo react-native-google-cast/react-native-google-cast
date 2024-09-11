@@ -63,8 +63,9 @@ const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
 }
 
 export const withIosGoogleCast: ConfigPlugin<{
-  receiverAppId?: string
   disableDiscoveryAutostart?: boolean
+  expandedController?: boolean
+  receiverAppId?: string
   startDiscoveryAfterFirstTapOnCastButton?: boolean
   suspendSessionsWhenBackgrounded?: boolean
 }> = (config, props) => {
@@ -72,8 +73,9 @@ export const withIosGoogleCast: ConfigPlugin<{
     receiverAppId: props.receiverAppId,
   })
   config = withIosAppDelegateLoaded(config, {
-    receiverAppId: props.receiverAppId,
     disableDiscoveryAutostart: props.disableDiscoveryAutostart,
+    expandedController: props.expandedController,
+    receiverAppId: props.receiverAppId,
     startDiscoveryAfterFirstTapOnCastButton:
       props.startDiscoveryAfterFirstTapOnCastButton,
     suspendSessionsWhenBackgrounded: props.suspendSessionsWhenBackgrounded,
@@ -87,8 +89,9 @@ export const MATCH_INIT =
   /-\s*\(BOOL\)\s*application:\s*\(UIApplication\s*\*\s*\)\s*\w+\s+didFinishLaunchingWithOptions:/g
 
 type IosProps = {
-  receiverAppId?: string | null
   disableDiscoveryAutostart?: boolean
+  expandedController?: boolean
+  receiverAppId?: string | null
   startDiscoveryAfterFirstTapOnCastButton?: boolean
   suspendSessionsWhenBackgrounded?: boolean
 }
@@ -96,8 +99,9 @@ type IosProps = {
 export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
   src: string,
   {
-    receiverAppId = null,
     disableDiscoveryAutostart = false,
+    expandedController = false,
+    receiverAppId = null,
     startDiscoveryAfterFirstTapOnCastButton = true,
     suspendSessionsWhenBackgrounded = true,
   }: IosProps = {}
@@ -122,6 +126,7 @@ export function addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
       !!suspendSessionsWhenBackgrounded
     )};`,
     '  [GCKCastContext setSharedInstanceWithOptions:options];',
+    `  [GCKCastContext sharedInstance].useDefaultExpandedMediaControls = ${String(!!expandedController)};`,
     '#endif'
   )
 

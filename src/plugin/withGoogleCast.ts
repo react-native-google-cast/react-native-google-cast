@@ -15,6 +15,14 @@ const withGoogleCast: ConfigPlugin<
     androidReceiverAppId?: string
 
     /**
+     * Whether to use the default expanded controller.
+     *
+     * @default true
+     * @see https://react-native-google-cast.github.io/docs/components/ExpandedController
+     */
+    expandedController?: boolean
+
+    /**
      * Whether the discovery of Cast devices should not start automatically at context initialization time.
      *
      * @default false
@@ -51,6 +59,7 @@ const withGoogleCast: ConfigPlugin<
   config = withIosGoogleCast(config, {
     receiverAppId: props.iosReceiverAppId ?? props.receiverAppId,
     disableDiscoveryAutostart: props.iosDisableDiscoveryAutostart,
+    expandedController: props.expandedController ?? true,
     suspendSessionsWhenBackgrounded: props.iosSuspendSessionsWhenBackgrounded,
     startDiscoveryAfterFirstTapOnCastButton:
       props.iosStartDiscoveryAfterFirstTapOnCastButton,
@@ -58,6 +67,7 @@ const withGoogleCast: ConfigPlugin<
 
   config = withAndroidGoogleCast(config, {
     receiverAppId: props.androidReceiverAppId ?? props.receiverAppId,
+    expandedController: props.expandedController,
     androidPlayServicesCastFrameworkVersion:
       props.androidPlayServicesCastFrameworkVersion,
   })

@@ -35,30 +35,31 @@ const MAIN_ACTIVITY_LANGUAGES: Record<
 }
 
 type Props = {
+  expandedController?: boolean
   receiverAppId?: string
 }
 
-const CUSTOM_ACTIVITY =
+const EXPANDED_CONTROLLER_ACTIVITY =
   'com.reactnative.googlecast.RNGCExpandedControllerActivity'
 
-async function ensureCustomActivityAsync({
+async function ensureExpandedControllerActivity({
   mainApplication,
 }: {
   mainApplication: AndroidConfig.Manifest.ManifestApplication
 }) {
   if (Array.isArray(mainApplication.activity)) {
-    // Remove all activities matching the custom name
+    // If the expanded controller activity is already added
     mainApplication.activity = mainApplication.activity.filter((activity) => {
-      return activity.$?.['android:name'] !== CUSTOM_ACTIVITY
+      return activity.$?.['android:name'] !== EXPANDED_CONTROLLER_ACTIVITY
     })
   } else {
     mainApplication.activity = []
   }
 
-  // `<activity android:name="${CUSTOM_ACTIVITY}" />`
+  // adds `<activity android:name="${EXPANDED_CONTROLLER_ACTIVITY}" />` to the manifest
   mainApplication.activity.push({
     $: {
-      'android:name': CUSTOM_ACTIVITY,
+      'android:name': EXPANDED_CONTROLLER_ACTIVITY,
     },
   })
   return mainApplication
@@ -66,12 +67,14 @@ async function ensureCustomActivityAsync({
 
 const withAndroidManifestCast: ConfigPlugin<Props> = (
   config,
-  { receiverAppId } = {}
+  { expandedController, receiverAppId } = {}
 ) => {
   return withAndroidManifest(config, async (config_) => {
     const mainApplication = getMainApplicationOrThrow(config_.modResults)
 
-    ensureCustomActivityAsync({ mainApplication })
+    if (expandedController) {
+      ensureExpandedControllerActivity({ mainApplication })
+    }
 
     addMetaDataItemToMainApplication(
       mainApplication,
@@ -156,12 +159,15 @@ export const withAndroidGoogleCast: ConfigPlugin<{
    */
   androidPlayServicesCastFrameworkVersion?: string
 
+  expandedController?: boolean
+
   /**
    * ??
    */
   receiverAppId?: string
 }> = (config, props) => {
   config = withAndroidManifestCast(config, {
+    expandedController: props.expandedController,
     receiverAppId: props.receiverAppId,
   })
   config = withMainActivityLazyLoading(config)
