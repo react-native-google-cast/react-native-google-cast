@@ -44,19 +44,32 @@ const withIosLocalNetworkPermissions: ConfigPlugin<{
 // TODO: Use AppDelegate swizzling
 const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
   return withAppDelegate(config, (config_) => {
-    if (!['objc', 'objcpp'].includes(config_.modResults.language)) {
+    if (
+      config_.modResults.language === 'objc' ||
+      config_.modResults.language === 'objcpp'
+    ) {
+      config_.modResults.contents =
+        addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+          config_.modResults.contents,
+          props
+        ).contents
+      config_.modResults.contents = addGoogleCastAppDelegateImport(
+        config_.modResults.contents
+      ).contents
+    } else if (config_.modResults.language === 'swift') {
+      config_.modResults.contents =
+        addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+          config_.modResults.contents,
+          props
+        ).contents
+      config_.modResults.contents = addSwiftGoogleCastAppDelegateImport(
+        config_.modResults.contents
+      ).contents
+    } else {
       throw new Error(
-        "react-native-google-cast config plugin does not support AppDelegates that aren't Objective-C(++) yet."
+        'react-native-google-cast config plugin only supports Objective-C(++) or Swift AppDelegates.'
       )
     }
-    config_.modResults.contents =
-      addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
-        config_.modResults.contents,
-        props
-      ).contents
-    config_.modResults.contents = addGoogleCastAppDelegateImport(
-      config_.modResults.contents
-    ).contents
 
     return config_
   })
@@ -87,6 +100,10 @@ export const withIosGoogleCast: ConfigPlugin<{
 // From expo-cli RNMaps setup
 export const MATCH_INIT =
   /-\s*\(BOOL\)\s*application:\s*\(UIApplication\s*\*\s*\)\s*\w+\s+didFinishLaunchingWithOptions:/g
+
+// Match Swift AppDelegate's didFinishLaunchingWithOptions method - updated with more flexible pattern
+export const MATCH_SWIFT_INIT =
+  /public\s+override\s+func\s+application\s*\(\s*_?\s*application\s*:\s*UIApplication\s*,\s*didFinishLaunchingWithOptions\s+launchOptions\s*:.*\)\s*->\s*Bool/g
 
 type IosProps = {
   disableDiscoveryAutostart?: boolean
@@ -156,6 +173,67 @@ function addGoogleCastAppDelegateImport(src: string) {
     newSrc: newSrc.join('\n'),
     anchor: /#import "AppDelegate\.h"/,
     offset: 1,
+    comment: '//',
+  })
+}
+
+function addSwiftGoogleCastAppDelegateImport(src: string) {
+  const newSrc = []
+  newSrc.push('#if canImport(GoogleCast)', 'import GoogleCast', '#endif')
+
+  return mergeContents({
+    tag: 'react-native-google-cast-import',
+    src,
+    newSrc: newSrc.join('\n'),
+    anchor: /import React/,
+    offset: 0,
+    comment: '//',
+  })
+}
+
+export function addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+  src: string,
+  {
+    disableDiscoveryAutostart = false,
+    expandedController = false,
+    receiverAppId = null,
+    startDiscoveryAfterFirstTapOnCastButton = true,
+    suspendSessionsWhenBackgrounded = true,
+  }: IosProps = {}
+) {
+  let newSrc = []
+  newSrc.push(
+    // For extra safety
+    '#if canImport(GoogleCast)',
+    `    let receiverAppID = ${
+      receiverAppId
+        ? `"${receiverAppId}"`
+        : 'kGCKDefaultMediaReceiverApplicationID'
+    }`,
+    '    let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)',
+    '    let options = GCKCastOptions(discoveryCriteria: criteria)',
+    `    options.disableDiscoveryAutostart = ${String(!!disableDiscoveryAutostart)}`,
+    `    options.startDiscoveryAfterFirstTapOnCastButton = ${String(
+      !!startDiscoveryAfterFirstTapOnCastButton
+    )}`,
+    `    options.suspendSessionsWhenBackgrounded = ${String(
+      !!suspendSessionsWhenBackgrounded
+    )}`,
+    '    GCKCastContext.setSharedInstanceWith(options)',
+    `    GCKCastContext.sharedInstance().useDefaultExpandedMediaControls = ${String(!!expandedController)}`,
+    '#endif'
+  )
+
+  newSrc = newSrc.filter(Boolean)
+
+  // For better reliability, let's look for any appearance of "self.moduleName" which is common in
+  // Swift Expo AppDelegates
+  return mergeContents({
+    tag: 'react-native-google-cast-didFinishLaunchingWithOptions',
+    src,
+    newSrc: newSrc.join('\n'),
+    anchor: /self\.moduleName/,
+    offset: -1, // Insert right before this line
     comment: '//',
   })
 }
