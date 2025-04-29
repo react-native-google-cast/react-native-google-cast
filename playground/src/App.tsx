@@ -11,6 +11,7 @@ import Home from './screens/Home'
 import Queue from './screens/Queue'
 import Session from './screens/Session'
 import Tracks from './screens/Tracks'
+import MiniController from './screens/MiniController'
 
 const Stack = createStackNavigator()
 
@@ -44,6 +45,7 @@ export default function App() {
         <Stack.Screen name="Queue" component={Queue} />
         <Stack.Screen name="Session" component={Session} />
         <Stack.Screen name="Tracks" component={Tracks} />
+        <Stack.Screen name="MiniController" component={MiniController} />
       </Stack.Navigator>
     </NavigationContainer>
   )

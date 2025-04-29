@@ -19,6 +19,7 @@ import com.reactnative.googlecast.api.RNGCDiscoveryManager;
 import com.reactnative.googlecast.api.RNGCRemoteMediaClient;
 import com.reactnative.googlecast.api.RNGCSessionManager;
 import com.reactnative.googlecast.components.RNGoogleCastButtonManager;
+import com.reactnative.googlecast.components.RNGoogleCastMiniControllerManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +51,7 @@ public class GoogleCastPackage implements ReactPackage {
     List<ViewManager> managers = new ArrayList<>();
 
     managers.add(new RNGoogleCastButtonManager());
+    managers.add(new RNGoogleCastMiniControllerManager());
 
     return managers;
   }

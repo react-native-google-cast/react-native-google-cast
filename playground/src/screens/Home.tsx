@@ -49,6 +49,7 @@ export default function Home() {
             { title: 'Session' },
             { title: 'Client' },
             { title: 'Tracks' },
+            { title: 'MiniController' },
           ],
         },
       ]}

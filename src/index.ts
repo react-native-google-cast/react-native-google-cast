@@ -18,6 +18,7 @@ export { default as useRemoteMediaClient } from './api/useRemoteMediaClient'
 export { default as useStreamPosition } from './api/useStreamPosition'
 
 export { default as CastButton } from './components/CastButton'
+export { default as MiniController } from './components/MiniController'
 
 export { default as ActiveInputState } from './types/ActiveInputState'
 export { default as CastState } from './types/CastState'
