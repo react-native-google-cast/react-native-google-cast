@@ -17,11 +17,9 @@ public class RNGoogleCastMiniControllerView extends FrameLayout {
         super(context);
         this.activity = (FragmentActivity) context;
 
-        // Create a unique ID for the container
         int containerId = generateViewId();
         setId(containerId);
 
-        // Add the mini controller fragment
         miniControllerFragment = new MiniControllerFragment();
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         fragmentManager.beginTransaction()
