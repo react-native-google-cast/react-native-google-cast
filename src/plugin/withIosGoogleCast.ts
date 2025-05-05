@@ -4,7 +4,7 @@ import {
   withAppDelegate,
   withInfoPlist,
 } from '@expo/config-plugins'
-
+import { insertContentsInsideSwiftFunctionBlock } from '@expo/config-plugins/build/ios/codeMod'
 const LOCAL_NETWORK_USAGE =
   '${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network'
 
@@ -61,7 +61,7 @@ const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
         addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
           config_.modResults.contents,
           props
-        ).contents
+        )
       config_.modResults.contents = addSwiftGoogleCastAppDelegateImport(
         config_.modResults.contents
       ).contents
@@ -226,14 +226,10 @@ export function addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
 
   newSrc = newSrc.filter(Boolean)
 
-  // For better reliability, let's look for any appearance of "self.moduleName" which is common in
-  // Swift Expo AppDelegates
-  return mergeContents({
-    tag: 'react-native-google-cast-didFinishLaunchingWithOptions',
+  return insertContentsInsideSwiftFunctionBlock(
     src,
-    newSrc: newSrc.join('\n'),
-    anchor: /self\.moduleName/,
-    offset: -1, // Insert right before this line
-    comment: '//',
-  })
+    'application didFinishLaunchingWithOptions:',
+    newSrc.join('\n'),
+    { position: 'tailBeforeLastReturn' }
+  )
 }
