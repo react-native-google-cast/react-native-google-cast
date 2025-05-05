@@ -44,7 +44,16 @@ const withIosLocalNetworkPermissions: ConfigPlugin<{
 // TODO: Use AppDelegate swizzling
 const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
   return withAppDelegate(config, (config_) => {
-    if (
+    if (config_.modResults.language === 'swift') {
+      config_.modResults.contents =
+        addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+          config_.modResults.contents,
+          props
+        )
+      config_.modResults.contents = addSwiftGoogleCastAppDelegateImport(
+        config_.modResults.contents
+      ).contents
+    } else if (
       config_.modResults.language === 'objc' ||
       config_.modResults.language === 'objcpp'
     ) {
@@ -56,19 +65,6 @@ const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
       config_.modResults.contents = addGoogleCastAppDelegateImport(
         config_.modResults.contents
       ).contents
-    } else if (config_.modResults.language === 'swift') {
-      config_.modResults.contents =
-        addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
-          config_.modResults.contents,
-          props
-        )
-      config_.modResults.contents = addSwiftGoogleCastAppDelegateImport(
-        config_.modResults.contents
-      ).contents
-    } else {
-      throw new Error(
-        'react-native-google-cast config plugin only supports Objective-C(++) or Swift AppDelegates.'
-      )
     }
 
     return config_
@@ -100,10 +96,6 @@ export const withIosGoogleCast: ConfigPlugin<{
 // From expo-cli RNMaps setup
 export const MATCH_INIT =
   /-\s*\(BOOL\)\s*application:\s*\(UIApplication\s*\*\s*\)\s*\w+\s+didFinishLaunchingWithOptions:/g
-
-// Match Swift AppDelegate's didFinishLaunchingWithOptions method - updated with more flexible pattern
-export const MATCH_SWIFT_INIT =
-  /public\s+override\s+func\s+application\s*\(\s*_?\s*application\s*:\s*UIApplication\s*,\s*didFinishLaunchingWithOptions\s+launchOptions\s*:.*\)\s*->\s*Bool/g
 
 type IosProps = {
   disableDiscoveryAutostart?: boolean
