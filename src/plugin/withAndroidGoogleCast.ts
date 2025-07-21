@@ -262,14 +262,20 @@ function addGoogleCastVersionImport(
   src: string,
   { version }: { version?: string } = {}
 ) {
-  const newSrc = []
-  newSrc.push(`        castFrameworkVersion = "${version}"`)
+  const newSrc = [`        castFrameworkVersion = "${version}"`]
+  const hasExtBlock = src.match(/ext(?:\s+)?\{/)
+  const anchor = hasExtBlock ? /ext(?:\s+)?\{/ : /buildscript(?:\s+)?\{/
+
+  if (!hasExtBlock) {
+    newSrc.unshift('  ext {')
+    newSrc.push('  }')
+  }
 
   return mergeContents({
-    tag: 'react-native-google-cast-version',
+    tag: 'react-native-google-cast-version-import',
     src,
     newSrc: newSrc.join('\n'),
-    anchor: /ext(?:\s+)?\{/,
+    anchor,
     offset: 1,
     comment: '//',
   })
