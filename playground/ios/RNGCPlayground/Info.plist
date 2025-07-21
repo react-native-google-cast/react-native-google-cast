@@ -17,39 +17,36 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>localhost</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
 	</dict>
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_googlecast._tcp</string>
-		<string>_EA48D3FC._googlecast._tcp</string>
-	</array>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi
-	network.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>RCTNewArchEnabled</key>
+	<true/>
+  <key>NSBonjourServices</key>
+  <array>
+    <string>_googlecast._tcp</string>
+    <string>_EA48D3FC._googlecast._tcp</string>
+  </array>
+  <key>NSLocalNetworkUsageDescription</key>
+  <string>${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

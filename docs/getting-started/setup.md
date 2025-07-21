@@ -138,7 +138,7 @@ The plugin provides props for extra customization. Every time you change the pro
 
    Alternatively, you may provide your own `OptionsProvider` class. See `GoogleCastOptionsProvider.java` for inspiration.
 
-2. In your `MainActivity.java`, initialize CastContext by overriding the `onCreate` method.
+2. In your `MainActivity.java` or `MainActivity.kt`, initialize CastContext by overriding the `onCreate` method.
 
    ```java
    // ...
@@ -157,6 +157,27 @@ The plugin provides props for extra customization. Every time you change the pro
          // lazy load Google Cast context
          CastContext.getSharedInstance(this);
        } catch (Exception e) {
+         // cast framework not supported
+       }
+     }
+   }
+   ```
+
+   ```kt
+   import android.os.Bundle
+   import androidx.annotation.Nullable
+   import com.google.android.gms.cast.framework.CastContext
+
+   class MainActivity : ReactActivity() {
+     // ...
+
+     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
+       super.onCreate(savedInstanceState)
+
+       try {
+         // lazy load Google Cast context
+         CastContext.getSharedInstance(this)
+       } catch (e: Exception) {
          // cast framework not supported
        }
      }

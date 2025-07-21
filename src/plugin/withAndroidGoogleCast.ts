@@ -107,7 +107,7 @@ const withProjectBuildGradleVersion: ConfigPlugin<{ version?: string }> = (
       {
         version,
       }
-    ).contents
+    )
 
     return config_
   })
@@ -152,7 +152,6 @@ const withMainActivityLazyLoading: ConfigPlugin = (config) => {
   })
 }
 
-// castFrameworkVersion
 export const withAndroidGoogleCast: ConfigPlugin<{
   /**
    * @default '+'
@@ -262,6 +261,18 @@ function addGoogleCastVersionImport(
   src: string,
   { version }: { version?: string } = {}
 ) {
+  const tag = 'react-native-google-cast-version-import'
+
+  src = removeContents({ src, tag }).contents
+
+  // If the source already has a castFrameworkVersion set, then do not add it again.
+  if (src.match(/castFrameworkVersion\s*=/)) {
+    console.warn(
+      `react-native-google-cast config plugin: Skipping adding castFrameworkVersion as it already exists in the project build.gradle.`
+    )
+    return src
+  }
+
   const newSrc = [`        castFrameworkVersion = "${version}"`]
   const hasExtBlock = src.match(/ext(?:\s+)?\{/)
   const anchor = hasExtBlock ? /ext(?:\s+)?\{/ : /buildscript(?:\s+)?\{/
@@ -272,11 +283,11 @@ function addGoogleCastVersionImport(
   }
 
   return mergeContents({
-    tag: 'react-native-google-cast-version-import',
+    tag,
     src,
     newSrc: newSrc.join('\n'),
     anchor,
     offset: 1,
     comment: '//',
-  })
+  }).contents
 }

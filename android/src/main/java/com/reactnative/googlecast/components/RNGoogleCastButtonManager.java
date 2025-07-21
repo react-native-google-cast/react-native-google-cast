@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.mediarouter.app.MediaRouteButton;
 
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -24,6 +25,7 @@ import com.google.android.gms.cast.framework.CastStateListener;
 import java.util.ArrayList;
 import java.util.List;
 
+@ReactModule(name = RNGoogleCastButtonManager.REACT_CLASS)
 public class RNGoogleCastButtonManager
     extends SimpleViewManager<MediaRouteButton> {
 

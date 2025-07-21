@@ -8,22 +8,21 @@ It is written in TypeScript so types will always be up-to-date.
 
 ## Version History
 
-| RNGC | React Native | iOS | Android | Maintained | Notes                                                                            |
-| ---- | ------------ | --- | ------- | ---------- | -------------------------------------------------------------------------------- |
-| 1.x  | 🤷‍♂️           | 🤷‍♂️  | 🤷‍♂️      | 🛑         | Old version implemented for Google Cast SDK v2 with manual discoverability.      |
-| 3.x  | >=0.40       | 🤷‍♂️  | 🤷‍♂️      | 🛑         | Rewrite of the library for Google Cast SDK v3 with automatic session management. |
-| 4.x  | >=0.60       | 10+ |         | 🐜         | Completely rewritten API, closely resembling native Android/iOS APIs.            |
-
-<!-- | 5.x  | >=0.68       | 14+ |         | ✅         | Rewritten using React Native's New Architecture                                  | -->
-<!-- > Version 5.x is currently in development. -->
+| RNGC  | React Native | iOS   | Android | Status | Notes                                                                            |
+| ----- | ------------ | ----- | ------- | ------ | -------------------------------------------------------------------------------- |
+| 1.x   | 🤷‍♂️           | 🤷‍♂️    | 🤷‍♂️      | 🛑     | Old version implemented for Google Cast SDK v2 with manual discoverability.      |
+| 3.x   | >=0.40       | 🤷‍♂️    | 🤷‍♂️      | 🛑     | Rewrite of the library for Google Cast SDK v3 with automatic session management. |
+| 4.x   | >=0.60       | 10+   |         | 🐜     | Completely rewritten API, closely resembling native Android/iOS APIs.            |
+| 4.9.x | >=0.76       | 15.1+ | 24+     | ✅     | Supports React Native's New Architecture in Compatibility Mode                   |
+| 5.x   | >=0.76       | 15.1+ | 24+     | 🏗️     | Currently in development with full support for React Native's New Architecture   |
 
 ## Documentation
 
 https://react-native-google-cast.github.io/docs/getting-started/installation
 
-## Example
+## Cast Videos Demo App
 
-Refer to the [example](example/) folder to find a React Native version of the CastVideos reference app.
+<strike>Refer to the [example](example/) folder to find a React Native version of the CastVideos reference app.</strike> Currently outdated.
 
 ## Playground
 

@@ -1,26 +1,26 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
-platform :ios, '14'
-install! 'cocoapods', deterministic_uuids: false
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
 
-production = ENV['PRODUCTION'] == '1'
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
 
 target 'RNGCPlayground' do
   config = use_native_modules!
 
-  # Flags change depending on the env values.
-  flags = get_default_flags
-
   use_react_native!(
-    path: config[:reactNativePath],
-    # to enable hermes on iOS, change `false` to `true` and then install pods
-    production: production,
-    hermes_enabled: flags[:hermes_enabled],
-    fabric_enabled: flags[:fabric_enabled],
-    flipper_configuration: FlipperConfiguration.disabled,
+    :path => config[:reactNativePath],
     # An absolute path to your application root.
-    app_path: "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   # Note that the example is in a relative location to the library's root directory.
@@ -28,26 +28,14 @@ target 'RNGCPlayground' do
   # pod 'react-native-google-cast', path: '../node_modules/react-native-google-cast/'
   pod 'react-native-google-cast', path: '../../'
 
-  target 'RNGCPlaygroundTests' do
-    inherit! :complete
-    # Pods for testing
-  end
 
   post_install do |installer|
-    react_native_post_install(installer)
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
-
-    installer.pods_project.build_configurations.each do |config|
-      installer.pods_project.targets.each do |target|
-        if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
-          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-        end
-      end
-
-      # Set the preprocessing macro for the whole Pods project
-      existing_flags = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-      existing_flags << '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION'
-      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = existing_flags
-    end
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
   end
 end

@@ -50,7 +50,7 @@ This is by far the most common problem with this library. Before creating an iss
   java.lang.IllegalStateException: The activity must be a subclass of FragmentActivity
   ```
 
-  Make sure your `MainActivity` extends `GoogleCastActivity`, `AppCompatActivity`, or some other descendant of `FragmentActivity`.
+  Make sure your `MainActivity` extends `ReactActivity`, `AppCompatActivity`, or some other descendant of `FragmentActivity`.
 
 - ```
   .../react-native-google-cast/ios/RNGoogleCast/components/RNGoogleCastButtonManager.m:1:9: fatal error: 'React/RCTViewManager.h' file not found

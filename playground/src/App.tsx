@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler'
 
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React, { useCallback } from 'react'
 import { CastButton } from 'react-native-google-cast'
 import Client from './screens/Client'
@@ -12,7 +12,7 @@ import Queue from './screens/Queue'
 import Session from './screens/Session'
 import Tracks from './screens/Tracks'
 
-const Stack = createStackNavigator()
+const Stack = createNativeStackNavigator()
 
 export default function App() {
   const headerRight = useCallback(

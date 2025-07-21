@@ -1,10 +1,11 @@
-import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
 import {
   ConfigPlugin,
   withAppDelegate,
   withInfoPlist,
 } from '@expo/config-plugins'
 import { insertContentsInsideSwiftFunctionBlock } from '@expo/config-plugins/build/ios/codeMod'
+import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
+
 const LOCAL_NETWORK_USAGE =
   '${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network'
 
@@ -220,7 +221,7 @@ export function addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
 
   return insertContentsInsideSwiftFunctionBlock(
     src,
-    'application didFinishLaunchingWithOptions:',
+    'application(_:didFinishLaunchingWithOptions:)',
     newSrc.join('\n'),
     { position: 'tailBeforeLastReturn' }
   )
