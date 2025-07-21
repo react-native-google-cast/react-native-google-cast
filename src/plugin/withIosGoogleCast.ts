@@ -4,7 +4,7 @@ import {
   withAppDelegate,
   withInfoPlist,
 } from '@expo/config-plugins'
-
+import { insertContentsInsideSwiftFunctionBlock } from '@expo/config-plugins/build/ios/codeMod'
 const LOCAL_NETWORK_USAGE =
   '${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi network'
 
@@ -44,19 +44,28 @@ const withIosLocalNetworkPermissions: ConfigPlugin<{
 // TODO: Use AppDelegate swizzling
 const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
   return withAppDelegate(config, (config_) => {
-    if (!['objc', 'objcpp'].includes(config_.modResults.language)) {
-      throw new Error(
-        "react-native-google-cast config plugin does not support AppDelegates that aren't Objective-C(++) yet."
-      )
-    }
-    config_.modResults.contents =
-      addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
-        config_.modResults.contents,
-        props
+    if (config_.modResults.language === 'swift') {
+      config_.modResults.contents =
+        addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+          config_.modResults.contents,
+          props
+        )
+      config_.modResults.contents = addSwiftGoogleCastAppDelegateImport(
+        config_.modResults.contents
       ).contents
-    config_.modResults.contents = addGoogleCastAppDelegateImport(
-      config_.modResults.contents
-    ).contents
+    } else if (
+      config_.modResults.language === 'objc' ||
+      config_.modResults.language === 'objcpp'
+    ) {
+      config_.modResults.contents =
+        addGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+          config_.modResults.contents,
+          props
+        ).contents
+      config_.modResults.contents = addGoogleCastAppDelegateImport(
+        config_.modResults.contents
+      ).contents
+    }
 
     return config_
   })
@@ -158,4 +167,61 @@ function addGoogleCastAppDelegateImport(src: string) {
     offset: 1,
     comment: '//',
   })
+}
+
+function addSwiftGoogleCastAppDelegateImport(src: string) {
+  const newSrc = []
+  newSrc.push('#if canImport(GoogleCast)', 'import GoogleCast', '#endif')
+
+  return mergeContents({
+    tag: 'react-native-google-cast-import',
+    src,
+    newSrc: newSrc.join('\n'),
+    anchor: /import React/,
+    offset: 0,
+    comment: '//',
+  })
+}
+
+export function addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
+  src: string,
+  {
+    disableDiscoveryAutostart = false,
+    expandedController = false,
+    receiverAppId = null,
+    startDiscoveryAfterFirstTapOnCastButton = true,
+    suspendSessionsWhenBackgrounded = true,
+  }: IosProps = {}
+) {
+  let newSrc = []
+  newSrc.push(
+    // For extra safety
+    '#if canImport(GoogleCast)',
+    `    let receiverAppID = ${
+      receiverAppId
+        ? `"${receiverAppId}"`
+        : 'kGCKDefaultMediaReceiverApplicationID'
+    }`,
+    '    let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)',
+    '    let options = GCKCastOptions(discoveryCriteria: criteria)',
+    `    options.disableDiscoveryAutostart = ${String(!!disableDiscoveryAutostart)}`,
+    `    options.startDiscoveryAfterFirstTapOnCastButton = ${String(
+      !!startDiscoveryAfterFirstTapOnCastButton
+    )}`,
+    `    options.suspendSessionsWhenBackgrounded = ${String(
+      !!suspendSessionsWhenBackgrounded
+    )}`,
+    '    GCKCastContext.setSharedInstanceWith(options)',
+    `    GCKCastContext.sharedInstance().useDefaultExpandedMediaControls = ${String(!!expandedController)}`,
+    '#endif'
+  )
+
+  newSrc = newSrc.filter(Boolean)
+
+  return insertContentsInsideSwiftFunctionBlock(
+    src,
+    'application didFinishLaunchingWithOptions:',
+    newSrc.join('\n'),
+    { position: 'tailBeforeLastReturn' }
+  )
 }
