@@ -1652,7 +1652,7 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - SocketRocket
-  - react-native-google-cast (4.9.0):
+  - react-native-google-cast (4.9.1):
     - google-cast-sdk
     - PromisesObjC
     - React
@@ -2783,7 +2783,7 @@ SPEC CHECKSUMS:
   React-logger: 2f0d40bc8e648fbb1ff3b6580ad54189a8753290
   React-Mapbuffer: 9a7c65078c6851397c1999068989e4fc239d0c80
   React-microtasksnativemodule: 4f1ef719ba6c7ebbd2d75346ffa2916f9b4771c9
-  react-native-google-cast: 7730b04ec6c692ec40c8a017a63a3cfe5d5785c0
+  react-native-google-cast: 85727694aef6365d871f72b3ec1c722c612a1578
   react-native-safe-area-context: 339885703b6dd1be2bce42d9c0b0350c21180032
   React-NativeModulesApple: f6f696e510b9d89c3c06b7764f56947dc13ae922
   React-oscompat: 114036cd8f064558c9c1a0c04fc9ae5e1453706a
