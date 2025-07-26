@@ -21,6 +21,7 @@ import com.google.android.gms.cast.framework.media.NotificationActionsProvider;
 import com.google.android.gms.cast.framework.media.NotificationOptions;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
+import com.reactnative.googlecast.api.RNGCCastContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +93,8 @@ public class GoogleCastOptionsProvider implements OptionsProvider {
           }
 
           private MediaStatus getMediaStatus() {
-            CastContext castContext = CastContext.getSharedInstance(getApplicationContext());
+            CastContext castContext = RNGCCastContext.getSharedInstance(getApplicationContext());
+            if (castContext == null) return null;
             CastSession castSession = castContext.getSessionManager().getCurrentCastSession();
             if (castSession == null) return null;
             RemoteMediaClient client = castSession.getRemoteMediaClient();

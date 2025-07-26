@@ -122,12 +122,15 @@ public class RNGCDiscoveryManager
   public void onHostResume() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+    if (mListenersAttached) return;
 
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        MediaRouteSelector selector = CastContext.getSharedInstance().getMergedSelector();
+        CastContext castContext = RNGCCastContext.getSharedInstance(context);
+        if (castContext == null) return;
+
+        MediaRouteSelector selector = castContext.getMergedSelector();
         MediaRouter.getInstance(context).addCallback(selector, mediaRouterCallback);
       }
     });
@@ -137,8 +140,6 @@ public class RNGCDiscoveryManager
   @Override
   public void onHostDestroy() {
     final ReactApplicationContext context = getReactApplicationContext();
-
-    if (!RNGCCastContext.isCastApiAvailable(context)) return;
 
     context.runOnUiQueueThread(new Runnable() {
       @Override

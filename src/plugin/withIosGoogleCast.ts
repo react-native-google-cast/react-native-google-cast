@@ -3,7 +3,6 @@ import {
   withAppDelegate,
   withInfoPlist,
 } from '@expo/config-plugins'
-import { insertContentsInsideSwiftFunctionBlock } from '@expo/config-plugins/build/ios/codeMod'
 import { mergeContents } from '@expo/config-plugins/build/utils/generateCode'
 
 const LOCAL_NETWORK_USAGE =
@@ -50,7 +49,7 @@ const withIosAppDelegateLoaded: ConfigPlugin<IosProps> = (config, props) => {
         addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
           config_.modResults.contents,
           props
-        )
+        ).contents
       config_.modResults.contents = addSwiftGoogleCastAppDelegateImport(
         config_.modResults.contents
       ).contents
@@ -172,7 +171,11 @@ function addGoogleCastAppDelegateImport(src: string) {
 
 function addSwiftGoogleCastAppDelegateImport(src: string) {
   const newSrc = []
-  newSrc.push('#if canImport(GoogleCast)', 'import GoogleCast', '#endif')
+  newSrc.push(
+    '#if canImport(GoogleCast) && os(iOS)',
+    'import GoogleCast',
+    '#endif'
+  )
 
   return mergeContents({
     tag: 'react-native-google-cast-import',
@@ -197,7 +200,7 @@ export function addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
   let newSrc = []
   newSrc.push(
     // For extra safety
-    '#if canImport(GoogleCast)',
+    '#if canImport(GoogleCast) && os(iOS)',
     `    let receiverAppID = ${
       receiverAppId
         ? `"${receiverAppId}"`
@@ -219,10 +222,12 @@ export function addSwiftGoogleCastAppDelegateDidFinishLaunchingWithOptions(
 
   newSrc = newSrc.filter(Boolean)
 
-  return insertContentsInsideSwiftFunctionBlock(
+  return mergeContents({
+    tag: 'react-native-google-cast-didFinishLaunchingWithOptions',
     src,
-    'application(_:didFinishLaunchingWithOptions:)',
-    newSrc.join('\n'),
-    { position: 'tailBeforeLastReturn' }
-  )
+    newSrc: newSrc.join('\n'),
+    anchor: /let\s+delegate\s*=\s*ReactNativeDelegate\(\)/,
+    offset: 0,
+    comment: '//',
+  })
 }

@@ -37,45 +37,54 @@ The plugin provides props for extra customization. Every time you change the pro
 
 ## iOS
 
-1. In `AppDelegate.m` (or `AppDelegate.swift`) add
+1. In `AppDelegate.swift` (or `AppDelegate.mm`) add
 
-   <!--DOCUSAURUS_CODE_TABS-->
-   <!--Swift-->
+  <!--DOCUSAURUS_CODE_TABS-->
+  <!--Swift-->
 
-   ```swift
-   import GoogleCast
-   ```
+  ```swift
+  // 1.1. add import at the top
+  import GoogleCast
 
-   <!--Objective-C-->
+  class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(
+      _ application: UIApplication,
+      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+      // ...
+      // 1.2. add inside application:didFinishLaunchingWithOptions
+      let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
+      let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
+      let options = GCKCastOptions(discoveryCriteria: criteria)
+      GCKCastContext.setSharedInstanceWith(options)
+      // ...
+    }
+    // ...
+  }
+  ```
 
-   ```obj-c
-   #import <GoogleCast/GoogleCast.h>
-   ```
+  <!--Objective-C-->
 
-   <!--END_DOCUSAURUS_CODE_TABS-->
+  ```obj-c
+  // 1.1. add import at the top
+  #import <GoogleCast/GoogleCast.h>
 
-   and insert the following in the `application:didFinishLaunchingWithOptions` method:
+  @implementation AppDelegate
+    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+    {
+      // ...
+      // 1.2. add inside application didFinishLaunchingWithOptions
+      NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
+      GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
+      GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+      [GCKCastContext setSharedInstanceWithOptions:options];
+      // ...
+    }
+    // ...
+  }
+  ```
 
-   <!--DOCUSAURUS_CODE_TABS-->
-   <!--Swift-->
-
-   ```swift
-   let receiverAppID = kGCKDefaultMediaReceiverApplicationID // or "ABCD1234"
-   let criteria = GCKDiscoveryCriteria(applicationID: receiverAppID)
-   let options = GCKCastOptions(discoveryCriteria: criteria)
-   GCKCastContext.setSharedInstanceWith(options)
-   ```
-
-   <!--Objective-C-->
-
-   ```obj-c
-   NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
-   GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
-   GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
-   [GCKCastContext setSharedInstanceWithOptions:options];
-   ```
-
-   <!--END_DOCUSAURUS_CODE_TABS-->
+  <!--END_DOCUSAURUS_CODE_TABS-->
 
    If using a [custom web receiver](https://developers.google.com/cast/docs/web_receiver), replace `kGCKDefaultMediaReceiverApplicationID` with your receiver app id.
 
@@ -97,7 +106,7 @@ The plugin provides props for extra customization. Every time you change the pro
 
    Furthermore, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
 
-3. By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
+3. (optional) By default, Cast device discovery is initiated when the user taps the Cast button. If it's the first time, the local network access interstitial will appear, followed by the iOS Local Network Access permissions dialog.
 
    You may [customize this behavior](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#customizations) in `AppDelegate.m` by either:
 
@@ -138,51 +147,50 @@ The plugin provides props for extra customization. Every time you change the pro
 
    Alternatively, you may provide your own `OptionsProvider` class. See `GoogleCastOptionsProvider.java` for inspiration.
 
-2. In your `MainActivity.java` or `MainActivity.kt`, initialize CastContext by overriding the `onCreate` method.
+2. In your `MainActivity.kt` or `MainActivity.java`, initialize CastContext by overriding the `onCreate` method.
 
-   ```java
-   // ...
-   import android.os.Bundle;
-   import androidx.annotation.Nullable;
-   import com.google.android.gms.cast.framework.CastContext;
+  <!--DOCUSAURUS_CODE_TABS-->
+  <!--Kotlin-->
 
-   public class MainActivity extends ReactActivity {
-     // ...
+  ```kt
+  import android.os.Bundle
+  import androidx.annotation.Nullable
+  import com.reactnative.googlecast.api.RNGCCastContext
 
-     @Override
-     protected void onCreate(@Nullable Bundle savedInstanceState) {
-       super.onCreate(savedInstanceState);
+  class MainActivity : ReactActivity() {
+    // ...
 
-       try {
-         // lazy load Google Cast context
-         CastContext.getSharedInstance(this);
-       } catch (Exception e) {
-         // cast framework not supported
-       }
-     }
-   }
-   ```
+    override fun onCreate(@Nullable savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
 
-   ```kt
-   import android.os.Bundle
-   import androidx.annotation.Nullable
-   import com.google.android.gms.cast.framework.CastContext
+      // lazy load Google Cast context (if supported on this device)
+      RNGCCastContext.getSharedInstance(this)
+    }
+  }
+  ```
 
-   class MainActivity : ReactActivity() {
-     // ...
+  <!--Java-->
 
-     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
-       super.onCreate(savedInstanceState)
+  ```java
+  // ...
+  import android.os.Bundle;
+  import androidx.annotation.Nullable;
+  import com.reactnative.googlecast.api.RNGCCastContext;
 
-       try {
-         // lazy load Google Cast context
-         CastContext.getSharedInstance(this)
-       } catch (e: Exception) {
-         // cast framework not supported
-       }
-     }
-   }
-   ```
+  public class MainActivity extends ReactActivity {
+    // ...
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+
+      // lazy load Google Cast context (if supported on this device)
+      RNGCCastContext.getSharedInstance(this);
+    }
+  }
+  ```
+
+  <!--END_DOCUSAURUS_CODE_TABS-->
 
    This works if you're extending `ReactActivity` (or `NavigationActivity` if you're using react-native-navigation). If you're extending a different activity, make sure it is a descendant of `androidx.appcompat.app.AppCompatActivity`.
 

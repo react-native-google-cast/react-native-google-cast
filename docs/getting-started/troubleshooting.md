@@ -26,7 +26,7 @@ This is by far the most common problem with this library. Before creating an iss
 
 - Check the Debug log in Xcode or Android Studio for any warnings and errors.
 
-- (Android) Make sure the device has Google Play Services available and that you initialize `CastContext.getSharedInstance(this);` in your `MainActivity`'s `onCreate`.
+- (Android) Make sure the device has Google Play Services available and that you initialize `RNGCCastContext.getSharedInstance(this)` in your `MainActivity`'s `onCreate`.
 
 - (Android) **emulators** are [not supported](https://github.com/googlecast/CastVideos-android/issues/104#issuecomment-816290407). Please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
 
@@ -73,4 +73,10 @@ This is by far the most common problem with this library. Before creating an iss
 
   When building on M1/ARM Macs, you need to edit your `ios/Podfile` as described in [Installation](https://react-native-google-cast.github.io/docs/getting-started/installation.html#ios).
 
-- (Android) Using `tools:node="replace"` in AndroidManifest may cause media to not load on the Cast device [#349](https://github.com/react-native-google-cast/react-native-google-cast/issues/349). See [firebase/quickstart-android#477](https://github.com/firebase/quickstart-android/issues/477) for options how to resolve this.
+- Using `tools:node="replace"` in AndroidManifest may cause media to not load on the Cast device [#349](https://github.com/react-native-google-cast/react-native-google-cast/issues/349). See [firebase/quickstart-android#477](https://github.com/firebase/quickstart-android/issues/477) for options how to resolve this.
+
+- ```
+  > Task :app:compileReleaseKotlin FAILED
+  e: Incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
+  ```
+  The latest version of Cast Framework isn't compatible with older Kotlin versions. Please update your `app/build.gradle` to use Kotlin 2.x or set `castFrameworkVersion = "22.0.0"` as described in [Installation](https://react-native-google-cast.github.io/docs/getting-started/installation.html#android). See [issue #570](https://github.com/react-native-google-cast/react-native-google-cast/issues/570#issuecomment-3101401245).

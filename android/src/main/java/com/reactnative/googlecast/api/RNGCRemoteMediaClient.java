@@ -287,10 +287,10 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   protected With<RemoteMediaClient> with = new With<RemoteMediaClient>() {
     @Override
     protected @Nullable RemoteMediaClient getX() {
-      final CastSession castSession = CastContext.getSharedInstance(getReactApplicationContext())
-        .getSessionManager()
-        .getCurrentCastSession();
+      final CastContext castContext = RNGCCastContext.getSharedInstance(getReactApplicationContext());
+      if (castContext == null) return null;
 
+      final CastSession castSession = castContext.getSessionManager().getCurrentCastSession();
       if (castSession == null) return null;
 
       return castSession.getRemoteMediaClient();
@@ -353,13 +353,15 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   public void onHostResume() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+    if (mListenersAttached) return;
 
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(context)
-          .getSessionManager();
+        CastContext castContext = RNGCCastContext.getSharedInstance(context);
+        if (castContext == null) return;
+
+        SessionManager sessionManager = castContext.getSessionManager();
         sessionManager.addSessionManagerListener(sessionListener);
 
         CastSession session = sessionManager.getCurrentCastSession();
@@ -375,13 +377,13 @@ public class RNGCRemoteMediaClient extends ReactContextBaseJavaModule implements
   public void onHostDestroy() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (!RNGCCastContext.isCastApiAvailable(context)) return;
-
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(context)
-          .getSessionManager();
+        CastContext castContext = RNGCCastContext.getSharedInstance(context);
+        if (castContext == null) return;
+
+        SessionManager sessionManager = castContext.getSessionManager();
         sessionManager.removeSessionManagerListener(sessionListener);
 
         CastSession session = sessionManager.getCurrentCastSession();

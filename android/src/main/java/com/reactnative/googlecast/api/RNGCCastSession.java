@@ -308,12 +308,15 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
   public void onHostResume() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+    if (mListenersAttached) return;
 
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(context).getSessionManager();
+        CastContext castContext = RNGCCastContext.getSharedInstance(context);
+        if (castContext == null) return;
+
+        SessionManager sessionManager = castContext.getSessionManager();
         sessionManager.addSessionManagerListener(sessionListener);
 
         castSession = sessionManager.getCurrentCastSession();
@@ -329,12 +332,13 @@ public class RNGCCastSession extends ReactContextBaseJavaModule implements Lifec
   public void onHostDestroy() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (!RNGCCastContext.isCastApiAvailable(context)) return;
-
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        SessionManager sessionManager = CastContext.getSharedInstance(context).getSessionManager();
+        CastContext castContext = RNGCCastContext.getSharedInstance(context);
+        if (castContext == null) return;
+
+        SessionManager sessionManager = castContext.getSessionManager();
         sessionManager.removeSessionManagerListener(sessionListener);
 
         castSession = sessionManager.getCurrentCastSession();

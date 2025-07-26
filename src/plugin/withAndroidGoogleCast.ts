@@ -25,11 +25,11 @@ const MAIN_ACTIVITY_LANGUAGES: Record<
   { code: string; anchor: RegExp }
 > = {
   java: {
-    code: 'CastContext.getSharedInstance(this)',
+    code: 'RNGCCastContext.getSharedInstance(this)',
     anchor: /super\.onCreate\(\w+\)/,
   },
   kt: {
-    code: 'CastContext.getSharedInstance(this)',
+    code: 'RNGCCastContext.getSharedInstance(this)',
     anchor: /super\.onCreate\(\w+\)/,
   },
 }
@@ -139,7 +139,7 @@ const withMainActivityLazyLoading: ConfigPlugin = (config) => {
   return withMainActivity(config, async (config_) => {
     const src = addImports(
       config_.modResults.contents,
-      ['com.google.android.gms.cast.framework.CastContext'],
+      ['com.reactnative.googlecast.api.RNGCCastContext'],
       config_.modResults.language === 'java'
     )
 

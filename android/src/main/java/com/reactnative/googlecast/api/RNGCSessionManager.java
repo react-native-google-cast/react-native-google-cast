@@ -19,6 +19,7 @@ import com.google.android.gms.cast.CastStatusCodes;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastReasonCodes;
 import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.Session;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.common.ConnectionResult;
@@ -89,15 +90,10 @@ public class RNGCSessionManager
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        if (!RNGCCastContext.isCastApiAvailable(getReactApplicationContext())) {
-          promise.resolve(null);
-          return;
+        SessionManager sessionManager = getSessionManager();
+        if (sessionManager != null) {
+          sessionManager.endCurrentSession(stopCasting);
         }
-
-        SessionManager sessionManager =
-          CastContext.getSharedInstance(getReactApplicationContext())
-            .getSessionManager();
-        sessionManager.endCurrentSession(stopCasting);
         promise.resolve(null);
       }
     });
@@ -108,12 +104,8 @@ public class RNGCSessionManager
     getReactApplicationContext().runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        int state = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getReactApplicationContext());
-        if (state == ConnectionResult.SUCCESS) {
-          promise.resolve(RNGCCastSession.toJson(getSessionManager().getCurrentCastSession()));
-        } else {
-          promise.resolve(null);
-        }
+        SessionManager sessionManager = getSessionManager();
+        promise.resolve(sessionManager == null ? null : RNGCCastSession.toJson(sessionManager.getCurrentCastSession()));
       }
     });
   }
@@ -146,11 +138,7 @@ public class RNGCSessionManager
 
         params.putMap("session", RNGCCastSession.toJson((session)));
 
-        CastContext castContext = null;
-        try {
-            castContext = CastContext.getSharedInstance();
-        } catch (RuntimeException e) {
-        }
+        CastContext castContext = RNGCCastContext.getSharedInstance(getReactApplicationContext());
 
         if (castContext == null || CastReasonCodes.CASTING_STOPPED != castContext.getCastReasonCodeForCastStatusCode(error)) {
           params.putString("error", CastStatusCodes.getStatusCodeString(error));
@@ -235,7 +223,7 @@ public class RNGCSessionManager
   public void onHostResume() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (mListenersAttached || !RNGCCastContext.isCastApiAvailable(context)) return;
+    if (mListenersAttached) return;
 
     context.runOnUiQueueThread(new Runnable() {
       @Override
@@ -255,21 +243,14 @@ public class RNGCSessionManager
   public void onHostDestroy() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (!mListenersAttached) return;
-
-    if (!RNGCCastContext.isCastApiAvailable(context)) {
-        mListenersAttached = false;
-        return;
-    }
-
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
         SessionManager sessionManager = getSessionManager();
         if (sessionManager != null) {
-            sessionManager.removeSessionManagerListener(RNGCSessionManager.this, CastSession.class);
-            mListenersAttached = false;
+          sessionManager.removeSessionManagerListener(RNGCSessionManager.this, CastSession.class);
         }
+        mListenersAttached = false;
       }
     });
   }
@@ -286,12 +267,8 @@ public class RNGCSessionManager
 
   @Nullable
   private SessionManager getSessionManager() {
-    try {
-      CastContext castContext = CastContext.getSharedInstance(getReactApplicationContext());
-      return castContext.getSessionManager();
-    } catch (RuntimeException e) {
-        e.printStackTrace();
-        return null;
-    }
+    CastContext castContext = RNGCCastContext.getSharedInstance(getReactApplicationContext());
+    if (castContext == null) { return null; }
+    return castContext.getSessionManager();
   }
 }

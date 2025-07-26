@@ -72,6 +72,18 @@ public class RNGCCastContext
     return constants;
   }
 
+  @Nullable
+  public static CastContext getSharedInstance(Context context) {
+    try {
+      if (isCastApiAvailable(context)) {
+        return CastContext.getSharedInstance(context);
+      }
+      return null;
+    } catch (RuntimeException e) {
+      return null;
+    }
+  }
+
   public void sendEvent(@NonNull String eventName, @Nullable Object params) {
     getReactApplicationContext()
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
@@ -94,13 +106,8 @@ public class RNGCCastContext
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        if (isCastApiAvailable(context)) {
-          CastContext castContext =
-            CastContext.getSharedInstance(context);
-          promise.resolve(RNGCCastState.toJson(castContext.getCastState()));
-        } else {
-          promise.resolve(null);
-        }
+        CastContext castContext = getSharedInstance(context);
+        promise.resolve(castContext == null ? null : RNGCCastState.toJson(castContext.getCastState()));
       }
     });
   }
@@ -187,13 +194,15 @@ public class RNGCCastContext
   public void onHostResume() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (mListenersAttached || !isCastApiAvailable(context)) return;
+    if (mListenersAttached) return;
 
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext = CastContext.getSharedInstance(context);
-        castContext.addCastStateListener(castStateListener);
+        CastContext castContext = getSharedInstance(context);
+        if (castContext != null) {
+          castContext.addCastStateListener(castStateListener);
+        }
       }
     });
 
@@ -204,13 +213,13 @@ public class RNGCCastContext
   public void onHostDestroy() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (!isCastApiAvailable(context)) return;
-
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        CastContext castContext = CastContext.getSharedInstance(context);
-        castContext.removeCastStateListener(castStateListener);
+        CastContext castContext = getSharedInstance(context);
+        if (castContext != null) {
+          castContext.removeCastStateListener(castStateListener);
+        }
       }
     });
     mListenersAttached = false;
@@ -220,7 +229,7 @@ public class RNGCCastContext
   public void onHostPause() {
   }
 
-  protected static boolean isCastApiAvailable(Context context) {
+  private static boolean isCastApiAvailable(Context context) {
     return !isTv(context) && isGooglePlayServiceAvailable(context);
   }
 
