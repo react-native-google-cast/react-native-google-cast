@@ -146,7 +146,12 @@ public class RNGCSessionManager
 
         params.putMap("session", RNGCCastSession.toJson((session)));
 
-        CastContext castContext = CastContext.getSharedInstance();
+        CastContext castContext = null;
+        try {
+            castContext = CastContext.getSharedInstance();
+        } catch (RuntimeException e) {
+        }
+
         if (castContext == null || CastReasonCodes.CASTING_STOPPED != castContext.getCastReasonCodeForCastStatusCode(error)) {
           params.putString("error", CastStatusCodes.getStatusCodeString(error));
         }
@@ -235,27 +240,38 @@ public class RNGCSessionManager
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        getSessionManager().addSessionManagerListener(RNGCSessionManager.this,
-          CastSession.class);
+        SessionManager sessionManager = getSessionManager();
+        if (sessionManager != null) {
+            sessionManager.addSessionManagerListener(RNGCSessionManager.this, CastSession.class);
+            mListenersAttached = true;
+        } else {
+            mListenersAttached = false;
+        }
       }
     });
-    mListenersAttached = true;
   }
 
   @Override
   public void onHostDestroy() {
     final ReactApplicationContext context = getReactApplicationContext();
 
-    if (!RNGCCastContext.isCastApiAvailable(context)) return;
+    if (!mListenersAttached) return;
+
+    if (!RNGCCastContext.isCastApiAvailable(context)) {
+        mListenersAttached = false;
+        return;
+    }
 
     context.runOnUiQueueThread(new Runnable() {
       @Override
       public void run() {
-        getSessionManager().removeSessionManagerListener(RNGCSessionManager.this,
-          CastSession.class);
+        SessionManager sessionManager = getSessionManager();
+        if (sessionManager != null) {
+            sessionManager.removeSessionManagerListener(RNGCSessionManager.this, CastSession.class);
+            mListenersAttached = false;
+        }
       }
     });
-    mListenersAttached = false;
   }
 
   @Override
@@ -268,8 +284,14 @@ public class RNGCSessionManager
       .emit(eventName, params);
   }
 
+  @Nullable
   private SessionManager getSessionManager() {
-    return CastContext.getSharedInstance(getReactApplicationContext())
-      .getSessionManager();
+    try {
+      CastContext castContext = CastContext.getSharedInstance(getReactApplicationContext());
+      return castContext.getSessionManager();
+    } catch (RuntimeException e) {
+        e.printStackTrace();
+        return null;
+    }
   }
 }
