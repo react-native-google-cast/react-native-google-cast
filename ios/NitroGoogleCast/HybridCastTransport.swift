@@ -61,9 +61,9 @@ final class HybridCastTransport: HybridCastTransportSpec {
   private func startObservingIfNeeded() {
     refreshCachedState()
     guard stateObserver == nil else { return }
-    // TODO(verify): GCK symbol is `kGCKCastStateDidChangeNotification`.
+    // The GoogleCast SDK exposes this as a Swift-native NSNotification.Name.
     stateObserver = NotificationCenter.default.addObserver(
-      forName: NSNotification.Name(rawValue: kGCKCastStateDidChangeNotification),
+      forName: .gckCastStateDidChange,
       object: nil,
       queue: .main
     ) { [weak self] _ in
