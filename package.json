@@ -48,6 +48,7 @@
     "pods:example": "cd example && pod-install --quiet",
     "pods:playground": "cd playground && pod-install --quiet",
     "prepare": "bob build",
+    "specs": "nitrogen",
     "release": "dotenv release-it",
     "release:minor": "dotenv release-it -- minor",
     "release:major": "dotenv release-it -- major",
@@ -55,8 +56,9 @@
     "typescript": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=18.0.0",
+    "react-native": ">=0.78.0",
+    "react-native-nitro-modules": ">=0.35.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
@@ -79,11 +81,13 @@
     "jest": "^29.7.0",
     "jsdoc-to-markdown": "^6.0.1",
     "mock-socket": "^9.0.3",
+    "nitrogen": "0.35.10",
     "pod-install": "^0.1.0",
     "prettier": "^3.2.5",
     "react": "19.1.0",
     "react-native": "0.80.1",
     "react-native-builder-bob": "^0.18.1",
+    "react-native-nitro-modules": "0.35.10",
     "release-it": "^14.10.0",
     "rimraf": "^3.0.2",
     "typedoc": "^0.18.0",
@@ -192,5 +196,6 @@
       "module",
       "typescript"
     ]
-  }
+  },
+  "packageManager": "yarn@4.17.0+sha512.c2957de2f9025ab14d63b24d0d8be1f1655810e22c341042c27f7ecd017b180ec12db73d69ac366d71b304ef9f069349ce462de96f04f8f1da317f4f762c95ae"
 }

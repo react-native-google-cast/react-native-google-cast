@@ -1,0 +1,23 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": ["googlecast"],
+  "ios": {
+    "iosModuleName": "NitroGoogleCast"
+  },
+  "android": {
+    "androidNamespace": ["googlecast"],
+    "androidCxxLibName": "NitroGoogleCast"
+  },
+  "autolinking": {
+    "CastTransport": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridCastTransport"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridCastTransport"
+      }
+    }
+  }
+}
