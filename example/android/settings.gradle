@@ -1,6 +1,8 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+// Deps are hoisted to the repo-root node_modules in this Yarn workspace, so the
+// gradle-plugin is at ../../node_modules (not ../node_modules).
+pluginManagement { includeBuild("../../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'CastExample'
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+includeBuild('../../node_modules/@react-native/gradle-plugin')

@@ -14,10 +14,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import {
-  castTransport,
-  type CastState,
-} from 'react-native-google-cast';
+import { castTransport, type CastState } from 'react-native-google-cast';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -32,9 +29,7 @@ function App() {
   }, []);
 
   return (
-    <SafeAreaView
-      style={[styles.container, isDarkMode && styles.containerDark]}
-    >
+    <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <View style={styles.content}>
         <Text style={[styles.title, isDarkMode && styles.textLight]}>

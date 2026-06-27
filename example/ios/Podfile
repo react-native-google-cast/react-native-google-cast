@@ -24,28 +24,11 @@ target 'CastExample' do
   )
 
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
-
-    # fmt's consteval format-string constructors are rejected by Xcode 26+ clang
-    # (__apple_build_version__ >= 21000000). Extend fmt's own "broken Apple clang" guard
-    # (originally for < 14000029) to also cover Xcode 26+, so FMT_CONSTEVAL stays empty.
-    fmt_base_h = "#{installer.sandbox.root}/fmt/include/fmt/base.h"
-    if File.exist?(fmt_base_h)
-      content = File.read(fmt_base_h)
-      patched = content.gsub(
-        '__apple_build_version__ < 14000029L',
-        '(__apple_build_version__ < 14000029L || __apple_build_version__ >= 21000000L)'
-      )
-      if patched != content
-        FileUtils.chmod(0644, fmt_base_h)
-        File.write(fmt_base_h, patched)
-      end
-    end
   end
 end

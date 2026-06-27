@@ -59,10 +59,10 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
     "@expo/config-plugins": "^10.1.2",
-    "@react-native/eslint-config": "^0.78.0",
+    "@react-native/eslint-config": "^0.86.0",
     "@release-it/conventional-changelog": "^3.0.1",
     "@types/jest": "^29.5.12",
-    "@types/react": "^19.1.0",
+    "@types/react": "^19.2.0",
     "auto-changelog": "^2.2.1",
     "commitlint": "^11.0.0",
     "dotenv-cli": "^4.0.0",
@@ -74,13 +74,13 @@
     "nitrogen": "0.35.10",
     "pod-install": "^0.3.0",
     "prettier": "^3.2.5",
-    "react": "19.1.0",
-    "react-native": "0.80.1",
+    "react": "19.2.3",
+    "react-native": "0.86.0",
     "react-native-builder-bob": "^0.40.0",
     "react-native-nitro-modules": "0.35.10",
     "release-it": "^14.10.0",
     "rimraf": "^3.0.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.3"
   },
   "keywords": [
     "react-native",
