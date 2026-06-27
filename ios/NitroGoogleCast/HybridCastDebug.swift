@@ -26,7 +26,7 @@ final class HybridCastDebug: HybridCastDebugSpec {
   }
 
   func roundTripMediaMetadata(value: MediaMetadata) throws -> MediaMetadata {
-    throw Self.notImplemented("MediaMetadata")
+    value.toGckMediaMetadata().toMediaMetadata()
   }
 
   func roundTripMediaTrack(value: MediaTrack) throws -> MediaTrack {

@@ -23,6 +23,13 @@ target 'CastExample' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # Native unit tests for the NitroGoogleCast struct↔GCK converters (Phase 2 / T1).
+  # Hosted by the app target; `:search_paths` reuses the host app's statically linked
+  # pods (NitroGoogleCast + GoogleCast) without re-linking them.
+  target 'NitroGoogleCastTests' do
+    inherit! :search_paths
+  end
+
   post_install do |installer|
     react_native_post_install(
       installer,

@@ -9,25 +9,65 @@
 /* Begin PBXBuildFile section */
 		0C80B921A6F3F58F76C31292 /* libPods-CastExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-CastExample.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		187464540DC0627857A7D455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779854B72D9EB90F8D75DE24 /* Foundation.framework */; };
+		3793168C11FD428477BD36D2 /* ObjCExceptionCatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = BE0BC692AE34376D15117AB1 /* ObjCExceptionCatcher.m */; };
 		656C2B00A32550D541921572 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		7EAC73AC1C7C6F66A78E2B50 /* webImage.json in Resources */ = {isa = PBXBuildFile; fileRef = CD5368DB3979F7BED0E02B18 /* webImage.json */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		AD6C41D2A84F59D396DD1ADE /* libPods-NitroGoogleCastTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 734165D8F6B0CBDB199B2153 /* libPods-NitroGoogleCastTests.a */; };
+		B2C20978461B5704FC1035EA /* mediaMetadata.json in Resources */ = {isa = PBXBuildFile; fileRef = D238C1D4072D586851C1CAC7 /* mediaMetadata.json */; };
+		D4D37E0D98C03840E32131C4 /* MediaMetadataConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601A25E393D5E717271FDB47 /* MediaMetadataConverterTests.swift */; };
+		D50530E04E0C2472AA1DB13D /* ConverterFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48720271A19CCCCA05701D16 /* ConverterFixtures.swift */; };
+		F50A0AC6186CAFFFE8B02BA9 /* WebImageConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C9BA0346A86D31EE8E1B0 /* WebImageConverterTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5CFDB66DF11F803F637A118F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = CastExample;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* CastExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CastExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CastExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CastExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = CastExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1C5C9BA0346A86D31EE8E1B0 /* WebImageConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WebImageConverterTests.swift; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-CastExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastExample.debug.xcconfig"; path = "Target Support Files/Pods-CastExample/Pods-CastExample.debug.xcconfig"; sourceTree = "<group>"; };
+		48720271A19CCCCA05701D16 /* ConverterFixtures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConverterFixtures.swift; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-CastExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastExample.release.xcconfig"; path = "Target Support Files/Pods-CastExample/Pods-CastExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-CastExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CastExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		601A25E393D5E717271FDB47 /* MediaMetadataConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaMetadataConverterTests.swift; sourceTree = "<group>"; };
+		734165D8F6B0CBDB199B2153 /* libPods-NitroGoogleCastTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NitroGoogleCastTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CastExample/AppDelegate.swift; sourceTree = "<group>"; };
+		779854B72D9EB90F8D75DE24 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		7C37CF92849D5D9E5E03D509 /* Pods-NitroGoogleCastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NitroGoogleCastTests.release.xcconfig"; path = "Target Support Files/Pods-NitroGoogleCastTests/Pods-NitroGoogleCastTests.release.xcconfig"; sourceTree = "<group>"; };
+		7D25EEE635499F84B57C657F /* Pods-NitroGoogleCastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NitroGoogleCastTests.debug.xcconfig"; path = "Target Support Files/Pods-NitroGoogleCastTests/Pods-NitroGoogleCastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CastExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		83AC4B1FE313398578441B61 /* NitroGoogleCastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NitroGoogleCastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2E0EF12B1FEAADDD522D214 /* ObjCExceptionCatcher.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = ObjCExceptionCatcher.h; sourceTree = "<group>"; };
+		AF59CECC66765DA0E4BBEAE4 /* NitroGoogleCastTests-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NitroGoogleCastTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		BE0BC692AE34376D15117AB1 /* ObjCExceptionCatcher.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ObjCExceptionCatcher.m; sourceTree = "<group>"; };
+		CD5368DB3979F7BED0E02B18 /* webImage.json */ = {isa = PBXFileReference; includeInIndex = 1; name = webImage.json; path = ../../fixtures/converters/webImage.json; sourceTree = "<group>"; };
+		D238C1D4072D586851C1CAC7 /* mediaMetadata.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaMetadata.json; path = ../../fixtures/converters/mediaMetadata.json; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		07E3C5BA4974CECB0E743105 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187464540DC0627857A7D455 /* Foundation.framework in Frameworks */,
+				AD6C41D2A84F59D396DD1ADE /* libPods-NitroGoogleCastTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -56,9 +96,34 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-CastExample.a */,
+				EC4DC40F9F33A8183BB74389 /* iOS */,
+				734165D8F6B0CBDB199B2153 /* libPods-NitroGoogleCastTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
+		};
+		2FAB4F55A91C1EBCB3F5447B /* NitroGoogleCastTests */ = {
+			isa = PBXGroup;
+			children = (
+				48720271A19CCCCA05701D16 /* ConverterFixtures.swift */,
+				1C5C9BA0346A86D31EE8E1B0 /* WebImageConverterTests.swift */,
+				601A25E393D5E717271FDB47 /* MediaMetadataConverterTests.swift */,
+				BE0BC692AE34376D15117AB1 /* ObjCExceptionCatcher.m */,
+				A2E0EF12B1FEAADDD522D214 /* ObjCExceptionCatcher.h */,
+				AF59CECC66765DA0E4BBEAE4 /* NitroGoogleCastTests-Bridging-Header.h */,
+			);
+			name = NitroGoogleCastTests;
+			path = NitroGoogleCastTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		459B3CAE3497384F1FAABFE7 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				CD5368DB3979F7BED0E02B18 /* webImage.json */,
+				D238C1D4072D586851C1CAC7 /* mediaMetadata.json */,
+			);
+			name = Fixtures;
+			sourceTree = SOURCE_ROOT;
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
@@ -75,6 +140,8 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				2FAB4F55A91C1EBCB3F5447B /* NitroGoogleCastTests */,
+				459B3CAE3497384F1FAABFE7 /* Fixtures */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -85,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* CastExample.app */,
+				83AC4B1FE313398578441B61 /* NitroGoogleCastTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,8 +162,18 @@
 			children = (
 				3B4392A12AC88292D35C810B /* Pods-CastExample.debug.xcconfig */,
 				5709B34CF0A7D63546082F79 /* Pods-CastExample.release.xcconfig */,
+				7C37CF92849D5D9E5E03D509 /* Pods-NitroGoogleCastTests.release.xcconfig */,
+				7D25EEE635499F84B57C657F /* Pods-NitroGoogleCastTests.debug.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		EC4DC40F9F33A8183BB74389 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				779854B72D9EB90F8D75DE24 /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,6 +199,25 @@
 			productName = CastExample;
 			productReference = 13B07F961A680F5B00A75B9A /* CastExample.app */;
 			productType = "com.apple.product-type.application";
+		};
+		D94ACC29FB65856A890F09E5 /* NitroGoogleCastTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 78BC8C2B6FA35BC11B8F000F /* Build configuration list for PBXNativeTarget "NitroGoogleCastTests" */;
+			buildPhases = (
+				7ADD61745F870984A6C66848 /* [CP] Check Pods Manifest.lock */,
+				B3C301B55DBB71D462E0C77D /* Sources */,
+				07E3C5BA4974CECB0E743105 /* Frameworks */,
+				9509750BDF1488B3C6E31139 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8275B91540AF57AC58CE7F42 /* PBXTargetDependency */,
+			);
+			name = NitroGoogleCastTests;
+			productName = NitroGoogleCastTests;
+			productReference = 83AC4B1FE313398578441B61 /* NitroGoogleCastTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -149,6 +246,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* CastExample */,
+				D94ACC29FB65856A890F09E5 /* NitroGoogleCastTests */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +259,15 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				656C2B00A32550D541921572 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9509750BDF1488B3C6E31139 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7EAC73AC1C7C6F66A78E2B50 /* webImage.json in Resources */,
+				B2C20978461B5704FC1035EA /* mediaMetadata.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +305,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7ADD61745F870984A6C66848 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NitroGoogleCastTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
@@ -250,7 +379,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C301B55DBB71D462E0C77D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D50530E04E0C2472AA1DB13D /* ConverterFixtures.swift in Sources */,
+				F50A0AC6186CAFFFE8B02BA9 /* WebImageConverterTests.swift in Sources */,
+				D4D37E0D98C03840E32131C4 /* MediaMetadataConverterTests.swift in Sources */,
+				3793168C11FD428477BD36D2 /* ObjCExceptionCatcher.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8275B91540AF57AC58CE7F42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CastExample;
+			target = 13B07F861A680F5B00A75B9A /* CastExample */;
+			targetProxy = 5CFDB66DF11F803F637A118F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -310,6 +459,39 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		6AC6257E5068D0BF5776893A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D25EEE635499F84B57C657F /* Pods-NitroGoogleCastTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Private\"",
+					"\"${PODS_ROOT}/Headers/Private/NitroModules\"",
+					"\"${PODS_ROOT}/Headers/Private/NitroGoogleCast\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=\"${PODS_CONFIGURATION_BUILD_DIR}/NitroModules/NitroModules.modulemap\" -Xcc -fmodule-map-file=\"${PODS_CONFIGURATION_BUILD_DIR}/NitroGoogleCast/NitroGoogleCast.modulemap\"";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.NitroGoogleCastTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "NitroGoogleCastTests/NitroGoogleCastTests-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_HEADER_NAME = "";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CastExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CastExample";
+			};
+			name = Debug;
 		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -469,6 +651,40 @@
 			};
 			name = Release;
 		};
+		9942EAAA028ECEF69C2FDF64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C37CF92849D5D9E5E03D509 /* Pods-NitroGoogleCastTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Private\"",
+					"\"${PODS_ROOT}/Headers/Private/NitroModules\"",
+					"\"${PODS_ROOT}/Headers/Private/NitroGoogleCast\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=\"${PODS_CONFIGURATION_BUILD_DIR}/NitroModules/NitroModules.modulemap\" -Xcc -fmodule-map-file=\"${PODS_CONFIGURATION_BUILD_DIR}/NitroGoogleCast/NitroGoogleCast.modulemap\"";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.NitroGoogleCastTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "NitroGoogleCastTests/NitroGoogleCastTests-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_HEADER_NAME = "";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CastExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CastExample";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -477,6 +693,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		78BC8C2B6FA35BC11B8F000F /* Build configuration list for PBXNativeTarget "NitroGoogleCastTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9942EAAA028ECEF69C2FDF64 /* Release */,
+				6AC6257E5068D0BF5776893A /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

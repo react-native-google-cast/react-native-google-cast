@@ -1,0 +1,141 @@
+{
+  "$comment": "Shared golden-fixture corpus for the MediaMetadata struct↔GCK converter (Phase 2 / T1). Read by both the iOS XCTest suite and the Android instrumented suite. `input` is fed through struct→GCK→struct; the result must deep-equal `expectedRoundTrip`. Both platforms assert against the SAME expected values. NOTES: (1) metadataType is mapped by value, not ordinal. (2) Standard fields map to predefined kGCKMetadataKey* constants; any other customData key is application-defined and round-trips through customData. (3) GCK image dimensions are required ints, so absent image width/height become 0. (4) DATE FIELDS (releaseDate/creationDate/broadcastDate) are NSDate-typed in GCK. `input` uses extended ISO-8601 (so the converter can parse it); `expectedRoundTrip` holds GCK iOS's canonical 'restricted ISO-8601' BASIC form emitted by dateAsStringForKey — date-only (yyyyMMdd) when the time is exactly midnight UTC, otherwise yyyyMMddTHHmmssZ. CROSS-PLATFORM CAVEAT: Android's MediaMetadata may canonicalize dates to a different string; when the Android side is wired up, re-verify these date values and reconcile (this is the one known fan-out risk). (5) Empty images / customData normalize to absent.",
+  "fixtures": [
+    {
+      "name": "generic",
+      "input": {
+        "type": "generic",
+        "title": "The Big Buck Bunny",
+        "subtitle": "A short film",
+        "artist": "Blender Foundation",
+        "releaseDate": "2008-04-10T00:00:00Z",
+        "images": [{ "url": "https://example.com/poster.png", "width": 1280, "height": 720 }],
+        "customData": { "rating": "PG", "year": 2008 }
+      },
+      "expectedRoundTrip": {
+        "type": "generic",
+        "title": "The Big Buck Bunny",
+        "subtitle": "A short film",
+        "artist": "Blender Foundation",
+        "releaseDate": "20080410",
+        "images": [{ "url": "https://example.com/poster.png", "width": 1280, "height": 720 }],
+        "customData": { "rating": "PG", "year": 2008 }
+      }
+    },
+    {
+      "name": "movie",
+      "input": {
+        "type": "movie",
+        "title": "Sintel",
+        "subtitle": "An epic journey",
+        "studio": "Blender Institute",
+        "releaseDate": "2010-09-27T00:00:00Z",
+        "images": [
+          { "url": "https://example.com/sintel-poster.jpg", "width": 800, "height": 1200 },
+          { "url": "https://example.com/sintel-backdrop.jpg" }
+        ]
+      },
+      "expectedRoundTrip": {
+        "type": "movie",
+        "title": "Sintel",
+        "subtitle": "An epic journey",
+        "studio": "Blender Institute",
+        "releaseDate": "20100927",
+        "images": [
+          { "url": "https://example.com/sintel-poster.jpg", "width": 800, "height": 1200 },
+          { "url": "https://example.com/sintel-backdrop.jpg", "width": 0, "height": 0 }
+        ]
+      }
+    },
+    {
+      "name": "musicTrack",
+      "input": {
+        "type": "musicTrack",
+        "title": "Intro",
+        "artist": "The Artist",
+        "albumTitle": "The Album",
+        "albumArtist": "Various Artists",
+        "composer": "The Composer",
+        "discNumber": 1,
+        "trackNumber": 0,
+        "releaseDate": "2018-04-10T00:00:00Z",
+        "images": [{ "url": "https://example.com/cover.png", "width": 500, "height": 500 }]
+      },
+      "expectedRoundTrip": {
+        "type": "musicTrack",
+        "title": "Intro",
+        "artist": "The Artist",
+        "albumTitle": "The Album",
+        "albumArtist": "Various Artists",
+        "composer": "The Composer",
+        "discNumber": 1,
+        "trackNumber": 0,
+        "releaseDate": "20180410",
+        "images": [{ "url": "https://example.com/cover.png", "width": 500, "height": 500 }]
+      }
+    },
+    {
+      "name": "photo",
+      "input": {
+        "type": "photo",
+        "title": "Sunset over the bay",
+        "artist": "Jane Photographer",
+        "creationDate": "2019-07-04T18:30:00Z",
+        "location": "Seattle, Washington, USA",
+        "latitude": 47.6062,
+        "longitude": -122.3321,
+        "width": 4032,
+        "height": 3024,
+        "images": [{ "url": "https://example.com/photo-thumb.jpg", "width": 320, "height": 240 }]
+      },
+      "expectedRoundTrip": {
+        "type": "photo",
+        "title": "Sunset over the bay",
+        "artist": "Jane Photographer",
+        "creationDate": "20190704T183000Z",
+        "location": "Seattle, Washington, USA",
+        "latitude": 47.6062,
+        "longitude": -122.3321,
+        "width": 4032,
+        "height": 3024,
+        "images": [{ "url": "https://example.com/photo-thumb.jpg", "width": 320, "height": 240 }]
+      }
+    },
+    {
+      "name": "tvShow",
+      "input": {
+        "type": "tvShow",
+        "title": "Pilot",
+        "seriesTitle": "A Great Show",
+        "seasonNumber": 1,
+        "episodeNumber": 0,
+        "broadcastDate": "2021-01-15T00:00:00Z",
+        "releaseDate": "2021-01-15T00:00:00Z",
+        "images": [{ "url": "https://example.com/episode.png", "width": 1920, "height": 1080 }]
+      },
+      "expectedRoundTrip": {
+        "type": "tvShow",
+        "title": "Pilot",
+        "seriesTitle": "A Great Show",
+        "seasonNumber": 1,
+        "episodeNumber": 0,
+        "broadcastDate": "20210115",
+        "releaseDate": "20210115",
+        "images": [{ "url": "https://example.com/episode.png", "width": 1920, "height": 1080 }]
+      }
+    },
+    {
+      "name": "user",
+      "input": {
+        "type": "user",
+        "title": "Custom item",
+        "customData": { "showId": "abc-123", "progress": 0.42, "season": 3 }
+      },
+      "expectedRoundTrip": {
+        "type": "user",
+        "title": "Custom item",
+        "customData": { "showId": "abc-123", "progress": 0.42, "season": 3 }
+      }
+    }
+  ]
+}
