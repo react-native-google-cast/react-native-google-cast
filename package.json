@@ -27,7 +27,7 @@
     "nitro.json",
     "app.plugin.js",
     "react-native.config.js",
-    "react-native-google-cast.podspec"
+    "NitroGoogleCast.podspec"
   ],
   "contributors": [
     "Charlie L <charliesbot@gmail.com>",
