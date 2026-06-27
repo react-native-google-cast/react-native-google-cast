@@ -23,9 +23,10 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply from: "../nitrogen/generated/android/NitroGoogleCast+autolinking.gradle"
 apply from: "./fix-prefab.gradle"
 
-if (isNewArchitectureEnabled()) {
-  apply plugin: "com.facebook.react"
-}
+// NOTE: a Nitro library must NOT apply "com.facebook.react" — it has no React
+// Native codegen specs (registration is via nitrogen + C++). Applying it without
+// a codegenConfig makes the library regenerate the RN *core* codegen, which then
+// clashes with the app/other libraries at dex merge (duplicate class).
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["NitroGoogleCast_" + name]
@@ -94,16 +95,6 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
-  }
-
-  sourceSets {
-    main {
-      if (isNewArchitectureEnabled()) {
-        java.srcDirs += [
-          "${project.buildDir}/generated/source/codegen/java"
-        ]
-      }
-    }
   }
 }
 

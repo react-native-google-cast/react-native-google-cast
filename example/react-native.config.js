@@ -1,14 +1,23 @@
 const path = require('path');
 const pkg = require('../package.json');
 
-// Tell React Native autolinking where the local library lives. Required because
-// the library is the workspace root and Yarn does not symlink it into
-// node_modules, so use_native_modules! / Gradle autolinking can't discover it
-// by the usual node_modules scan.
+// The library is the workspace root and isn't symlinked into node_modules, so
+// RN autolinking can't auto-detect it. Point it at the root and give explicit
+// platform sources so both iOS and Android are linked.
+const root = path.join(__dirname, '..');
+
 module.exports = {
   dependencies: {
     [pkg.name]: {
-      root: path.join(__dirname, '..'),
+      root,
+      platforms: {
+        ios: {
+          podspecPath: path.join(root, 'NitroGoogleCast.podspec'),
+        },
+        android: {
+          sourceDir: path.join(root, 'android'),
+        },
+      },
     },
   },
 };
