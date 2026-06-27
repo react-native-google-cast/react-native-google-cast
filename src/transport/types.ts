@@ -1,4 +1,5 @@
-import type { CastState, ListenerSubscription } from '../specs/CastTransport.nitro'
+import type { CastState } from '../types/CastState'
+import type { ListenerSubscription } from '../specs/CastTransport.nitro'
 
 export type { CastState, ListenerSubscription }
 

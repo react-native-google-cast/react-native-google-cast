@@ -23,4 +23,16 @@ public final class NitroGoogleCastAutolinking {
   public static func isCastTransportRecyclable() -> Bool {
     return HybridCastTransport.self is any RecyclableView.Type
   }
+  
+  public static func createCastDebug() -> bridge.std__shared_ptr_HybridCastDebugSpec_ {
+    let hybridObject = HybridCastDebug()
+    return { () -> bridge.std__shared_ptr_HybridCastDebugSpec_ in
+      let __cxxWrapped = hybridObject.getCxxWrapper()
+      return __cxxWrapped.getCxxPart()
+    }()
+  }
+  
+  public static func isCastDebugRecyclable() -> Bool {
+    return HybridCastDebug.self is any RecyclableView.Type
+  }
 }

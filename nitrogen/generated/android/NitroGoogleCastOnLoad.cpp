@@ -15,6 +15,7 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
+#include "JHybridCastDebugSpec.hpp"
 #include "JHybridCastTransportSpec.hpp"
 #include "JFunc_void.hpp"
 #include "JFunc_void_CastState.hpp"
@@ -36,12 +37,21 @@ struct JHybridCastTransportSpecImpl: public jni::JavaClass<JHybridCastTransportS
     return javaPart->getJHybridCastTransportSpec();
   }
 };
+struct JHybridCastDebugSpecImpl: public jni::JavaClass<JHybridCastDebugSpecImpl, JHybridCastDebugSpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/googlecast/HybridCastDebug;";
+  static std::shared_ptr<JHybridCastDebugSpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridCastDebugSpecImpl::javaobject()>();
+    jni::local_ref<JHybridCastDebugSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridCastDebugSpec();
+  }
+};
 
 void registerAllNatives() {
   using namespace margelo::nitro;
   using namespace margelo::nitro::googlecast;
 
   // Register native JNI methods
+  margelo::nitro::googlecast::JHybridCastDebugSpec::CxxPart::registerNatives();
   margelo::nitro::googlecast::JHybridCastTransportSpec::CxxPart::registerNatives();
   margelo::nitro::googlecast::JFunc_void_cxx::registerNatives();
   margelo::nitro::googlecast::JFunc_void_CastState_cxx::registerNatives();
@@ -51,6 +61,12 @@ void registerAllNatives() {
     "CastTransport",
     []() -> std::shared_ptr<HybridObject> {
       return JHybridCastTransportSpecImpl::create();
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "CastDebug",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridCastDebugSpecImpl::create();
     }
   );
 }

@@ -8,12 +8,29 @@
 #include "NitroGoogleCast-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
+#include "HybridCastDebugSpecSwift.hpp"
 #include "HybridCastTransportSpecSwift.hpp"
 #include "NitroGoogleCast-Swift-Cxx-Umbrella.hpp"
 #include <NitroModules/NitroDefines.hpp>
 
 namespace margelo::nitro::googlecast::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<HybridCastDebugSpec>
+  std::shared_ptr<HybridCastDebugSpec> create_std__shared_ptr_HybridCastDebugSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    NitroGoogleCast::HybridCastDebugSpec_cxx swiftPart = NitroGoogleCast::HybridCastDebugSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::googlecast::HybridCastDebugSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridCastDebugSpec_(std__shared_ptr_HybridCastDebugSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::googlecast::HybridCastDebugSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::googlecast::HybridCastDebugSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridCastDebugSpec\" is not implemented in Swift!");
+    }
+    #endif
+    NitroGoogleCast::HybridCastDebugSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
   // pragma MARK: std::function<void()>
   Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroGoogleCast::Func_void::fromUnsafe(swiftClosureWrapper);

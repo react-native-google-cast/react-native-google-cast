@@ -1,0 +1,21 @@
+{
+  "$comment": "Shared golden-fixture corpus for the WebImage struct↔GCK converter (Phase 2 / T1). Read by both the iOS XCTest suite and the Android Robolectric suite. `input` is fed through struct→GCK→struct; the result must deep-equal `expectedRoundTrip`. Both platforms assert against the SAME expected values, so any iOS/Android divergence (or symmetric mapping bug captured here) fails the suite.",
+  "fixtures": [
+    {
+      "name": "full",
+      "input": { "url": "https://example.com/poster.png", "width": 1280, "height": 720 },
+      "expectedRoundTrip": { "url": "https://example.com/poster.png", "width": 1280, "height": 720 }
+    },
+    {
+      "name": "no-dimensions",
+      "$comment": "GCK image dimensions are required ints; absent width/height become 0 and survive the round trip as 0 (not absent).",
+      "input": { "url": "https://example.com/icon.png" },
+      "expectedRoundTrip": { "url": "https://example.com/icon.png", "width": 0, "height": 0 }
+    },
+    {
+      "name": "square",
+      "input": { "url": "https://cdn.example.org/a/b/c.jpg", "width": 256, "height": 256 },
+      "expectedRoundTrip": { "url": "https://cdn.example.org/a/b/c.jpg", "width": 256, "height": 256 }
+    }
+  ]
+}

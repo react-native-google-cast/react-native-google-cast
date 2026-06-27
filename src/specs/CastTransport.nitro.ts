@@ -1,15 +1,5 @@
 import type { HybridObject } from 'react-native-nitro-modules'
-
-// NOTE (v5 scaffold): types are co-located here for the initial codegen spike.
-// Phase 2 splits named types into their own files under src/types per the
-// api-design / build-nitro-modules conventions.
-
-/** The possible casting states (mirrors v4 `CastState` values). */
-export type CastState =
-  | 'noDevicesAvailable'
-  | 'notConnected'
-  | 'connecting'
-  | 'connected'
+import type { CastState } from '../types/CastState'
 
 /** Handle returned by `add*Listener`; call `remove()` to unsubscribe. */
 export interface ListenerSubscription {

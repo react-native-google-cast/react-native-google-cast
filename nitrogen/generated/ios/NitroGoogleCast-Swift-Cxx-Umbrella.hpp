@@ -8,21 +8,136 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `ActiveInputState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class ActiveInputState; }
+// Forward declaration of `ApplicationMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
 // Forward declaration of `CastState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastState; }
+// Forward declaration of `DeviceCapability` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class DeviceCapability; }
+// Forward declaration of `Device` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `HybridCastDebugSpec` to properly resolve imports.
+namespace margelo::nitro::googlecast { class HybridCastDebugSpec; }
 // Forward declaration of `HybridCastTransportSpec` to properly resolve imports.
 namespace margelo::nitro::googlecast { class HybridCastTransportSpec; }
 // Forward declaration of `ListenerSubscription` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct ListenerSubscription; }
+// Forward declaration of `MediaHlsSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsSegmentFormat; }
+// Forward declaration of `MediaHlsVideoSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsVideoSegmentFormat; }
+// Forward declaration of `MediaInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaInfo; }
+// Forward declaration of `MediaLiveSeekableRange` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLiveSeekableRange; }
+// Forward declaration of `MediaLoadRequest` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLoadRequest; }
+// Forward declaration of `MediaMetadataType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaMetadataType; }
+// Forward declaration of `MediaMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaMetadata; }
+// Forward declaration of `MediaPlayerIdleReason` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerIdleReason; }
+// Forward declaration of `MediaPlayerState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerState; }
+// Forward declaration of `MediaQueueContainerMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueContainerMetadata; }
+// Forward declaration of `MediaQueueContainerType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueContainerType; }
+// Forward declaration of `MediaQueueData` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueData; }
+// Forward declaration of `MediaQueueItem` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueItem; }
+// Forward declaration of `MediaQueueType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueType; }
+// Forward declaration of `MediaRepeatMode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
+// Forward declaration of `MediaSeekOptions` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaSeekOptions; }
+// Forward declaration of `MediaSeekResumeState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
+// Forward declaration of `MediaStatus` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaStatus; }
+// Forward declaration of `MediaStreamType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaStreamType; }
+// Forward declaration of `MediaTrackSubtype` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackSubtype; }
+// Forward declaration of `MediaTrackType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackType; }
+// Forward declaration of `MediaTrack` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaTrack; }
+// Forward declaration of `PlayServicesState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `StandbyState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class StandbyState; }
+// Forward declaration of `TextTrackEdgeType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackEdgeType; }
+// Forward declaration of `TextTrackFontGenericFamily` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontGenericFamily; }
+// Forward declaration of `TextTrackFontStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontStyle; }
+// Forward declaration of `TextTrackStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct TextTrackStyle; }
+// Forward declaration of `TextTrackWindowType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackWindowType; }
+// Forward declaration of `VideoHdrType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class VideoHdrType; }
+// Forward declaration of `VideoInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct VideoInfo; }
+// Forward declaration of `WebImage` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct WebImage; }
 
 // Include C++ defined types
+#include "ActiveInputState.hpp"
+#include "ApplicationMetadata.hpp"
 #include "CastState.hpp"
+#include "Device.hpp"
+#include "DeviceCapability.hpp"
+#include "HybridCastDebugSpec.hpp"
 #include "HybridCastTransportSpec.hpp"
 #include "ListenerSubscription.hpp"
+#include "MediaHlsSegmentFormat.hpp"
+#include "MediaHlsVideoSegmentFormat.hpp"
+#include "MediaInfo.hpp"
+#include "MediaLiveSeekableRange.hpp"
+#include "MediaLoadRequest.hpp"
+#include "MediaMetadata.hpp"
+#include "MediaMetadataType.hpp"
+#include "MediaPlayerIdleReason.hpp"
+#include "MediaPlayerState.hpp"
+#include "MediaQueueContainerMetadata.hpp"
+#include "MediaQueueContainerType.hpp"
+#include "MediaQueueData.hpp"
+#include "MediaQueueItem.hpp"
+#include "MediaQueueType.hpp"
+#include "MediaRepeatMode.hpp"
+#include "MediaSeekOptions.hpp"
+#include "MediaSeekResumeState.hpp"
+#include "MediaStatus.hpp"
+#include "MediaStreamType.hpp"
+#include "MediaTrack.hpp"
+#include "MediaTrackSubtype.hpp"
+#include "MediaTrackType.hpp"
+#include "PlayServicesState.hpp"
+#include "StandbyState.hpp"
+#include "TextTrackEdgeType.hpp"
+#include "TextTrackFontGenericFamily.hpp"
+#include "TextTrackFontStyle.hpp"
+#include "TextTrackStyle.hpp"
+#include "TextTrackWindowType.hpp"
+#include "VideoHdrType.hpp"
+#include "VideoInfo.hpp"
+#include "WebImage.hpp"
+#include <NitroModules/AnyMap.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 // C++ helpers for Swift
 #include "NitroGoogleCast-Swift-Cxx-Bridge.hpp"
@@ -34,6 +149,8 @@ namespace margelo::nitro::googlecast { struct ListenerSubscription; }
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridCastDebugSpec_cxx` to properly resolve imports.
+namespace NitroGoogleCast { class HybridCastDebugSpec_cxx; }
 // Forward declaration of `HybridCastTransportSpec_cxx` to properly resolve imports.
 namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 

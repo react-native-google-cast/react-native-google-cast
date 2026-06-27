@@ -11,6 +11,7 @@
 #import <type_traits>
 
 #include "HybridCastTransportSpecSwift.hpp"
+#include "HybridCastDebugSpecSwift.hpp"
 
 @interface NitroGoogleCastAutolinking : NSObject
 @end
@@ -25,6 +26,13 @@
     "CastTransport",
     []() -> std::shared_ptr<HybridObject> {
       std::shared_ptr<HybridCastTransportSpec> hybridObject = NitroGoogleCast::NitroGoogleCastAutolinking::createCastTransport();
+      return hybridObject;
+    }
+  );
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "CastDebug",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridCastDebugSpec> hybridObject = NitroGoogleCast::NitroGoogleCastAutolinking::createCastDebug();
       return hybridObject;
     }
   );

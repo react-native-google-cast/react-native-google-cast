@@ -33,8 +33,10 @@ target_sources(
   # Autolinking Setup
   ../nitrogen/generated/android/NitroGoogleCastOnLoad.cpp
   # Shared Nitrogen C++ sources
+  ../nitrogen/generated/shared/c++/HybridCastDebugSpec.cpp
   ../nitrogen/generated/shared/c++/HybridCastTransportSpec.cpp
   # Android-specific Nitrogen C++ sources
+  ../nitrogen/generated/android/c++/JHybridCastDebugSpec.cpp
   ../nitrogen/generated/android/c++/JHybridCastTransportSpec.cpp
 )
 

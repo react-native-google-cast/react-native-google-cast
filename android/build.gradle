@@ -96,6 +96,16 @@ android {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
   }
+
+  // Robolectric harness for the struct↔GCK converter parity suite (Phase 2 / T1).
+  // Covers AnyMap-free converters on the JVM; AnyMap-carrying types are exercised by
+  // instrumented tests (androidTest) because AnyMap is JNI-backed.
+  testOptions {
+    unitTests {
+      includeAndroidResources = true
+      returnDefaultValues = true
+    }
+  }
 }
 
 repositories {
@@ -114,4 +124,8 @@ dependencies {
 
   // Google Cast SDK
   implementation "com.google.android.gms:play-services-cast-framework:${castFrameworkVersion}"
+
+  // Converter parity suite (Robolectric, JVM unit tests).
+  testImplementation "junit:junit:4.13.2"
+  testImplementation "org.robolectric:robolectric:4.13"
 }

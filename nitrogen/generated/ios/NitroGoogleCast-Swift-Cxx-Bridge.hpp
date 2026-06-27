@@ -8,25 +8,142 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `ActiveInputState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class ActiveInputState; }
+// Forward declaration of `ApplicationMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
 // Forward declaration of `CastState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastState; }
+// Forward declaration of `DeviceCapability` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class DeviceCapability; }
+// Forward declaration of `Device` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `HybridCastDebugSpec` to properly resolve imports.
+namespace margelo::nitro::googlecast { class HybridCastDebugSpec; }
 // Forward declaration of `HybridCastTransportSpec` to properly resolve imports.
 namespace margelo::nitro::googlecast { class HybridCastTransportSpec; }
 // Forward declaration of `ListenerSubscription` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct ListenerSubscription; }
+// Forward declaration of `MediaHlsSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsSegmentFormat; }
+// Forward declaration of `MediaHlsVideoSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsVideoSegmentFormat; }
+// Forward declaration of `MediaInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaInfo; }
+// Forward declaration of `MediaLiveSeekableRange` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLiveSeekableRange; }
+// Forward declaration of `MediaLoadRequest` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLoadRequest; }
+// Forward declaration of `MediaMetadataType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaMetadataType; }
+// Forward declaration of `MediaMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaMetadata; }
+// Forward declaration of `MediaPlayerIdleReason` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerIdleReason; }
+// Forward declaration of `MediaPlayerState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerState; }
+// Forward declaration of `MediaQueueContainerMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueContainerMetadata; }
+// Forward declaration of `MediaQueueContainerType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueContainerType; }
+// Forward declaration of `MediaQueueData` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueData; }
+// Forward declaration of `MediaQueueItem` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueItem; }
+// Forward declaration of `MediaQueueType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueType; }
+// Forward declaration of `MediaRepeatMode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
+// Forward declaration of `MediaSeekOptions` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaSeekOptions; }
+// Forward declaration of `MediaSeekResumeState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
+// Forward declaration of `MediaStatus` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaStatus; }
+// Forward declaration of `MediaStreamType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaStreamType; }
+// Forward declaration of `MediaTrackSubtype` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackSubtype; }
+// Forward declaration of `MediaTrackType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackType; }
+// Forward declaration of `MediaTrack` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaTrack; }
+// Forward declaration of `PlayServicesState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `StandbyState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class StandbyState; }
+// Forward declaration of `TextTrackEdgeType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackEdgeType; }
+// Forward declaration of `TextTrackFontGenericFamily` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontGenericFamily; }
+// Forward declaration of `TextTrackFontStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontStyle; }
+// Forward declaration of `TextTrackStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct TextTrackStyle; }
+// Forward declaration of `TextTrackWindowType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackWindowType; }
+// Forward declaration of `VideoHdrType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class VideoHdrType; }
+// Forward declaration of `VideoInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct VideoInfo; }
+// Forward declaration of `WebImage` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct WebImage; }
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridCastDebugSpec_cxx` to properly resolve imports.
+namespace NitroGoogleCast { class HybridCastDebugSpec_cxx; }
 // Forward declaration of `HybridCastTransportSpec_cxx` to properly resolve imports.
 namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 
 // Include C++ defined types
+#include "ActiveInputState.hpp"
+#include "ApplicationMetadata.hpp"
 #include "CastState.hpp"
+#include "Device.hpp"
+#include "DeviceCapability.hpp"
+#include "HybridCastDebugSpec.hpp"
 #include "HybridCastTransportSpec.hpp"
 #include "ListenerSubscription.hpp"
+#include "MediaHlsSegmentFormat.hpp"
+#include "MediaHlsVideoSegmentFormat.hpp"
+#include "MediaInfo.hpp"
+#include "MediaLiveSeekableRange.hpp"
+#include "MediaLoadRequest.hpp"
+#include "MediaMetadata.hpp"
+#include "MediaMetadataType.hpp"
+#include "MediaPlayerIdleReason.hpp"
+#include "MediaPlayerState.hpp"
+#include "MediaQueueContainerMetadata.hpp"
+#include "MediaQueueContainerType.hpp"
+#include "MediaQueueData.hpp"
+#include "MediaQueueItem.hpp"
+#include "MediaQueueType.hpp"
+#include "MediaRepeatMode.hpp"
+#include "MediaSeekOptions.hpp"
+#include "MediaSeekResumeState.hpp"
+#include "MediaStatus.hpp"
+#include "MediaStreamType.hpp"
+#include "MediaTrack.hpp"
+#include "MediaTrackSubtype.hpp"
+#include "MediaTrackType.hpp"
+#include "PlayServicesState.hpp"
+#include "StandbyState.hpp"
+#include "TextTrackEdgeType.hpp"
+#include "TextTrackFontGenericFamily.hpp"
+#include "TextTrackFontStyle.hpp"
+#include "TextTrackStyle.hpp"
+#include "TextTrackWindowType.hpp"
+#include "VideoHdrType.hpp"
+#include "VideoInfo.hpp"
+#include "WebImage.hpp"
+#include <NitroModules/AnyMap.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 /**
  * Contains specialized versions of C++ templated types so they can be accessed from Swift,
@@ -34,6 +151,722 @@ namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
  */
 namespace margelo::nitro::googlecast::bridge::swift {
 
+  // pragma MARK: std::optional<double>
+  /**
+   * Specialized version of `std::optional<double>`.
+   */
+  using std__optional_double_ = std::optional<double>;
+  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
+    return std::optional<double>(value);
+  }
+  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<DeviceCapability>
+  /**
+   * Specialized version of `std::vector<DeviceCapability>`.
+   */
+  using std__vector_DeviceCapability_ = std::vector<DeviceCapability>;
+  inline std::vector<DeviceCapability> create_std__vector_DeviceCapability_(size_t size) noexcept {
+    std::vector<DeviceCapability> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::vector<WebImage>
+  /**
+   * Specialized version of `std::vector<WebImage>`.
+   */
+  using std__vector_WebImage_ = std::vector<WebImage>;
+  inline std::vector<WebImage> create_std__vector_WebImage_(size_t size) noexcept {
+    std::vector<WebImage> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<bool>
+  /**
+   * Specialized version of `std::optional<bool>`.
+   */
+  using std__optional_bool_ = std::optional<bool>;
+  inline std::optional<bool> create_std__optional_bool_(const bool& value) noexcept {
+    return std::optional<bool>(value);
+  }
+  inline bool has_value_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<std::string>
+  /**
+   * Specialized version of `std::vector<std::string>`.
+   */
+  using std__vector_std__string_ = std::vector<std::string>;
+  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
+    std::vector<std::string> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<WebImage>>
+  /**
+   * Specialized version of `std::optional<std::vector<WebImage>>`.
+   */
+  using std__optional_std__vector_WebImage__ = std::optional<std::vector<WebImage>>;
+  inline std::optional<std::vector<WebImage>> create_std__optional_std__vector_WebImage__(const std::vector<WebImage>& value) noexcept {
+    return std::optional<std::vector<WebImage>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_WebImage__(const std::optional<std::vector<WebImage>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<WebImage> get_std__optional_std__vector_WebImage__(const std::optional<std::vector<WebImage>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<std::string>
+  /**
+   * Specialized version of `std::optional<std::string>`.
+   */
+  using std__optional_std__string_ = std::optional<std::string>;
+  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
+    return std::optional<std::string>(value);
+  }
+  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<std::shared_ptr<AnyMap>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<AnyMap>>`.
+   */
+  using std__optional_std__shared_ptr_AnyMap__ = std::optional<std::shared_ptr<AnyMap>>;
+  inline std::optional<std::shared_ptr<AnyMap>> create_std__optional_std__shared_ptr_AnyMap__(const std::shared_ptr<AnyMap>& value) noexcept {
+    return std::optional<std::shared_ptr<AnyMap>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_AnyMap__(const std::optional<std::shared_ptr<AnyMap>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<AnyMap> get_std__optional_std__shared_ptr_AnyMap__(const std::optional<std::shared_ptr<AnyMap>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaTrackSubtype>
+  /**
+   * Specialized version of `std::optional<MediaTrackSubtype>`.
+   */
+  using std__optional_MediaTrackSubtype_ = std::optional<MediaTrackSubtype>;
+  inline std::optional<MediaTrackSubtype> create_std__optional_MediaTrackSubtype_(const MediaTrackSubtype& value) noexcept {
+    return std::optional<MediaTrackSubtype>(value);
+  }
+  inline bool has_value_std__optional_MediaTrackSubtype_(const std::optional<MediaTrackSubtype>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaTrackSubtype get_std__optional_MediaTrackSubtype_(const std::optional<MediaTrackSubtype>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextTrackEdgeType>
+  /**
+   * Specialized version of `std::optional<TextTrackEdgeType>`.
+   */
+  using std__optional_TextTrackEdgeType_ = std::optional<TextTrackEdgeType>;
+  inline std::optional<TextTrackEdgeType> create_std__optional_TextTrackEdgeType_(const TextTrackEdgeType& value) noexcept {
+    return std::optional<TextTrackEdgeType>(value);
+  }
+  inline bool has_value_std__optional_TextTrackEdgeType_(const std::optional<TextTrackEdgeType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextTrackEdgeType get_std__optional_TextTrackEdgeType_(const std::optional<TextTrackEdgeType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextTrackFontGenericFamily>
+  /**
+   * Specialized version of `std::optional<TextTrackFontGenericFamily>`.
+   */
+  using std__optional_TextTrackFontGenericFamily_ = std::optional<TextTrackFontGenericFamily>;
+  inline std::optional<TextTrackFontGenericFamily> create_std__optional_TextTrackFontGenericFamily_(const TextTrackFontGenericFamily& value) noexcept {
+    return std::optional<TextTrackFontGenericFamily>(value);
+  }
+  inline bool has_value_std__optional_TextTrackFontGenericFamily_(const std::optional<TextTrackFontGenericFamily>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextTrackFontGenericFamily get_std__optional_TextTrackFontGenericFamily_(const std::optional<TextTrackFontGenericFamily>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextTrackFontStyle>
+  /**
+   * Specialized version of `std::optional<TextTrackFontStyle>`.
+   */
+  using std__optional_TextTrackFontStyle_ = std::optional<TextTrackFontStyle>;
+  inline std::optional<TextTrackFontStyle> create_std__optional_TextTrackFontStyle_(const TextTrackFontStyle& value) noexcept {
+    return std::optional<TextTrackFontStyle>(value);
+  }
+  inline bool has_value_std__optional_TextTrackFontStyle_(const std::optional<TextTrackFontStyle>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextTrackFontStyle get_std__optional_TextTrackFontStyle_(const std::optional<TextTrackFontStyle>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextTrackWindowType>
+  /**
+   * Specialized version of `std::optional<TextTrackWindowType>`.
+   */
+  using std__optional_TextTrackWindowType_ = std::optional<TextTrackWindowType>;
+  inline std::optional<TextTrackWindowType> create_std__optional_TextTrackWindowType_(const TextTrackWindowType& value) noexcept {
+    return std::optional<TextTrackWindowType>(value);
+  }
+  inline bool has_value_std__optional_TextTrackWindowType_(const std::optional<TextTrackWindowType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextTrackWindowType get_std__optional_TextTrackWindowType_(const std::optional<TextTrackWindowType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<VideoHdrType>
+  /**
+   * Specialized version of `std::optional<VideoHdrType>`.
+   */
+  using std__optional_VideoHdrType_ = std::optional<VideoHdrType>;
+  inline std::optional<VideoHdrType> create_std__optional_VideoHdrType_(const VideoHdrType& value) noexcept {
+    return std::optional<VideoHdrType>(value);
+  }
+  inline bool has_value_std__optional_VideoHdrType_(const std::optional<VideoHdrType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline VideoHdrType get_std__optional_VideoHdrType_(const std::optional<VideoHdrType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaStreamType>
+  /**
+   * Specialized version of `std::optional<MediaStreamType>`.
+   */
+  using std__optional_MediaStreamType_ = std::optional<MediaStreamType>;
+  inline std::optional<MediaStreamType> create_std__optional_MediaStreamType_(const MediaStreamType& value) noexcept {
+    return std::optional<MediaStreamType>(value);
+  }
+  inline bool has_value_std__optional_MediaStreamType_(const std::optional<MediaStreamType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaStreamType get_std__optional_MediaStreamType_(const std::optional<MediaStreamType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaMetadata>
+  /**
+   * Specialized version of `std::optional<MediaMetadata>`.
+   */
+  using std__optional_MediaMetadata_ = std::optional<MediaMetadata>;
+  inline std::optional<MediaMetadata> create_std__optional_MediaMetadata_(const MediaMetadata& value) noexcept {
+    return std::optional<MediaMetadata>(value);
+  }
+  inline bool has_value_std__optional_MediaMetadata_(const std::optional<MediaMetadata>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaMetadata get_std__optional_MediaMetadata_(const std::optional<MediaMetadata>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<MediaTrack>
+  /**
+   * Specialized version of `std::vector<MediaTrack>`.
+   */
+  using std__vector_MediaTrack_ = std::vector<MediaTrack>;
+  inline std::vector<MediaTrack> create_std__vector_MediaTrack_(size_t size) noexcept {
+    std::vector<MediaTrack> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<MediaTrack>>
+  /**
+   * Specialized version of `std::optional<std::vector<MediaTrack>>`.
+   */
+  using std__optional_std__vector_MediaTrack__ = std::optional<std::vector<MediaTrack>>;
+  inline std::optional<std::vector<MediaTrack>> create_std__optional_std__vector_MediaTrack__(const std::vector<MediaTrack>& value) noexcept {
+    return std::optional<std::vector<MediaTrack>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_MediaTrack__(const std::optional<std::vector<MediaTrack>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<MediaTrack> get_std__optional_std__vector_MediaTrack__(const std::optional<std::vector<MediaTrack>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextTrackStyle>
+  /**
+   * Specialized version of `std::optional<TextTrackStyle>`.
+   */
+  using std__optional_TextTrackStyle_ = std::optional<TextTrackStyle>;
+  inline std::optional<TextTrackStyle> create_std__optional_TextTrackStyle_(const TextTrackStyle& value) noexcept {
+    return std::optional<TextTrackStyle>(value);
+  }
+  inline bool has_value_std__optional_TextTrackStyle_(const std::optional<TextTrackStyle>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextTrackStyle get_std__optional_TextTrackStyle_(const std::optional<TextTrackStyle>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaHlsSegmentFormat>
+  /**
+   * Specialized version of `std::optional<MediaHlsSegmentFormat>`.
+   */
+  using std__optional_MediaHlsSegmentFormat_ = std::optional<MediaHlsSegmentFormat>;
+  inline std::optional<MediaHlsSegmentFormat> create_std__optional_MediaHlsSegmentFormat_(const MediaHlsSegmentFormat& value) noexcept {
+    return std::optional<MediaHlsSegmentFormat>(value);
+  }
+  inline bool has_value_std__optional_MediaHlsSegmentFormat_(const std::optional<MediaHlsSegmentFormat>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaHlsSegmentFormat get_std__optional_MediaHlsSegmentFormat_(const std::optional<MediaHlsSegmentFormat>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaHlsVideoSegmentFormat>
+  /**
+   * Specialized version of `std::optional<MediaHlsVideoSegmentFormat>`.
+   */
+  using std__optional_MediaHlsVideoSegmentFormat_ = std::optional<MediaHlsVideoSegmentFormat>;
+  inline std::optional<MediaHlsVideoSegmentFormat> create_std__optional_MediaHlsVideoSegmentFormat_(const MediaHlsVideoSegmentFormat& value) noexcept {
+    return std::optional<MediaHlsVideoSegmentFormat>(value);
+  }
+  inline bool has_value_std__optional_MediaHlsVideoSegmentFormat_(const std::optional<MediaHlsVideoSegmentFormat>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaHlsVideoSegmentFormat get_std__optional_MediaHlsVideoSegmentFormat_(const std::optional<MediaHlsVideoSegmentFormat>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<double>
+  /**
+   * Specialized version of `std::vector<double>`.
+   */
+  using std__vector_double_ = std::vector<double>;
+  inline std::vector<double> create_std__vector_double_(size_t size) noexcept {
+    std::vector<double> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<double>>
+  /**
+   * Specialized version of `std::optional<std::vector<double>>`.
+   */
+  using std__optional_std__vector_double__ = std::optional<std::vector<double>>;
+  inline std::optional<std::vector<double>> create_std__optional_std__vector_double__(const std::vector<double>& value) noexcept {
+    return std::optional<std::vector<double>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_double__(const std::optional<std::vector<double>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<double> get_std__optional_std__vector_double__(const std::optional<std::vector<double>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaQueueContainerType>
+  /**
+   * Specialized version of `std::optional<MediaQueueContainerType>`.
+   */
+  using std__optional_MediaQueueContainerType_ = std::optional<MediaQueueContainerType>;
+  inline std::optional<MediaQueueContainerType> create_std__optional_MediaQueueContainerType_(const MediaQueueContainerType& value) noexcept {
+    return std::optional<MediaQueueContainerType>(value);
+  }
+  inline bool has_value_std__optional_MediaQueueContainerType_(const std::optional<MediaQueueContainerType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaQueueContainerType get_std__optional_MediaQueueContainerType_(const std::optional<MediaQueueContainerType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<MediaMetadata>
+  /**
+   * Specialized version of `std::vector<MediaMetadata>`.
+   */
+  using std__vector_MediaMetadata_ = std::vector<MediaMetadata>;
+  inline std::vector<MediaMetadata> create_std__vector_MediaMetadata_(size_t size) noexcept {
+    std::vector<MediaMetadata> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<MediaMetadata>>
+  /**
+   * Specialized version of `std::optional<std::vector<MediaMetadata>>`.
+   */
+  using std__optional_std__vector_MediaMetadata__ = std::optional<std::vector<MediaMetadata>>;
+  inline std::optional<std::vector<MediaMetadata>> create_std__optional_std__vector_MediaMetadata__(const std::vector<MediaMetadata>& value) noexcept {
+    return std::optional<std::vector<MediaMetadata>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_MediaMetadata__(const std::optional<std::vector<MediaMetadata>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<MediaMetadata> get_std__optional_std__vector_MediaMetadata__(const std::optional<std::vector<MediaMetadata>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaQueueType>
+  /**
+   * Specialized version of `std::optional<MediaQueueType>`.
+   */
+  using std__optional_MediaQueueType_ = std::optional<MediaQueueType>;
+  inline std::optional<MediaQueueType> create_std__optional_MediaQueueType_(const MediaQueueType& value) noexcept {
+    return std::optional<MediaQueueType>(value);
+  }
+  inline bool has_value_std__optional_MediaQueueType_(const std::optional<MediaQueueType>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaQueueType get_std__optional_MediaQueueType_(const std::optional<MediaQueueType>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaRepeatMode>
+  /**
+   * Specialized version of `std::optional<MediaRepeatMode>`.
+   */
+  using std__optional_MediaRepeatMode_ = std::optional<MediaRepeatMode>;
+  inline std::optional<MediaRepeatMode> create_std__optional_MediaRepeatMode_(const MediaRepeatMode& value) noexcept {
+    return std::optional<MediaRepeatMode>(value);
+  }
+  inline bool has_value_std__optional_MediaRepeatMode_(const std::optional<MediaRepeatMode>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaRepeatMode get_std__optional_MediaRepeatMode_(const std::optional<MediaRepeatMode>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaQueueContainerMetadata>
+  /**
+   * Specialized version of `std::optional<MediaQueueContainerMetadata>`.
+   */
+  using std__optional_MediaQueueContainerMetadata_ = std::optional<MediaQueueContainerMetadata>;
+  inline std::optional<MediaQueueContainerMetadata> create_std__optional_MediaQueueContainerMetadata_(const MediaQueueContainerMetadata& value) noexcept {
+    return std::optional<MediaQueueContainerMetadata>(value);
+  }
+  inline bool has_value_std__optional_MediaQueueContainerMetadata_(const std::optional<MediaQueueContainerMetadata>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaQueueContainerMetadata get_std__optional_MediaQueueContainerMetadata_(const std::optional<MediaQueueContainerMetadata>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<MediaQueueItem>
+  /**
+   * Specialized version of `std::vector<MediaQueueItem>`.
+   */
+  using std__vector_MediaQueueItem_ = std::vector<MediaQueueItem>;
+  inline std::vector<MediaQueueItem> create_std__vector_MediaQueueItem_(size_t size) noexcept {
+    std::vector<MediaQueueItem> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<MediaQueueItem>>
+  /**
+   * Specialized version of `std::optional<std::vector<MediaQueueItem>>`.
+   */
+  using std__optional_std__vector_MediaQueueItem__ = std::optional<std::vector<MediaQueueItem>>;
+  inline std::optional<std::vector<MediaQueueItem>> create_std__optional_std__vector_MediaQueueItem__(const std::vector<MediaQueueItem>& value) noexcept {
+    return std::optional<std::vector<MediaQueueItem>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_MediaQueueItem__(const std::optional<std::vector<MediaQueueItem>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<MediaQueueItem> get_std__optional_std__vector_MediaQueueItem__(const std::optional<std::vector<MediaQueueItem>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaInfo>
+  /**
+   * Specialized version of `std::optional<MediaInfo>`.
+   */
+  using std__optional_MediaInfo_ = std::optional<MediaInfo>;
+  inline std::optional<MediaInfo> create_std__optional_MediaInfo_(const MediaInfo& value) noexcept {
+    return std::optional<MediaInfo>(value);
+  }
+  inline bool has_value_std__optional_MediaInfo_(const std::optional<MediaInfo>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaInfo get_std__optional_MediaInfo_(const std::optional<MediaInfo>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaQueueData>
+  /**
+   * Specialized version of `std::optional<MediaQueueData>`.
+   */
+  using std__optional_MediaQueueData_ = std::optional<MediaQueueData>;
+  inline std::optional<MediaQueueData> create_std__optional_MediaQueueData_(const MediaQueueData& value) noexcept {
+    return std::optional<MediaQueueData>(value);
+  }
+  inline bool has_value_std__optional_MediaQueueData_(const std::optional<MediaQueueData>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaQueueData get_std__optional_MediaQueueData_(const std::optional<MediaQueueData>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaSeekResumeState>
+  /**
+   * Specialized version of `std::optional<MediaSeekResumeState>`.
+   */
+  using std__optional_MediaSeekResumeState_ = std::optional<MediaSeekResumeState>;
+  inline std::optional<MediaSeekResumeState> create_std__optional_MediaSeekResumeState_(const MediaSeekResumeState& value) noexcept {
+    return std::optional<MediaSeekResumeState>(value);
+  }
+  inline bool has_value_std__optional_MediaSeekResumeState_(const std::optional<MediaSeekResumeState>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaSeekResumeState get_std__optional_MediaSeekResumeState_(const std::optional<MediaSeekResumeState>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaPlayerState>
+  /**
+   * Specialized version of `std::optional<MediaPlayerState>`.
+   */
+  using std__optional_MediaPlayerState_ = std::optional<MediaPlayerState>;
+  inline std::optional<MediaPlayerState> create_std__optional_MediaPlayerState_(const MediaPlayerState& value) noexcept {
+    return std::optional<MediaPlayerState>(value);
+  }
+  inline bool has_value_std__optional_MediaPlayerState_(const std::optional<MediaPlayerState>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaPlayerState get_std__optional_MediaPlayerState_(const std::optional<MediaPlayerState>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaPlayerIdleReason>
+  /**
+   * Specialized version of `std::optional<MediaPlayerIdleReason>`.
+   */
+  using std__optional_MediaPlayerIdleReason_ = std::optional<MediaPlayerIdleReason>;
+  inline std::optional<MediaPlayerIdleReason> create_std__optional_MediaPlayerIdleReason_(const MediaPlayerIdleReason& value) noexcept {
+    return std::optional<MediaPlayerIdleReason>(value);
+  }
+  inline bool has_value_std__optional_MediaPlayerIdleReason_(const std::optional<MediaPlayerIdleReason>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaPlayerIdleReason get_std__optional_MediaPlayerIdleReason_(const std::optional<MediaPlayerIdleReason>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<VideoInfo>
+  /**
+   * Specialized version of `std::optional<VideoInfo>`.
+   */
+  using std__optional_VideoInfo_ = std::optional<VideoInfo>;
+  inline std::optional<VideoInfo> create_std__optional_VideoInfo_(const VideoInfo& value) noexcept {
+    return std::optional<VideoInfo>(value);
+  }
+  inline bool has_value_std__optional_VideoInfo_(const std::optional<VideoInfo>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline VideoInfo get_std__optional_VideoInfo_(const std::optional<VideoInfo>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<MediaLiveSeekableRange>
+  /**
+   * Specialized version of `std::optional<MediaLiveSeekableRange>`.
+   */
+  using std__optional_MediaLiveSeekableRange_ = std::optional<MediaLiveSeekableRange>;
+  inline std::optional<MediaLiveSeekableRange> create_std__optional_MediaLiveSeekableRange_(const MediaLiveSeekableRange& value) noexcept {
+    return std::optional<MediaLiveSeekableRange>(value);
+  }
+  inline bool has_value_std__optional_MediaLiveSeekableRange_(const std::optional<MediaLiveSeekableRange>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaLiveSeekableRange get_std__optional_MediaLiveSeekableRange_(const std::optional<MediaLiveSeekableRange>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridCastDebugSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridCastDebugSpec>`.
+   */
+  using std__shared_ptr_HybridCastDebugSpec_ = std::shared_ptr<HybridCastDebugSpec>;
+  std::shared_ptr<HybridCastDebugSpec> create_std__shared_ptr_HybridCastDebugSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridCastDebugSpec_(std__shared_ptr_HybridCastDebugSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridCastDebugSpec>
+  using std__weak_ptr_HybridCastDebugSpec_ = std::weak_ptr<HybridCastDebugSpec>;
+  inline std__weak_ptr_HybridCastDebugSpec_ weakify_std__shared_ptr_HybridCastDebugSpec_(const std::shared_ptr<HybridCastDebugSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<WebImage>
+  using Result_WebImage_ = Result<WebImage>;
+  inline Result_WebImage_ create_Result_WebImage_(const WebImage& value) noexcept {
+    return Result<WebImage>::withValue(value);
+  }
+  inline Result_WebImage_ create_Result_WebImage_(const std::exception_ptr& error) noexcept {
+    return Result<WebImage>::withError(error);
+  }
+  
+  // pragma MARK: Result<Device>
+  using Result_Device_ = Result<Device>;
+  inline Result_Device_ create_Result_Device_(const Device& value) noexcept {
+    return Result<Device>::withValue(value);
+  }
+  inline Result_Device_ create_Result_Device_(const std::exception_ptr& error) noexcept {
+    return Result<Device>::withError(error);
+  }
+  
+  // pragma MARK: Result<ApplicationMetadata>
+  using Result_ApplicationMetadata_ = Result<ApplicationMetadata>;
+  inline Result_ApplicationMetadata_ create_Result_ApplicationMetadata_(const ApplicationMetadata& value) noexcept {
+    return Result<ApplicationMetadata>::withValue(value);
+  }
+  inline Result_ApplicationMetadata_ create_Result_ApplicationMetadata_(const std::exception_ptr& error) noexcept {
+    return Result<ApplicationMetadata>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaMetadata>
+  using Result_MediaMetadata_ = Result<MediaMetadata>;
+  inline Result_MediaMetadata_ create_Result_MediaMetadata_(const MediaMetadata& value) noexcept {
+    return Result<MediaMetadata>::withValue(value);
+  }
+  inline Result_MediaMetadata_ create_Result_MediaMetadata_(const std::exception_ptr& error) noexcept {
+    return Result<MediaMetadata>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaTrack>
+  using Result_MediaTrack_ = Result<MediaTrack>;
+  inline Result_MediaTrack_ create_Result_MediaTrack_(const MediaTrack& value) noexcept {
+    return Result<MediaTrack>::withValue(value);
+  }
+  inline Result_MediaTrack_ create_Result_MediaTrack_(const std::exception_ptr& error) noexcept {
+    return Result<MediaTrack>::withError(error);
+  }
+  
+  // pragma MARK: Result<TextTrackStyle>
+  using Result_TextTrackStyle_ = Result<TextTrackStyle>;
+  inline Result_TextTrackStyle_ create_Result_TextTrackStyle_(const TextTrackStyle& value) noexcept {
+    return Result<TextTrackStyle>::withValue(value);
+  }
+  inline Result_TextTrackStyle_ create_Result_TextTrackStyle_(const std::exception_ptr& error) noexcept {
+    return Result<TextTrackStyle>::withError(error);
+  }
+  
+  // pragma MARK: Result<VideoInfo>
+  using Result_VideoInfo_ = Result<VideoInfo>;
+  inline Result_VideoInfo_ create_Result_VideoInfo_(const VideoInfo& value) noexcept {
+    return Result<VideoInfo>::withValue(value);
+  }
+  inline Result_VideoInfo_ create_Result_VideoInfo_(const std::exception_ptr& error) noexcept {
+    return Result<VideoInfo>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaInfo>
+  using Result_MediaInfo_ = Result<MediaInfo>;
+  inline Result_MediaInfo_ create_Result_MediaInfo_(const MediaInfo& value) noexcept {
+    return Result<MediaInfo>::withValue(value);
+  }
+  inline Result_MediaInfo_ create_Result_MediaInfo_(const std::exception_ptr& error) noexcept {
+    return Result<MediaInfo>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaLiveSeekableRange>
+  using Result_MediaLiveSeekableRange_ = Result<MediaLiveSeekableRange>;
+  inline Result_MediaLiveSeekableRange_ create_Result_MediaLiveSeekableRange_(const MediaLiveSeekableRange& value) noexcept {
+    return Result<MediaLiveSeekableRange>::withValue(value);
+  }
+  inline Result_MediaLiveSeekableRange_ create_Result_MediaLiveSeekableRange_(const std::exception_ptr& error) noexcept {
+    return Result<MediaLiveSeekableRange>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaQueueItem>
+  using Result_MediaQueueItem_ = Result<MediaQueueItem>;
+  inline Result_MediaQueueItem_ create_Result_MediaQueueItem_(const MediaQueueItem& value) noexcept {
+    return Result<MediaQueueItem>::withValue(value);
+  }
+  inline Result_MediaQueueItem_ create_Result_MediaQueueItem_(const std::exception_ptr& error) noexcept {
+    return Result<MediaQueueItem>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaQueueContainerMetadata>
+  using Result_MediaQueueContainerMetadata_ = Result<MediaQueueContainerMetadata>;
+  inline Result_MediaQueueContainerMetadata_ create_Result_MediaQueueContainerMetadata_(const MediaQueueContainerMetadata& value) noexcept {
+    return Result<MediaQueueContainerMetadata>::withValue(value);
+  }
+  inline Result_MediaQueueContainerMetadata_ create_Result_MediaQueueContainerMetadata_(const std::exception_ptr& error) noexcept {
+    return Result<MediaQueueContainerMetadata>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaQueueData>
+  using Result_MediaQueueData_ = Result<MediaQueueData>;
+  inline Result_MediaQueueData_ create_Result_MediaQueueData_(const MediaQueueData& value) noexcept {
+    return Result<MediaQueueData>::withValue(value);
+  }
+  inline Result_MediaQueueData_ create_Result_MediaQueueData_(const std::exception_ptr& error) noexcept {
+    return Result<MediaQueueData>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaLoadRequest>
+  using Result_MediaLoadRequest_ = Result<MediaLoadRequest>;
+  inline Result_MediaLoadRequest_ create_Result_MediaLoadRequest_(const MediaLoadRequest& value) noexcept {
+    return Result<MediaLoadRequest>::withValue(value);
+  }
+  inline Result_MediaLoadRequest_ create_Result_MediaLoadRequest_(const std::exception_ptr& error) noexcept {
+    return Result<MediaLoadRequest>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaSeekOptions>
+  using Result_MediaSeekOptions_ = Result<MediaSeekOptions>;
+  inline Result_MediaSeekOptions_ create_Result_MediaSeekOptions_(const MediaSeekOptions& value) noexcept {
+    return Result<MediaSeekOptions>::withValue(value);
+  }
+  inline Result_MediaSeekOptions_ create_Result_MediaSeekOptions_(const std::exception_ptr& error) noexcept {
+    return Result<MediaSeekOptions>::withError(error);
+  }
+  
+  // pragma MARK: Result<MediaStatus>
+  using Result_MediaStatus_ = Result<MediaStatus>;
+  inline Result_MediaStatus_ create_Result_MediaStatus_(const MediaStatus& value) noexcept {
+    return Result<MediaStatus>::withValue(value);
+  }
+  inline Result_MediaStatus_ create_Result_MediaStatus_(const std::exception_ptr& error) noexcept {
+    return Result<MediaStatus>::withError(error);
+  }
+  
+  // pragma MARK: Result<ActiveInputState>
+  using Result_ActiveInputState_ = Result<ActiveInputState>;
+  inline Result_ActiveInputState_ create_Result_ActiveInputState_(ActiveInputState value) noexcept {
+    return Result<ActiveInputState>::withValue(std::move(value));
+  }
+  inline Result_ActiveInputState_ create_Result_ActiveInputState_(const std::exception_ptr& error) noexcept {
+    return Result<ActiveInputState>::withError(error);
+  }
+  
+  // pragma MARK: Result<StandbyState>
+  using Result_StandbyState_ = Result<StandbyState>;
+  inline Result_StandbyState_ create_Result_StandbyState_(StandbyState value) noexcept {
+    return Result<StandbyState>::withValue(std::move(value));
+  }
+  inline Result_StandbyState_ create_Result_StandbyState_(const std::exception_ptr& error) noexcept {
+    return Result<StandbyState>::withError(error);
+  }
+  
+  // pragma MARK: Result<PlayServicesState>
+  using Result_PlayServicesState_ = Result<PlayServicesState>;
+  inline Result_PlayServicesState_ create_Result_PlayServicesState_(PlayServicesState value) noexcept {
+    return Result<PlayServicesState>::withValue(std::move(value));
+  }
+  inline Result_PlayServicesState_ create_Result_PlayServicesState_(const std::exception_ptr& error) noexcept {
+    return Result<PlayServicesState>::withError(error);
+  }
+  
   // pragma MARK: std::function<void()>
   /**
    * Specialized version of `std::function<void()>`.

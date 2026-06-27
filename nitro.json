@@ -18,6 +18,16 @@
         "language": "kotlin",
         "implementationClassName": "HybridCastTransport"
       }
+    },
+    "CastDebug": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridCastDebug"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridCastDebug"
+      }
     }
   }
 }
