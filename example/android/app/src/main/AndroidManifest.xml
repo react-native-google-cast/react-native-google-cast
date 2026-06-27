@@ -23,5 +23,10 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <!-- Google Cast: registers the OptionsProvider so CastContext can initialize. -->
+      <meta-data
+        android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+        android:value="com.castexample.CastOptionsProvider" />
     </application>
 </manifest>
