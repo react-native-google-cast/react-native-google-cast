@@ -1,0 +1,61 @@
+{
+  "fixtures": [
+    {
+      "name": "single-media",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 200 },
+        "autoplay": true,
+        "startTime": 15,
+        "playbackRate": 1.5,
+        "credentials": "token-123",
+        "credentialsType": "bearer",
+        "customData": { "session": "abc" }
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 200 },
+        "autoplay": true,
+        "startTime": 15,
+        "playbackRate": 1.5,
+        "credentials": "token-123",
+        "credentialsType": "bearer",
+        "customData": { "session": "abc" }
+      }
+    },
+    {
+      "name": "queue-load",
+      "input": {
+        "queueData": {
+          "type": "playlist",
+          "startIndex": 0,
+          "items": [
+            { "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 50 }, "autoplay": true, "preloadTime": 0 }
+          ]
+        },
+        "autoplay": false
+      },
+      "expectedRoundTrip": {
+        "queueData": {
+          "type": "playlist",
+          "startIndex": 0,
+          "items": [
+            { "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 50 }, "autoplay": true, "preloadTime": 0 }
+          ]
+        },
+        "autoplay": false,
+        "playbackRate": 1
+      }
+    },
+    {
+      "name": "minimal",
+      "$comment": "autoplay is NSNumber? in GCK but the GCKMediaLoadRequestDataBuilder injects a default of true (pinned from observed output) — it does NOT round-trip as absent. playbackRate default observed as 1. startTime unset comes back nil.",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/3.mp4", "streamType": "buffered", "streamDuration": 0 }
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/3.mp4", "streamType": "buffered", "streamDuration": 0 },
+        "autoplay": true,
+        "playbackRate": 1
+      }
+    }
+  ]
+}

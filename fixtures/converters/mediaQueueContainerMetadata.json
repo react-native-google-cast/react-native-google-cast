@@ -1,0 +1,27 @@
+{
+  "fixtures": [
+    {
+      "name": "audiobook-full",
+      "input": {
+        "containerType": "audioBook",
+        "title": "My Audiobook",
+        "containerDuration": 3600,
+        "containerImages": [{ "url": "https://example.com/cover.jpg", "width": 300, "height": 300 }],
+        "sections": [{ "type": "musicTrack", "title": "Chapter 1" }]
+      },
+      "expectedRoundTrip": {
+        "containerType": "audioBook",
+        "title": "My Audiobook",
+        "containerDuration": 3600,
+        "containerImages": [{ "url": "https://example.com/cover.jpg", "width": 300, "height": 300 }],
+        "sections": [{ "type": "musicTrack", "title": "Chapter 1" }]
+      }
+    },
+    {
+      "name": "minimal",
+      "$comment": "containerType is non-optional in GCK; absent maps to Generic which comes back as 'generic'.",
+      "input": {},
+      "expectedRoundTrip": { "containerType": "generic" }
+    }
+  ]
+}

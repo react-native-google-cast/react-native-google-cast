@@ -1,0 +1,32 @@
+{
+  "fixtures": [
+    {
+      "name": "full",
+      "input": {
+        "position": 30.5,
+        "relative": true,
+        "infinite": false,
+        "resumeState": "play",
+        "customData": { "source": "scrubber" }
+      },
+      "expectedRoundTrip": {
+        "position": 30.5,
+        "relative": true,
+        "infinite": false,
+        "resumeState": "play",
+        "customData": { "source": "scrubber" }
+      }
+    },
+    {
+      "name": "pause-resume",
+      "input": { "position": 10, "resumeState": "pause" },
+      "expectedRoundTrip": { "position": 10, "relative": false, "infinite": false, "resumeState": "pause" }
+    },
+    {
+      "name": "minimal",
+      "$comment": "position/relative/infinite are non-optional in GCK; absent values come back as GCK init() defaults (0/false/false). resumeState 'Unchanged' maps to nil.",
+      "input": {},
+      "expectedRoundTrip": { "position": 0, "relative": false, "infinite": false }
+    }
+  ]
+}

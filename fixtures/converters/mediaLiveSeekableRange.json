@@ -1,0 +1,14 @@
+{
+  "fixtures": [
+    {
+      "name": "moving-window",
+      "input": { "startTime": 0, "endTime": 3600, "isMovingWindow": true, "isLiveDone": false },
+      "expectedRoundTrip": { "startTime": 0, "endTime": 3600, "isMovingWindow": true, "isLiveDone": false }
+    },
+    {
+      "name": "live-done",
+      "input": { "startTime": 100.5, "endTime": 200.5, "isMovingWindow": false, "isLiveDone": true },
+      "expectedRoundTrip": { "startTime": 100.5, "endTime": 200.5, "isMovingWindow": false, "isLiveDone": true }
+    }
+  ]
+}

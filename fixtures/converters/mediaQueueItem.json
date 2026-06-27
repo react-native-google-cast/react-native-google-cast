@@ -1,0 +1,38 @@
+{
+  "fixtures": [
+    {
+      "name": "full",
+      "$comment": "itemId has no GCK builder setter, so it is dropped on the forward trip and comes back nil (Android must reconcile).",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 120 },
+        "itemId": 7,
+        "activeTrackIds": [1, 2],
+        "autoplay": false,
+        "playbackDuration": 90,
+        "preloadTime": 5,
+        "startTime": 12.5,
+        "customData": { "tag": "queued" }
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 120 },
+        "activeTrackIds": [1, 2],
+        "autoplay": false,
+        "playbackDuration": 90,
+        "preloadTime": 5,
+        "startTime": 12.5,
+        "customData": { "tag": "queued" }
+      }
+    },
+    {
+      "name": "minimal",
+      "$comment": "autoplay is non-optional in GCK; the GCKMediaQueueItemBuilder default is false (pinned from observed output). Unset time intervals (playbackDuration=inf, preloadTime/startTime sentinels) come back nil.",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 0 }
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 0 },
+        "autoplay": false
+      }
+    }
+  ]
+}

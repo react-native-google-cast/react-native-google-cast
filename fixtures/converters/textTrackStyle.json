@@ -1,0 +1,65 @@
+{
+  "fixtures": [
+    {
+      "name": "full",
+      "$comment": "Colors are CSS strings bridged through GCKColor; GCK may normalize the CSS form, so expectedRoundTrip colors are pinned to the observed normalized output (Android must reconcile its own GCKColor/CSS behavior).",
+      "input": {
+        "backgroundColor": "#000000FF",
+        "edgeColor": "#FF0000FF",
+        "edgeType": "outline",
+        "fontFamily": "Helvetica",
+        "fontGenericFamily": "serif",
+        "fontScale": 1.5,
+        "fontStyle": "bold",
+        "foregroundColor": "#FFFFFFFF",
+        "windowColor": "#00000080",
+        "windowCornerRadius": 8,
+        "windowType": "rounded",
+        "customData": { "preset": "high-contrast" }
+      },
+      "expectedRoundTrip": {
+        "backgroundColor": "#000000FF",
+        "edgeColor": "#FF0000FF",
+        "edgeType": "outline",
+        "fontFamily": "Helvetica",
+        "fontGenericFamily": "serif",
+        "fontScale": 1.5,
+        "fontStyle": "bold",
+        "foregroundColor": "#FFFFFFFF",
+        "windowColor": "#00000080",
+        "windowCornerRadius": 8,
+        "windowType": "rounded",
+        "customData": { "preset": "high-contrast" }
+      }
+    },
+    {
+      "name": "partial",
+      "$comment": "GCKMediaTextTrackStyle() defaults edgeType/windowType to None and fontStyle to Normal (pinned from observed output); these come back as concrete values, not nil. fontGenericFamily default maps to nil.",
+      "input": {
+        "foregroundColor": "#112233FF",
+        "fontScale": 2.0,
+        "fontStyle": "italic"
+      },
+      "expectedRoundTrip": {
+        "foregroundColor": "#112233FF",
+        "fontScale": 2.0,
+        "fontStyle": "italic",
+        "edgeType": "none",
+        "windowType": "none",
+        "windowCornerRadius": 0
+      }
+    },
+    {
+      "name": "minimal",
+      "$comment": "GCKMediaTextTrackStyle() defaults (pinned from observed output): fontScale=1, windowCornerRadius=0, edgeType=none, fontStyle=normal, windowType=none. fontGenericFamily/colors/fontFamily default to nil.",
+      "input": {},
+      "expectedRoundTrip": {
+        "fontScale": 1,
+        "windowCornerRadius": 0,
+        "edgeType": "none",
+        "fontStyle": "normal",
+        "windowType": "none"
+      }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "$comment": "iOS CANNOT pin these values: GCKDevice is receive-only (init is NS_UNAVAILABLE, deviceID has no settable ivar), so the iOS suite does not run this corpus. expectedRoundTrip here is a DRAFT — Android (where GCKDevice is constructible) must author/verify it. iOS implements only GCKDevice→Device.",
+  "fixtures": [
+    {
+      "name": "full",
+      "$comment": "capabilities round-trip in canonical bit order (videoOut, videoIn, audioOut, audioIn, dynamicGroup, multizoneGroup, multiChannelGroup).",
+      "input": {
+        "capabilities": ["videoout", "audioout"],
+        "deviceId": "device-uuid-1",
+        "deviceVersion": "1.42",
+        "friendlyName": "Living Room TV",
+        "icons": [{ "url": "https://example.com/device.png", "width": 100, "height": 100 }],
+        "ipAddress": "192.168.1.42",
+        "isOnLocalNetwork": true,
+        "modelName": "Chromecast Ultra"
+      },
+      "expectedRoundTrip": {
+        "capabilities": ["videoout", "audioout"],
+        "deviceId": "device-uuid-1",
+        "deviceVersion": "1.42",
+        "friendlyName": "Living Room TV",
+        "icons": [{ "url": "https://example.com/device.png", "width": 100, "height": 100 }],
+        "ipAddress": "192.168.1.42",
+        "isOnLocalNetwork": true,
+        "modelName": "Chromecast Ultra"
+      }
+    },
+    {
+      "name": "minimal",
+      "$comment": "isOnLocalNetwork is non-optional BOOL in GCK; absent comes back as false. Nullable name/version/model absent come back as \"\".",
+      "input": { "deviceId": "device-uuid-2", "friendlyName": "Speaker" },
+      "expectedRoundTrip": {
+        "capabilities": [],
+        "deviceId": "device-uuid-2",
+        "deviceVersion": "",
+        "friendlyName": "Speaker",
+        "icons": [],
+        "ipAddress": "",
+        "isOnLocalNetwork": false,
+        "modelName": ""
+      }
+    }
+  ]
+}

@@ -78,6 +78,194 @@ enum ConverterFixtures {
     )
   }
 
+  static func mediaTrack(from json: [String: Any]) -> MediaTrack {
+    return MediaTrack(
+      id: number(json["id"]) ?? 0,
+      type: MediaTrackType(fromString: json["type"] as? String ?? "audio") ?? .audio,
+      contentId: json["contentId"] as? String,
+      contentType: json["contentType"] as? String,
+      language: json["language"] as? String,
+      name: json["name"] as? String,
+      subtype: (json["subtype"] as? String).flatMap { MediaTrackSubtype(fromString: $0) },
+      customData: anyMap(json["customData"])
+    )
+  }
+
+  static func textTrackStyle(from json: [String: Any]) -> TextTrackStyle {
+    return TextTrackStyle(
+      backgroundColor: json["backgroundColor"] as? String,
+      edgeColor: json["edgeColor"] as? String,
+      edgeType: (json["edgeType"] as? String).flatMap { TextTrackEdgeType(fromString: $0) },
+      fontFamily: json["fontFamily"] as? String,
+      fontGenericFamily: (json["fontGenericFamily"] as? String).flatMap {
+        TextTrackFontGenericFamily(fromString: $0)
+      },
+      fontScale: number(json["fontScale"]),
+      fontStyle: (json["fontStyle"] as? String).flatMap { TextTrackFontStyle(fromString: $0) },
+      foregroundColor: json["foregroundColor"] as? String,
+      windowColor: json["windowColor"] as? String,
+      windowCornerRadius: number(json["windowCornerRadius"]),
+      windowType: (json["windowType"] as? String).flatMap { TextTrackWindowType(fromString: $0) },
+      customData: anyMap(json["customData"])
+    )
+  }
+
+  static func videoInfo(from json: [String: Any]) -> VideoInfo {
+    return VideoInfo(
+      hdrType: (json["hdrType"] as? String).flatMap { VideoHdrType(fromString: $0) },
+      width: number(json["width"]),
+      height: number(json["height"])
+    )
+  }
+
+  static func mediaSeekOptions(from json: [String: Any]) -> MediaSeekOptions {
+    return MediaSeekOptions(
+      position: number(json["position"]),
+      relative: json["relative"] as? Bool,
+      infinite: json["infinite"] as? Bool,
+      resumeState: (json["resumeState"] as? String).flatMap {
+        MediaSeekResumeState(fromString: $0)
+      },
+      customData: anyMap(json["customData"])
+    )
+  }
+
+  static func mediaInfo(from json: [String: Any]) -> MediaInfo {
+    return MediaInfo(
+      contentUrl: json["contentUrl"] as? String ?? "",
+      contentId: json["contentId"] as? String,
+      contentType: json["contentType"] as? String,
+      entity: json["entity"] as? String,
+      streamType: (json["streamType"] as? String).flatMap { MediaStreamType(fromString: $0) },
+      metadata: (json["metadata"] as? [String: Any]).map { mediaMetadata(from: $0) },
+      streamDuration: number(json["streamDuration"]),
+      mediaTracks: (json["mediaTracks"] as? [[String: Any]])?.map { mediaTrack(from: $0) },
+      textTrackStyle: (json["textTrackStyle"] as? [String: Any]).map { textTrackStyle(from: $0) },
+      hlsSegmentFormat: (json["hlsSegmentFormat"] as? String).flatMap {
+        MediaHlsSegmentFormat(fromString: $0)
+      },
+      hlsVideoSegmentFormat: (json["hlsVideoSegmentFormat"] as? String).flatMap {
+        MediaHlsVideoSegmentFormat(fromString: $0)
+      },
+      customData: anyMap(json["customData"])
+    )
+  }
+
+  static func mediaQueueItem(from json: [String: Any]) -> MediaQueueItem {
+    return MediaQueueItem(
+      mediaInfo: mediaInfo(from: json["mediaInfo"] as? [String: Any] ?? [:]),
+      itemId: number(json["itemId"]),
+      activeTrackIds: (json["activeTrackIds"] as? [Any])?.compactMap { number($0) },
+      autoplay: json["autoplay"] as? Bool,
+      playbackDuration: number(json["playbackDuration"]),
+      preloadTime: number(json["preloadTime"]),
+      startTime: number(json["startTime"]),
+      customData: anyMap(json["customData"])
+    )
+  }
+
+  static func mediaQueueContainerMetadata(
+    from json: [String: Any]
+  ) -> MediaQueueContainerMetadata {
+    return MediaQueueContainerMetadata(
+      containerType: (json["containerType"] as? String).flatMap {
+        MediaQueueContainerType(fromString: $0)
+      },
+      title: json["title"] as? String,
+      containerDuration: number(json["containerDuration"]),
+      containerImages: (json["containerImages"] as? [[String: Any]])?.map { webImage(from: $0) },
+      sections: (json["sections"] as? [[String: Any]])?.map { mediaMetadata(from: $0) }
+    )
+  }
+
+  static func mediaQueueData(from json: [String: Any]) -> MediaQueueData {
+    return MediaQueueData(
+      id: json["id"] as? String,
+      name: json["name"] as? String,
+      entity: json["entity"] as? String,
+      type: (json["type"] as? String).flatMap { MediaQueueType(fromString: $0) },
+      repeatMode: (json["repeatMode"] as? String).flatMap { MediaRepeatMode(fromString: $0) },
+      containerMetadata: (json["containerMetadata"] as? [String: Any]).map {
+        mediaQueueContainerMetadata(from: $0)
+      },
+      items: (json["items"] as? [[String: Any]])?.map { mediaQueueItem(from: $0) },
+      startIndex: number(json["startIndex"]),
+      startTime: number(json["startTime"])
+    )
+  }
+
+  static func mediaLoadRequest(from json: [String: Any]) -> MediaLoadRequest {
+    return MediaLoadRequest(
+      mediaInfo: (json["mediaInfo"] as? [String: Any]).map { mediaInfo(from: $0) },
+      queueData: (json["queueData"] as? [String: Any]).map { mediaQueueData(from: $0) },
+      autoplay: json["autoplay"] as? Bool,
+      startTime: number(json["startTime"]),
+      playbackRate: number(json["playbackRate"]),
+      credentials: json["credentials"] as? String,
+      credentialsType: json["credentialsType"] as? String,
+      customData: anyMap(json["customData"])
+    )
+  }
+
+  static func device(from json: [String: Any]) -> Device {
+    let caps =
+      (json["capabilities"] as? [String])?.compactMap { DeviceCapability(fromString: $0) } ?? []
+    let icons = (json["icons"] as? [[String: Any]])?.map { webImage(from: $0) } ?? []
+    return Device(
+      capabilities: caps,
+      deviceId: json["deviceId"] as? String ?? "",
+      deviceVersion: json["deviceVersion"] as? String ?? "",
+      friendlyName: json["friendlyName"] as? String ?? "",
+      icons: icons,
+      ipAddress: json["ipAddress"] as? String ?? "",
+      isOnLocalNetwork: json["isOnLocalNetwork"] as? Bool,
+      modelName: json["modelName"] as? String ?? ""
+    )
+  }
+
+  static func applicationMetadata(from json: [String: Any]) -> ApplicationMetadata {
+    return ApplicationMetadata(
+      applicationId: json["applicationId"] as? String ?? "",
+      images: (json["images"] as? [[String: Any]])?.map { webImage(from: $0) } ?? [],
+      name: json["name"] as? String ?? "",
+      namespaces: (json["namespaces"] as? [String]) ?? []
+    )
+  }
+
+  static func mediaLiveSeekableRange(from json: [String: Any]) -> MediaLiveSeekableRange {
+    return MediaLiveSeekableRange(
+      startTime: number(json["startTime"]) ?? 0,
+      endTime: number(json["endTime"]) ?? 0,
+      isMovingWindow: json["isMovingWindow"] as? Bool ?? false,
+      isLiveDone: json["isLiveDone"] as? Bool ?? false
+    )
+  }
+
+  static func mediaStatus(from json: [String: Any]) -> MediaStatus {
+    return MediaStatus(
+      mediaInfo: (json["mediaInfo"] as? [String: Any]).map { mediaInfo(from: $0) },
+      playerState: (json["playerState"] as? String).flatMap { MediaPlayerState(fromString: $0) },
+      idleReason: (json["idleReason"] as? String).flatMap { MediaPlayerIdleReason(fromString: $0) },
+      streamPosition: number(json["streamPosition"]) ?? 0,
+      playbackRate: number(json["playbackRate"]) ?? 0,
+      volume: number(json["volume"]) ?? 0,
+      isMuted: json["isMuted"] as? Bool ?? false,
+      activeTrackIds: (json["activeTrackIds"] as? [Any])?.compactMap { number($0) },
+      videoInfo: (json["videoInfo"] as? [String: Any]).map { videoInfo(from: $0) },
+      liveSeekableRange: (json["liveSeekableRange"] as? [String: Any]).map {
+        mediaLiveSeekableRange(from: $0)
+      },
+      queueItems: (json["queueItems"] as? [[String: Any]])?.map { mediaQueueItem(from: $0) } ?? [],
+      currentItemId: number(json["currentItemId"]),
+      loadingItemId: number(json["loadingItemId"]),
+      preloadedItemId: number(json["preloadedItemId"]),
+      queueRepeatMode: (json["queueRepeatMode"] as? String).flatMap {
+        MediaRepeatMode(fromString: $0)
+      },
+      customData: anyMap(json["customData"])
+    )
+  }
+
   // MARK: - Helpers
 
   static func number(_ value: Any?) -> Double? {

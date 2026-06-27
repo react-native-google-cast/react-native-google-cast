@@ -1,0 +1,25 @@
+{
+  "$comment": "iOS CANNOT pin these values: GCKApplicationMetadata's default initializer traps at runtime, so the iOS suite does not run this corpus. expectedRoundTrip here is a DRAFT — Android must author/verify it. iOS implements only GCKApplicationMetadata→ApplicationMetadata.",
+  "fixtures": [
+    {
+      "name": "full",
+      "input": {
+        "applicationId": "ABCD1234",
+        "name": "My Cast App",
+        "images": [{ "url": "https://example.com/app-icon.png", "width": 256, "height": 256 }],
+        "namespaces": ["urn:x-cast:com.example.custom", "urn:x-cast:com.google.cast.media"]
+      },
+      "expectedRoundTrip": {
+        "applicationId": "ABCD1234",
+        "name": "My Cast App",
+        "images": [{ "url": "https://example.com/app-icon.png", "width": 256, "height": 256 }],
+        "namespaces": ["urn:x-cast:com.example.custom", "urn:x-cast:com.google.cast.media"]
+      }
+    },
+    {
+      "name": "minimal",
+      "input": { "applicationId": "X1", "name": "App" },
+      "expectedRoundTrip": { "applicationId": "X1", "name": "App", "images": [], "namespaces": [] }
+    }
+  ]
+}

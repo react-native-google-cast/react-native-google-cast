@@ -8,21 +8,30 @@ import NitroModules
 /// round-trip identity and cross-platform (iOS == Android) equality. Converters live in
 /// one-per-type files under `Converters/`; this object only wires them together.
 ///
-/// Methods whose converters are not yet written throw `notImplemented(_:)` so the module
-/// keeps compiling while the converter set is filled in (fan-out work).
+/// `PlayServicesState` has no iOS GCK counterpart (Android-only), so its round-trip is an
+/// identity pass-through; every other type runs through its real struct↔GCK converters.
 final class HybridCastDebug: HybridCastDebugSpec {
   func roundTripWebImage(value: WebImage) throws -> WebImage {
     value.toGckImage().toWebImage()
   }
 
+  /// `GCKDevice` is receive-only and cannot be constructed on iOS — its `init` is
+  /// `NS_UNAVAILABLE`, it blocks ivar mutation, and `deviceID` has no settable backing ivar.
+  /// The GCK→struct direction (`GCKDevice+toDevice.swift`) is implemented but UNVERIFIED on iOS:
+  /// no `GCKDevice` instance can be obtained in XCTest, so neither direction has runtime
+  /// coverage here. Android (which constructs `Device` natively) must verify the mapping.
   func roundTripDevice(value: Device) throws -> Device {
-    throw Self.notImplemented("Device")
+    throw Self.notConstructibleOnIos("Device", "GCKDevice")
   }
 
+  /// `GCKApplicationMetadata` is receive-only and cannot be constructed on iOS — its default
+  /// initializer traps at runtime. The GCK→struct direction
+  /// (`GCKApplicationMetadata+toApplicationMetadata.swift`) is implemented but UNVERIFIED on iOS
+  /// (no instance obtainable in XCTest); Android must verify the mapping.
   func roundTripApplicationMetadata(
     value: ApplicationMetadata
   ) throws -> ApplicationMetadata {
-    throw Self.notImplemented("ApplicationMetadata")
+    throw Self.notConstructibleOnIos("ApplicationMetadata", "GCKApplicationMetadata")
   }
 
   func roundTripMediaMetadata(value: MediaMetadata) throws -> MediaMetadata {
@@ -30,76 +39,84 @@ final class HybridCastDebug: HybridCastDebugSpec {
   }
 
   func roundTripMediaTrack(value: MediaTrack) throws -> MediaTrack {
-    throw Self.notImplemented("MediaTrack")
+    value.toGckMediaTrack().toMediaTrack()
   }
 
   func roundTripTextTrackStyle(value: TextTrackStyle) throws -> TextTrackStyle {
-    throw Self.notImplemented("TextTrackStyle")
+    value.toGckTextTrackStyle().toTextTrackStyle()
   }
 
   func roundTripVideoInfo(value: VideoInfo) throws -> VideoInfo {
-    throw Self.notImplemented("VideoInfo")
+    value.toGckVideoInfo().toVideoInfo()
   }
 
   func roundTripMediaInfo(value: MediaInfo) throws -> MediaInfo {
-    throw Self.notImplemented("MediaInfo")
+    value.toGckMediaInformation().toMediaInfo()
   }
 
   func roundTripMediaLiveSeekableRange(
     value: MediaLiveSeekableRange
   ) throws -> MediaLiveSeekableRange {
-    throw Self.notImplemented("MediaLiveSeekableRange")
+    value.toGckMediaLiveSeekableRange().toMediaLiveSeekableRange()
   }
 
   func roundTripMediaQueueItem(value: MediaQueueItem) throws -> MediaQueueItem {
-    throw Self.notImplemented("MediaQueueItem")
+    value.toGckMediaQueueItem().toMediaQueueItem()
   }
 
   func roundTripMediaQueueContainerMetadata(
     value: MediaQueueContainerMetadata
   ) throws -> MediaQueueContainerMetadata {
-    throw Self.notImplemented("MediaQueueContainerMetadata")
+    value.toGckMediaQueueContainerMetadata().toMediaQueueContainerMetadata()
   }
 
   func roundTripMediaQueueData(value: MediaQueueData) throws -> MediaQueueData {
-    throw Self.notImplemented("MediaQueueData")
+    value.toGckMediaQueueData().toMediaQueueData()
   }
 
   func roundTripMediaLoadRequest(
     value: MediaLoadRequest
   ) throws -> MediaLoadRequest {
-    throw Self.notImplemented("MediaLoadRequest")
+    value.toGckMediaLoadRequestData().toMediaLoadRequest()
   }
 
   func roundTripMediaSeekOptions(
     value: MediaSeekOptions
   ) throws -> MediaSeekOptions {
-    throw Self.notImplemented("MediaSeekOptions")
+    value.toGckMediaSeekOptions().toMediaSeekOptions()
   }
 
   func roundTripMediaStatus(value: MediaStatus) throws -> MediaStatus {
-    throw Self.notImplemented("MediaStatus")
+    value.toGckMediaStatus().toMediaStatus()
   }
 
   func roundTripActiveInputState(
     value: ActiveInputState
   ) throws -> ActiveInputState {
-    throw Self.notImplemented("ActiveInputState")
+    value.toGckActiveInputStatus().toActiveInputState()
   }
 
   func roundTripStandbyState(value: StandbyState) throws -> StandbyState {
-    throw Self.notImplemented("StandbyState")
+    value.toGckStandbyStatus().toStandbyState()
   }
 
+  /// iOS has no Google Play Services concept, so `PlayServicesState` has no GCK counterpart;
+  /// this is an Android-only type. The value passes through unchanged (no GCK conversion
+  /// exists to exercise on iOS).
   func roundTripPlayServicesState(
     value: PlayServicesState
   ) throws -> PlayServicesState {
-    throw Self.notImplemented("PlayServicesState")
+    value
   }
 
-  private static func notImplemented(_ type: String) -> RuntimeError {
+  /// Signals a receive-only GCK type whose iOS class cannot be constructed (so the synthetic
+  /// `struct → GCK → struct` round-trip cannot run on iOS). The forward, app-used direction
+  /// (`GCK<type> → struct`) is still implemented.
+  private static func notConstructibleOnIos(_ type: String, _ gckType: String) -> RuntimeError {
     RuntimeError.error(
-      withMessage: "CastDebug.roundTrip\(type): converter not yet implemented"
+      withMessage:
+        "CastDebug.roundTrip\(type): \(gckType) is receive-only on iOS and cannot be constructed; "
+        + "only the \(gckType)→\(type) direction is available."
     )
   }
 }

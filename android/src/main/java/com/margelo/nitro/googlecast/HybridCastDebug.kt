@@ -2,7 +2,41 @@ package com.margelo.nitro.googlecast
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.googlecast.converters.fromGckActiveInputState
+import com.margelo.nitro.googlecast.converters.fromGckConnectionResult
+import com.margelo.nitro.googlecast.converters.fromGckStandbyState
+import com.margelo.nitro.googlecast.converters.toApplicationMetadata
+import com.margelo.nitro.googlecast.converters.toDevice
+import com.margelo.nitro.googlecast.converters.toGckActiveInputState
+import com.margelo.nitro.googlecast.converters.toGckApplicationMetadata
+import com.margelo.nitro.googlecast.converters.toGckCastDevice
+import com.margelo.nitro.googlecast.converters.toGckConnectionResult
+import com.margelo.nitro.googlecast.converters.toGckMediaInfo
+import com.margelo.nitro.googlecast.converters.toGckMediaLiveSeekableRange
+import com.margelo.nitro.googlecast.converters.toGckMediaLoadRequestData
+import com.margelo.nitro.googlecast.converters.toGckMediaMetadata
+import com.margelo.nitro.googlecast.converters.toGckMediaQueueContainerMetadata
+import com.margelo.nitro.googlecast.converters.toGckMediaQueueData
+import com.margelo.nitro.googlecast.converters.toGckMediaQueueItem
+import com.margelo.nitro.googlecast.converters.toGckMediaSeekOptions
+import com.margelo.nitro.googlecast.converters.toGckMediaStatus
+import com.margelo.nitro.googlecast.converters.toGckMediaTrack
+import com.margelo.nitro.googlecast.converters.toGckStandbyState
+import com.margelo.nitro.googlecast.converters.toGckTextTrackStyle
+import com.margelo.nitro.googlecast.converters.toGckVideoInfo
 import com.margelo.nitro.googlecast.converters.toGckWebImage
+import com.margelo.nitro.googlecast.converters.toMediaInfo
+import com.margelo.nitro.googlecast.converters.toMediaLiveSeekableRange
+import com.margelo.nitro.googlecast.converters.toMediaLoadRequest
+import com.margelo.nitro.googlecast.converters.toMediaMetadata
+import com.margelo.nitro.googlecast.converters.toMediaQueueContainerMetadata
+import com.margelo.nitro.googlecast.converters.toMediaQueueData
+import com.margelo.nitro.googlecast.converters.toMediaQueueItem
+import com.margelo.nitro.googlecast.converters.toMediaSeekOptions
+import com.margelo.nitro.googlecast.converters.toMediaStatus
+import com.margelo.nitro.googlecast.converters.toMediaTrack
+import com.margelo.nitro.googlecast.converters.toTextTrackStyle
+import com.margelo.nitro.googlecast.converters.toVideoInfo
 import com.margelo.nitro.googlecast.converters.toWebImage
 
 /**
@@ -12,9 +46,6 @@ import com.margelo.nitro.googlecast.converters.toWebImage
  * `struct → GCK → struct` so the shared golden-fixture parity suite (T1) can assert
  * round-trip identity and cross-platform (iOS == Android) equality. Converters live in
  * one-per-type files under `converters/`; this object only wires them together.
- *
- * Methods whose converters are not yet written throw so the module keeps compiling while
- * the converter set is filled in (fan-out work).
  */
 @DoNotStrip
 @Keep
@@ -22,65 +53,63 @@ class HybridCastDebug : HybridCastDebugSpec() {
   override fun roundTripWebImage(value: WebImage): WebImage =
     value.toGckWebImage().toWebImage()
 
-  override fun roundTripDevice(value: Device): Device = notImplemented("Device")
+  override fun roundTripDevice(value: Device): Device =
+    value.toGckCastDevice().toDevice()
 
   override fun roundTripApplicationMetadata(
     value: ApplicationMetadata
-  ): ApplicationMetadata = notImplemented("ApplicationMetadata")
+  ): ApplicationMetadata = value.toGckApplicationMetadata().toApplicationMetadata()
 
   override fun roundTripMediaMetadata(value: MediaMetadata): MediaMetadata =
-    notImplemented("MediaMetadata")
+    value.toGckMediaMetadata().toMediaMetadata()
 
   override fun roundTripMediaTrack(value: MediaTrack): MediaTrack =
-    notImplemented("MediaTrack")
+    value.toGckMediaTrack().toMediaTrack()
 
   override fun roundTripTextTrackStyle(value: TextTrackStyle): TextTrackStyle =
-    notImplemented("TextTrackStyle")
+    value.toGckTextTrackStyle().toTextTrackStyle()
 
   override fun roundTripVideoInfo(value: VideoInfo): VideoInfo =
-    notImplemented("VideoInfo")
+    value.toGckVideoInfo().toVideoInfo()
 
   override fun roundTripMediaInfo(value: MediaInfo): MediaInfo =
-    notImplemented("MediaInfo")
+    value.toGckMediaInfo().toMediaInfo()
 
   override fun roundTripMediaLiveSeekableRange(
     value: MediaLiveSeekableRange
-  ): MediaLiveSeekableRange = notImplemented("MediaLiveSeekableRange")
+  ): MediaLiveSeekableRange = value.toGckMediaLiveSeekableRange().toMediaLiveSeekableRange()
 
   override fun roundTripMediaQueueItem(value: MediaQueueItem): MediaQueueItem =
-    notImplemented("MediaQueueItem")
+    value.toGckMediaQueueItem().toMediaQueueItem()
 
   override fun roundTripMediaQueueContainerMetadata(
     value: MediaQueueContainerMetadata
-  ): MediaQueueContainerMetadata = notImplemented("MediaQueueContainerMetadata")
+  ): MediaQueueContainerMetadata =
+    value.toGckMediaQueueContainerMetadata().toMediaQueueContainerMetadata()
 
   override fun roundTripMediaQueueData(value: MediaQueueData): MediaQueueData =
-    notImplemented("MediaQueueData")
+    value.toGckMediaQueueData().toMediaQueueData()
 
   override fun roundTripMediaLoadRequest(
     value: MediaLoadRequest
-  ): MediaLoadRequest = notImplemented("MediaLoadRequest")
+  ): MediaLoadRequest = value.toGckMediaLoadRequestData().toMediaLoadRequest()
 
   override fun roundTripMediaSeekOptions(
     value: MediaSeekOptions
-  ): MediaSeekOptions = notImplemented("MediaSeekOptions")
+  ): MediaSeekOptions = value.toGckMediaSeekOptions().toMediaSeekOptions()
 
   override fun roundTripMediaStatus(value: MediaStatus): MediaStatus =
-    notImplemented("MediaStatus")
+    value.toGckMediaStatus().toMediaStatus()
 
   override fun roundTripActiveInputState(
     value: ActiveInputState
-  ): ActiveInputState = notImplemented("ActiveInputState")
+  ): ActiveInputState = ActiveInputState.fromGckActiveInputState(value.toGckActiveInputState())
 
   override fun roundTripStandbyState(value: StandbyState): StandbyState =
-    notImplemented("StandbyState")
+    StandbyState.fromGckStandbyState(value.toGckStandbyState())
 
   override fun roundTripPlayServicesState(
     value: PlayServicesState
-  ): PlayServicesState = notImplemented("PlayServicesState")
-
-  private fun notImplemented(type: String): Nothing =
-    throw UnsupportedOperationException(
-      "CastDebug.roundTrip$type: converter not yet implemented"
-    )
+  ): PlayServicesState =
+    PlayServicesState.fromGckConnectionResult(value.toGckConnectionResult())
 }

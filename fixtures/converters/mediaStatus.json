@@ -1,0 +1,81 @@
+{
+  "fixtures": [
+    {
+      "name": "playing",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/v.mp4", "streamType": "buffered", "streamDuration": 300 },
+        "playerState": "playing",
+        "streamPosition": 42.5,
+        "playbackRate": 1,
+        "volume": 0.8,
+        "isMuted": false,
+        "activeTrackIds": [1],
+        "videoInfo": { "hdrType": "HDR", "width": 1920, "height": 1080 },
+        "queueRepeatMode": "all"
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/v.mp4", "streamType": "buffered", "streamDuration": 300 },
+        "playerState": "playing",
+        "streamPosition": 42.5,
+        "playbackRate": 1,
+        "volume": 0.8,
+        "isMuted": false,
+        "activeTrackIds": [1],
+        "videoInfo": { "hdrType": "HDR", "width": 1920, "height": 1080 },
+        "queueRepeatMode": "all"
+      }
+    },
+    {
+      "name": "idle",
+      "$comment": "idleReason 'None', playerState 'Unknown', queueRepeatMode 'Unchanged' map to nil; item-id fields default to the invalid sentinel and come back nil.",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 },
+        "playerState": "idle",
+        "idleReason": "finished",
+        "streamPosition": 0,
+        "playbackRate": 0,
+        "volume": 1,
+        "isMuted": true
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 },
+        "playerState": "idle",
+        "idleReason": "finished",
+        "streamPosition": 0,
+        "playbackRate": 0,
+        "volume": 1,
+        "isMuted": true
+      }
+    },
+    {
+      "name": "with-queue-and-live",
+      "$comment": "Exercises queueItems and liveSeekableRange round-trip through KVC construction.",
+      "input": {
+        "mediaInfo": { "contentUrl": "https://example.com/live.m3u8", "streamType": "live", "streamDuration": 0 },
+        "playerState": "buffering",
+        "streamPosition": 10,
+        "playbackRate": 1,
+        "volume": 0.5,
+        "isMuted": false,
+        "liveSeekableRange": { "startTime": 0, "endTime": 120, "isMovingWindow": true, "isLiveDone": false },
+        "queueItems": [
+          { "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 60 }, "autoplay": true, "preloadTime": 0 }
+        ],
+        "currentItemId": 3
+      },
+      "expectedRoundTrip": {
+        "mediaInfo": { "contentUrl": "https://example.com/live.m3u8", "streamType": "live", "streamDuration": 0 },
+        "playerState": "buffering",
+        "streamPosition": 10,
+        "playbackRate": 1,
+        "volume": 0.5,
+        "isMuted": false,
+        "liveSeekableRange": { "startTime": 0, "endTime": 120, "isMovingWindow": true, "isLiveDone": false },
+        "queueItems": [
+          { "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 60 }, "autoplay": true, "preloadTime": 0 }
+        ],
+        "currentItemId": 3
+      }
+    }
+  ]
+}

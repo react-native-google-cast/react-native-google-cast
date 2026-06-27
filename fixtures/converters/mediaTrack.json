@@ -1,0 +1,75 @@
+{
+  "fixtures": [
+    {
+      "name": "audio-full",
+      "input": {
+        "id": 1,
+        "type": "audio",
+        "contentId": "track-1",
+        "contentType": "audio/mp4",
+        "language": "en-US",
+        "name": "English",
+        "customData": { "bitrate": 256, "label": "stereo" }
+      },
+      "expectedRoundTrip": {
+        "id": 1,
+        "type": "audio",
+        "contentId": "track-1",
+        "contentType": "audio/mp4",
+        "language": "en-US",
+        "name": "English",
+        "customData": { "bitrate": 256, "label": "stereo" }
+      }
+    },
+    {
+      "name": "text-subtitles",
+      "input": {
+        "id": 2,
+        "type": "text",
+        "contentId": "subs-en",
+        "contentType": "text/vtt",
+        "language": "en",
+        "name": "English subtitles",
+        "subtype": "subtitles"
+      },
+      "expectedRoundTrip": {
+        "id": 2,
+        "type": "text",
+        "contentId": "subs-en",
+        "contentType": "text/vtt",
+        "language": "en",
+        "name": "English subtitles",
+        "subtype": "subtitles"
+      }
+    },
+    {
+      "name": "video-minimal",
+      "$comment": "contentType is required by GCK; an absent contentType is sent as \"\" and comes back nil (cross-platform: Android must reconcile the empty-vs-absent rule).",
+      "input": {
+        "id": 3,
+        "type": "video",
+        "contentType": "video/mp4"
+      },
+      "expectedRoundTrip": {
+        "id": 3,
+        "type": "video",
+        "contentType": "video/mp4"
+      }
+    },
+    {
+      "name": "captions-subtype",
+      "input": {
+        "id": 4,
+        "type": "text",
+        "contentType": "text/vtt",
+        "subtype": "captions"
+      },
+      "expectedRoundTrip": {
+        "id": 4,
+        "type": "text",
+        "contentType": "text/vtt",
+        "subtype": "captions"
+      }
+    }
+  ]
+}

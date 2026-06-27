@@ -1,0 +1,56 @@
+{
+  "fixtures": [
+    {
+      "name": "full",
+      "input": {
+        "contentUrl": "https://example.com/video.m3u8",
+        "contentId": "vid-1",
+        "contentType": "application/x-mpegURL",
+        "entity": "entity://vid-1",
+        "streamType": "buffered",
+        "streamDuration": 600.5,
+        "metadata": { "type": "movie", "title": "Big Buck Bunny" },
+        "mediaTracks": [
+          { "id": 1, "type": "audio", "contentType": "audio/mp4", "language": "en", "name": "English" }
+        ],
+        "hlsSegmentFormat": "AAC",
+        "hlsVideoSegmentFormat": "FMP4",
+        "customData": { "drm": "widevine" }
+      },
+      "expectedRoundTrip": {
+        "contentUrl": "https://example.com/video.m3u8",
+        "contentId": "vid-1",
+        "contentType": "application/x-mpegURL",
+        "entity": "entity://vid-1",
+        "streamType": "buffered",
+        "streamDuration": 600.5,
+        "metadata": { "type": "movie", "title": "Big Buck Bunny" },
+        "mediaTracks": [
+          { "id": 1, "type": "audio", "contentType": "audio/mp4", "language": "en", "name": "English" }
+        ],
+        "hlsSegmentFormat": "AAC",
+        "hlsVideoSegmentFormat": "FMP4",
+        "customData": { "drm": "widevine" }
+      }
+    },
+    {
+      "name": "live",
+      "input": {
+        "contentUrl": "https://example.com/live.m3u8",
+        "streamType": "live",
+        "streamDuration": 0
+      },
+      "expectedRoundTrip": {
+        "contentUrl": "https://example.com/live.m3u8",
+        "streamType": "live",
+        "streamDuration": 0
+      }
+    },
+    {
+      "name": "minimal",
+      "$comment": "streamType is non-optional in GCK; the GCKMediaInformationBuilder default is Buffered (pinned from observed output), not None. streamDuration default observed as 0.",
+      "input": { "contentUrl": "https://example.com/a.mp3" },
+      "expectedRoundTrip": { "contentUrl": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "fixtures": [
+    {
+      "name": "hdr-1080p",
+      "input": { "hdrType": "HDR", "width": 1920, "height": 1080 },
+      "expectedRoundTrip": { "hdrType": "HDR", "width": 1920, "height": 1080 }
+    },
+    {
+      "name": "sdr-4k",
+      "input": { "hdrType": "SDR", "width": 3840, "height": 2160 },
+      "expectedRoundTrip": { "hdrType": "SDR", "width": 3840, "height": 2160 }
+    },
+    {
+      "name": "minimal",
+      "$comment": "width/height are non-optional NSUInteger in GCK; absent values are written as 0. hdrType default is pinned from observed output (GCKVideoInfo() default).",
+      "input": {},
+      "expectedRoundTrip": { "hdrType": "SDR", "width": 0, "height": 0 }
+    }
+  ]
+}
