@@ -75,11 +75,14 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('example/ios/Podfile.lock') }}
           restore-keys: ${{ runner.os }}-pods-
 
+      # --deployment fails the build if a fresh install would mutate Podfile.lock, so the
+      # committed lockfile must match what bundler-resolved CocoaPods (1.15.2, pinned via the
+      # example/Gemfile xcodeproj < 1.26 constraint) produces. Keep the two in sync.
       - name: Pod install
         working-directory: example/ios
         env:
           BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
-        run: bundle exec pod install
+        run: bundle exec pod install --deployment
 
       # Device names differ by Xcode/runner image, so resolve a concrete simulator at runtime
       # instead of hardcoding one. The converter tests are device-agnostic — any booted iPhone
