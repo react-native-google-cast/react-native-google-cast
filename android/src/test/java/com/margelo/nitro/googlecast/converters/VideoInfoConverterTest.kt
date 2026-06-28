@@ -54,10 +54,10 @@ class VideoInfoConverterTest {
       // Pin GCK side by constant name (platform-specific int, not in corpus).
       if (inputJson.has("hdrType")) {
         val hdrName = inputJson.getString("hdrType")
-        val expectedGck = hdrGckConst[hdrName]
-        if (expectedGck != null) {
-          assertEquals("[$name] gck hdrType", expectedGck, gck.hdrType)
+        val expectedGck = checkNotNull(hdrGckConst[hdrName]) {
+          "Unsupported hdrType fixture: $hdrName"
         }
+        assertEquals("[$name] gck hdrType", expectedGck, gck.hdrType)
       }
       assertEquals("[$name] gck width", (input.width ?: 0.0).toInt(), gck.width)
       assertEquals("[$name] gck height", (input.height ?: 0.0).toInt(), gck.height)
@@ -85,10 +85,10 @@ class VideoInfoConverterTest {
     height = if (json.has("height")) json.getDouble("height") else null
   )
 
-  private fun hdrTypeFromString(s: String): VideoHdrType? = when (s) {
+  private fun hdrTypeFromString(s: String): VideoHdrType = when (s) {
     "SDR" -> VideoHdrType.SDR
     "DV" -> VideoHdrType.DV
     "HDR" -> VideoHdrType.HDR
-    else -> null
+    else -> error("Unsupported hdrType fixture: $s")
   }
 }

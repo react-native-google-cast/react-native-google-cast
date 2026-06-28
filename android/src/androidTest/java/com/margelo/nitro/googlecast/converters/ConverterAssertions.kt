@@ -26,17 +26,27 @@ internal object ConverterAssertions {
     val expectedKeys = expected.getAllKeys().toSet()
     assertEquals("$ctx: customData keys", expectedKeys, actualKeys)
     for (key in expectedKeys.intersect(actualKeys)) {
+      val expectedNumber = numericValue(expected, key)
+      val actualNumber = numericValue(actual, key)
       when {
+        expectedNumber != null || actualNumber != null -> {
+          assertNotNull("$ctx customData[$key]: expected numeric", expectedNumber)
+          assertNotNull("$ctx customData[$key]: actual numeric", actualNumber)
+          assertEquals("$ctx customData[$key]", expectedNumber!!, actualNumber!!, 1e-6)
+        }
         expected.isString(key) ->
           assertEquals("$ctx customData[$key]", expected.getString(key), actual.getString(key))
         expected.isBoolean(key) ->
           assertEquals("$ctx customData[$key]", expected.getBoolean(key), actual.getBoolean(key))
-        expected.isDouble(key) ->
-          assertEquals("$ctx customData[$key]", expected.getDouble(key), actual.getDouble(key), 1e-6)
-        expected.isInt64(key) ->
-          assertEquals("$ctx customData[$key]", expected.getInt64(key), actual.getInt64(key))
       }
     }
+  }
+
+  /** Normalizes a numeric AnyMap entry (Int64 or Double) to Double; null if not numeric. */
+  private fun numericValue(map: AnyMap, key: String): Double? = when {
+    map.isDouble(key) -> map.getDouble(key)
+    map.isInt64(key) -> map.getInt64(key).toDouble()
+    else -> null
   }
 
   /** Builds an AnyMap from a JSONObject (flat scalars only, matching the corpus format). */

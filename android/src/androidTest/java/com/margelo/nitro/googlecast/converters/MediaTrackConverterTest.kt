@@ -78,7 +78,7 @@ class MediaTrackConverterTest {
     "audio" -> MediaTrackType.AUDIO
     "text" -> MediaTrackType.TEXT
     "video" -> MediaTrackType.VIDEO
-    else -> MediaTrackType.AUDIO
+    else -> error("Unsupported mediaTrack.type: $s")
   }
 
   private fun subtypeFromString(s: String): MediaTrackSubtype? = when (s) {
@@ -87,6 +87,6 @@ class MediaTrackConverterTest {
     "descriptions" -> MediaTrackSubtype.DESCRIPTIONS
     "metadata" -> MediaTrackSubtype.METADATA
     "subtitles" -> MediaTrackSubtype.SUBTITLES
-    else -> null
+    else -> error("Unsupported mediaTrack.subtype: $s")
   }
 }
