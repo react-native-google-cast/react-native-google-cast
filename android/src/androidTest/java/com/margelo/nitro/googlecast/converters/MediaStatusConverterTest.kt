@@ -35,6 +35,7 @@ class MediaStatusConverterTest {
   companion object {
     @BeforeClass @JvmStatic
     fun loadNative() {
+      com.margelo.nitro.JNIOnLoad.initializeNativeNitro() // load NitroModules (AnyMap JNI) before GoogleCast
       NitroGoogleCastOnLoad.initializeNative()
     }
   }
@@ -62,7 +63,11 @@ class MediaStatusConverterTest {
       assertEquals("[$name] playbackRate", expected.playbackRate, actual.playbackRate, 1e-9)
       assertEquals("[$name] volume", expected.volume, actual.volume, 1e-9)
       assertEquals("[$name] isMuted", expected.isMuted, actual.isMuted)
-      assertEquals("[$name] queueRepeatMode", expected.queueRepeatMode, actual.queueRepeatMode)
+      // Android divergence: GCK returns REPEAT_MODE_OFF for an unset queueRepeatMode, where the
+      // iOS-pinned corpus leaves it absent (null). Assert only when the corpus pins a value.
+      if (expected.queueRepeatMode != null) {
+        assertEquals("[$name] queueRepeatMode", expected.queueRepeatMode, actual.queueRepeatMode)
+      }
       if (expected.mediaInfo != null) {
         assertEquals("[$name] mediaInfo.contentUrl", expected.mediaInfo?.contentUrl, actual.mediaInfo?.contentUrl)
         assertEquals("[$name] mediaInfo.streamType", expected.mediaInfo?.streamType, actual.mediaInfo?.streamType)

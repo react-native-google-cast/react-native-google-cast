@@ -28,6 +28,7 @@ class MediaTrackConverterTest {
   companion object {
     @BeforeClass @JvmStatic
     fun loadNative() {
+      com.margelo.nitro.JNIOnLoad.initializeNativeNitro() // load NitroModules (AnyMap JNI) before GoogleCast
       NitroGoogleCastOnLoad.initializeNative()
     }
   }
