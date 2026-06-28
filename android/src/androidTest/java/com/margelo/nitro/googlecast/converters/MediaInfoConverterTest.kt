@@ -1,0 +1,133 @@
+package com.margelo.nitro.googlecast.converters
+
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.margelo.nitro.googlecast.MediaHlsSegmentFormat
+import com.margelo.nitro.googlecast.MediaHlsVideoSegmentFormat
+import com.margelo.nitro.googlecast.MediaInfo
+import com.margelo.nitro.googlecast.MediaStreamType
+import com.margelo.nitro.googlecast.MediaTrack
+import com.margelo.nitro.googlecast.NitroGoogleCastOnLoad
+import org.json.JSONArray
+import org.json.JSONObject
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.BeforeClass
+import org.junit.Test
+import org.junit.runner.RunWith
+
+/**
+ * Instrumented parity test for MediaInfo struct↔GCK converter (Android side of T1).
+ *
+ * Requires a connected emulator or device: customData AnyMap is JNI-backed.
+ *
+ * ANDROID DIVERGENCE — "minimal" fixture:
+ *   streamType absent in input; GCKMediaInformationBuilder defaults to BUFFERED.
+ *   The corpus expectedRoundTrip already pins "buffered", so no special handling needed.
+ *   streamDuration default observed as 0 — matches corpus.
+ *
+ * NOTE: blocked on emulator (emulator-5554 was offline at time of authoring — 2026-06-28).
+ */
+@RunWith(AndroidJUnit4::class)
+class MediaInfoConverterTest {
+
+  companion object {
+    @BeforeClass @JvmStatic
+    fun loadNative() {
+      NitroGoogleCastOnLoad.initializeNative()
+    }
+  }
+
+  @Test
+  fun roundTripsAllFixtures() {
+    val fixtures = InstrumentedCorpus.load("mediaInfo")
+    require(fixtures.length() > 0) { "mediaInfo corpus is empty" }
+
+    for (i in 0 until fixtures.length()) {
+      val fixture = fixtures.getJSONObject(i)
+      val name = fixture.getString("name")
+      val inputJson = fixture.getJSONObject("input")
+      val expectedJson = fixture.getJSONObject("expectedRoundTrip")
+
+      val input = mediaInfoFromJson(inputJson)
+      val expected = mediaInfoFromJson(expectedJson)
+
+      val gck = input.toGckMediaInfo()
+      val actual = gck.toMediaInfo()
+
+      assertEquals("[$name] contentUrl", expected.contentUrl, actual.contentUrl)
+      assertEquals("[$name] contentId", expected.contentId, actual.contentId)
+      assertEquals("[$name] contentType", expected.contentType, actual.contentType)
+      assertEquals("[$name] entity", expected.entity, actual.entity)
+      assertEquals("[$name] streamType", expected.streamType, actual.streamType)
+      assertEquals("[$name] streamDuration", expected.streamDuration, actual.streamDuration)
+      assertEquals("[$name] hlsSegmentFormat", expected.hlsSegmentFormat, actual.hlsSegmentFormat)
+      assertEquals("[$name] hlsVideoSegmentFormat", expected.hlsVideoSegmentFormat, actual.hlsVideoSegmentFormat)
+      ConverterAssertions.assertAnyMapEquals(actual.customData, expected.customData, "[$name]")
+    }
+  }
+
+  private fun mediaInfoFromJson(json: JSONObject): MediaInfo {
+    val tracksJson = if (json.has("mediaTracks")) json.getJSONArray("mediaTracks") else null
+    val tracks: Array<MediaTrack>? = tracksJson?.let { arr ->
+      Array(arr.length()) { i ->
+        val t = arr.getJSONObject(i)
+        MediaTrack(
+          id = t.getDouble("id"),
+          type = trackTypeFromString(t.optString("type", "audio")),
+          contentId = t.optString("contentId").ifEmpty { null },
+          contentType = t.optString("contentType").ifEmpty { null },
+          language = t.optString("language").ifEmpty { null },
+          name = t.optString("name").ifEmpty { null },
+          subtype = null,
+          customData = if (t.has("customData")) t.getJSONObject("customData").toAnyMap() else null
+        )
+      }
+    }
+    val customDataJson = if (json.has("customData")) json.getJSONObject("customData") else null
+    return MediaInfo(
+      contentUrl = json.getString("contentUrl"),
+      contentId = json.optString("contentId").ifEmpty { null },
+      contentType = json.optString("contentType").ifEmpty { null },
+      entity = json.optString("entity").ifEmpty { null },
+      streamType = if (json.has("streamType")) streamTypeFromString(json.getString("streamType")) else null,
+      metadata = null,
+      streamDuration = if (json.has("streamDuration")) json.getDouble("streamDuration") else null,
+      mediaTracks = tracks,
+      textTrackStyle = null,
+      hlsSegmentFormat = if (json.has("hlsSegmentFormat")) hlsSegmentFormatFromString(json.getString("hlsSegmentFormat")) else null,
+      hlsVideoSegmentFormat = if (json.has("hlsVideoSegmentFormat")) hlsVideoSegmentFormatFromString(json.getString("hlsVideoSegmentFormat")) else null,
+      customData = customDataJson?.toAnyMap()
+    )
+  }
+
+  private fun trackTypeFromString(s: String) = when (s) {
+    "audio" -> com.margelo.nitro.googlecast.MediaTrackType.AUDIO
+    "text" -> com.margelo.nitro.googlecast.MediaTrackType.TEXT
+    "video" -> com.margelo.nitro.googlecast.MediaTrackType.VIDEO
+    else -> com.margelo.nitro.googlecast.MediaTrackType.AUDIO
+  }
+
+  private fun streamTypeFromString(s: String): MediaStreamType = when (s) {
+    "buffered" -> MediaStreamType.BUFFERED
+    "live" -> MediaStreamType.LIVE
+    "other" -> MediaStreamType.OTHER
+    else -> MediaStreamType.OTHER
+  }
+
+  private fun hlsSegmentFormatFromString(s: String): MediaHlsSegmentFormat? = when (s) {
+    "AAC" -> MediaHlsSegmentFormat.AAC
+    "AC3" -> MediaHlsSegmentFormat.AC3
+    "E_AC3" -> MediaHlsSegmentFormat.E_AC3
+    "FMP4" -> MediaHlsSegmentFormat.FMP4
+    "MP3" -> MediaHlsSegmentFormat.MP3
+    "TS" -> MediaHlsSegmentFormat.TS
+    "TS_AAC" -> MediaHlsSegmentFormat.TS_AAC
+    else -> null
+  }
+
+  private fun hlsVideoSegmentFormatFromString(s: String): MediaHlsVideoSegmentFormat? = when (s) {
+    "FMP4" -> MediaHlsVideoSegmentFormat.FMP4
+    "MPEG2_TS" -> MediaHlsVideoSegmentFormat.MPEG2_TS
+    else -> null
+  }
+}
