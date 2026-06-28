@@ -1,0 +1,145 @@
+name: Android CI
+
+# Converter parity suite for the v5 (Nitro) rewrite. Two tiers:
+#   • unit-tests       — Robolectric, JVM only, NO emulator. Covers the AnyMap-free
+#                        converters (VideoInfo, MediaLiveSeekableRange, + the state enums).
+#                        Runs on every push/PR to v5.
+#   • instrumented     — real emulator. Covers the AnyMap-carrying converters (MediaInfo,
+#                        MediaMetadata, MediaStatus, …) — AnyMap is JNI/C++-backed and cannot
+#                        run under Robolectric. Only runs when android-relevant paths change
+#                        (or on manual dispatch), since booting an emulator is slow.
+#
+# The shared golden corpus (fixtures/converters/*.json) is the cross-platform contract; the
+# iOS XCTest suite pins every value in it, so these jobs verify the Android converters match
+# that same contract.
+
+on:
+  push:
+    branches: [v5]
+  pull_request:
+    branches: [v5]
+  workflow_dispatch:
+
+# Newer pushes to the same ref cancel in-flight runs.
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Decide whether the (expensive) instrumented job needs to run.
+  changes:
+    name: Detect android changes
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.filter.outputs.android }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            android:
+              - 'android/**'
+              - 'fixtures/converters/**'
+              - 'nitrogen/generated/android/**'
+              - 'example/android/**'
+              - '.github/workflows/android.yml'
+
+  unit-tests:
+    name: Robolectric parity (no emulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+      - name: Install JS dependencies
+        run: yarn install --immutable
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+
+      # The library declares an externalNativeBuild (CMake/NDK); AGP needs the pinned NDK
+      # present to *configure* the project even though unit tests don't build the .so.
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned NDK + CMake
+        run: sdkmanager "ndk;27.1.12297006" "cmake;3.22.1"
+
+      - name: Robolectric converter parity suite
+        working-directory: example/android
+        run: ./gradlew :react-native-google-cast:testDebugUnitTest
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robolectric-report
+          path: |
+            android/build/reports/tests/
+            android/build/test-results/
+          if-no-files-found: ignore
+
+  instrumented-tests:
+    name: Instrumented parity (emulator, AnyMap types)
+    needs: changes
+    if: needs.changes.outputs.android == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [34]
+    steps:
+      - uses: actions/checkout@v4
+
+      # KVM hardware acceleration is available on GitHub-hosted Linux runners.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+      - name: Install JS dependencies
+        run: yarn install --immutable
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned NDK + CMake (builds the .so)
+        run: sdkmanager "ndk;27.1.12297006" "cmake;3.22.1"
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Build a single ABI matching the x86_64 emulator to keep the native build fast.
+      - name: Run instrumented parity suite
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: example/android
+          script: ./gradlew :react-native-google-cast:connectedDebugAndroidTest -PreactNativeArchitectures=x86_64
+
+      - name: Upload instrumented report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-report
+          path: |
+            android/build/reports/androidTests/
+            android/build/outputs/androidTest-results/
+          if-no-files-found: ignore
