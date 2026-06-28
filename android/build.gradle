@@ -119,6 +119,21 @@ android {
       assets.srcDirs = ['../fixtures']
     }
   }
+
+  // The androidTest APK pulls the shared RN/runtime .so files from BOTH this library's
+  // externalNativeBuild output (library_jni) and react-android, so merging fails with
+  // "2 files found with path lib/<abi>/<name>.so". These are the identical runtime libs from
+  // each input, so pickFirst is safe (the library's own libNitro*.so are not duplicated).
+  packaging {
+    jniLibs {
+      pickFirsts += [
+        "**/libc++_shared.so",
+        "**/libfbjni.so",
+        "**/libjsi.so",
+        "**/libreactnative.so",
+      ]
+    }
+  }
 }
 
 repositories {
