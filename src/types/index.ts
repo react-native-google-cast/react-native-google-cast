@@ -3,6 +3,7 @@
 // and the hand-written per-platform struct↔GCK converters.
 
 export type { ActiveInputState } from './ActiveInputState'
+export type { CastError, CastErrorCode } from './CastError'
 export type { ApplicationMetadata } from './ApplicationMetadata'
 export type { CastState } from './CastState'
 export type { Device, DeviceCapability } from './Device'
