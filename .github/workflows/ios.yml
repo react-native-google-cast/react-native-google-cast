@@ -1,0 +1,115 @@
+name: iOS CI
+
+# Converter parity suite for the v5 (Nitro) rewrite — the iOS counterpart to android.yml.
+#
+# This is a SINGLE job (no paths-filter / emulator split like Android). iOS XCTest links the
+# real compiled NitroGoogleCast + GoogleCast static framework, so it can exercise the
+# AnyMap-carrying converters (MediaInfo, MediaMetadata, MediaStatus, …) that the Android
+# Robolectric tier cannot. That makes this one job the authority for the whole shared golden
+# corpus (fixtures/converters/*.json) — the cross-platform contract both platforms verify.
+#
+# nitrogen/generated/ is committed, so codegen is NOT run here; a clean `pod install` + build
+# must reproduce the 16/16 green suite from the committed pbxproj build settings.
+
+on:
+  push:
+    branches: [v5]
+  pull_request:
+    branches: [v5]
+  workflow_dispatch:
+
+# Newer pushes to the same ref cancel in-flight runs.
+concurrency:
+  group: ios-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  xctest:
+    name: XCTest converter parity
+    # Pin the image (not macos-latest) so `latest-stable` Xcode + the bundled simulator
+    # runtime stay deterministic across runner-image rollouts.
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      # --- JS deps (Yarn Berry 4 via corepack; example is a workspace of the repo root) ---
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+
+      - name: Locate Yarn cache
+        id: yarn-cache
+        run: echo "dir=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
+      - name: Cache Yarn
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+
+      - name: Install JS dependencies
+        run: yarn install --immutable
+
+      # --- Ruby / CocoaPods (Gemfile lives in example/, pinned via bundler) ---
+      - name: Setup Ruby + Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: example
+
+      - name: Cache Pods
+        uses: actions/cache@v4
+        with:
+          path: example/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('example/ios/Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-pods-
+
+      - name: Pod install
+        working-directory: example/ios
+        env:
+          BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
+        run: bundle exec pod install
+
+      # Device names differ by Xcode/runner image, so resolve a concrete simulator at runtime
+      # instead of hardcoding one. The converter tests are device-agnostic — any booted iPhone
+      # simulator works — so pick the newest available iPhone and fail loudly if none exist.
+      - name: Select iOS Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[]
+                      | select(.key | test("iOS"))
+                      | .value[] | select(.name | test("^iPhone"))]
+                     | last | .udid')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "::error::No available iPhone simulator found on this runner."
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Selected simulator UDID: $UDID"
+          xcrun simctl list devices available | grep -i "$UDID" || true
+          echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Run XCTest converter parity suite
+        working-directory: example/ios
+        run: |
+          xcodebuild test \
+            -workspace CastExample.xcworkspace \
+            -scheme NitroGoogleCastTests \
+            -destination "id=$SIMULATOR_UDID" \
+            -resultBundlePath "$GITHUB_WORKSPACE/NitroGoogleCastTests.xcresult"
+
+      - name: Upload xcresult bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-xcresult
+          path: NitroGoogleCastTests.xcresult
+          if-no-files-found: ignore
