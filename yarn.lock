@@ -3122,7 +3122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/babel-preset@npm:0.86.0":
+"@react-native/babel-preset@npm:0.86.0, @react-native/babel-preset@npm:^0.86.0":
   version: 0.86.0
   resolution: "@react-native/babel-preset@npm:0.86.0"
   dependencies:
@@ -11635,6 +11635,7 @@ __metadata:
   dependencies:
     "@commitlint/config-conventional": "npm:^11.0.0"
     "@expo/config-plugins": "npm:^10.1.2"
+    "@react-native/babel-preset": "npm:^0.86.0"
     "@react-native/eslint-config": "npm:^0.86.0"
     "@react-native/jest-preset": "npm:^0.86.0"
     "@release-it/conventional-changelog": "npm:^3.0.1"
