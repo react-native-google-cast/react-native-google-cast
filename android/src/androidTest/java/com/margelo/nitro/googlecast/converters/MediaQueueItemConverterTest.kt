@@ -7,7 +7,6 @@ import com.margelo.nitro.googlecast.MediaStreamType
 import com.margelo.nitro.googlecast.NitroGoogleCastOnLoad
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,8 +17,9 @@ import org.junit.runner.RunWith
  * Requires a connected emulator or device: customData AnyMap is JNI-backed.
  *
  * ANDROID DIVERGENCE — `itemId`:
- *   GCK's MediaQueueItemBuilder has no setItemId(); itemId is assigned by the receiver.
- *   The corpus expectedRoundTrip drops itemId (absent means null). Android must assert null.
+ *   Unlike iOS, GCK Android's MediaQueueItemBuilder HAS setItemId(), so Android preserves the
+ *   input itemId through the round-trip. The iOS-pinned corpus drops itemId (iOS has no setter),
+ *   so we assert against the input value here rather than the corpus expectedRoundTrip.
  *
  * ANDROID NOTE — time-interval sentinel:
  *   GCK uses INFINITY or a sentinel for unset time intervals (playbackDuration, preloadTime,
@@ -63,8 +63,9 @@ class MediaQueueItemConverterTest {
       val gck = input.toGckMediaQueueItem()
       val actual = gck.toMediaQueueItem()
 
-      // itemId is always null after round-trip (no GCK builder setter).
-      assertNull("[$name] itemId (android: no GCK builder setter)", actual.itemId)
+      // Android preserves itemId (MediaQueueItemBuilder.setItemId exists); assert it round-trips
+      // the input value. iOS drops it — see the ANDROID DIVERGENCE note above.
+      assertEquals("[$name] itemId (android preserves itemId)", input.itemId, actual.itemId)
       assertEquals("[$name] autoplay", expected.autoplay, actual.autoplay)
       assertEquals("[$name] mediaInfo.contentUrl", expected.mediaInfo?.contentUrl, actual.mediaInfo?.contentUrl)
       assertEquals("[$name] mediaInfo.streamType", expected.mediaInfo?.streamType, actual.mediaInfo?.streamType)

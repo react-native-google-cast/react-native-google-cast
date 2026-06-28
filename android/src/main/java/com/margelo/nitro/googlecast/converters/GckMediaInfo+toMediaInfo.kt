@@ -19,7 +19,9 @@ internal fun GckMediaInfo.toMediaInfo(): MediaInfo {
   val mappedTracks = mediaTracks?.map { it.toMediaTrack() }
   return MediaInfo(
     contentUrl = contentUrl ?: contentId ?: "",
-    contentId = contentId,
+    // GCK Android returns an empty string for an unset contentId; normalize to null so the
+    // struct matches iOS (and the cross-platform corpus), where an absent contentId is null.
+    contentId = contentId?.ifEmpty { null },
     contentType = contentType,
     entity = entity,
     streamType = streamTypeOrNull(streamType),

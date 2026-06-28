@@ -69,7 +69,15 @@ class TextTrackStyleConverterTest {
       assertEquals("[$name] edgeColor", expected.edgeColor, actual.edgeColor)
       assertEquals("[$name] foregroundColor", expected.foregroundColor, actual.foregroundColor)
       assertEquals("[$name] windowColor", expected.windowColor, actual.windowColor)
-      assertEquals("[$name] edgeType", expected.edgeType, actual.edgeType)
+      // ANDROID DIVERGENCE — edgeType: GCK Android defaults an unset edgeType to UNSPECIFIED
+      // (which the converter maps to null), whereas iOS GCK defaults it to NONE (so the iOS-pinned
+      // corpus pins "none"). Assert Android's behavior: an explicit edgeType round-trips; an unset
+      // one stays null.
+      if (input.edgeType != null) {
+        assertEquals("[$name] edgeType", input.edgeType, actual.edgeType)
+      } else {
+        assertNull("[$name] edgeType (android: unset edgeType -> null, not NONE)", actual.edgeType)
+      }
       assertEquals("[$name] fontFamily", expected.fontFamily, actual.fontFamily)
       assertEquals("[$name] fontGenericFamily", expected.fontGenericFamily, actual.fontGenericFamily)
       assertEquals("[$name] fontScale", expected.fontScale, actual.fontScale)
