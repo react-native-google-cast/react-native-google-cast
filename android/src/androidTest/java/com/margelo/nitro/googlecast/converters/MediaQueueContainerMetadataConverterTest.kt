@@ -27,7 +27,14 @@ class MediaQueueContainerMetadataConverterTest {
   companion object {
     @BeforeClass @JvmStatic
     fun loadNative() {
-      com.margelo.nitro.JNIOnLoad.initializeNativeNitro() // load NitroModules (AnyMap JNI) before GoogleCast
+      // Bare androidTest process: bootstrap the native stack a real RN app sets up in
+      // MainApplication. fbjni's HybridData (used by AnyMap) loads libfbjni via NativeLoader,
+      // which must be initialized first; then NitroModules (the AnyMap JNI) is loaded explicitly
+      // (System.loadLibrary fires JNI_OnLoad only for directly-loaded libs, not transitive deps).
+      if (!com.facebook.soloader.nativeloader.NativeLoader.isInitialized()) {
+        com.facebook.soloader.nativeloader.NativeLoader.init(com.facebook.soloader.nativeloader.SystemDelegate())
+      }
+      com.margelo.nitro.JNIOnLoad.initializeNativeNitro()
       NitroGoogleCastOnLoad.initializeNative()
     }
   }
