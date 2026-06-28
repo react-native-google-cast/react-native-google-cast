@@ -67,6 +67,40 @@ class MediaStatusConverterTest {
         assertEquals("[$name] mediaInfo.contentUrl", expected.mediaInfo?.contentUrl, actual.mediaInfo?.contentUrl)
         assertEquals("[$name] mediaInfo.streamType", expected.mediaInfo?.streamType, actual.mediaInfo?.streamType)
       }
+
+      // Nested state pinned by the corpus: "playing" → activeTrackIds + videoInfo;
+      // "with-queue-and-live" → liveSeekableRange + queueItems + currentItemId.
+      assertEquals("[$name] activeTrackIds", expected.activeTrackIds?.toList(), actual.activeTrackIds?.toList())
+
+      if (expected.videoInfo != null) {
+        assertEquals("[$name] videoInfo.hdrType", expected.videoInfo?.hdrType, actual.videoInfo?.hdrType)
+        assertEquals("[$name] videoInfo.width", expected.videoInfo?.width, actual.videoInfo?.width)
+        assertEquals("[$name] videoInfo.height", expected.videoInfo?.height, actual.videoInfo?.height)
+      }
+
+      if (expected.liveSeekableRange != null) {
+        assertEquals("[$name] liveSeekableRange.startTime",
+          expected.liveSeekableRange?.startTime, actual.liveSeekableRange?.startTime)
+        assertEquals("[$name] liveSeekableRange.endTime",
+          expected.liveSeekableRange?.endTime, actual.liveSeekableRange?.endTime)
+        assertEquals("[$name] liveSeekableRange.isMovingWindow",
+          expected.liveSeekableRange?.isMovingWindow, actual.liveSeekableRange?.isMovingWindow)
+        assertEquals("[$name] liveSeekableRange.isLiveDone",
+          expected.liveSeekableRange?.isLiveDone, actual.liveSeekableRange?.isLiveDone)
+      }
+
+      assertEquals("[$name] currentItemId", expected.currentItemId, actual.currentItemId)
+
+      // queueItems: count + proven per-item fields. Per-item itemId/startTime/customData are
+      // not pinned by the corpus and would need fixture expansion (deferred).
+      assertEquals("[$name] queueItems count", expected.queueItems.size, actual.queueItems.size)
+      for (j in expected.queueItems.indices) {
+        assertEquals("[$name] queueItems[$j].mediaInfo.contentUrl",
+          expected.queueItems[j].mediaInfo?.contentUrl, actual.queueItems[j].mediaInfo?.contentUrl)
+        assertEquals("[$name] queueItems[$j].autoplay",
+          expected.queueItems[j].autoplay, actual.queueItems[j].autoplay)
+      }
+
       ConverterAssertions.assertAnyMapEquals(actual.customData, expected.customData, "[$name]")
     }
   }

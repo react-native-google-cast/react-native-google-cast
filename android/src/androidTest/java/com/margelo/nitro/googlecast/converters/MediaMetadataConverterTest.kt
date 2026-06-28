@@ -69,6 +69,11 @@ class MediaMetadataConverterTest {
       assertEquals("[$name] episodeNumber", expected.episodeNumber, actual.episodeNumber)
       assertEquals("[$name] seasonNumber", expected.seasonNumber, actual.seasonNumber)
       assertEquals("[$name] seriesTitle", expected.seriesTitle, actual.seriesTitle)
+      assertEquals("[$name] location", expected.location, actual.location)
+      assertEquals("[$name] latitude", expected.latitude, actual.latitude)
+      assertEquals("[$name] longitude", expected.longitude, actual.longitude)
+      assertEquals("[$name] width", expected.width, actual.width)
+      assertEquals("[$name] height", expected.height, actual.height)
 
       val expectedImages = expected.images
       val actualImages = actual.images
@@ -78,6 +83,10 @@ class MediaMetadataConverterTest {
         assertEquals("[$name] images count", expectedImages.size, actualImages?.size ?: 0)
         for (j in expectedImages.indices) {
           assertEquals("[$name] images[$j] url", expectedImages[j].url, actualImages?.get(j)?.url)
+          // expectedRoundTrip pins image dimensions for every entry (GCK requires concrete
+          // ints; absent dims normalize to 0), so both sides are always non-null here.
+          assertEquals("[$name] images[$j] width", expectedImages[j].width, actualImages?.get(j)?.width)
+          assertEquals("[$name] images[$j] height", expectedImages[j].height, actualImages?.get(j)?.height)
         }
       }
 

@@ -2,6 +2,8 @@ package com.margelo.nitro.googlecast.converters
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.margelo.nitro.googlecast.MediaInfo
+import com.margelo.nitro.googlecast.MediaQueueContainerMetadata
+import com.margelo.nitro.googlecast.MediaQueueContainerType
 import com.margelo.nitro.googlecast.MediaQueueData
 import com.margelo.nitro.googlecast.MediaQueueItem
 import com.margelo.nitro.googlecast.MediaQueueType
@@ -10,6 +12,7 @@ import com.margelo.nitro.googlecast.MediaStreamType
 import com.margelo.nitro.googlecast.NitroGoogleCastOnLoad
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,6 +57,26 @@ class MediaQueueDataConverterTest {
       assertEquals("[$name] id", expected.id, actual.id)
       assertEquals("[$name] name", expected.name, actual.name)
       assertEquals("[$name] entity", expected.entity, actual.entity)
+
+      // queue startTime: guard on non-null. GCK seconds = ms/1000; the "minimal" fixture leaves
+      // startTime unset, where Android emits 0.0 (primitive) but the corpus pins it absent (an
+      // Android divergence the corpus doesn't model), so only assert where the corpus pins a value.
+      if (expected.startTime != null) {
+        assertEquals("[$name] startTime", expected.startTime, actual.startTime)
+      }
+
+      // containerMetadata: assert presence + scalar sub-fields (parsed minimally; corpus has
+      // containerType + title only). MediaQueueContainerMetadataConverterTest covers the full surface.
+      val expectedContainer = expected.containerMetadata
+      val actualContainer = actual.containerMetadata
+      if (expectedContainer == null) {
+        assertNull("[$name] containerMetadata", actualContainer)
+      } else {
+        assertEquals("[$name] containerMetadata.containerType",
+          expectedContainer.containerType, actualContainer?.containerType)
+        assertEquals("[$name] containerMetadata.title",
+          expectedContainer.title, actualContainer?.title)
+      }
 
       val expectedItems = expected.items
       val actualItems = actual.items
@@ -101,7 +124,7 @@ class MediaQueueDataConverterTest {
       entity = json.optString("entity").ifEmpty { null },
       type = if (json.has("type")) queueTypeFromString(json.getString("type")) else null,
       repeatMode = if (json.has("repeatMode")) repeatModeFromString(json.getString("repeatMode")) else null,
-      containerMetadata = null,
+      containerMetadata = if (json.has("containerMetadata")) containerMetadataFromJson(json.getJSONObject("containerMetadata")) else null,
       items = items,
       startIndex = if (json.has("startIndex")) json.getDouble("startIndex") else null,
       startTime = if (json.has("startTime")) json.getDouble("startTime") else null
@@ -119,6 +142,22 @@ class MediaQueueDataConverterTest {
     "tvSeries" -> MediaQueueType.TVSERIES
     "videoPlaylist" -> MediaQueueType.VIDEOPLAYLIST
     else -> MediaQueueType.ALBUM
+  }
+
+  /** Minimal container parser; the corpus exercises containerType + title only. */
+  private fun containerMetadataFromJson(json: JSONObject): MediaQueueContainerMetadata =
+    MediaQueueContainerMetadata(
+      containerType = if (json.has("containerType")) containerTypeFromString(json.getString("containerType")) else null,
+      title = json.optString("title").ifEmpty { null },
+      containerDuration = if (json.has("containerDuration")) json.getDouble("containerDuration") else null,
+      containerImages = null,
+      sections = null
+    )
+
+  private fun containerTypeFromString(s: String): MediaQueueContainerType = when (s) {
+    "generic" -> MediaQueueContainerType.GENERIC
+    "audioBook" -> MediaQueueContainerType.AUDIOBOOK
+    else -> MediaQueueContainerType.GENERIC
   }
 
   private fun repeatModeFromString(s: String): MediaRepeatMode = when (s) {

@@ -1,6 +1,8 @@
 package com.margelo.nitro.googlecast.converters
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.margelo.nitro.googlecast.MediaMetadata
+import com.margelo.nitro.googlecast.MediaMetadataType
 import com.margelo.nitro.googlecast.MediaQueueContainerMetadata
 import com.margelo.nitro.googlecast.MediaQueueContainerType
 import com.margelo.nitro.googlecast.NitroGoogleCastOnLoad
@@ -58,6 +60,23 @@ class MediaQueueContainerMetadataConverterTest {
         assertEquals("[$name] containerImages count", expectedImages.size, actualImages?.size ?: 0)
         for (j in expectedImages.indices) {
           assertEquals("[$name] containerImages[$j] url", expectedImages[j].url, actualImages?.get(j)?.url)
+          // GCK WebImage always carries concrete int dimensions; expectedRoundTrip pins them.
+          assertEquals("[$name] containerImages[$j] width", expectedImages[j].width, actualImages?.get(j)?.width)
+          assertEquals("[$name] containerImages[$j] height", expectedImages[j].height, actualImages?.get(j)?.height)
+        }
+      }
+
+      // sections (an array of MediaMetadata). The corpus exercises type + title; assert those
+      // scalar sub-fields rather than deep-equals to stay robust against nested-array normalization.
+      val expectedSections = expected.sections
+      val actualSections = actual.sections
+      if (expectedSections == null) {
+        assertNull("[$name] sections", actualSections)
+      } else {
+        assertEquals("[$name] sections count", expectedSections.size, actualSections?.size ?: 0)
+        for (j in expectedSections.indices) {
+          assertEquals("[$name] sections[$j] type", expectedSections[j].type, actualSections?.get(j)?.type)
+          assertEquals("[$name] sections[$j] title", expectedSections[j].title, actualSections?.get(j)?.title)
         }
       }
     }
@@ -76,12 +95,16 @@ class MediaQueueContainerMetadataConverterTest {
         )
       }
     }
+    val sectionsJson = if (json.has("sections")) json.getJSONArray("sections") else null
+    val sections = sectionsJson?.let { arr ->
+      Array(arr.length()) { i -> sectionFromJson(arr.getJSONObject(i)) }
+    }
     return MediaQueueContainerMetadata(
       containerType = containerTypeStr?.let { containerTypeFromString(it) },
       title = json.optString("title").ifEmpty { null },
       containerDuration = if (json.has("containerDuration")) json.getDouble("containerDuration") else null,
       containerImages = images,
-      sections = null
+      sections = sections
     )
   }
 
@@ -89,5 +112,42 @@ class MediaQueueContainerMetadataConverterTest {
     "generic" -> MediaQueueContainerType.GENERIC
     "audioBook" -> MediaQueueContainerType.AUDIOBOOK
     else -> MediaQueueContainerType.GENERIC
+  }
+
+  /** Minimal MediaMetadata parser for sections (the corpus exercises only type + title). */
+  private fun sectionFromJson(json: JSONObject): MediaMetadata = MediaMetadata(
+    type = metadataTypeFromString(json.optString("type", "generic")),
+    images = null,
+    title = json.optString("title").ifEmpty { null },
+    subtitle = null,
+    artist = null,
+    releaseDate = null,
+    studio = null,
+    albumTitle = null,
+    albumArtist = null,
+    composer = null,
+    discNumber = null,
+    trackNumber = null,
+    creationDate = null,
+    location = null,
+    latitude = null,
+    longitude = null,
+    width = null,
+    height = null,
+    broadcastDate = null,
+    episodeNumber = null,
+    seasonNumber = null,
+    seriesTitle = null,
+    customData = null
+  )
+
+  private fun metadataTypeFromString(s: String): MediaMetadataType = when (s) {
+    "generic" -> MediaMetadataType.GENERIC
+    "movie" -> MediaMetadataType.MOVIE
+    "musicTrack" -> MediaMetadataType.MUSICTRACK
+    "photo" -> MediaMetadataType.PHOTO
+    "tvShow" -> MediaMetadataType.TVSHOW
+    "user" -> MediaMetadataType.USER
+    else -> MediaMetadataType.GENERIC
   }
 }

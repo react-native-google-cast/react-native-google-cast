@@ -59,6 +59,23 @@ class MediaQueueItemConverterTest {
       assertNull("[$name] itemId (android: no GCK builder setter)", actual.itemId)
       assertEquals("[$name] autoplay", expected.autoplay, actual.autoplay)
       assertEquals("[$name] mediaInfo.contentUrl", expected.mediaInfo?.contentUrl, actual.mediaInfo?.contentUrl)
+      assertEquals("[$name] mediaInfo.streamType", expected.mediaInfo?.streamType, actual.mediaInfo?.streamType)
+      assertEquals("[$name] mediaInfo.streamDuration", expected.mediaInfo?.streamDuration, actual.mediaInfo?.streamDuration)
+      // DoubleArray compares by reference; .toList() forces element-wise comparison.
+      // activeTrackIds is ?.let-mapped in the reverse converter, so unset → null on both sides.
+      assertEquals("[$name] activeTrackIds", expected.activeTrackIds?.toList(), actual.activeTrackIds?.toList())
+      // Timing fields: the reverse converter passes GCK values through with NO sentinel→null
+      // mapping, so on the "minimal" fixture (timings absent) GCK's unset defaults surface as
+      // non-null. Assert only where the corpus pins a value (the "full" fixture).
+      if (expected.playbackDuration != null) {
+        assertEquals("[$name] playbackDuration", expected.playbackDuration, actual.playbackDuration)
+      }
+      if (expected.preloadTime != null) {
+        assertEquals("[$name] preloadTime", expected.preloadTime, actual.preloadTime)
+      }
+      if (expected.startTime != null) {
+        assertEquals("[$name] startTime", expected.startTime, actual.startTime)
+      }
       ConverterAssertions.assertAnyMapEquals(actual.customData, expected.customData, "[$name]")
     }
   }

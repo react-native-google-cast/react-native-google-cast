@@ -62,6 +62,29 @@ class MediaInfoConverterTest {
       assertEquals("[$name] streamDuration", expected.streamDuration, actual.streamDuration)
       assertEquals("[$name] hlsSegmentFormat", expected.hlsSegmentFormat, actual.hlsSegmentFormat)
       assertEquals("[$name] hlsVideoSegmentFormat", expected.hlsVideoSegmentFormat, actual.hlsVideoSegmentFormat)
+
+      // mediaTracks round-trip. `expected` is built by the same helper, which parses
+      // id/type/contentId/contentType/language/name/customData (subtype is not exercised
+      // here — the standalone MediaTrackConverterTest covers the full MediaTrack surface).
+      val expectedTracks = expected.mediaTracks
+      val actualTracks = actual.mediaTracks
+      if (expectedTracks == null) {
+        assertNull("[$name] mediaTracks", actualTracks)
+      } else {
+        assertEquals("[$name] mediaTracks count", expectedTracks.size, actualTracks?.size ?: 0)
+        for (j in expectedTracks.indices) {
+          val et = expectedTracks[j]
+          val at = actualTracks?.get(j)
+          assertEquals("[$name] mediaTracks[$j].id", et.id, at?.id)
+          assertEquals("[$name] mediaTracks[$j].type", et.type, at?.type)
+          assertEquals("[$name] mediaTracks[$j].contentId", et.contentId, at?.contentId)
+          assertEquals("[$name] mediaTracks[$j].contentType", et.contentType, at?.contentType)
+          assertEquals("[$name] mediaTracks[$j].language", et.language, at?.language)
+          assertEquals("[$name] mediaTracks[$j].name", et.name, at?.name)
+          ConverterAssertions.assertAnyMapEquals(at?.customData, et.customData, "[$name] mediaTracks[$j]")
+        }
+      }
+
       ConverterAssertions.assertAnyMapEquals(actual.customData, expected.customData, "[$name]")
     }
   }
