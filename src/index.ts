@@ -7,3 +7,4 @@ export type {
   CastState,
   ListenerSubscription,
 } from './transport/types'
+export type { CastError, CastErrorCode } from './types/CastError'
