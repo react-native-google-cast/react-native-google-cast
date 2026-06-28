@@ -31,6 +31,9 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # No later step needs git auth; don't leave the token in .git/config.
+          persist-credentials: false
 
       - name: Select latest stable Xcode
         uses: maxim-lobanov/setup-xcode@v1
