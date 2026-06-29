@@ -21,6 +21,18 @@ namespace margelo::nitro::googlecast { enum class CastState; }
 namespace margelo::nitro::googlecast { struct Device; }
 // Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
+// Forward declaration of `MediaStatus` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaStatus; }
+// Forward declaration of `MediaLoadRequest` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLoadRequest; }
+// Forward declaration of `MediaSeekOptions` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaSeekOptions; }
+// Forward declaration of `TextTrackStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct TextTrackStyle; }
+// Forward declaration of `MediaQueueItem` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueItem; }
+// Forward declaration of `MediaRepeatMode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
 
 #include "InitialSnapshot.hpp"
 #include <NitroModules/Promise.hpp>
@@ -29,7 +41,13 @@ namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 #include "Device.hpp"
 #include <vector>
 #include "SessionLifecycleEvent.hpp"
+#include "MediaStatus.hpp"
 #include <string>
+#include "MediaLoadRequest.hpp"
+#include "MediaSeekOptions.hpp"
+#include "TextTrackStyle.hpp"
+#include "MediaQueueItem.hpp"
+#include "MediaRepeatMode.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -64,9 +82,28 @@ namespace margelo::nitro::googlecast {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) = 0;
+      virtual std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) = 0;
       virtual std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) = 0;
       virtual std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) = 0;
+      virtual std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) = 0;
+      virtual std::shared_ptr<Promise<void>> play() = 0;
+      virtual std::shared_ptr<Promise<void>> pause() = 0;
+      virtual std::shared_ptr<Promise<void>> stop() = 0;
+      virtual std::shared_ptr<Promise<void>> seek(const MediaSeekOptions& options) = 0;
+      virtual std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate) = 0;
+      virtual std::shared_ptr<Promise<void>> setActiveTrackIds(const std::vector<double>& trackIds) = 0;
+      virtual std::shared_ptr<Promise<void>> setTextTrackStyle(const TextTrackStyle& textTrackStyle) = 0;
+      virtual std::shared_ptr<Promise<void>> setStreamVolume(double volume) = 0;
+      virtual std::shared_ptr<Promise<void>> setStreamMuted(bool muted) = 0;
+      virtual std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) = 0;
+      virtual std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) = 0;
+      virtual std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) = 0;
+      virtual std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds) = 0;
+      virtual std::shared_ptr<Promise<void>> queueNext() = 0;
+      virtual std::shared_ptr<Promise<void>> queuePrev() = 0;
+      virtual std::shared_ptr<Promise<void>> queueJumpToItem(double itemId) = 0;
+      virtual std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode) = 0;
+      virtual std::shared_ptr<Promise<void>> requestMediaStatus() = 0;
       virtual void startDiscovery() = 0;
       virtual void stopDiscovery() = 0;
       virtual void setPassiveScan(bool passive) = 0;

@@ -39,12 +39,12 @@ abstract class HybridCastTransportSpec: HybridObject() {
   abstract val isPassiveScan: Boolean
 
   // Methods
-  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit): Promise<InitialSnapshot>
+  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus) -> Unit): Promise<InitialSnapshot>
   
   @DoNotStrip
   @Keep
-  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent): Promise<InitialSnapshot> {
-    val __result = initAndSubscribe(onState, onDevices, onLifecycle)
+  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent, onMediaStatus: Func_void_MediaStatus): Promise<InitialSnapshot> {
+    val __result = initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus)
     return __result
   }
   
@@ -55,6 +55,82 @@ abstract class HybridCastTransportSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun endCurrentSession(stopCasting: Boolean): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun loadMedia(request: MediaLoadRequest): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun play(): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun pause(): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun stop(): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun seek(options: MediaSeekOptions): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setPlaybackRate(playbackRate: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setActiveTrackIds(trackIds: DoubleArray): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setStreamVolume(volume: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setStreamMuted(muted: Boolean): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueLoad(items: Array<MediaQueueItem>, startIndex: Double, repeatMode: MediaRepeatMode): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueInsertItems(items: Array<MediaQueueItem>, beforeItemId: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueReorderItems(itemIds: DoubleArray, beforeItemId: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueRemoveItems(itemIds: DoubleArray): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueNext(): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queuePrev(): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueJumpToItem(itemId: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun requestMediaStatus(): Promise<Unit>
   
   @DoNotStrip
   @Keep

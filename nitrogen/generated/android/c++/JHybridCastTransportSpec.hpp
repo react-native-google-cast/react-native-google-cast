@@ -56,9 +56,28 @@ namespace margelo::nitro::googlecast {
 
   public:
     // Methods
-    std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) override;
+    std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) override;
     std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) override;
     std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override;
+    std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override;
+    std::shared_ptr<Promise<void>> play() override;
+    std::shared_ptr<Promise<void>> pause() override;
+    std::shared_ptr<Promise<void>> stop() override;
+    std::shared_ptr<Promise<void>> seek(const MediaSeekOptions& options) override;
+    std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate) override;
+    std::shared_ptr<Promise<void>> setActiveTrackIds(const std::vector<double>& trackIds) override;
+    std::shared_ptr<Promise<void>> setTextTrackStyle(const TextTrackStyle& textTrackStyle) override;
+    std::shared_ptr<Promise<void>> setStreamVolume(double volume) override;
+    std::shared_ptr<Promise<void>> setStreamMuted(bool muted) override;
+    std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) override;
+    std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) override;
+    std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) override;
+    std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds) override;
+    std::shared_ptr<Promise<void>> queueNext() override;
+    std::shared_ptr<Promise<void>> queuePrev() override;
+    std::shared_ptr<Promise<void>> queueJumpToItem(double itemId) override;
+    std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode) override;
+    std::shared_ptr<Promise<void>> requestMediaStatus() override;
     void startDiscovery() override;
     void stopDiscovery() override;
     void setPassiveScan(bool passive) override;

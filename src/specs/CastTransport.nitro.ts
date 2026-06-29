@@ -1,6 +1,12 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 import type { CastState } from '../types/CastState'
 import type { Device } from '../types/Device'
+import type { MediaStatus } from '../types/MediaStatus'
+import type { MediaLoadRequest } from '../types/MediaLoadRequest'
+import type { MediaSeekOptions } from '../types/MediaSeekOptions'
+import type { MediaQueueItem } from '../types/MediaQueueItem'
+import type { MediaRepeatMode } from '../types/MediaRepeatMode'
+import type { TextTrackStyle } from '../types/TextTrackStyle'
 import type { InitialSnapshot, SessionLifecycleEvent } from '../transport/types'
 
 export type { InitialSnapshot, SessionLifecycleEvent }
@@ -30,11 +36,40 @@ export interface CastTransport
   initAndSubscribe(
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
-    onLifecycle: (event: SessionLifecycleEvent) => void
+    onLifecycle: (event: SessionLifecycleEvent) => void,
+    onMediaStatus: (status: MediaStatus) => void
   ): Promise<InitialSnapshot>
 
   startSession(deviceId: string): Promise<void>
   endCurrentSession(stopCasting: boolean): Promise<void>
+
+  // RemoteMediaClient mutation surface (Phase 4) — mirrors `CastTransportApi`;
+  // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these
+  // diverge from the API. Native impls route to GCKRemoteMediaClient (iOS) /
+  // RemoteMediaClient (Android) and push status via `onMediaStatus`.
+  loadMedia(request: MediaLoadRequest): Promise<void>
+  play(): Promise<void>
+  pause(): Promise<void>
+  stop(): Promise<void>
+  seek(options: MediaSeekOptions): Promise<void>
+  setPlaybackRate(playbackRate: number): Promise<void>
+  setActiveTrackIds(trackIds: number[]): Promise<void>
+  setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void>
+  setStreamVolume(volume: number): Promise<void>
+  setStreamMuted(muted: boolean): Promise<void>
+  queueLoad(
+    items: MediaQueueItem[],
+    startIndex: number,
+    repeatMode: MediaRepeatMode
+  ): Promise<void>
+  queueInsertItems(items: MediaQueueItem[], beforeItemId: number): Promise<void>
+  queueReorderItems(itemIds: number[], beforeItemId: number): Promise<void>
+  queueRemoveItems(itemIds: number[]): Promise<void>
+  queueNext(): Promise<void>
+  queuePrev(): Promise<void>
+  queueJumpToItem(itemId: number): Promise<void>
+  queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void>
+  requestMediaStatus(): Promise<void>
 
   startDiscovery(): void
   stopDiscovery(): void

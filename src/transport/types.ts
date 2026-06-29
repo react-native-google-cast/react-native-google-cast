@@ -2,6 +2,12 @@ import type { CastState } from '../types/CastState'
 import type { PlayServicesState } from '../types/PlayServicesState'
 import type { Device } from '../types/Device'
 import type { CastError } from '../types/CastError'
+import type { MediaStatus } from '../types/MediaStatus'
+import type { MediaLoadRequest } from '../types/MediaLoadRequest'
+import type { MediaSeekOptions } from '../types/MediaSeekOptions'
+import type { MediaQueueItem } from '../types/MediaQueueItem'
+import type { MediaRepeatMode } from '../types/MediaRepeatMode'
+import type { TextTrackStyle } from '../types/TextTrackStyle'
 
 export type { CastState, PlayServicesState, Device, CastError }
 
@@ -124,7 +130,8 @@ export interface CastTransportApi {
   initAndSubscribe(
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
-    onLifecycle: (event: SessionLifecycleEvent) => void
+    onLifecycle: (event: SessionLifecycleEvent) => void,
+    onMediaStatus: (status: MediaStatus) => void
   ): Promise<InitialSnapshot>
 
   /**
@@ -139,6 +146,71 @@ export interface CastTransportApi {
    * disconnecting the sender). Rejects a {@link CastError} on failure.
    */
   endCurrentSession(stopCasting: boolean): Promise<void>
+
+  // --- RemoteMediaClient mutation surface (Phase 4) ---
+  //
+  // Every method re-resolves the active session's `GCKRemoteMediaClient` /
+  // `RemoteMediaClient` on the main thread per call (never caches a handle), so
+  // a call after disconnect rejects a `noSession` {@link CastError} instead of
+  // crashing. Each returns when the underlying GCK request *settles* (T6:
+  // exactly-once — success resolves, failure/replacement/abort rejects). Status
+  // mutations stream back through the `onMediaStatus` callback, never the
+  // return value (reads are served from the store cache).
+
+  /** Load (and, per the request, autoplay) media on the active session. */
+  loadMedia(request: MediaLoadRequest): Promise<void>
+  /** Resume playback of the current item. */
+  play(): Promise<void>
+  /** Pause playback of the current item. */
+  pause(): Promise<void>
+  /** Stop playback and unload the current item. */
+  stop(): Promise<void>
+  /** Seek within the current item (absolute/relative + resume state). */
+  seek(options: MediaSeekOptions): Promise<void>
+  /** Set the playback rate (1 = normal; GCK clamps the supported range). */
+  setPlaybackRate(playbackRate: number): Promise<void>
+
+  /** Set the active media track ids (audio/text); empty array clears them. */
+  setActiveTrackIds(trackIds: number[]): Promise<void>
+  /** Set the text-track (caption) style. */
+  setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void>
+
+  /** Set the stream volume of the active session (0…1). */
+  setStreamVolume(volume: number): Promise<void>
+  /** Mute/unmute the active session's stream. */
+  setStreamMuted(muted: boolean): Promise<void>
+
+  /** Replace the queue with `items`, starting at `startIndex`, in `repeatMode`. */
+  queueLoad(
+    items: MediaQueueItem[],
+    startIndex: number,
+    repeatMode: MediaRepeatMode
+  ): Promise<void>
+  /**
+   * Insert `items` before `beforeItemId`. A `beforeItemId` that is not a current
+   * item id (use `0`, GCK's invalid-item sentinel) appends to the end.
+   */
+  queueInsertItems(items: MediaQueueItem[], beforeItemId: number): Promise<void>
+  /**
+   * Move `itemIds` to before `beforeItemId` (same `0` = move-to-end sentinel).
+   */
+  queueReorderItems(itemIds: number[], beforeItemId: number): Promise<void>
+  /** Remove `itemIds` from the queue. */
+  queueRemoveItems(itemIds: number[]): Promise<void>
+  /** Advance to the next queue item. */
+  queueNext(): Promise<void>
+  /** Go back to the previous queue item. */
+  queuePrev(): Promise<void>
+  /** Jump to a specific queue item by id. */
+  queueJumpToItem(itemId: number): Promise<void>
+  /** Set the queue repeat mode. */
+  queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void>
+
+  /**
+   * Request a fresh media status from the receiver. The result arrives via the
+   * `onMediaStatus` callback (this resolves once the *request* settles).
+   */
+  requestMediaStatus(): Promise<void>
 
   /** iOS: begin active device discovery. No-op where unsupported. */
   startDiscovery(): void

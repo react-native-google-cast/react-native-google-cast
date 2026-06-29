@@ -1047,6 +1047,28 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Func_void_SessionLifecycleEvent_Wrapper(std::move(value));
   }
   
+  // pragma MARK: std::function<void(const MediaStatus& /* status */)>
+  /**
+   * Specialized version of `std::function<void(const MediaStatus&)>`.
+   */
+  using Func_void_MediaStatus = std::function<void(const MediaStatus& /* status */)>;
+  /**
+   * Wrapper class for a `std::function<void(const MediaStatus& / * status * /)>`, this can be used from Swift.
+   */
+  class Func_void_MediaStatus_Wrapper final {
+  public:
+    explicit Func_void_MediaStatus_Wrapper(std::function<void(const MediaStatus& /* status */)>&& func): _function(std::make_unique<std::function<void(const MediaStatus& /* status */)>>(std::move(func))) {}
+    inline void call(MediaStatus status) const noexcept {
+      _function->operator()(status);
+    }
+  private:
+    std::unique_ptr<std::function<void(const MediaStatus& /* status */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_MediaStatus create_Func_void_MediaStatus(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_MediaStatus_Wrapper wrap_Func_void_MediaStatus(Func_void_MediaStatus value) noexcept {
+    return Func_void_MediaStatus_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<void>>
   /**
    * Specialized version of `std::shared_ptr<Promise<void>>`.

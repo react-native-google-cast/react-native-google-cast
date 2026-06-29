@@ -29,6 +29,64 @@ namespace margelo::nitro::googlecast { enum class SessionEventType; }
 namespace margelo::nitro::googlecast { struct CastError; }
 // Forward declaration of `CastErrorCode` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastErrorCode; }
+// Forward declaration of `MediaStatus` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaStatus; }
+// Forward declaration of `MediaInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaInfo; }
+// Forward declaration of `MediaStreamType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaStreamType; }
+// Forward declaration of `MediaMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaMetadata; }
+// Forward declaration of `MediaMetadataType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaMetadataType; }
+// Forward declaration of `MediaTrack` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaTrack; }
+// Forward declaration of `MediaTrackType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackType; }
+// Forward declaration of `MediaTrackSubtype` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackSubtype; }
+// Forward declaration of `TextTrackStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct TextTrackStyle; }
+// Forward declaration of `TextTrackEdgeType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackEdgeType; }
+// Forward declaration of `TextTrackFontGenericFamily` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontGenericFamily; }
+// Forward declaration of `TextTrackFontStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontStyle; }
+// Forward declaration of `TextTrackWindowType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackWindowType; }
+// Forward declaration of `MediaHlsSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsSegmentFormat; }
+// Forward declaration of `MediaHlsVideoSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsVideoSegmentFormat; }
+// Forward declaration of `MediaPlayerState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerState; }
+// Forward declaration of `MediaPlayerIdleReason` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerIdleReason; }
+// Forward declaration of `VideoInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct VideoInfo; }
+// Forward declaration of `VideoHdrType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class VideoHdrType; }
+// Forward declaration of `MediaLiveSeekableRange` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLiveSeekableRange; }
+// Forward declaration of `MediaQueueItem` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueItem; }
+// Forward declaration of `MediaRepeatMode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
+// Forward declaration of `MediaLoadRequest` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLoadRequest; }
+// Forward declaration of `MediaQueueData` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueData; }
+// Forward declaration of `MediaQueueType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueType; }
+// Forward declaration of `MediaQueueContainerMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueContainerMetadata; }
+// Forward declaration of `MediaQueueContainerType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueContainerType; }
+// Forward declaration of `MediaSeekOptions` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaSeekOptions; }
+// Forward declaration of `MediaSeekResumeState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 
 #include "InitialSnapshot.hpp"
 #include <NitroModules/Promise.hpp>
@@ -63,6 +121,67 @@ namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 #include "JCastError.hpp"
 #include "CastErrorCode.hpp"
 #include "JCastErrorCode.hpp"
+#include "MediaStatus.hpp"
+#include "JFunc_void_MediaStatus.hpp"
+#include "JMediaStatus.hpp"
+#include "MediaInfo.hpp"
+#include "JMediaInfo.hpp"
+#include "MediaStreamType.hpp"
+#include "JMediaStreamType.hpp"
+#include "MediaMetadata.hpp"
+#include "JMediaMetadata.hpp"
+#include "MediaMetadataType.hpp"
+#include "JMediaMetadataType.hpp"
+#include <NitroModules/AnyMap.hpp>
+#include <NitroModules/JAnyMap.hpp>
+#include "MediaTrack.hpp"
+#include "JMediaTrack.hpp"
+#include "MediaTrackType.hpp"
+#include "JMediaTrackType.hpp"
+#include "MediaTrackSubtype.hpp"
+#include "JMediaTrackSubtype.hpp"
+#include "TextTrackStyle.hpp"
+#include "JTextTrackStyle.hpp"
+#include "TextTrackEdgeType.hpp"
+#include "JTextTrackEdgeType.hpp"
+#include "TextTrackFontGenericFamily.hpp"
+#include "JTextTrackFontGenericFamily.hpp"
+#include "TextTrackFontStyle.hpp"
+#include "JTextTrackFontStyle.hpp"
+#include "TextTrackWindowType.hpp"
+#include "JTextTrackWindowType.hpp"
+#include "MediaHlsSegmentFormat.hpp"
+#include "JMediaHlsSegmentFormat.hpp"
+#include "MediaHlsVideoSegmentFormat.hpp"
+#include "JMediaHlsVideoSegmentFormat.hpp"
+#include "MediaPlayerState.hpp"
+#include "JMediaPlayerState.hpp"
+#include "MediaPlayerIdleReason.hpp"
+#include "JMediaPlayerIdleReason.hpp"
+#include "VideoInfo.hpp"
+#include "JVideoInfo.hpp"
+#include "VideoHdrType.hpp"
+#include "JVideoHdrType.hpp"
+#include "MediaLiveSeekableRange.hpp"
+#include "JMediaLiveSeekableRange.hpp"
+#include "MediaQueueItem.hpp"
+#include "JMediaQueueItem.hpp"
+#include "MediaRepeatMode.hpp"
+#include "JMediaRepeatMode.hpp"
+#include "MediaLoadRequest.hpp"
+#include "JMediaLoadRequest.hpp"
+#include "MediaQueueData.hpp"
+#include "JMediaQueueData.hpp"
+#include "MediaQueueType.hpp"
+#include "JMediaQueueType.hpp"
+#include "MediaQueueContainerMetadata.hpp"
+#include "JMediaQueueContainerMetadata.hpp"
+#include "MediaQueueContainerType.hpp"
+#include "JMediaQueueContainerType.hpp"
+#include "MediaSeekOptions.hpp"
+#include "JMediaSeekOptions.hpp"
+#include "MediaSeekResumeState.hpp"
+#include "JMediaSeekResumeState.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -111,9 +230,9 @@ namespace margelo::nitro::googlecast {
   }
 
   // Methods
-  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */)>("initAndSubscribe_cxx");
-    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle));
+  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */, jni::alias_ref<JFunc_void_MediaStatus::javaobject> /* onMediaStatus */)>("initAndSubscribe_cxx");
+    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle), JFunc_void_MediaStatus_cxx::fromCpp(onMediaStatus));
     return [&]() {
       auto __promise = Promise<InitialSnapshot>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
@@ -145,6 +264,324 @@ namespace margelo::nitro::googlecast {
   std::shared_ptr<Promise<void>> JHybridCastTransportSpec::endCurrentSession(bool stopCasting) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* stopCasting */)>("endCurrentSession");
     auto __result = method(_javaPart, stopCasting);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::loadMedia(const MediaLoadRequest& request) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaLoadRequest> /* request */)>("loadMedia");
+    auto __result = method(_javaPart, JMediaLoadRequest::fromCpp(request));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::play() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("play");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::pause() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pause");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::stop() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("stop");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::seek(const MediaSeekOptions& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaSeekOptions> /* options */)>("seek");
+    auto __result = method(_javaPart, JMediaSeekOptions::fromCpp(options));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setPlaybackRate(double playbackRate) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* playbackRate */)>("setPlaybackRate");
+    auto __result = method(_javaPart, playbackRate);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setActiveTrackIds(const std::vector<double>& trackIds) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* trackIds */)>("setActiveTrackIds");
+    auto __result = method(_javaPart, [&]() {
+      size_t __size = trackIds.size();
+      jni::local_ref<jni::JArrayDouble> __array = jni::JArrayDouble::newArray(__size);
+      __array->setRegion(0, __size, trackIds.data());
+      return __array;
+    }());
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setTextTrackStyle(const TextTrackStyle& textTrackStyle) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JTextTrackStyle> /* textTrackStyle */)>("setTextTrackStyle");
+    auto __result = method(_javaPart, JTextTrackStyle::fromCpp(textTrackStyle));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setStreamVolume(double volume) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* volume */)>("setStreamVolume");
+    auto __result = method(_javaPart, volume);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setStreamMuted(bool muted) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* muted */)>("setStreamMuted");
+    auto __result = method(_javaPart, muted);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JMediaQueueItem>> /* items */, double /* startIndex */, jni::alias_ref<JMediaRepeatMode> /* repeatMode */)>("queueLoad");
+    auto __result = method(_javaPart, [&](auto&& __input) {
+      size_t __size = __input.size();
+      jni::local_ref<jni::JArrayClass<JMediaQueueItem>> __array = jni::JArrayClass<JMediaQueueItem>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = __input[__i];
+        auto __elementJni = JMediaQueueItem::fromCpp(__element);
+        __array->setElement(__i, *__elementJni);
+      }
+      return __array;
+    }(items), startIndex, JMediaRepeatMode::fromCpp(repeatMode));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JMediaQueueItem>> /* items */, double /* beforeItemId */)>("queueInsertItems");
+    auto __result = method(_javaPart, [&](auto&& __input) {
+      size_t __size = __input.size();
+      jni::local_ref<jni::JArrayClass<JMediaQueueItem>> __array = jni::JArrayClass<JMediaQueueItem>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = __input[__i];
+        auto __elementJni = JMediaQueueItem::fromCpp(__element);
+        __array->setElement(__i, *__elementJni);
+      }
+      return __array;
+    }(items), beforeItemId);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* itemIds */, double /* beforeItemId */)>("queueReorderItems");
+    auto __result = method(_javaPart, [&]() {
+      size_t __size = itemIds.size();
+      jni::local_ref<jni::JArrayDouble> __array = jni::JArrayDouble::newArray(__size);
+      __array->setRegion(0, __size, itemIds.data());
+      return __array;
+    }(), beforeItemId);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueRemoveItems(const std::vector<double>& itemIds) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* itemIds */)>("queueRemoveItems");
+    auto __result = method(_javaPart, [&]() {
+      size_t __size = itemIds.size();
+      jni::local_ref<jni::JArrayDouble> __array = jni::JArrayDouble::newArray(__size);
+      __array->setRegion(0, __size, itemIds.data());
+      return __array;
+    }());
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueNext() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("queueNext");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queuePrev() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("queuePrev");
+    auto __result = method(_javaPart);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueJumpToItem(double itemId) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* itemId */)>("queueJumpToItem");
+    auto __result = method(_javaPart, itemId);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueSetRepeatMode(MediaRepeatMode repeatMode) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaRepeatMode> /* repeatMode */)>("queueSetRepeatMode");
+    auto __result = method(_javaPart, JMediaRepeatMode::fromCpp(repeatMode));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::requestMediaStatus() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("requestMediaStatus");
+    auto __result = method(_javaPart);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

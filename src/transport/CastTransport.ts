@@ -34,12 +34,38 @@ export const castTransport: CastTransportApi = {
     return hybrid.isPassiveScan
   },
 
-  initAndSubscribe: (onState, onDevices, onLifecycle) =>
-    hybrid.initAndSubscribe(onState, onDevices, onLifecycle),
+  initAndSubscribe: (onState, onDevices, onLifecycle, onMediaStatus) =>
+    hybrid.initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus),
 
   startSession: (deviceId) => mutate(() => hybrid.startSession(deviceId)),
   endCurrentSession: (stopCasting) =>
     mutate(() => hybrid.endCurrentSession(stopCasting)),
+
+  // RemoteMediaClient mutations — same error-translation wrapper as sessions.
+  loadMedia: (request) => mutate(() => hybrid.loadMedia(request)),
+  play: () => mutate(() => hybrid.play()),
+  pause: () => mutate(() => hybrid.pause()),
+  stop: () => mutate(() => hybrid.stop()),
+  seek: (options) => mutate(() => hybrid.seek(options)),
+  setPlaybackRate: (rate) => mutate(() => hybrid.setPlaybackRate(rate)),
+  setActiveTrackIds: (trackIds) =>
+    mutate(() => hybrid.setActiveTrackIds(trackIds)),
+  setTextTrackStyle: (style) => mutate(() => hybrid.setTextTrackStyle(style)),
+  setStreamVolume: (volume) => mutate(() => hybrid.setStreamVolume(volume)),
+  setStreamMuted: (muted) => mutate(() => hybrid.setStreamMuted(muted)),
+  queueLoad: (items, startIndex, repeatMode) =>
+    mutate(() => hybrid.queueLoad(items, startIndex, repeatMode)),
+  queueInsertItems: (items, beforeItemId) =>
+    mutate(() => hybrid.queueInsertItems(items, beforeItemId)),
+  queueReorderItems: (itemIds, beforeItemId) =>
+    mutate(() => hybrid.queueReorderItems(itemIds, beforeItemId)),
+  queueRemoveItems: (itemIds) => mutate(() => hybrid.queueRemoveItems(itemIds)),
+  queueNext: () => mutate(() => hybrid.queueNext()),
+  queuePrev: () => mutate(() => hybrid.queuePrev()),
+  queueJumpToItem: (itemId) => mutate(() => hybrid.queueJumpToItem(itemId)),
+  queueSetRepeatMode: (repeatMode) =>
+    mutate(() => hybrid.queueSetRepeatMode(repeatMode)),
+  requestMediaStatus: () => mutate(() => hybrid.requestMediaStatus()),
 
   startDiscovery: () => hybrid.startDiscovery(),
   stopDiscovery: () => hybrid.stopDiscovery(),

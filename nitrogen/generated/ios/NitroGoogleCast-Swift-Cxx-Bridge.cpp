@@ -71,6 +71,14 @@ namespace margelo::nitro::googlecast::bridge::swift {
     };
   }
   
+  // pragma MARK: std::function<void(const MediaStatus& /* status */)>
+  Func_void_MediaStatus create_Func_void_MediaStatus(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_MediaStatus::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const MediaStatus& status) mutable -> void {
+      swiftClosure.call(status);
+    };
+  }
+  
   // pragma MARK: std::function<void()>
   Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroGoogleCast::Func_void::fromUnsafe(swiftClosureWrapper);

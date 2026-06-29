@@ -1,16 +1,23 @@
 import type { InitialSnapshot, SessionLifecycleEvent } from '../transport/types'
 import type { CastState, Device } from '../transport/types'
+import type { MediaStatus } from '../types/MediaStatus'
 
 /**
- * Internal store event — the union of the three native push sources fed through
+ * Internal store event — the union of the native push sources fed through
  * {@link CastTransportApi.initAndSubscribe}. Later phases extend this union with
- * their own kinds (media status in P4, channel messages in P5) and feed them via
- * their own native HybridObject into `CastStore.dispatch`.
+ * their own kinds (channel messages in P5) and feed them via their own native
+ * HybridObject into `CastStore.dispatch`.
+ *
+ * `mediaStatus` (P4) is the streamed `GCKMediaStatus` / `MediaStatus` of the
+ * active session's RemoteMediaClient, pushed through the `onMediaStatus`
+ * callback. There is no media status when no session is live, so the media
+ * slice clears itself on the `ended` / `startFailed` lifecycle transitions.
  */
 export type StoreEvent =
   | { readonly kind: 'state'; readonly castState: CastState }
   | { readonly kind: 'devices'; readonly devices: Device[] }
   | { readonly kind: 'lifecycle'; readonly event: SessionLifecycleEvent }
+  | { readonly kind: 'mediaStatus'; readonly status: MediaStatus }
 
 /**
  * A registered piece of store state. Core slices (context / discovery / session)

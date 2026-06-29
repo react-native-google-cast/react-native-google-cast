@@ -15,9 +15,28 @@ public protocol HybridCastTransportSpec_protocol: HybridObject {
   var isPassiveScan: Bool { get }
 
   // Methods
-  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void) throws -> Promise<InitialSnapshot>
+  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void, onMediaStatus: @escaping (_ status: MediaStatus) -> Void) throws -> Promise<InitialSnapshot>
   func startSession(deviceId: String) throws -> Promise<Void>
   func endCurrentSession(stopCasting: Bool) throws -> Promise<Void>
+  func loadMedia(request: MediaLoadRequest) throws -> Promise<Void>
+  func play() throws -> Promise<Void>
+  func pause() throws -> Promise<Void>
+  func stop() throws -> Promise<Void>
+  func seek(options: MediaSeekOptions) throws -> Promise<Void>
+  func setPlaybackRate(playbackRate: Double) throws -> Promise<Void>
+  func setActiveTrackIds(trackIds: [Double]) throws -> Promise<Void>
+  func setTextTrackStyle(textTrackStyle: TextTrackStyle) throws -> Promise<Void>
+  func setStreamVolume(volume: Double) throws -> Promise<Void>
+  func setStreamMuted(muted: Bool) throws -> Promise<Void>
+  func queueLoad(items: [MediaQueueItem], startIndex: Double, repeatMode: MediaRepeatMode) throws -> Promise<Void>
+  func queueInsertItems(items: [MediaQueueItem], beforeItemId: Double) throws -> Promise<Void>
+  func queueReorderItems(itemIds: [Double], beforeItemId: Double) throws -> Promise<Void>
+  func queueRemoveItems(itemIds: [Double]) throws -> Promise<Void>
+  func queueNext() throws -> Promise<Void>
+  func queuePrev() throws -> Promise<Void>
+  func queueJumpToItem(itemId: Double) throws -> Promise<Void>
+  func queueSetRepeatMode(repeatMode: MediaRepeatMode) throws -> Promise<Void>
+  func requestMediaStatus() throws -> Promise<Void>
   func startDiscovery() throws -> Void
   func stopDiscovery() throws -> Void
   func setPassiveScan(passive: Bool) throws -> Void

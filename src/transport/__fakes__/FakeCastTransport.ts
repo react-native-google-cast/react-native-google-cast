@@ -6,6 +6,12 @@ import type {
   InitialSnapshot,
   SessionLifecycleEvent,
 } from '../types'
+import type { MediaStatus } from '../../types/MediaStatus'
+import type { MediaLoadRequest } from '../../types/MediaLoadRequest'
+import type { MediaSeekOptions } from '../../types/MediaSeekOptions'
+import type { MediaQueueItem } from '../../types/MediaQueueItem'
+import type { MediaRepeatMode } from '../../types/MediaRepeatMode'
+import type { TextTrackStyle } from '../../types/TextTrackStyle'
 
 export interface FakeCastTransportOptions {
   /** Defaults to `true`. Set `false` to exercise the unavailable path. */
@@ -51,6 +57,13 @@ export class FakeCastTransport implements CastTransportApi {
   readonly endCurrentSessionCalls: boolean[] = []
 
   /**
+   * Recorded media-mutation calls, keyed by method name, in call order. Each
+   * entry is the argument tuple the method was called with. Tests assert
+   * routing without caring about the (native-only) GCK side effect.
+   */
+  readonly mediaCalls: Array<{ method: string; args: readonly unknown[] }> = []
+
+  /**
    * Scriptable mutation behaviour. Override to reject:
    * `t.startSessionBehavior = async () => { throw { code: 'network' } }`.
    */
@@ -58,10 +71,28 @@ export class FakeCastTransport implements CastTransportApi {
   endCurrentSessionBehavior: (stopCasting: boolean) => Promise<void> =
     async () => {}
 
+  /**
+   * Scriptable behaviour for every media mutation, keyed by method name.
+   * Defaults to resolve; override to reject a specific call:
+   * `t.mediaBehavior.seek = async () => { throw { code: 'noSession' } }`.
+   */
+  readonly mediaBehavior: Record<string, (...args: never[]) => Promise<void>> =
+    {}
+
   private readonly snapshot: InitialSnapshot
   private onState?: (castState: CastState) => void
   private onDevices?: (devices: Device[]) => void
   private onLifecycle?: (event: SessionLifecycleEvent) => void
+  private onMediaStatus?: (status: MediaStatus) => void
+
+  /** Record a media mutation and run its scripted behaviour (resolve default). */
+  private media(method: string, ...args: unknown[]): Promise<void> {
+    this.mediaCalls.push({ method, args })
+    const behavior = this.mediaBehavior[method]
+    return behavior
+      ? (behavior as (...a: unknown[]) => Promise<void>)(...args)
+      : Promise.resolve()
+  }
 
   constructor(options: FakeCastTransportOptions = {}) {
     this.isAvailable = options.isAvailable ?? true
@@ -71,12 +102,14 @@ export class FakeCastTransport implements CastTransportApi {
   async initAndSubscribe(
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
-    onLifecycle: (event: SessionLifecycleEvent) => void
+    onLifecycle: (event: SessionLifecycleEvent) => void,
+    onMediaStatus: (status: MediaStatus) => void
   ): Promise<InitialSnapshot> {
     this.initCount++
     this.onState = onState
     this.onDevices = onDevices
     this.onLifecycle = onLifecycle
+    this.onMediaStatus = onMediaStatus
     return this.snapshot
   }
 
@@ -88,6 +121,73 @@ export class FakeCastTransport implements CastTransportApi {
   async endCurrentSession(stopCasting: boolean): Promise<void> {
     this.endCurrentSessionCalls.push(stopCasting)
     return this.endCurrentSessionBehavior(stopCasting)
+  }
+
+  // --- RemoteMediaClient mutation surface (records + scriptable behaviour) ---
+
+  loadMedia(request: MediaLoadRequest): Promise<void> {
+    return this.media('loadMedia', request)
+  }
+  play(): Promise<void> {
+    return this.media('play')
+  }
+  pause(): Promise<void> {
+    return this.media('pause')
+  }
+  stop(): Promise<void> {
+    return this.media('stop')
+  }
+  seek(options: MediaSeekOptions): Promise<void> {
+    return this.media('seek', options)
+  }
+  setPlaybackRate(playbackRate: number): Promise<void> {
+    return this.media('setPlaybackRate', playbackRate)
+  }
+  setActiveTrackIds(trackIds: number[]): Promise<void> {
+    return this.media('setActiveTrackIds', trackIds)
+  }
+  setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void> {
+    return this.media('setTextTrackStyle', textTrackStyle)
+  }
+  setStreamVolume(volume: number): Promise<void> {
+    return this.media('setStreamVolume', volume)
+  }
+  setStreamMuted(muted: boolean): Promise<void> {
+    return this.media('setStreamMuted', muted)
+  }
+  queueLoad(
+    items: MediaQueueItem[],
+    startIndex: number,
+    repeatMode: MediaRepeatMode
+  ): Promise<void> {
+    return this.media('queueLoad', items, startIndex, repeatMode)
+  }
+  queueInsertItems(
+    items: MediaQueueItem[],
+    beforeItemId: number
+  ): Promise<void> {
+    return this.media('queueInsertItems', items, beforeItemId)
+  }
+  queueReorderItems(itemIds: number[], beforeItemId: number): Promise<void> {
+    return this.media('queueReorderItems', itemIds, beforeItemId)
+  }
+  queueRemoveItems(itemIds: number[]): Promise<void> {
+    return this.media('queueRemoveItems', itemIds)
+  }
+  queueNext(): Promise<void> {
+    return this.media('queueNext')
+  }
+  queuePrev(): Promise<void> {
+    return this.media('queuePrev')
+  }
+  queueJumpToItem(itemId: number): Promise<void> {
+    return this.media('queueJumpToItem', itemId)
+  }
+  queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void> {
+    return this.media('queueSetRepeatMode', repeatMode)
+  }
+  requestMediaStatus(): Promise<void> {
+    return this.media('requestMediaStatus')
   }
 
   startDiscovery(): void {
@@ -105,6 +205,7 @@ export class FakeCastTransport implements CastTransportApi {
     this.onState = undefined
     this.onDevices = undefined
     this.onLifecycle = undefined
+    this.onMediaStatus = undefined
   }
 
   // --- test scripting helpers (not part of CastTransportApi) ---
@@ -122,6 +223,11 @@ export class FakeCastTransport implements CastTransportApi {
   /** Emit a session-lifecycle event to the subscribed store. */
   emitLifecycle(event: SessionLifecycleEvent): void {
     this.onLifecycle?.(event)
+  }
+
+  /** Emit a media-status update to the subscribed store. */
+  emitMediaStatus(status: MediaStatus): void {
+    this.onMediaStatus?.(status)
   }
 }
 

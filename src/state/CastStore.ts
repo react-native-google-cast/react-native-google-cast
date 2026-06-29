@@ -20,6 +20,7 @@ import {
   StoreSession,
   sessionSlice,
 } from './session.slice'
+import { mediaSlice } from './media.slice'
 
 export type { StoreSession }
 
@@ -97,10 +98,11 @@ export class CastStore {
       this.resolveReady = resolve
     })
 
-    // Core slices register exactly the way Phase 4/5 domain slices will.
+    // Core slices register exactly the way Phase 5 domain slices will.
     this.push(contextSlice)
     this.push(discoverySlice)
     this.push(sessionSlice)
+    this.push(mediaSlice)
     for (const slice of options.slices ?? []) this.push(slice)
 
     // Seed safe defaults so getSnapshot() works before init resolves.
@@ -211,7 +213,8 @@ export class CastStore {
       const snapshot = await this.transport.initAndSubscribe(
         (castState) => this.dispatch({ kind: 'state', castState }),
         (devices) => this.dispatch({ kind: 'devices', devices }),
-        (event) => this.dispatchLifecycle(event)
+        (event) => this.dispatchLifecycle(event),
+        (status) => this.dispatch({ kind: 'mediaStatus', status })
       )
       this.seedAll(snapshot)
     } catch {

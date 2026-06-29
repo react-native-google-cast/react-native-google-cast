@@ -15,6 +15,13 @@ const UNAVAILABLE_SNAPSHOT: InitialSnapshot = {
   devices: [],
 }
 
+function unsupported(): Promise<never> {
+  return Promise.reject({
+    code: 'notSupported',
+    message: 'Casting is not supported on web yet.',
+  })
+}
+
 export const castTransport: CastTransportApi = {
   isAvailable: false,
   isDiscovering: false,
@@ -22,18 +29,28 @@ export const castTransport: CastTransportApi = {
 
   initAndSubscribe: async () => UNAVAILABLE_SNAPSHOT,
 
-  startSession: async () => {
-    throw {
-      code: 'notSupported',
-      message: 'Casting is not supported on web yet.',
-    }
-  },
-  endCurrentSession: async () => {
-    throw {
-      code: 'notSupported',
-      message: 'Casting is not supported on web yet.',
-    }
-  },
+  startSession: unsupported,
+  endCurrentSession: unsupported,
+
+  loadMedia: unsupported,
+  play: unsupported,
+  pause: unsupported,
+  stop: unsupported,
+  seek: unsupported,
+  setPlaybackRate: unsupported,
+  setActiveTrackIds: unsupported,
+  setTextTrackStyle: unsupported,
+  setStreamVolume: unsupported,
+  setStreamMuted: unsupported,
+  queueLoad: unsupported,
+  queueInsertItems: unsupported,
+  queueReorderItems: unsupported,
+  queueRemoveItems: unsupported,
+  queueNext: unsupported,
+  queuePrev: unsupported,
+  queueJumpToItem: unsupported,
+  queueSetRepeatMode: unsupported,
+  requestMediaStatus: unsupported,
 
   startDiscovery: () => {},
   stopDiscovery: () => {},

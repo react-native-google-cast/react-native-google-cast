@@ -34,6 +34,64 @@ namespace margelo::nitro::googlecast { enum class SessionEventType; }
 namespace margelo::nitro::googlecast { struct CastError; }
 // Forward declaration of `CastErrorCode` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastErrorCode; }
+// Forward declaration of `MediaStatus` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaStatus; }
+// Forward declaration of `MediaInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaInfo; }
+// Forward declaration of `MediaStreamType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaStreamType; }
+// Forward declaration of `MediaMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaMetadata; }
+// Forward declaration of `MediaMetadataType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaMetadataType; }
+// Forward declaration of `MediaTrack` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaTrack; }
+// Forward declaration of `MediaTrackType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackType; }
+// Forward declaration of `MediaTrackSubtype` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaTrackSubtype; }
+// Forward declaration of `TextTrackStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct TextTrackStyle; }
+// Forward declaration of `TextTrackEdgeType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackEdgeType; }
+// Forward declaration of `TextTrackFontGenericFamily` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontGenericFamily; }
+// Forward declaration of `TextTrackFontStyle` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackFontStyle; }
+// Forward declaration of `TextTrackWindowType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class TextTrackWindowType; }
+// Forward declaration of `MediaHlsSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsSegmentFormat; }
+// Forward declaration of `MediaHlsVideoSegmentFormat` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaHlsVideoSegmentFormat; }
+// Forward declaration of `MediaPlayerState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerState; }
+// Forward declaration of `MediaPlayerIdleReason` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaPlayerIdleReason; }
+// Forward declaration of `VideoInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct VideoInfo; }
+// Forward declaration of `VideoHdrType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class VideoHdrType; }
+// Forward declaration of `MediaLiveSeekableRange` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLiveSeekableRange; }
+// Forward declaration of `MediaQueueItem` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueItem; }
+// Forward declaration of `MediaRepeatMode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
+// Forward declaration of `MediaLoadRequest` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaLoadRequest; }
+// Forward declaration of `MediaQueueData` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueData; }
+// Forward declaration of `MediaQueueType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueType; }
+// Forward declaration of `MediaQueueContainerMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaQueueContainerMetadata; }
+// Forward declaration of `MediaQueueContainerType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaQueueContainerType; }
+// Forward declaration of `MediaSeekOptions` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaSeekOptions; }
+// Forward declaration of `MediaSeekResumeState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 
 #include "InitialSnapshot.hpp"
 #include <NitroModules/Promise.hpp>
@@ -51,6 +109,36 @@ namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 #include "SessionEventType.hpp"
 #include "CastError.hpp"
 #include "CastErrorCode.hpp"
+#include "MediaStatus.hpp"
+#include "MediaInfo.hpp"
+#include "MediaStreamType.hpp"
+#include "MediaMetadata.hpp"
+#include "MediaMetadataType.hpp"
+#include <NitroModules/AnyMap.hpp>
+#include "MediaTrack.hpp"
+#include "MediaTrackType.hpp"
+#include "MediaTrackSubtype.hpp"
+#include "TextTrackStyle.hpp"
+#include "TextTrackEdgeType.hpp"
+#include "TextTrackFontGenericFamily.hpp"
+#include "TextTrackFontStyle.hpp"
+#include "TextTrackWindowType.hpp"
+#include "MediaHlsSegmentFormat.hpp"
+#include "MediaHlsVideoSegmentFormat.hpp"
+#include "MediaPlayerState.hpp"
+#include "MediaPlayerIdleReason.hpp"
+#include "VideoInfo.hpp"
+#include "VideoHdrType.hpp"
+#include "MediaLiveSeekableRange.hpp"
+#include "MediaQueueItem.hpp"
+#include "MediaRepeatMode.hpp"
+#include "MediaLoadRequest.hpp"
+#include "MediaQueueData.hpp"
+#include "MediaQueueType.hpp"
+#include "MediaQueueContainerMetadata.hpp"
+#include "MediaQueueContainerType.hpp"
+#include "MediaSeekOptions.hpp"
+#include "MediaSeekResumeState.hpp"
 
 #include "NitroGoogleCast-Swift-Cxx-Umbrella.hpp"
 
@@ -110,8 +198,8 @@ namespace margelo::nitro::googlecast {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) override {
-      auto __result = _swiftPart.initAndSubscribe(onState, onDevices, onLifecycle);
+    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) override {
+      auto __result = _swiftPart.initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
@@ -128,6 +216,158 @@ namespace margelo::nitro::googlecast {
     }
     inline std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override {
       auto __result = _swiftPart.endCurrentSession(std::forward<decltype(stopCasting)>(stopCasting));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override {
+      auto __result = _swiftPart.loadMedia(std::forward<decltype(request)>(request));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> play() override {
+      auto __result = _swiftPart.play();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> pause() override {
+      auto __result = _swiftPart.pause();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> stop() override {
+      auto __result = _swiftPart.stop();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> seek(const MediaSeekOptions& options) override {
+      auto __result = _swiftPart.seek(std::forward<decltype(options)>(options));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate) override {
+      auto __result = _swiftPart.setPlaybackRate(std::forward<decltype(playbackRate)>(playbackRate));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setActiveTrackIds(const std::vector<double>& trackIds) override {
+      auto __result = _swiftPart.setActiveTrackIds(trackIds);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setTextTrackStyle(const TextTrackStyle& textTrackStyle) override {
+      auto __result = _swiftPart.setTextTrackStyle(std::forward<decltype(textTrackStyle)>(textTrackStyle));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setStreamVolume(double volume) override {
+      auto __result = _swiftPart.setStreamVolume(std::forward<decltype(volume)>(volume));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setStreamMuted(bool muted) override {
+      auto __result = _swiftPart.setStreamMuted(std::forward<decltype(muted)>(muted));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) override {
+      auto __result = _swiftPart.queueLoad(items, std::forward<decltype(startIndex)>(startIndex), static_cast<int>(repeatMode));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) override {
+      auto __result = _swiftPart.queueInsertItems(items, std::forward<decltype(beforeItemId)>(beforeItemId));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) override {
+      auto __result = _swiftPart.queueReorderItems(itemIds, std::forward<decltype(beforeItemId)>(beforeItemId));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds) override {
+      auto __result = _swiftPart.queueRemoveItems(itemIds);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueNext() override {
+      auto __result = _swiftPart.queueNext();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queuePrev() override {
+      auto __result = _swiftPart.queuePrev();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueJumpToItem(double itemId) override {
+      auto __result = _swiftPart.queueJumpToItem(std::forward<decltype(itemId)>(itemId));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode) override {
+      auto __result = _swiftPart.queueSetRepeatMode(static_cast<int>(repeatMode));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> requestMediaStatus() override {
+      auto __result = _swiftPart.requestMediaStatus();
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
