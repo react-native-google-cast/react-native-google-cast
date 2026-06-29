@@ -8,13 +8,22 @@ T4 integration tests from the plan.
 
 ## Status at hand-off
 
-| Gate                                                 | iOS                                            | Android                                                                |
-| ---------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
-| `yarn nitrogen` generates spec                       | ✅                                             | ✅                                                                     |
-| Native module **compiles**                           | ✅ (`xcodebuild` NitroGoogleCast pod, GCK SDK) | ✅ (`:react-native-google-cast:compileDebugKotlin`, GCK + MediaRouter) |
-| Spike 0.1 — GCK event → JS callback                  | ⬜ device                                      | ⬜ device                                                              |
-| Spike 0.2 — thrown error carries `code`+`nativeCode` | ⬜ device                                      | ⬜ device                                                              |
-| Spike 0.3 — listener attach/detach/teardown clean    | ⬜ device                                      | ⬜ device                                                              |
+| Gate                                              | iOS                                            | Android                                                                  |
+| ------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
+| `yarn nitrogen` generates spec                    | ✅                                             | ✅                                                                       |
+| Native module **compiles**                        | ✅ (`xcodebuild` NitroGoogleCast pod, GCK SDK) | ✅ (`:react-native-google-cast:compileDebugKotlin`, GCK + MediaRouter)   |
+| Native module **loads + instantiates** on device  | ⬜ sim                                         | ✅ (`HybridCastTransportSpec` prototype, moto g05)                       |
+| Spike 0.1 — GCK event → JS callback               | ⬜ sim                                         | ✅ ordered `starting→started→ending→ended` + cast-state, real Chromecast |
+| Spike 0.2 — error carries `code`+`nativeCode`     | ⬜ sim                                         | ✅ `code`/`message` (probe) **and** `nativeCode=2161` (ended event)      |
+| connect → disconnect → reconnect → new generation | ⬜ sim                                         | ✅ session id changes across reconnect                                   |
+| Spike 0.3 — listener attach/detach/teardown clean | ⬜ sim                                         | ⬜ (not explicitly exercised; `dispose()` not wired to UI)               |
+
+**Android device run (moto g05 + "Office TV" Chromecast):** critical-gap #12 is
+**closed** — both `code` and `nativeCode` cross the Nitro bridge (the thrown-error
+JSON channel and the streamed-`CastError`-struct channel both proven). The full
+session lifecycle streams in order through native listener → store → bus → façade.
+Remaining: iOS simulator run, and the explicit teardown (0.3) + suspend/resumeFailed
+paths (unit-tested in jest; not yet driven on-device).
 
 ## Spike assertions (the gate that froze the seam — confirm post-hoc)
 
