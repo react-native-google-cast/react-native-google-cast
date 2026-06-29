@@ -24,7 +24,8 @@ import org.junit.runner.RunWith
  *   streamType absent in input. The iOS-pinned corpus pins "buffered" (iOS GCK default), but
  *   GCK Android leaves an unset streamType as INVALID, which the converter maps to null. The
  *   streamType assertion below handles this per-platform (explicit value round-trips; an unset
- *   one stays null). streamDuration default is 0 on both platforms — matches corpus.
+ *   one stays null). streamDuration behaves the same way: GCK Android maps an unset duration to
+ *   UNKNOWN_DURATION (-> null), while the iOS-pinned corpus has 0.
  *
  * NOTE: blocked on emulator (emulator-5554 was offline at time of authoring — 2026-06-28).
  */
@@ -73,7 +74,13 @@ class MediaInfoConverterTest {
       } else {
         assertNull("[$name] streamType (android: unset -> null, not BUFFERED)", actual.streamType)
       }
-      assertEquals("[$name] streamDuration", expected.streamDuration, actual.streamDuration)
+      // ANDROID DIVERGENCE — streamDuration: GCK Android maps an unset duration to
+      // UNKNOWN_DURATION (-> null); iOS pins 0. Explicit value round-trips; unset stays null.
+      if (input.streamDuration != null) {
+        assertEquals("[$name] streamDuration", input.streamDuration, actual.streamDuration)
+      } else {
+        assertNull("[$name] streamDuration (android: unset -> null, not 0)", actual.streamDuration)
+      }
       assertEquals("[$name] hlsSegmentFormat", expected.hlsSegmentFormat, actual.hlsSegmentFormat)
       assertEquals("[$name] hlsVideoSegmentFormat", expected.hlsVideoSegmentFormat, actual.hlsVideoSegmentFormat)
 
