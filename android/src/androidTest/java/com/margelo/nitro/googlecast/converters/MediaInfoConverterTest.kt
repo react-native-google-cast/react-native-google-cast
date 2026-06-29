@@ -21,9 +21,10 @@ import org.junit.runner.RunWith
  * Requires a connected emulator or device: customData AnyMap is JNI-backed.
  *
  * ANDROID DIVERGENCE — "minimal" fixture:
- *   streamType absent in input; GCKMediaInformationBuilder defaults to BUFFERED.
- *   The corpus expectedRoundTrip already pins "buffered", so no special handling needed.
- *   streamDuration default observed as 0 — matches corpus.
+ *   streamType absent in input. The iOS-pinned corpus pins "buffered" (iOS GCK default), but
+ *   GCK Android leaves an unset streamType as INVALID, which the converter maps to null. The
+ *   streamType assertion below handles this per-platform (explicit value round-trips; an unset
+ *   one stays null). streamDuration default is 0 on both platforms — matches corpus.
  *
  * NOTE: blocked on emulator (emulator-5554 was offline at time of authoring — 2026-06-28).
  */
@@ -66,7 +67,12 @@ class MediaInfoConverterTest {
       assertEquals("[$name] contentId", expected.contentId, actual.contentId)
       assertEquals("[$name] contentType", expected.contentType, actual.contentType)
       assertEquals("[$name] entity", expected.entity, actual.entity)
-      assertEquals("[$name] streamType", expected.streamType, actual.streamType)
+      // ANDROID DIVERGENCE (see class note): unset streamType -> null on Android, BUFFERED on iOS.
+      if (input.streamType != null) {
+        assertEquals("[$name] streamType", input.streamType, actual.streamType)
+      } else {
+        assertNull("[$name] streamType (android: unset -> null, not BUFFERED)", actual.streamType)
+      }
       assertEquals("[$name] streamDuration", expected.streamDuration, actual.streamDuration)
       assertEquals("[$name] hlsSegmentFormat", expected.hlsSegmentFormat, actual.hlsSegmentFormat)
       assertEquals("[$name] hlsVideoSegmentFormat", expected.hlsVideoSegmentFormat, actual.hlsVideoSegmentFormat)

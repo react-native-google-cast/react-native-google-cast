@@ -81,9 +81,21 @@ class TextTrackStyleConverterTest {
       assertEquals("[$name] fontFamily", expected.fontFamily, actual.fontFamily)
       assertEquals("[$name] fontGenericFamily", expected.fontGenericFamily, actual.fontGenericFamily)
       assertEquals("[$name] fontScale", expected.fontScale, actual.fontScale)
-      assertEquals("[$name] fontStyle", expected.fontStyle, actual.fontStyle)
+      // ANDROID DIVERGENCE — fontStyle: like edgeType/windowType, GCK Android leaves an unset
+      // fontStyle as UNSPECIFIED (-> null); iOS defaults to NORMAL. Explicit value round-trips.
+      if (input.fontStyle != null) {
+        assertEquals("[$name] fontStyle", input.fontStyle, actual.fontStyle)
+      } else {
+        assertNull("[$name] fontStyle (android: unset -> null, not NORMAL)", actual.fontStyle)
+      }
       assertEquals("[$name] windowCornerRadius", expected.windowCornerRadius, actual.windowCornerRadius)
-      assertEquals("[$name] windowType", expected.windowType, actual.windowType)
+      // ANDROID DIVERGENCE — windowType: same as edgeType — GCK Android leaves an unset
+      // windowType as UNSPECIFIED (-> null); iOS defaults to NONE. Explicit value round-trips.
+      if (input.windowType != null) {
+        assertEquals("[$name] windowType", input.windowType, actual.windowType)
+      } else {
+        assertNull("[$name] windowType (android: unset -> null, not NONE)", actual.windowType)
+      }
       ConverterAssertions.assertAnyMapEquals(actual.customData, expected.customData, "[$name]")
     }
   }

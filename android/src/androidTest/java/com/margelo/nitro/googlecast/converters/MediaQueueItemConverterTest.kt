@@ -66,7 +66,13 @@ class MediaQueueItemConverterTest {
       // Android preserves itemId (MediaQueueItemBuilder.setItemId exists); assert it round-trips
       // the input value. iOS drops it — see the ANDROID DIVERGENCE note above.
       assertEquals("[$name] itemId (android preserves itemId)", input.itemId, actual.itemId)
-      assertEquals("[$name] autoplay", expected.autoplay, actual.autoplay)
+      // ANDROID DIVERGENCE — autoplay: GCK Android's MediaQueueItemBuilder defaults an unset
+      // autoplay to true, whereas iOS defaults to false. Explicit value round-trips; unset -> true.
+      if (input.autoplay != null) {
+        assertEquals("[$name] autoplay", input.autoplay, actual.autoplay)
+      } else {
+        assertEquals("[$name] autoplay (android: unset -> true)", true, actual.autoplay)
+      }
       assertEquals("[$name] mediaInfo.contentUrl", expected.mediaInfo?.contentUrl, actual.mediaInfo?.contentUrl)
       assertEquals("[$name] mediaInfo.streamType", expected.mediaInfo?.streamType, actual.mediaInfo?.streamType)
       assertEquals("[$name] mediaInfo.streamDuration", expected.mediaInfo?.streamDuration, actual.mediaInfo?.streamDuration)
