@@ -11,10 +11,16 @@ import NitroModules
 public protocol HybridCastTransportSpec_protocol: HybridObject {
   // Properties
   var isAvailable: Bool { get }
+  var isDiscovering: Bool { get }
+  var isPassiveScan: Bool { get }
 
   // Methods
-  func getCastState() throws -> CastState
-  func addCastStateListener(listener: @escaping (_ state: CastState) -> Void) throws -> ListenerSubscription
+  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void) throws -> Promise<InitialSnapshot>
+  func startSession(deviceId: String) throws -> Promise<Void>
+  func endCurrentSession(stopCasting: Bool) throws -> Promise<Void>
+  func startDiscovery() throws -> Void
+  func stopDiscovery() throws -> Void
+  func setPassiveScan(passive: Bool) throws -> Void
 }
 
 public extension HybridCastTransportSpec_protocol {

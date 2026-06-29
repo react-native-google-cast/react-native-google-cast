@@ -15,8 +15,14 @@ namespace margelo::nitro::googlecast {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridGetter("isAvailable", &HybridCastTransportSpec::getIsAvailable);
-      prototype.registerHybridMethod("getCastState", &HybridCastTransportSpec::getCastState);
-      prototype.registerHybridMethod("addCastStateListener", &HybridCastTransportSpec::addCastStateListener);
+      prototype.registerHybridGetter("isDiscovering", &HybridCastTransportSpec::getIsDiscovering);
+      prototype.registerHybridGetter("isPassiveScan", &HybridCastTransportSpec::getIsPassiveScan);
+      prototype.registerHybridMethod("initAndSubscribe", &HybridCastTransportSpec::initAndSubscribe);
+      prototype.registerHybridMethod("startSession", &HybridCastTransportSpec::startSession);
+      prototype.registerHybridMethod("endCurrentSession", &HybridCastTransportSpec::endCurrentSession);
+      prototype.registerHybridMethod("startDiscovery", &HybridCastTransportSpec::startDiscovery);
+      prototype.registerHybridMethod("stopDiscovery", &HybridCastTransportSpec::stopDiscovery);
+      prototype.registerHybridMethod("setPassiveScan", &HybridCastTransportSpec::setPassiveScan);
     });
   }
 

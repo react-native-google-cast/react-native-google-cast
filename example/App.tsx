@@ -1,8 +1,9 @@
 /**
  * react-native-google-cast v5 — example app.
  *
- * Phase 0+1 spike screen: exercises the Nitro CastTransport directly
- * (isAvailable + getCastState + live cast-state subscription).
+ * Phase 3 smoke screen: exercises the v5 façades over the central state machine
+ * (sync getCastState / getPlayServicesState + live cast-state subscription +
+ * the discovered device list).
  */
 
 import { useEffect, useState } from 'react';
@@ -14,32 +15,50 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { castTransport, type CastState } from 'react-native-google-cast';
+import GoogleCast, {
+  type CastState,
+  type Device,
+} from 'react-native-google-cast';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  const [available] = useState(() => castTransport.isAvailable);
+  const discoveryManager = GoogleCast.getDiscoveryManager();
+
   const [state, setState] = useState<CastState>(() =>
-    castTransport.getCastState()
+    GoogleCast.getCastState(),
+  );
+  const [playServices] = useState(() => GoogleCast.getPlayServicesState());
+  const [devices, setDevices] = useState<readonly Device[]>(() =>
+    discoveryManager.getDevices(),
   );
 
   useEffect(() => {
-    const subscription = castTransport.addCastStateListener(setState);
-    return () => subscription.remove();
-  }, []);
+    const castSub = GoogleCast.onCastStateChanged(setState);
+    const devicesSub = discoveryManager.onDevicesUpdated(setDevices);
+    return () => {
+      castSub.remove();
+      devicesSub.remove();
+    };
+  }, [discoveryManager]);
 
   return (
-    <SafeAreaView style={[styles.container, isDarkMode && styles.containerDark]}>
+    <SafeAreaView
+      style={[styles.container, isDarkMode && styles.containerDark]}
+    >
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <View style={styles.content}>
         <Text style={[styles.title, isDarkMode && styles.textLight]}>
           react-native-google-cast v5
         </Text>
         <Text style={[styles.row, isDarkMode && styles.textLight]}>
-          Casting available: {available ? 'yes' : 'no'}
+          Cast state: {state}
         </Text>
         <Text style={[styles.row, isDarkMode && styles.textLight]}>
-          Cast state: {state}
+          Play Services: {playServices}
+        </Text>
+        <Text style={[styles.row, isDarkMode && styles.textLight]}>
+          Devices ({devices.length}):{' '}
+          {devices.map(d => d.friendlyName).join(', ') || '—'}
         </Text>
       </View>
     </SafeAreaView>

@@ -12,14 +12,45 @@
 // Forward declaration of `HybridCastTransportSpec_cxx` to properly resolve imports.
 namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 
+// Forward declaration of `InitialSnapshot` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct InitialSnapshot; }
 // Forward declaration of `CastState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastState; }
-// Forward declaration of `ListenerSubscription` to properly resolve imports.
-namespace margelo::nitro::googlecast { struct ListenerSubscription; }
+// Forward declaration of `PlayServicesState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `Device` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `DeviceCapability` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class DeviceCapability; }
+// Forward declaration of `WebImage` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct WebImage; }
+// Forward declaration of `SessionInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
+// Forward declaration of `SessionEventType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class SessionEventType; }
+// Forward declaration of `CastError` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct CastError; }
+// Forward declaration of `CastErrorCode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 
+#include "InitialSnapshot.hpp"
+#include <NitroModules/Promise.hpp>
 #include "CastState.hpp"
-#include "ListenerSubscription.hpp"
+#include "PlayServicesState.hpp"
+#include "Device.hpp"
+#include <vector>
+#include "DeviceCapability.hpp"
+#include <string>
+#include "WebImage.hpp"
+#include <optional>
+#include "SessionInfo.hpp"
 #include <functional>
+#include "SessionLifecycleEvent.hpp"
+#include "SessionEventType.hpp"
+#include "CastError.hpp"
+#include "CastErrorCode.hpp"
 
 #include "NitroGoogleCast-Swift-Cxx-Umbrella.hpp"
 
@@ -70,24 +101,56 @@ namespace margelo::nitro::googlecast {
     inline bool getIsAvailable() noexcept override {
       return _swiftPart.isAvailable();
     }
+    inline bool getIsDiscovering() noexcept override {
+      return _swiftPart.isDiscovering();
+    }
+    inline bool getIsPassiveScan() noexcept override {
+      return _swiftPart.isPassiveScan();
+    }
 
   public:
     // Methods
-    inline CastState getCastState() override {
-      auto __result = _swiftPart.getCastState();
+    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) override {
+      auto __result = _swiftPart.initAndSubscribe(onState, onDevices, onLifecycle);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline ListenerSubscription addCastStateListener(const std::function<void(CastState /* state */)>& listener) override {
-      auto __result = _swiftPart.addCastStateListener(listener);
+    inline std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) override {
+      auto __result = _swiftPart.startSession(deviceId);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
+    }
+    inline std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override {
+      auto __result = _swiftPart.endCurrentSession(std::forward<decltype(stopCasting)>(stopCasting));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline void startDiscovery() override {
+      auto __result = _swiftPart.startDiscovery();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void stopDiscovery() override {
+      auto __result = _swiftPart.stopDiscovery();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+    }
+    inline void setPassiveScan(bool passive) override {
+      auto __result = _swiftPart.setPassiveScan(std::forward<decltype(passive)>(passive));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
     }
 
   private:

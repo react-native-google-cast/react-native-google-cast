@@ -8,21 +8,21 @@
 import NitroModules
 
 /**
- * Wraps a Swift `(_ state: CastState) -> Void` as a class.
+ * Wraps a Swift `(_ castState: CastState) -> Void` as a class.
  * This class can be used from C++, e.g. to wrap the Swift closure as a `std::function`.
  */
 public final class Func_void_CastState {
   public typealias bridge = margelo.nitro.googlecast.bridge.swift
 
-  private let closure: (_ state: CastState) -> Void
+  private let closure: (_ castState: CastState) -> Void
 
-  public init(_ closure: @escaping (_ state: CastState) -> Void) {
+  public init(_ closure: @escaping (_ castState: CastState) -> Void) {
     self.closure = closure
   }
 
   @inline(__always)
-  public func call(state: Int32) -> Void {
-    self.closure(margelo.nitro.googlecast.CastState(rawValue: state)!)
+  public func call(castState: Int32) -> Void {
+    self.closure(margelo.nitro.googlecast.CastState(rawValue: castState)!)
   }
 
   /**

@@ -31,19 +31,51 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::function<void(const InitialSnapshot& /* result */)>
+  Func_void_InitialSnapshot create_Func_void_InitialSnapshot(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_InitialSnapshot::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const InitialSnapshot& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
+      swiftClosure.call(error);
+    };
+  }
+  
+  // pragma MARK: std::function<void(CastState /* castState */)>
+  Func_void_CastState create_Func_void_CastState(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_CastState::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](CastState castState) mutable -> void {
+      swiftClosure.call(static_cast<int>(castState));
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::vector<Device>& /* devices */)>
+  Func_void_std__vector_Device_ create_Func_void_std__vector_Device_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_std__vector_Device_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::vector<Device>& devices) mutable -> void {
+      swiftClosure.call(devices);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const SessionLifecycleEvent& /* event */)>
+  Func_void_SessionLifecycleEvent create_Func_void_SessionLifecycleEvent(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_SessionLifecycleEvent::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const SessionLifecycleEvent& event) mutable -> void {
+      swiftClosure.call(event);
+    };
+  }
+  
   // pragma MARK: std::function<void()>
   Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroGoogleCast::Func_void::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
       swiftClosure.call();
-    };
-  }
-  
-  // pragma MARK: std::function<void(CastState /* state */)>
-  Func_void_CastState create_Func_void_CastState(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroGoogleCast::Func_void_CastState::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](CastState state) mutable -> void {
-      swiftClosure.call(static_cast<int>(state));
     };
   }
   

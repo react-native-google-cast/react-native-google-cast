@@ -17,8 +17,9 @@
 
 #include "JHybridCastDebugSpec.hpp"
 #include "JHybridCastTransportSpec.hpp"
-#include "JFunc_void.hpp"
 #include "JFunc_void_CastState.hpp"
+#include "JFunc_void_std__vector_Device_.hpp"
+#include "JFunc_void_SessionLifecycleEvent.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::googlecast {
@@ -53,8 +54,9 @@ void registerAllNatives() {
   // Register native JNI methods
   margelo::nitro::googlecast::JHybridCastDebugSpec::CxxPart::registerNatives();
   margelo::nitro::googlecast::JHybridCastTransportSpec::CxxPart::registerNatives();
-  margelo::nitro::googlecast::JFunc_void_cxx::registerNatives();
   margelo::nitro::googlecast::JFunc_void_CastState_cxx::registerNatives();
+  margelo::nitro::googlecast::JFunc_void_std__vector_Device__cxx::registerNatives();
+  margelo::nitro::googlecast::JFunc_void_SessionLifecycleEvent_cxx::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(

@@ -13,14 +13,23 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
+// Forward declaration of `InitialSnapshot` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct InitialSnapshot; }
 // Forward declaration of `CastState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastState; }
-// Forward declaration of `ListenerSubscription` to properly resolve imports.
-namespace margelo::nitro::googlecast { struct ListenerSubscription; }
+// Forward declaration of `Device` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 
+#include "InitialSnapshot.hpp"
+#include <NitroModules/Promise.hpp>
 #include "CastState.hpp"
-#include "ListenerSubscription.hpp"
 #include <functional>
+#include "Device.hpp"
+#include <vector>
+#include "SessionLifecycleEvent.hpp"
+#include <string>
 
 namespace margelo::nitro::googlecast {
 
@@ -50,11 +59,17 @@ namespace margelo::nitro::googlecast {
     public:
       // Properties
       virtual bool getIsAvailable() = 0;
+      virtual bool getIsDiscovering() = 0;
+      virtual bool getIsPassiveScan() = 0;
 
     public:
       // Methods
-      virtual CastState getCastState() = 0;
-      virtual ListenerSubscription addCastStateListener(const std::function<void(CastState /* state */)>& listener) = 0;
+      virtual std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) = 0;
+      virtual std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) = 0;
+      virtual std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) = 0;
+      virtual void startDiscovery() = 0;
+      virtual void stopDiscovery() = 0;
+      virtual void setPassiveScan(bool passive) = 0;
 
     protected:
       // Hybrid Setup

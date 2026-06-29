@@ -12,6 +12,10 @@
 namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 // Forward declaration of `ApplicationMetadata` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
+// Forward declaration of `CastErrorCode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastErrorCode; }
+// Forward declaration of `CastError` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct CastError; }
 // Forward declaration of `CastState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastState; }
 // Forward declaration of `DeviceCapability` to properly resolve imports.
@@ -22,8 +26,8 @@ namespace margelo::nitro::googlecast { struct Device; }
 namespace margelo::nitro::googlecast { class HybridCastDebugSpec; }
 // Forward declaration of `HybridCastTransportSpec` to properly resolve imports.
 namespace margelo::nitro::googlecast { class HybridCastTransportSpec; }
-// Forward declaration of `ListenerSubscription` to properly resolve imports.
-namespace margelo::nitro::googlecast { struct ListenerSubscription; }
+// Forward declaration of `InitialSnapshot` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct InitialSnapshot; }
 // Forward declaration of `MediaHlsSegmentFormat` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class MediaHlsSegmentFormat; }
 // Forward declaration of `MediaHlsVideoSegmentFormat` to properly resolve imports.
@@ -70,6 +74,12 @@ namespace margelo::nitro::googlecast { enum class MediaTrackType; }
 namespace margelo::nitro::googlecast { struct MediaTrack; }
 // Forward declaration of `PlayServicesState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `SessionEventType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class SessionEventType; }
+// Forward declaration of `SessionInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 // Forward declaration of `StandbyState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class StandbyState; }
 // Forward declaration of `TextTrackEdgeType` to properly resolve imports.
@@ -98,12 +108,14 @@ namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 // Include C++ defined types
 #include "ActiveInputState.hpp"
 #include "ApplicationMetadata.hpp"
+#include "CastError.hpp"
+#include "CastErrorCode.hpp"
 #include "CastState.hpp"
 #include "Device.hpp"
 #include "DeviceCapability.hpp"
 #include "HybridCastDebugSpec.hpp"
 #include "HybridCastTransportSpec.hpp"
-#include "ListenerSubscription.hpp"
+#include "InitialSnapshot.hpp"
 #include "MediaHlsSegmentFormat.hpp"
 #include "MediaHlsVideoSegmentFormat.hpp"
 #include "MediaInfo.hpp"
@@ -127,6 +139,9 @@ namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 #include "MediaTrackSubtype.hpp"
 #include "MediaTrackType.hpp"
 #include "PlayServicesState.hpp"
+#include "SessionEventType.hpp"
+#include "SessionInfo.hpp"
+#include "SessionLifecycleEvent.hpp"
 #include "StandbyState.hpp"
 #include "TextTrackEdgeType.hpp"
 #include "TextTrackFontGenericFamily.hpp"
@@ -137,6 +152,8 @@ namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 #include "VideoInfo.hpp"
 #include "WebImage.hpp"
 #include <NitroModules/AnyMap.hpp>
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
 #include <exception>
 #include <functional>
@@ -867,6 +884,181 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Result<PlayServicesState>::withError(error);
   }
   
+  // pragma MARK: std::vector<Device>
+  /**
+   * Specialized version of `std::vector<Device>`.
+   */
+  using std__vector_Device_ = std::vector<Device>;
+  inline std::vector<Device> create_std__vector_Device_(size_t size) noexcept {
+    std::vector<Device> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<SessionInfo>
+  /**
+   * Specialized version of `std::optional<SessionInfo>`.
+   */
+  using std__optional_SessionInfo_ = std::optional<SessionInfo>;
+  inline std::optional<SessionInfo> create_std__optional_SessionInfo_(const SessionInfo& value) noexcept {
+    return std::optional<SessionInfo>(value);
+  }
+  inline bool has_value_std__optional_SessionInfo_(const std::optional<SessionInfo>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline SessionInfo get_std__optional_SessionInfo_(const std::optional<SessionInfo>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<InitialSnapshot>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<InitialSnapshot>>`.
+   */
+  using std__shared_ptr_Promise_InitialSnapshot__ = std::shared_ptr<Promise<InitialSnapshot>>;
+  inline std::shared_ptr<Promise<InitialSnapshot>> create_std__shared_ptr_Promise_InitialSnapshot__() noexcept {
+    return Promise<InitialSnapshot>::create();
+  }
+  inline PromiseHolder<InitialSnapshot> wrap_std__shared_ptr_Promise_InitialSnapshot__(std::shared_ptr<Promise<InitialSnapshot>> promise) noexcept {
+    return PromiseHolder<InitialSnapshot>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const InitialSnapshot& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const InitialSnapshot&)>`.
+   */
+  using Func_void_InitialSnapshot = std::function<void(const InitialSnapshot& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const InitialSnapshot& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_InitialSnapshot_Wrapper final {
+  public:
+    explicit Func_void_InitialSnapshot_Wrapper(std::function<void(const InitialSnapshot& /* result */)>&& func): _function(std::make_unique<std::function<void(const InitialSnapshot& /* result */)>>(std::move(func))) {}
+    inline void call(InitialSnapshot result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const InitialSnapshot& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_InitialSnapshot create_Func_void_InitialSnapshot(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_InitialSnapshot_Wrapper wrap_Func_void_InitialSnapshot(Func_void_InitialSnapshot value) noexcept {
+    return Func_void_InitialSnapshot_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(CastState /* castState */)>
+  /**
+   * Specialized version of `std::function<void(CastState)>`.
+   */
+  using Func_void_CastState = std::function<void(CastState /* castState */)>;
+  /**
+   * Wrapper class for a `std::function<void(CastState / * castState * /)>`, this can be used from Swift.
+   */
+  class Func_void_CastState_Wrapper final {
+  public:
+    explicit Func_void_CastState_Wrapper(std::function<void(CastState /* castState */)>&& func): _function(std::make_unique<std::function<void(CastState /* castState */)>>(std::move(func))) {}
+    inline void call(int castState) const noexcept {
+      _function->operator()(static_cast<CastState>(castState));
+    }
+  private:
+    std::unique_ptr<std::function<void(CastState /* castState */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_CastState create_Func_void_CastState(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_CastState_Wrapper wrap_Func_void_CastState(Func_void_CastState value) noexcept {
+    return Func_void_CastState_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::vector<Device>& /* devices */)>
+  /**
+   * Specialized version of `std::function<void(const std::vector<Device>&)>`.
+   */
+  using Func_void_std__vector_Device_ = std::function<void(const std::vector<Device>& /* devices */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::vector<Device>& / * devices * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__vector_Device__Wrapper final {
+  public:
+    explicit Func_void_std__vector_Device__Wrapper(std::function<void(const std::vector<Device>& /* devices */)>&& func): _function(std::make_unique<std::function<void(const std::vector<Device>& /* devices */)>>(std::move(func))) {}
+    inline void call(std::vector<Device> devices) const noexcept {
+      _function->operator()(devices);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::vector<Device>& /* devices */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__vector_Device_ create_Func_void_std__vector_Device_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__vector_Device__Wrapper wrap_Func_void_std__vector_Device_(Func_void_std__vector_Device_ value) noexcept {
+    return Func_void_std__vector_Device__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<CastError>
+  /**
+   * Specialized version of `std::optional<CastError>`.
+   */
+  using std__optional_CastError_ = std::optional<CastError>;
+  inline std::optional<CastError> create_std__optional_CastError_(const CastError& value) noexcept {
+    return std::optional<CastError>(value);
+  }
+  inline bool has_value_std__optional_CastError_(const std::optional<CastError>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline CastError get_std__optional_CastError_(const std::optional<CastError>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::function<void(const SessionLifecycleEvent& /* event */)>
+  /**
+   * Specialized version of `std::function<void(const SessionLifecycleEvent&)>`.
+   */
+  using Func_void_SessionLifecycleEvent = std::function<void(const SessionLifecycleEvent& /* event */)>;
+  /**
+   * Wrapper class for a `std::function<void(const SessionLifecycleEvent& / * event * /)>`, this can be used from Swift.
+   */
+  class Func_void_SessionLifecycleEvent_Wrapper final {
+  public:
+    explicit Func_void_SessionLifecycleEvent_Wrapper(std::function<void(const SessionLifecycleEvent& /* event */)>&& func): _function(std::make_unique<std::function<void(const SessionLifecycleEvent& /* event */)>>(std::move(func))) {}
+    inline void call(SessionLifecycleEvent event) const noexcept {
+      _function->operator()(event);
+    }
+  private:
+    std::unique_ptr<std::function<void(const SessionLifecycleEvent& /* event */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_SessionLifecycleEvent create_Func_void_SessionLifecycleEvent(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_SessionLifecycleEvent_Wrapper wrap_Func_void_SessionLifecycleEvent(Func_void_SessionLifecycleEvent value) noexcept {
+    return Func_void_SessionLifecycleEvent_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<void>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<void>>`.
+   */
+  using std__shared_ptr_Promise_void__ = std::shared_ptr<Promise<void>>;
+  inline std::shared_ptr<Promise<void>> create_std__shared_ptr_Promise_void__() noexcept {
+    return Promise<void>::create();
+  }
+  inline PromiseHolder<void> wrap_std__shared_ptr_Promise_void__(std::shared_ptr<Promise<void>> promise) noexcept {
+    return PromiseHolder<void>(std::move(promise));
+  }
+  
   // pragma MARK: std::function<void()>
   /**
    * Specialized version of `std::function<void()>`.
@@ -889,28 +1081,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Func_void_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::function<void(CastState /* state */)>
-  /**
-   * Specialized version of `std::function<void(CastState)>`.
-   */
-  using Func_void_CastState = std::function<void(CastState /* state */)>;
-  /**
-   * Wrapper class for a `std::function<void(CastState / * state * /)>`, this can be used from Swift.
-   */
-  class Func_void_CastState_Wrapper final {
-  public:
-    explicit Func_void_CastState_Wrapper(std::function<void(CastState /* state */)>&& func): _function(std::make_unique<std::function<void(CastState /* state */)>>(std::move(func))) {}
-    inline void call(int state) const noexcept {
-      _function->operator()(static_cast<CastState>(state));
-    }
-  private:
-    std::unique_ptr<std::function<void(CastState /* state */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_CastState create_Func_void_CastState(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_CastState_Wrapper wrap_Func_void_CastState(Func_void_CastState value) noexcept {
-    return Func_void_CastState_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<HybridCastTransportSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridCastTransportSpec>`.
@@ -923,22 +1093,31 @@ namespace margelo::nitro::googlecast::bridge::swift {
   using std__weak_ptr_HybridCastTransportSpec_ = std::weak_ptr<HybridCastTransportSpec>;
   inline std__weak_ptr_HybridCastTransportSpec_ weakify_std__shared_ptr_HybridCastTransportSpec_(const std::shared_ptr<HybridCastTransportSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: Result<CastState>
-  using Result_CastState_ = Result<CastState>;
-  inline Result_CastState_ create_Result_CastState_(CastState value) noexcept {
-    return Result<CastState>::withValue(std::move(value));
+  // pragma MARK: Result<std::shared_ptr<Promise<InitialSnapshot>>>
+  using Result_std__shared_ptr_Promise_InitialSnapshot___ = Result<std::shared_ptr<Promise<InitialSnapshot>>>;
+  inline Result_std__shared_ptr_Promise_InitialSnapshot___ create_Result_std__shared_ptr_Promise_InitialSnapshot___(const std::shared_ptr<Promise<InitialSnapshot>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<InitialSnapshot>>>::withValue(value);
   }
-  inline Result_CastState_ create_Result_CastState_(const std::exception_ptr& error) noexcept {
-    return Result<CastState>::withError(error);
+  inline Result_std__shared_ptr_Promise_InitialSnapshot___ create_Result_std__shared_ptr_Promise_InitialSnapshot___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<InitialSnapshot>>>::withError(error);
   }
   
-  // pragma MARK: Result<ListenerSubscription>
-  using Result_ListenerSubscription_ = Result<ListenerSubscription>;
-  inline Result_ListenerSubscription_ create_Result_ListenerSubscription_(const ListenerSubscription& value) noexcept {
-    return Result<ListenerSubscription>::withValue(value);
+  // pragma MARK: Result<std::shared_ptr<Promise<void>>>
+  using Result_std__shared_ptr_Promise_void___ = Result<std::shared_ptr<Promise<void>>>;
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::shared_ptr<Promise<void>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withValue(value);
   }
-  inline Result_ListenerSubscription_ create_Result_ListenerSubscription_(const std::exception_ptr& error) noexcept {
-    return Result<ListenerSubscription>::withError(error);
+  inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<void>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<void>
+  using Result_void_ = Result<void>;
+  inline Result_void_ create_Result_void_() noexcept {
+    return Result<void>::withValue();
+  }
+  inline Result_void_ create_Result_void_(const std::exception_ptr& error) noexcept {
+    return Result<void>::withError(error);
   }
 
 } // namespace margelo::nitro::googlecast::bridge::swift

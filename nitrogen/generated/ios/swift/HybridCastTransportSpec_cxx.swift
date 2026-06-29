@@ -127,34 +127,130 @@ open class HybridCastTransportSpec_cxx {
       return self.__implementation.isAvailable
     }
   }
+  
+  public final var isDiscovering: Bool {
+    @inline(__always)
+    get {
+      return self.__implementation.isDiscovering
+    }
+  }
+  
+  public final var isPassiveScan: Bool {
+    @inline(__always)
+    get {
+      return self.__implementation.isPassiveScan
+    }
+  }
 
   // Methods
   @inline(__always)
-  public final func getCastState() -> bridge.Result_CastState_ {
+  public final func initAndSubscribe(onState: bridge.Func_void_CastState, onDevices: bridge.Func_void_std__vector_Device_, onLifecycle: bridge.Func_void_SessionLifecycleEvent) -> bridge.Result_std__shared_ptr_Promise_InitialSnapshot___ {
     do {
-      let __result = try self.__implementation.getCastState()
-      let __resultCpp = __result
-      return bridge.create_Result_CastState_(__resultCpp)
+      let __result = try self.__implementation.initAndSubscribe(onState: { () -> (CastState) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_CastState(onState)
+        return { (__castState: CastState) -> Void in
+          __wrappedFunction.call(__castState.rawValue)
+        }
+      }(), onDevices: { () -> ([Device]) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_std__vector_Device_(onDevices)
+        return { (__devices: [Device]) -> Void in
+          __wrappedFunction.call({ () -> bridge.std__vector_Device_ in
+            var __vector = bridge.create_std__vector_Device_(__devices.count)
+            for __item in __devices {
+              __vector.push_back(__item)
+            }
+            return __vector
+          }())
+        }
+      }(), onLifecycle: { () -> (SessionLifecycleEvent) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_SessionLifecycleEvent(onLifecycle)
+        return { (__event: SessionLifecycleEvent) -> Void in
+          __wrappedFunction.call(__event)
+        }
+      }())
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_InitialSnapshot__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_InitialSnapshot__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_InitialSnapshot__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_InitialSnapshot___(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_CastState_(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_InitialSnapshot___(__exceptionPtr)
     }
   }
   
   @inline(__always)
-  public final func addCastStateListener(listener: bridge.Func_void_CastState) -> bridge.Result_ListenerSubscription_ {
+  public final func startSession(deviceId: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.addCastStateListener(listener: { () -> (CastState) -> Void in
-        let __wrappedFunction = bridge.wrap_Func_void_CastState(listener)
-        return { (__state: CastState) -> Void in
-          __wrappedFunction.call(__state.rawValue)
-        }
-      }())
-      let __resultCpp = __result
-      return bridge.create_Result_ListenerSubscription_(__resultCpp)
+      let __result = try self.__implementation.startSession(deviceId: String(deviceId))
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_ListenerSubscription_(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func endCurrentSession(stopCasting: Bool) -> bridge.Result_std__shared_ptr_Promise_void___ {
+    do {
+      let __result = try self.__implementation.endCurrentSession(stopCasting: stopCasting)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func startDiscovery() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.startDiscovery()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func stopDiscovery() -> bridge.Result_void_ {
+    do {
+      try self.__implementation.stopDiscovery()
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func setPassiveScan(passive: Bool) -> bridge.Result_void_ {
+    do {
+      try self.__implementation.setPassiveScan(passive: passive)
+      return bridge.create_Result_void_()
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_void_(__exceptionPtr)
     }
   }
 }

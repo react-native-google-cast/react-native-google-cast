@@ -7,19 +7,62 @@
 
 #include "JHybridCastTransportSpec.hpp"
 
+// Forward declaration of `InitialSnapshot` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct InitialSnapshot; }
 // Forward declaration of `CastState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class CastState; }
-// Forward declaration of `ListenerSubscription` to properly resolve imports.
-namespace margelo::nitro::googlecast { struct ListenerSubscription; }
+// Forward declaration of `PlayServicesState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `Device` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `DeviceCapability` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class DeviceCapability; }
+// Forward declaration of `WebImage` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct WebImage; }
+// Forward declaration of `SessionInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
+// Forward declaration of `SessionEventType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class SessionEventType; }
+// Forward declaration of `CastError` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct CastError; }
+// Forward declaration of `CastErrorCode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 
+#include "InitialSnapshot.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "JInitialSnapshot.hpp"
 #include "CastState.hpp"
 #include "JCastState.hpp"
-#include "ListenerSubscription.hpp"
-#include "JListenerSubscription.hpp"
+#include "PlayServicesState.hpp"
+#include "JPlayServicesState.hpp"
+#include "Device.hpp"
+#include <vector>
+#include "JDevice.hpp"
+#include "DeviceCapability.hpp"
+#include "JDeviceCapability.hpp"
+#include <string>
+#include "WebImage.hpp"
+#include "JWebImage.hpp"
+#include <optional>
+#include "SessionInfo.hpp"
+#include "JSessionInfo.hpp"
+#include <NitroModules/JUnit.hpp>
 #include <functional>
-#include "JFunc_void.hpp"
-#include <NitroModules/JNICallable.hpp>
 #include "JFunc_void_CastState.hpp"
+#include <NitroModules/JNICallable.hpp>
+#include "JFunc_void_std__vector_Device_.hpp"
+#include "SessionLifecycleEvent.hpp"
+#include "JFunc_void_SessionLifecycleEvent.hpp"
+#include "JSessionLifecycleEvent.hpp"
+#include "SessionEventType.hpp"
+#include "JSessionEventType.hpp"
+#include "CastError.hpp"
+#include "JCastError.hpp"
+#include "CastErrorCode.hpp"
+#include "JCastErrorCode.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -56,17 +99,75 @@ namespace margelo::nitro::googlecast {
     auto __result = method(_javaPart);
     return static_cast<bool>(__result);
   }
+  bool JHybridCastTransportSpec::getIsDiscovering() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("isDiscovering");
+    auto __result = method(_javaPart);
+    return static_cast<bool>(__result);
+  }
+  bool JHybridCastTransportSpec::getIsPassiveScan() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jboolean()>("isPassiveScan");
+    auto __result = method(_javaPart);
+    return static_cast<bool>(__result);
+  }
 
   // Methods
-  CastState JHybridCastTransportSpec::getCastState() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JCastState>()>("getCastState");
-    auto __result = method(_javaPart);
-    return __result->toCpp();
+  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */)>("initAndSubscribe_cxx");
+    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle));
+    return [&]() {
+      auto __promise = Promise<InitialSnapshot>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JInitialSnapshot>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
-  ListenerSubscription JHybridCastTransportSpec::addCastStateListener(const std::function<void(CastState /* state */)>& listener) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JListenerSubscription>(jni::alias_ref<JFunc_void_CastState::javaobject> /* listener */)>("addCastStateListener_cxx");
-    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(listener));
-    return __result->toCpp();
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::startSession(const std::string& deviceId) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* deviceId */)>("startSession");
+    auto __result = method(_javaPart, jni::make_jstring(deviceId));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::endCurrentSession(bool stopCasting) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* stopCasting */)>("endCurrentSession");
+    auto __result = method(_javaPart, stopCasting);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  void JHybridCastTransportSpec::startDiscovery() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("startDiscovery");
+    method(_javaPart);
+  }
+  void JHybridCastTransportSpec::stopDiscovery() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void()>("stopDiscovery");
+    method(_javaPart);
+  }
+  void JHybridCastTransportSpec::setPassiveScan(bool passive) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<void(jboolean /* passive */)>("setPassiveScan");
+    method(_javaPart, passive);
   }
 
 } // namespace margelo::nitro::googlecast

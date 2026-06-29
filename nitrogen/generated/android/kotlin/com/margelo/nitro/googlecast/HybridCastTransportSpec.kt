@@ -10,6 +10,7 @@ package com.margelo.nitro.googlecast
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -28,20 +29,44 @@ abstract class HybridCastTransportSpec: HybridObject() {
   @get:DoNotStrip
   @get:Keep
   abstract val isAvailable: Boolean
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val isDiscovering: Boolean
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val isPassiveScan: Boolean
 
   // Methods
-  @DoNotStrip
-  @Keep
-  abstract fun getCastState(): CastState
-  
-  abstract fun addCastStateListener(listener: (state: CastState) -> Unit): ListenerSubscription
+  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit): Promise<InitialSnapshot>
   
   @DoNotStrip
   @Keep
-  private fun addCastStateListener_cxx(listener: Func_void_CastState): ListenerSubscription {
-    val __result = addCastStateListener(listener)
+  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent): Promise<InitialSnapshot> {
+    val __result = initAndSubscribe(onState, onDevices, onLifecycle)
     return __result
   }
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startSession(deviceId: String): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun endCurrentSession(stopCasting: Boolean): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun startDiscovery(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun stopDiscovery(): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setPassiveScan(passive: Boolean): Unit
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

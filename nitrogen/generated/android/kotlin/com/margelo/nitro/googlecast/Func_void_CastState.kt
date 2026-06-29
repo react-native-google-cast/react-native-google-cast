@@ -14,7 +14,7 @@ import dalvik.annotation.optimization.FastNative
 
 
 /**
- * Represents the JavaScript callback `(state: enum) => void`.
+ * Represents the JavaScript callback `(castState: enum) => void`.
  * This can be either implemented in C++ (in which case it might be a callback coming from JS),
  * or in Kotlin/Java (in which case it is a native callback).
  */
@@ -28,11 +28,11 @@ fun interface Func_void_CastState: (CastState) -> Unit {
    */
   @DoNotStrip
   @Keep
-  override fun invoke(state: CastState): Unit
+  override fun invoke(castState: CastState): Unit
 }
 
 /**
- * Represents the JavaScript callback `(state: enum) => void`.
+ * Represents the JavaScript callback `(castState: enum) => void`.
  * This is implemented in C++, via a `std::function<...>`.
  * The callback might be coming from JS.
  */
@@ -56,15 +56,15 @@ class Func_void_CastState_cxx: Func_void_CastState {
 
   @DoNotStrip
   @Keep
-  override fun invoke(state: CastState): Unit
-    = invoke_cxx(state)
+  override fun invoke(castState: CastState): Unit
+    = invoke_cxx(castState)
 
   @FastNative
-  private external fun invoke_cxx(state: CastState): Unit
+  private external fun invoke_cxx(castState: CastState): Unit
 }
 
 /**
- * Represents the JavaScript callback `(state: enum) => void`.
+ * Represents the JavaScript callback `(castState: enum) => void`.
  * This is implemented in Java/Kotlin, via a `(CastState) -> Unit`.
  * The callback is always coming from native.
  */
@@ -74,7 +74,7 @@ class Func_void_CastState_cxx: Func_void_CastState {
 class Func_void_CastState_java(private val function: (CastState) -> Unit): Func_void_CastState {
   @DoNotStrip
   @Keep
-  override fun invoke(state: CastState): Unit {
-    return this.function(state)
+  override fun invoke(castState: CastState): Unit {
+    return this.function(castState)
   }
 }

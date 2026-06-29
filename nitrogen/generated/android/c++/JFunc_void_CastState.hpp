@@ -20,7 +20,7 @@ namespace margelo::nitro::googlecast {
   using namespace facebook;
 
   /**
-   * Represents the Java/Kotlin callback `(state: CastState) -> Unit`.
+   * Represents the Java/Kotlin callback `(castState: CastState) -> Unit`.
    * This can be passed around between C++ and Java/Kotlin.
    */
   struct JFunc_void_CastState: public jni::JavaClass<JFunc_void_CastState> {
@@ -31,9 +31,9 @@ namespace margelo::nitro::googlecast {
     /**
      * Invokes the function this `JFunc_void_CastState` instance holds through JNI.
      */
-    void invoke(CastState state) const {
-      static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JCastState> /* state */)>("invoke");
-      method(self(), JCastState::fromCpp(state));
+    void invoke(CastState castState) const {
+      static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JCastState> /* castState */)>("invoke");
+      method(self(), JCastState::fromCpp(castState));
     }
   };
 
@@ -42,7 +42,7 @@ namespace margelo::nitro::googlecast {
    */
   class JFunc_void_CastState_cxx final: public jni::HybridClass<JFunc_void_CastState_cxx, JFunc_void_CastState> {
   public:
-    static jni::local_ref<JFunc_void_CastState::javaobject> fromCpp(const std::function<void(CastState /* state */)>& func) {
+    static jni::local_ref<JFunc_void_CastState::javaobject> fromCpp(const std::function<void(CastState /* castState */)>& func) {
       return JFunc_void_CastState_cxx::newObjectCxxArgs(func);
     }
 
@@ -50,13 +50,13 @@ namespace margelo::nitro::googlecast {
     /**
      * Invokes the C++ `std::function<...>` this `JFunc_void_CastState_cxx` instance holds.
      */
-    void invoke_cxx(jni::alias_ref<JCastState> state) {
-      _func(state->toCpp());
+    void invoke_cxx(jni::alias_ref<JCastState> castState) {
+      _func(castState->toCpp());
     }
 
   public:
     [[nodiscard]]
-    inline const std::function<void(CastState /* state */)>& getFunction() const {
+    inline const std::function<void(CastState /* castState */)>& getFunction() const {
       return _func;
     }
 
@@ -67,11 +67,11 @@ namespace margelo::nitro::googlecast {
     }
 
   private:
-    explicit JFunc_void_CastState_cxx(const std::function<void(CastState /* state */)>& func): _func(func) { }
+    explicit JFunc_void_CastState_cxx(const std::function<void(CastState /* castState */)>& func): _func(func) { }
 
   private:
     friend HybridBase;
-    std::function<void(CastState /* state */)> _func;
+    std::function<void(CastState /* castState */)> _func;
   };
 
 } // namespace margelo::nitro::googlecast

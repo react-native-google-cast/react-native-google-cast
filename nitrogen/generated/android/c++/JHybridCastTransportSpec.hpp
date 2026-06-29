@@ -51,11 +51,17 @@ namespace margelo::nitro::googlecast {
   public:
     // Properties
     bool getIsAvailable() override;
+    bool getIsDiscovering() override;
+    bool getIsPassiveScan() override;
 
   public:
     // Methods
-    CastState getCastState() override;
-    ListenerSubscription addCastStateListener(const std::function<void(CastState /* state */)>& listener) override;
+    std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle) override;
+    std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) override;
+    std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override;
+    void startDiscovery() override;
+    void stopDiscovery() override;
+    void setPassiveScan(bool passive) override;
 
   private:
     jni::global_ref<JHybridCastTransportSpec::JavaPart> _javaPart;
