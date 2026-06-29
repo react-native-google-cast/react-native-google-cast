@@ -69,6 +69,11 @@ android {
         }
       }
     }
+
+    // Instrumented test runner for the AnyMap-carrying converter parity suite.
+    // AnyMap is JNI-backed and cannot run under Robolectric, so these tests
+    // require a connected emulator or device (android/src/androidTest/).
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 
   externalNativeBuild {
@@ -106,6 +111,29 @@ android {
       returnDefaultValues = true
     }
   }
+
+  // Bundle the shared golden-fixture corpus as androidTest assets so the instrumented
+  // suite can open them from the device without pushing files separately.
+  sourceSets {
+    androidTest {
+      assets.srcDirs = ['../fixtures']
+    }
+  }
+
+  // The androidTest APK pulls the shared RN/runtime .so files from BOTH this library's
+  // externalNativeBuild output (library_jni) and react-android, so merging fails with
+  // "2 files found with path lib/<abi>/<name>.so". These are the identical runtime libs from
+  // each input, so pickFirst is safe (the library's own libNitro*.so are not duplicated).
+  packaging {
+    jniLibs {
+      pickFirsts += [
+        "**/libc++_shared.so",
+        "**/libfbjni.so",
+        "**/libjsi.so",
+        "**/libreactnative.so",
+      ]
+    }
+  }
 }
 
 repositories {
@@ -128,4 +156,10 @@ dependencies {
   // Converter parity suite (Robolectric, JVM unit tests).
   testImplementation "junit:junit:4.13.2"
   testImplementation "org.robolectric:robolectric:4.13"
+
+  // Instrumented converter parity suite (androidTest) for AnyMap-carrying types.
+  // AnyMap is JNI-backed; these tests require a connected emulator or device.
+  androidTestImplementation "androidx.test.ext:junit:1.1.5"
+  androidTestImplementation "androidx.test:runner:1.5.2"
+  androidTestImplementation "androidx.test:rules:1.5.0"
 }
