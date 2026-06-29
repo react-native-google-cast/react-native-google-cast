@@ -8,13 +8,13 @@ T4 integration tests from the plan.
 
 ## Status at hand-off
 
-| Gate                                                 | iOS                                            | Android                                                               |
-| ---------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------- |
-| `yarn nitrogen` generates spec                       | ✅                                             | ✅                                                                    |
-| Native module **compiles**                           | ✅ (`xcodebuild` NitroGoogleCast pod, GCK SDK) | ⚠️ not compiled here (no JDK in CI env) — compile with `yarn android` |
-| Spike 0.1 — GCK event → JS callback                  | ⬜ device                                      | ⬜ device                                                             |
-| Spike 0.2 — thrown error carries `code`+`nativeCode` | ⬜ device                                      | ⬜ device                                                             |
-| Spike 0.3 — listener attach/detach/teardown clean    | ⬜ device                                      | ⬜ device                                                             |
+| Gate                                                 | iOS                                            | Android                                                                |
+| ---------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------- |
+| `yarn nitrogen` generates spec                       | ✅                                             | ✅                                                                     |
+| Native module **compiles**                           | ✅ (`xcodebuild` NitroGoogleCast pod, GCK SDK) | ✅ (`:react-native-google-cast:compileDebugKotlin`, GCK + MediaRouter) |
+| Spike 0.1 — GCK event → JS callback                  | ⬜ device                                      | ⬜ device                                                              |
+| Spike 0.2 — thrown error carries `code`+`nativeCode` | ⬜ device                                      | ⬜ device                                                              |
+| Spike 0.3 — listener attach/detach/teardown clean    | ⬜ device                                      | ⬜ device                                                              |
 
 ## Spike assertions (the gate that froze the seam — confirm post-hoc)
 
@@ -45,8 +45,8 @@ T4 integration tests from the plan.
 
 ## Android-specific verification
 
-- **Compile first** (`yarn android` / gradle) — the Kotlin was written against
-  the GCK + MediaRouter APIs but not compiled in this environment.
+- The Kotlin **compiles** (`:react-native-google-cast:compileDebugKotlin`)
+  against the GCK + MediaRouter APIs; runtime behaviour is still device-gated.
 - Discovery uses `MediaRouter` + `CastContext.getMergedSelector()`. Per the
   project memory, devices only surface once an on-screen Cast button (Phase 6)
   triggers an active scan — so device-list E2E may defer to Phase 6; the session
