@@ -9,6 +9,7 @@ import com.margelo.nitro.googlecast.NitroGoogleCastOnLoad
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,6 +63,9 @@ class MediaQueueContainerMetadataConverterTest {
       // iOS-pinned corpus leaves it absent (null). Assert only when the corpus pins a value.
       if (expected.containerDuration != null) {
         assertEquals("[$name] containerDuration", expected.containerDuration, actual.containerDuration)
+      } else {
+        val d = actual.containerDuration
+        assertTrue("[$name] containerDuration expected null or 0.0 when unset, got $d", d == null || d == 0.0)
       }
 
       val expectedImages = expected.containerImages
@@ -123,7 +127,7 @@ class MediaQueueContainerMetadataConverterTest {
   private fun containerTypeFromString(s: String): MediaQueueContainerType = when (s) {
     "generic" -> MediaQueueContainerType.GENERIC
     "audioBook" -> MediaQueueContainerType.AUDIOBOOK
-    else -> MediaQueueContainerType.GENERIC
+    else -> error("Unsupported containerType: $s")
   }
 
   /** Minimal MediaMetadata parser for sections (the corpus exercises only type + title). */
@@ -160,6 +164,6 @@ class MediaQueueContainerMetadataConverterTest {
     "photo" -> MediaMetadataType.PHOTO
     "tvShow" -> MediaMetadataType.TVSHOW
     "user" -> MediaMetadataType.USER
-    else -> MediaMetadataType.GENERIC
+    else -> error("Unsupported sections[].type: $s")
   }
 }

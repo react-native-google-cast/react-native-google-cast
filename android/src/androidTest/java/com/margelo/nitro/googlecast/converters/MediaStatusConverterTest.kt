@@ -111,6 +111,10 @@ class MediaStatusConverterTest {
           expected.queueItems[j].mediaInfo?.contentUrl, actual.queueItems[j].mediaInfo?.contentUrl)
         assertEquals("[$name] queueItems[$j].autoplay",
           expected.queueItems[j].autoplay, actual.queueItems[j].autoplay)
+        // Incremental: preloadTime is pinned by the corpus; itemId/startTime/customData remain
+        // unpinned (parser hardcodes them null) and need cross-platform fixture expansion (deferred).
+        assertEquals("[$name] queueItems[$j].preloadTime",
+          expected.queueItems[j].preloadTime, actual.queueItems[j].preloadTime)
       }
 
       ConverterAssertions.assertAnyMapEquals(actual.customData, expected.customData, "[$name]")

@@ -92,6 +92,13 @@ class MediaLoadRequestConverterTest {
               expectedItems[j].mediaInfo?.contentUrl, actualItems?.get(j)?.mediaInfo?.contentUrl)
             assertEquals("[$name] queueData.items[$j].autoplay",
               expectedItems[j].autoplay, actualItems?.get(j)?.autoplay)
+            // preloadTime is the only further item field pinned by the corpus (queue-load: 0).
+            // The other CodeRabbit-named fields (itemId / playbackDuration / startTime / customData)
+            // and queueData.startTime are unset in the fixture, so GCK's unset-defaults diverge from
+            // the parsed null (same class as the autoplay/startTime/containerDuration divergences
+            // documented above) — intentionally not asserted to avoid emulator false-fails.
+            assertEquals("[$name] queueData.items[$j].preloadTime",
+              expectedItems[j].preloadTime, actualItems?.get(j)?.preloadTime)
           }
         }
       }
