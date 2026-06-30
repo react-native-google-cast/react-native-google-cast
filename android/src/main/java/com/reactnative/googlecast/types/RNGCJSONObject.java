@@ -40,6 +40,8 @@ public class RNGCJSONObject {
           writableMap.putMap(key, toJson(jsonObject.getJSONObject(key)));
         } else if (value instanceof JSONArray) {
           writableMap.putArray(key, toJson(jsonObject.getJSONArray(key)));
+        } else if (value instanceof Boolean) {
+          writableMap.putBoolean(key, jsonObject.getBoolean(key));
         } else if (value == JSONObject.NULL) {
           writableMap.putNull(key);
         }
@@ -67,6 +69,8 @@ public class RNGCJSONObject {
           writableArray.pushMap(toJson(jsonArray.getJSONObject(i)));
         } else if (value instanceof JSONArray) {
           writableArray.pushArray(toJson(jsonArray.getJSONArray(i)));
+        } else if (value instanceof Boolean) {
+          writableArray.pushBoolean(jsonArray.getBoolean(i));
         } else if (value == JSONObject.NULL) {
           writableArray.pushNull();
         }
