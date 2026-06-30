@@ -140,6 +140,11 @@ public class RNGCSessionManager
 
         CastContext castContext = RNGCCastContext.getSharedInstance(getReactApplicationContext());
 
+        if (castContext != null) {
+          Integer reasonCode = castContext.getCastReasonCodeForCastStatusCode(error);
+          params.putInt("errorReasonCode", reasonCode);
+        }
+
         if (castContext == null || CastReasonCodes.CASTING_STOPPED != castContext.getCastReasonCodeForCastStatusCode(error)) {
           params.putString("error", CastStatusCodes.getStatusCodeString(error));
         }
@@ -179,6 +184,12 @@ public class RNGCSessionManager
     params.putMap("session", RNGCCastSession.toJson((session)));
     params.putString("error", CastStatusCodes.getStatusCodeString(error));
 
+    CastContext castContext = RNGCCastContext.getSharedInstance(getReactApplicationContext());
+    if (castContext != null) {
+      Integer reasonCode = castContext.getCastReasonCodeForCastStatusCode(error);
+      params.putInt("errorReasonCode", reasonCode);
+    }
+
     sendEvent(SESSION_START_FAILED, params);
   }
 
@@ -210,11 +221,17 @@ public class RNGCSessionManager
   }
 
   @Override
-  public void onSessionSuspended(CastSession session, int reason) {
+  public void onSessionSuspended(CastSession session, int errorCode) {
     WritableMap params = Arguments.createMap();
 
     params.putMap("session", RNGCCastSession.toJson((session)));
-    // TODO params.putString("reason", );
+    params.putInt("errorCode", errorCode);
+
+    CastContext castContext = RNGCCastContext.getSharedInstance(getReactApplicationContext());
+    if (castContext != null) {
+      Integer reasonCode = castContext.getCastReasonCodeForCastStatusCode(errorCode);
+      params.putInt("errorReasonCode", reasonCode);
+    }
 
     sendEvent(SESSION_SUSPENDED, params);
   }

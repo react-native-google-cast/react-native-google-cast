@@ -120,7 +120,8 @@ RCT_EXPORT_METHOD(startSession: (NSString *)deviceId
                     withError:(NSError *)error {
   [self sendEventWithName:SESSION_START_FAILED body:@{
     @"session": [RCTConvert fromGCKCastSession:session],
-    @"error": [error localizedDescription]
+    @"error": [error localizedDescription],
+    @"errorReasonCode": [NSNumber numberWithInteger:[error code]]
   }];
 }
 
@@ -128,8 +129,8 @@ RCT_EXPORT_METHOD(startSession: (NSString *)deviceId
     didSuspendCastSession:(GCKCastSession *)session
                withReason:(GCKConnectionSuspendReason)reason {
   [self sendEventWithName:SESSION_SUSPENDED body:@{
-    @"session": [RCTConvert fromGCKCastSession:session]
-    // TODO @"reason": [RCTConvert fromGCKConnectionSuspendReason:reason]
+    @"session": [RCTConvert fromGCKCastSession:session],
+    @"errorReasonCode": [NSNumber numberWithInteger:reason]
   }];
 }
 
@@ -159,7 +160,8 @@ RCT_EXPORT_METHOD(startSession: (NSString *)deviceId
              withError:(nullable NSError *)error {
   [self sendEventWithName:SESSION_ENDED body:@{
     @"session": [RCTConvert fromGCKCastSession:session],
-    @"error": error == nil ? [NSNull null] : [error localizedDescription]
+    @"error": error == nil ? [NSNull null] : [error localizedDescription],
+    @"errorReasonCode": error == nil ? [NSNull null] : [NSNumber numberWithInteger:[error code]]
   }];
 }
 

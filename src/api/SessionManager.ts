@@ -71,17 +71,29 @@ export default class SessionManager {
   }
 
   /** Called when a session has failed to start. */
-  onSessionStartFailed(handler: (session: CastSession, error: string) => void) {
+  onSessionStartFailed(
+    handler: (
+      session: CastSession,
+      error: string,
+      params?: { errorReasonCode?: number }
+    ) => void
+  ) {
     return this.eventEmitter.addListener(
       Native.SESSION_START_FAILED,
-      ({ session, error }) => handler(new CastSession(session), error)
+      ({ session, error, ...params }) =>
+        handler(new CastSession(session), error, params)
     )
   }
 
-  onSessionSuspended(handler: (session: CastSession) => void) {
+  onSessionSuspended(
+    handler: (
+      session: CastSession,
+      params?: { errorCode?: number; errorReasonCode?: number }
+    ) => void
+  ) {
     return this.eventEmitter.addListener(
       Native.SESSION_SUSPENDED,
-      ({ session }) => handler(new CastSession(session))
+      ({ session, ...params }) => handler(new CastSession(session), params)
     )
   }
 
@@ -107,10 +119,17 @@ export default class SessionManager {
   }
 
   /** Called when a session has ended, either by request or due to an error. */
-  onSessionEnded(handler: (session: CastSession, error?: string) => void) {
+  onSessionEnded(
+    handler: (
+      session: CastSession,
+      error?: string,
+      params?: { errorReasonCode?: number }
+    ) => void
+  ) {
     return this.eventEmitter.addListener(
       Native.SESSION_ENDED,
-      ({ session, error }) => handler(new CastSession(session), error)
+      ({ session, error, ...params }) =>
+        handler(new CastSession(session), error, params)
     )
   }
 
