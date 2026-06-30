@@ -262,7 +262,9 @@ class HybridCastTransport : HybridCastTransportSpec() {
     mediaCall { it.setPlaybackRate(playbackRate) }
 
   override fun setActiveTrackIds(trackIds: DoubleArray): Promise<Unit> =
-    mediaCall { it.setActiveMediaTracks(LongArray(trackIds.size) { i -> trackIds[i].toLong() }) }
+    mediaCall {
+      it.setActiveMediaTracks(LongArray(trackIds.size) { i -> trackIds[i].toIdLong("trackId") })
+    }
 
   override fun setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<Unit> =
     mediaCall { it.setTextTrackStyle(textTrackStyle.toGckTextTrackStyle()) }
@@ -281,7 +283,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
     mediaCall {
       it.queueLoad(
         Array(items.size) { i -> items[i].toGckMediaQueueItem() },
-        startIndex.toInt(),
+        startIndex.toIdInt("startIndex"),
         gckRepeatMode(repeatMode),
         null
       )
@@ -291,7 +293,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
     mediaCall {
       it.queueInsertItems(
         Array(items.size) { i -> items[i].toGckMediaQueueItem() },
-        beforeItemId.toInt(),
+        beforeItemId.toIdInt("beforeItemId"),
         null
       )
     }
@@ -299,21 +301,23 @@ class HybridCastTransport : HybridCastTransportSpec() {
   override fun queueReorderItems(itemIds: DoubleArray, beforeItemId: Double): Promise<Unit> =
     mediaCall {
       it.queueReorderItems(
-        IntArray(itemIds.size) { i -> itemIds[i].toInt() },
-        beforeItemId.toInt(),
+        IntArray(itemIds.size) { i -> itemIds[i].toIdInt("itemId") },
+        beforeItemId.toIdInt("beforeItemId"),
         null
       )
     }
 
   override fun queueRemoveItems(itemIds: DoubleArray): Promise<Unit> =
-    mediaCall { it.queueRemoveItems(IntArray(itemIds.size) { i -> itemIds[i].toInt() }, null) }
+    mediaCall {
+      it.queueRemoveItems(IntArray(itemIds.size) { i -> itemIds[i].toIdInt("itemId") }, null)
+    }
 
   override fun queueNext(): Promise<Unit> = mediaCall { it.queueNext(null) }
 
   override fun queuePrev(): Promise<Unit> = mediaCall { it.queuePrev(null) }
 
   override fun queueJumpToItem(itemId: Double): Promise<Unit> =
-    mediaCall { it.queueJumpToItem(itemId.toInt(), null) }
+    mediaCall { it.queueJumpToItem(itemId.toIdInt("itemId"), null) }
 
   override fun queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<Unit> =
     mediaCall { it.queueSetRepeatMode(gckRepeatMode(repeatMode), null) }
@@ -377,14 +381,21 @@ class HybridCastTransport : HybridCastTransportSpec() {
     detachMediaCallback()
     val callback =
       object : RemoteMediaClient.Callback() {
-        override fun onStatusUpdated() {
-          client.mediaStatus?.let { status -> onMediaStatus?.invoke(status.toMediaStatus()) }
-        }
+        override fun onStatusUpdated() = emitMediaStatus(client)
+        // Queue-only mutations (queueInsertItems / queueReorderItems / queueRemoveItems and
+        // receiver-side queue edits) report via onQueueStatusUpdated, *not* onStatusUpdated —
+        // forward them through the same path so the cached status' queueItems never goes stale
+        // until an unrelated player-status update happens to arrive.
+        override fun onQueueStatusUpdated() = emitMediaStatus(client)
       }
     client.registerCallback(callback)
     mediaCallback = callback
     observedClient = client
     // Surface the current status immediately so the store reflects an already-playing session.
+    emitMediaStatus(client)
+  }
+
+  private fun emitMediaStatus(client: RemoteMediaClient) {
     client.mediaStatus?.let { status -> onMediaStatus?.invoke(status.toMediaStatus()) }
   }
 
@@ -393,6 +404,25 @@ class HybridCastTransport : HybridCastTransportSpec() {
     observedClient?.unregisterCallback(callback)
     mediaCallback = null
     observedClient = null
+  }
+
+  // Queue/track IDs and indices cross the bridge as `Double`. A bare `toInt()` / `toLong()`
+  // silently narrows NaN, ±Inf, fractional, and out-of-range values — quietly targeting the
+  // *wrong* item — so validate before converting. Thrown from inside a `mediaCall` op lambda,
+  // these surface to JS as a `failed` rejection (see `mediaCall`). Note: `0`/negatives are left
+  // to GCK, which uses `MediaQueueItem.INVALID_ITEM_ID == 0` as the "append at end" sentinel.
+  private fun Double.toIdInt(name: String): Int {
+    require(isFinite() && this % 1.0 == 0.0 && this >= Int.MIN_VALUE.toDouble() && this <= Int.MAX_VALUE.toDouble()) {
+      "$name must be a finite integer in Int range, got $this"
+    }
+    return toInt()
+  }
+
+  private fun Double.toIdLong(name: String): Long {
+    require(isFinite() && this % 1.0 == 0.0 && this >= Long.MIN_VALUE.toDouble() && this <= Long.MAX_VALUE.toDouble()) {
+      "$name must be a finite integer in Long range, got $this"
+    }
+    return toLong()
   }
 
   private fun gckRepeatMode(mode: MediaRepeatMode): Int =
