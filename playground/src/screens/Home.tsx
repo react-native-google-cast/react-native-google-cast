@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from '@react-navigation/stack'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React, { useEffect } from 'react'
 import { Button, SectionList, Text, View } from 'react-native'
 import CastContext, { PlayServicesState } from 'react-native-google-cast'
@@ -9,7 +9,7 @@ export interface HomeProps {}
 
 export default function Home() {
   const navigation =
-    useNavigation<StackNavigationProp<RootStackParamList, 'Home'>>()
+    useNavigation<NativeStackNavigationProp<RootStackParamList, 'Home'>>()
 
   useEffect(() => {
     CastContext.getPlayServicesState().then((state) => {
