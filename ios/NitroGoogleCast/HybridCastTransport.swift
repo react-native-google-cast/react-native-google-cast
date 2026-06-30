@@ -545,6 +545,11 @@ private final class CastSessionListener: NSObject, GCKSessionManagerListener {
     _ sessionManager: GCKSessionManager, didSuspend session: GCKSession,
     withReason reason: GCKConnectionSuspendReason
   ) {
+    // TS treats `suspended` as a teardown (see `session.slice`), so detach the
+    // media listener and flush pending requests here too — otherwise a late
+    // media-status callback or a never-arriving request could repopulate / hang
+    // state JS already considers gone. Re-attached on `didResumeSession`.
+    onSessionInactive()
     emit(.suspended, reason: HybridCastTransport.suspendReason(reason))
   }
 }
