@@ -28,8 +28,13 @@ export interface SessionState {
   readonly generation: number
 }
 
-/** Lifecycle events that bring a live, operable session into existence. */
-const ESTABLISHES = new Set(['started', 'resumed'])
+/**
+ * Lifecycle events that bring a live, operable session into existence. Exported
+ * (alongside {@link SESSION_TEARDOWN_TYPES}) so dependent slices track session
+ * liveness off the same lists this slice uses, rather than keeping their own
+ * copies that can silently drift.
+ */
+export const SESSION_ESTABLISH_TYPES = new Set(['started', 'resumed'])
 /**
  * Lifecycle events that remove the live session. Exported so dependent slices
  * (e.g. the media slice, which must drop its cached status the instant the
@@ -70,7 +75,7 @@ export const sessionSlice: Slice<SessionState> = {
     if (event.kind !== 'lifecycle') return state
     const { type } = event.event
 
-    if (ESTABLISHES.has(type)) {
+    if (SESSION_ESTABLISH_TYPES.has(type)) {
       // A new live session (possibly replacing an existing one) — always a new
       // generation, so any façade from a prior session is stale.
       const nextGeneration = state.generation + 1

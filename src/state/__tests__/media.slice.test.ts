@@ -49,8 +49,9 @@ describe('media slice', () => {
     expect(mediaState(store).currentStatus).toBeNull()
   })
 
-  it('caches the latest pushed media status', async () => {
+  it('caches the latest pushed media status while a session is live', async () => {
     const { store, transport } = await makeStore()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
 
     transport.emitMediaStatus(status(0))
     expect(mediaState(store).currentStatus).toMatchObject({ streamPosition: 0 })
@@ -61,13 +62,47 @@ describe('media slice', () => {
     })
   })
 
+  it('drops a status push when no session is live', async () => {
+    const { store, transport } = await makeStore()
+
+    // No session has started: a stray push must not populate the slice.
+    transport.emitMediaStatus(status(0))
+    expect(mediaState(store).currentStatus).toBeNull()
+  })
+
+  it('accepts a push when a session was already live at cold start', async () => {
+    // Already-casting at init: the seed is live, so the first status sticks.
+    const transport = new FakeCastTransport({
+      initialSnapshot: { currentSession: session('s1') },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    transport.emitMediaStatus(status(5))
+    expect(mediaState(store).currentStatus).toMatchObject({ streamPosition: 5 })
+  })
+
   it('notifies subscribers when media status changes', async () => {
     const { store, transport } = await makeStore()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
     const listener = jest.fn()
     store.subscribe(listener)
 
     transport.emitMediaStatus(status(10))
     expect(listener).toHaveBeenCalledTimes(1)
+  })
+
+  it('clears a prior status when a new session replaces the live one', async () => {
+    const { store, transport } = await makeStore()
+
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(status(7))
+    expect(mediaState(store).currentStatus).not.toBeNull()
+
+    // A replacement session starts: the previous session's media must not bleed
+    // into the new generation, even before the receiver pushes a fresh status.
+    transport.emitLifecycle({ type: 'started', session: session('s2') })
+    expect(mediaState(store).currentStatus).toBeNull()
   })
 
   it('clears the status when the session ends (no use-after-free)', async () => {
@@ -81,9 +116,11 @@ describe('media slice', () => {
     expect(mediaState(store).currentStatus).toBeNull()
   })
 
-  it('clears the status when a session start fails', async () => {
+  it('never retains a status across a failed session start', async () => {
     const { store, transport } = await makeStore()
 
+    // No session ever became live, so a status arriving during the attempt is
+    // dropped, and startFailed leaves the slice empty.
     transport.emitMediaStatus(status(7))
     transport.emitLifecycle({
       type: 'startFailed',
@@ -92,7 +129,7 @@ describe('media slice', () => {
     expect(mediaState(store).currentStatus).toBeNull()
   })
 
-  it('clears the status when an Android session is suspended', async () => {
+  it('clears the status and drops later pushes when a session is suspended', async () => {
     const { store, transport } = await makeStore()
 
     transport.emitLifecycle({ type: 'started', session: session('s1') })
@@ -101,20 +138,27 @@ describe('media slice', () => {
 
     transport.emitLifecycle({ type: 'suspended', reason: 'appBackgrounded' })
     expect(mediaState(store).currentStatus).toBeNull()
+
+    // A status racing in after the suspend (Android background path) must not
+    // resurrect media now that the session is gone.
+    transport.emitMediaStatus(status(99))
+    expect(mediaState(store).currentStatus).toBeNull()
   })
 
-  it('clears the status when an Android session resume fails', async () => {
+  it('clears the status and drops later pushes when a resume fails', async () => {
     const { store, transport } = await makeStore()
 
     transport.emitLifecycle({ type: 'started', session: session('s1') })
     transport.emitMediaStatus(status(7))
     transport.emitLifecycle({ type: 'suspended' })
-    // A stale status pushed during the suspended window must not survive a
-    // failed resume either.
     transport.emitLifecycle({
       type: 'resumeFailed',
       error: { code: 'timeout', message: 'gone' },
     })
+    expect(mediaState(store).currentStatus).toBeNull()
+
+    // Still no live session after the failed resume: a late push stays dropped.
+    transport.emitMediaStatus(status(99))
     expect(mediaState(store).currentStatus).toBeNull()
   })
 
