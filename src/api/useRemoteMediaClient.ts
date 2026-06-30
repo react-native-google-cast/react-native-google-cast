@@ -13,11 +13,15 @@ import { RemoteMediaClient } from './RemoteMediaClient'
  *
  * @example
  * ```ts
+ * import { useEffect } from 'react'
  * import { useRemoteMediaClient } from 'react-native-google-cast'
  *
  * function MyComponent() {
  *   const client = useRemoteMediaClient()
- *   client?.loadMedia({ mediaInfo: { contentUrl: '…' } })
+ *
+ *   useEffect(() => {
+ *     client?.loadMedia({ mediaInfo: { contentUrl: '…' } })
+ *   }, [client])
  * }
  * ```
  */

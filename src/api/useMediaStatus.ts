@@ -7,9 +7,10 @@ import type { MediaStatus } from '../types/MediaStatus'
  * Hook to retrieve the current media status.
  *
  * The status is pushed only when the stream's status changes, so
- * `mediaStatus.streamPosition` reflects the time of the last update, not the
- * live position — use {@link useStreamPosition} for the latter. Returns `null`
- * when there is no active media (no session, or none loaded yet).
+ * `mediaStatus.streamPosition` reflects the time of the last update, not a
+ * live, ticking position — {@link useStreamPosition} is a convenience selector
+ * for that same field. Returns `null` when there is no active media (no
+ * session, or none loaded yet).
  *
  * @returns the current media status, or `null`.
  */

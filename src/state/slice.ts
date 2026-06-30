@@ -11,7 +11,8 @@ import type { MediaStatus } from '../types/MediaStatus'
  * `mediaStatus` (P4) is the streamed `GCKMediaStatus` / `MediaStatus` of the
  * active session's RemoteMediaClient, pushed through the `onMediaStatus`
  * callback. There is no media status when no session is live, so the media
- * slice clears itself on the `ended` / `startFailed` lifecycle transitions.
+ * slice clears itself on every session-teardown lifecycle transition (the same
+ * set the session slice uses to drop the live session).
  */
 export type StoreEvent =
   | { readonly kind: 'state'; readonly castState: CastState }

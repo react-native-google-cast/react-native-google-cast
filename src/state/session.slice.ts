@@ -30,8 +30,13 @@ export interface SessionState {
 
 /** Lifecycle events that bring a live, operable session into existence. */
 const ESTABLISHES = new Set(['started', 'resumed'])
-/** Lifecycle events that remove the live session. */
-const TEARS_DOWN = new Set([
+/**
+ * Lifecycle events that remove the live session. Exported so dependent slices
+ * (e.g. the media slice, which must drop its cached status the instant the
+ * session is gone) share this one list instead of keeping their own copy — the
+ * two drifting apart is exactly the bug this prevents.
+ */
+export const SESSION_TEARDOWN_TYPES = new Set([
   'ended',
   'startFailed',
   'resumeFailed',
@@ -75,7 +80,7 @@ export const sessionSlice: Slice<SessionState> = {
       return { current: session, generation: nextGeneration }
     }
 
-    if (TEARS_DOWN.has(type)) {
+    if (SESSION_TEARDOWN_TYPES.has(type)) {
       // Only a real transition if a session was live; otherwise nothing to
       // invalidate (avoids spurious generation bumps / snapshot churn).
       if (state.current === null) return state

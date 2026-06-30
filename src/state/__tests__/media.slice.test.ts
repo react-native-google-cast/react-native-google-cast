@@ -92,6 +92,32 @@ describe('media slice', () => {
     expect(mediaState(store).currentStatus).toBeNull()
   })
 
+  it('clears the status when an Android session is suspended', async () => {
+    const { store, transport } = await makeStore()
+
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(status(7))
+    expect(mediaState(store).currentStatus).not.toBeNull()
+
+    transport.emitLifecycle({ type: 'suspended', reason: 'appBackgrounded' })
+    expect(mediaState(store).currentStatus).toBeNull()
+  })
+
+  it('clears the status when an Android session resume fails', async () => {
+    const { store, transport } = await makeStore()
+
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(status(7))
+    transport.emitLifecycle({ type: 'suspended' })
+    // A stale status pushed during the suspended window must not survive a
+    // failed resume either.
+    transport.emitLifecycle({
+      type: 'resumeFailed',
+      error: { code: 'timeout', message: 'gone' },
+    })
+    expect(mediaState(store).currentStatus).toBeNull()
+  })
+
   it('keeps a stable reference on unrelated events (Invariant 2)', async () => {
     const { store, transport } = await makeStore()
 
@@ -100,8 +126,11 @@ describe('media slice', () => {
     transport.emitDevices([device('a')])
     expect(mediaState(store)).toBe(before)
 
-    // A clear on an already-empty slice must not allocate either.
+    // A clear on an already-empty slice must not allocate either — for any
+    // teardown event, not just `ended`.
     transport.emitLifecycle({ type: 'ended' })
+    transport.emitLifecycle({ type: 'suspended' })
+    transport.emitLifecycle({ type: 'resumeFailed', error: { code: 'network' } })
     expect(mediaState(store)).toBe(before)
   })
 })
