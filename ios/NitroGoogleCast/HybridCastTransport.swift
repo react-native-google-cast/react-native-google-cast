@@ -74,7 +74,13 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
     let promise = Promise<InitialSnapshot>()
     DispatchQueue.main.async { [weak self] in
-      guard let self else { return }
+      guard let self else {
+        // Disposed before this block ran — settle so the caller never hangs.
+        promise.reject(
+          withError: castRejection(
+            code: "interrupted", message: "The Cast transport was disposed.", nativeCode: nil))
+        return
+      }
       let context = GCKCastContext.sharedInstance()
       self.attachObservers(context)
       // If a session was already current before we subscribed, bind the media
@@ -240,22 +246,31 @@ final class HybridCastTransport: HybridCastTransportSpec {
   func queueLoad(
     items: [MediaQueueItem], startIndex: Double, repeatMode: MediaRepeatMode
   ) throws -> Promise<Void> {
+    guard let start = Self.queueIndex(startIndex) else {
+      return Self.rejectedIndex("startIndex", startIndex)
+    }
     let gckItems = items.map { $0.toGckMediaQueueItem() }
     let options = GCKMediaQueueLoadOptions()
-    options.startIndex = UInt(startIndex)
+    options.startIndex = start
     options.repeatMode = repeatMode.toGckRepeatMode()
     return withClient { $0.queueLoad(gckItems, with: options) }
   }
 
   func queueInsertItems(items: [MediaQueueItem], beforeItemId: Double) throws -> Promise<Void> {
+    guard let before = Self.queueIndex(beforeItemId) else {
+      return Self.rejectedIndex("beforeItemId", beforeItemId)
+    }
     let gckItems = items.map { $0.toGckMediaQueueItem() }
-    return withClient { $0.queueInsert(gckItems, beforeItemWithID: UInt(beforeItemId)) }
+    return withClient { $0.queueInsert(gckItems, beforeItemWithID: before) }
   }
 
   func queueReorderItems(itemIds: [Double], beforeItemId: Double) throws -> Promise<Void> {
+    guard let before = Self.queueIndex(beforeItemId) else {
+      return Self.rejectedIndex("beforeItemId", beforeItemId)
+    }
     let ids = itemIds.map { NSNumber(value: $0) }
     return withClient {
-      $0.queueReorderItems(withIDs: ids, insertBeforeItemWithID: UInt(beforeItemId))
+      $0.queueReorderItems(withIDs: ids, insertBeforeItemWithID: before)
     }
   }
 
@@ -269,7 +284,10 @@ final class HybridCastTransport: HybridCastTransportSpec {
   func queuePrev() throws -> Promise<Void> { withClient { $0.queuePreviousItem() } }
 
   func queueJumpToItem(itemId: Double) throws -> Promise<Void> {
-    withClient { $0.queueJumpToItem(withID: UInt(itemId)) }
+    guard let id = Self.queueIndex(itemId) else {
+      return Self.rejectedIndex("itemId", itemId)
+    }
+    return withClient { $0.queueJumpToItem(withID: id) }
   }
 
   func queueSetRepeatMode(repeatMode: MediaRepeatMode) throws -> Promise<Void> {
@@ -290,7 +308,13 @@ final class HybridCastTransport: HybridCastTransportSpec {
   ) -> Promise<Void> {
     let promise = Promise<Void>()
     DispatchQueue.main.async { [weak self] in
-      guard let self else { return }
+      guard let self else {
+        // Disposed before this block ran — settle so the caller never hangs.
+        promise.reject(
+          withError: castRejection(
+            code: "interrupted", message: "The Cast transport was disposed.", nativeCode: nil))
+        return
+      }
       guard
         let client = GCKCastContext.sharedInstance().sessionManager.currentCastSession?
           .remoteMediaClient
@@ -312,6 +336,21 @@ final class HybridCastTransport: HybridCastTransportSpec {
     }
     pendingRequests.insert(delegate)
     delegate.track(request)
+  }
+
+  /// Safely convert a JS-supplied queue index/id (`Double`) to `UInt`. `UInt(Double)`
+  /// *traps* on negative / NaN / infinite / fractional / overflow values, so the bridge
+  /// would crash before the request could be rejected — use `exactly:` and surface a Cast
+  /// error instead. `0` is valid (GCK's `kGCKMediaQueueInvalidItemID` append sentinel).
+  private static func queueIndex(_ value: Double) -> UInt? { UInt(exactly: value) }
+
+  /// A `Promise<Void>` already rejected with `invalidParameter` for an out-of-range index.
+  private static func rejectedIndex(_ name: String, _ value: Double) -> Promise<Void> {
+    let promise = Promise<Void>()
+    promise.reject(
+      withError: castRejection(
+        code: "invalidParameter", message: "Invalid \(name): \(value)", nativeCode: nil))
+    return promise
   }
 
   /// Bind the media-status listener to the current session's media client. Idempotent
