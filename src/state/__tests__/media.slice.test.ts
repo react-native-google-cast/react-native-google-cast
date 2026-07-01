@@ -174,7 +174,10 @@ describe('media slice', () => {
     // teardown event, not just `ended`.
     transport.emitLifecycle({ type: 'ended' })
     transport.emitLifecycle({ type: 'suspended' })
-    transport.emitLifecycle({ type: 'resumeFailed', error: { code: 'network' } })
+    transport.emitLifecycle({
+      type: 'resumeFailed',
+      error: { code: 'network' },
+    })
     expect(mediaState(store)).toBe(before)
   })
 })

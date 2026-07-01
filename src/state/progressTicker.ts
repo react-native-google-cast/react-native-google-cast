@@ -51,7 +51,8 @@ export class ProgressTicker {
     let pos = status.streamPosition
     // Advance only when the *current* status is the one we anchored to.
     if (status.playerState === 'playing' && status === this.anchorStatus) {
-      pos += ((this.now() - this.anchorTime) / 1000) * (status.playbackRate || 1)
+      pos +=
+        ((this.now() - this.anchorTime) / 1000) * (status.playbackRate || 1)
     }
     const duration = this.getDuration()
     if (duration > 0) return Math.min(Math.max(pos, 0), duration)

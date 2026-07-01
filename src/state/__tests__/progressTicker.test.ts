@@ -32,7 +32,11 @@ function status(over: Partial<MediaStatus> = {}): MediaStatus {
 // A controllable clock; ms since an arbitrary origin.
 function makeClock() {
   const state = { ms: 0 }
-  return { now: () => state.ms, advance: (ms: number) => (state.ms += ms), state }
+  return {
+    now: () => state.ms,
+    advance: (ms: number) => (state.ms += ms),
+    state,
+  }
 }
 
 async function makeTicker(now: () => number) {
@@ -56,7 +60,9 @@ describe('ProgressTicker — derivation', () => {
     const { ticker, transport } = await makeTicker(clock.now)
     const off = ticker.subscribe(() => {}) // activates the store subscription
     transport.emitLifecycle({ type: 'started', session: session('s1') })
-    transport.emitMediaStatus(status({ streamPosition: 10, playerState: 'paused' }))
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'paused' })
+    )
 
     clock.advance(5000)
     expect(ticker.getPosition()).toBe(10)
@@ -108,15 +114,41 @@ describe('ProgressTicker — derivation', () => {
     const { ticker, transport } = await makeTicker(clock.now)
     const off = ticker.subscribe(() => {})
     transport.emitLifecycle({ type: 'started', session: session('s1') })
-    transport.emitMediaStatus(status({ streamPosition: 10, playerState: 'playing' }))
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
 
     clock.advance(4000)
     expect(ticker.getPosition()).toBe(14)
 
     // Receiver reports 20 (e.g. after a seek); position tracks the new base.
-    transport.emitMediaStatus(status({ streamPosition: 20, playerState: 'playing' }))
+    transport.emitMediaStatus(
+      status({ streamPosition: 20, playerState: 'playing' })
+    )
     clock.advance(1000)
     expect(ticker.getPosition()).toBe(21)
+    off()
+  })
+
+  it('does not reanchor on an unrelated store change (media slice unchanged)', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    const off = ticker.subscribe(() => {})
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(12)
+
+    // Unrelated store change (cast-state) leaves the media slice untouched, so
+    // the `status === anchorStatus` guard must keep the ORIGINAL anchor: the
+    // position keeps advancing continuously rather than resetting to 12.
+    transport.emitState('connected')
+
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(14)
     off()
   })
 })
