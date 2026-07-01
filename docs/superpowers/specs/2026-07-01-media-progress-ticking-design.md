@@ -135,3 +135,9 @@ Unit tests drive `subscribeProgress` / `CastStore` with a `FakeCastTransport` an
 - Not in this bead (remain in `v5-aug.5`): `customData` on non-`loadMedia` mutations; dropped v4 convenience
   methods (`queueInsertAndPlayItem`, `setActiveMediaTracks` alias).
 - No hybrid native-interpolation ticking (considered and rejected as YAGNI).
+
+## Implementation note (2026-07-01)
+
+Delivered in pure TS as designed: `ProgressTicker` + singleton, `useStreamPosition(interval)`,
+`RemoteMediaClient.onMediaProgressUpdated`. No native (Swift/Kotlin) changes were needed —
+the existing `MediaStatus` push stream is sufficient. All tests green via `yarn jest`.
