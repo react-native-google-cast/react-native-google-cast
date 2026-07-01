@@ -22,6 +22,17 @@ jest.mock('../../state/castStore.singleton', () => {
   return { castStore: store, castTransport: transport }
 })
 
+// The singleton ticker captures Date.now at module load — before
+// jest.useFakeTimers() — so its clock can't be moved by the test. Inject a
+// controllable clock (a mock-prefixed name, permitted by jest's hoist plugin)
+// bound to the SAME mocked castStore.singleton the test already drives.
+let mockNow = 0
+jest.mock('../../state/progressTicker.singleton', () => {
+  const { ProgressTicker } = require('../../state/progressTicker')
+  const { castStore } = require('../../state/castStore.singleton')
+  return { progressTicker: new ProgressTicker(castStore, () => mockNow) }
+})
+
 const transport = castTransport as unknown as FakeCastTransport
 
 function device(id: string): Device {
@@ -116,6 +127,7 @@ describe('useStreamPosition — ticking', () => {
 
   it('advances between status pushes while playing', async () => {
     jest.useFakeTimers()
+    mockNow = 0
     const positions: (number | null)[] = []
     function Ticking(): null {
       positions.push(useStreamPosition(1))
@@ -138,12 +150,16 @@ describe('useStreamPosition — ticking', () => {
       })
     })
 
+    // Advance the ticker's clock, then fire the interval → derived position ticks.
+    mockNow = 1000
     act(() => {
       jest.advanceTimersByTime(1000)
     })
 
-    // The last observed position is >= the pushed base (it ticked forward).
-    expect(positions[positions.length - 1]!).toBeGreaterThanOrEqual(30)
+    // 30 (pushed base) + 1s × rate 1 = 31: it ticked strictly forward.
+    const last = positions[positions.length - 1]!
+    expect(last).toBeGreaterThan(30)
+    expect(last).toBe(31)
 
     act(() => {
       root.unmount()
