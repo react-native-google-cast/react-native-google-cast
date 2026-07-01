@@ -8,18 +8,30 @@ type TickerStoreView = Pick<CastStore, 'getSliceState' | 'subscribe'>
 /** A progress listener; pulls the current value via the ticker's getters. */
 type Listener = () => void
 
+interface Subscriber {
+  readonly listener: Listener
+  readonly interval: number
+}
+
 /**
  * Derives a locally-ticking stream position from the store's media slice — pure
  * TS, no native timer. Position advances only while `playerState === 'playing'`,
  * resyncing to the receiver's reported `streamPosition` on every status push, so
- * clock drift never accumulates. One shared `setInterval` runs at the smallest
- * subscriber interval and only while playing (added in Task 2).
+ * clock drift never accumulates.
+ *
+ * One shared `setInterval` runs at the smallest subscriber interval and only
+ * while playing + subscribed; it is recomputed on every membership change and on
+ * play-state transitions, and torn down when the last subscriber leaves.
  */
 export class ProgressTicker {
   private readonly store: TickerStoreView
   private readonly now: () => number
 
+  private readonly subs = new Map<object, Subscriber>()
   private storeUnsub: (() => void) | null = null
+  private timer: ReturnType<typeof setInterval> | null = null
+  private timerInterval = 0
+
   private anchorStatus: MediaStatus | null = null
   private anchorTime = 0
 
@@ -28,19 +40,24 @@ export class ProgressTicker {
     this.now = now
   }
 
-  /** Register a listener. Returns an unsubscribe. (Timer added in Task 2.) */
-  subscribe(_listener: Listener): () => void {
-    // Placeholder membership until Task 2 introduces the subscriber map + timer.
+  /**
+   * Register a progress listener at a given update interval (seconds, default 1).
+   * The listener is invoked on each shared tick while playing and whenever the
+   * media slice changes (a new status push, pause/resume, or teardown). Returns
+   * an unsubscribe.
+   */
+  subscribe(listener: Listener, interval = 1): () => void {
+    const key = {}
+    this.subs.set(key, { listener, interval })
     if (!this.storeUnsub) {
       this.storeUnsub = this.store.subscribe(() => this.onStoreChange())
       this.reanchor()
     }
+    this.reconcileTimer()
     return () => {
-      if (this.storeUnsub) {
-        this.storeUnsub()
-        this.storeUnsub = null
-      }
-      this.anchorStatus = null
+      if (!this.subs.delete(key)) return
+      if (this.subs.size === 0) this.teardown()
+      else this.reconcileTimer()
     }
   }
 
@@ -49,7 +66,6 @@ export class ProgressTicker {
     const status = this.status()
     if (!status) return null
     let pos = status.streamPosition
-    // Advance only when the *current* status is the one we anchored to.
     if (status.playerState === 'playing' && status === this.anchorStatus) {
       pos +=
         ((this.now() - this.anchorTime) / 1000) * (status.playbackRate || 1)
@@ -71,10 +87,53 @@ export class ProgressTicker {
   private onStoreChange(): void {
     const status = this.status()
     if (status !== this.anchorStatus) this.reanchor()
+    this.reconcileTimer()
+    this.notify()
   }
 
   private reanchor(): void {
     this.anchorStatus = this.status()
     this.anchorTime = this.now()
+  }
+
+  private isPlaying(): boolean {
+    return this.status()?.playerState === 'playing'
+  }
+
+  private minInterval(): number {
+    let min = Infinity
+    for (const { interval } of this.subs.values()) min = Math.min(min, interval)
+    return min === Infinity ? 1 : min
+  }
+
+  private reconcileTimer(): void {
+    const want = this.subs.size > 0 && this.isPlaying()
+    const min = this.minInterval()
+    if (want && (this.timer === null || min !== this.timerInterval)) {
+      if (this.timer !== null) clearInterval(this.timer)
+      this.timerInterval = min
+      this.timer = setInterval(() => this.notify(), min * 1000)
+    } else if (!want && this.timer !== null) {
+      clearInterval(this.timer)
+      this.timer = null
+      this.timerInterval = 0
+    }
+  }
+
+  private notify(): void {
+    for (const { listener } of [...this.subs.values()]) listener()
+  }
+
+  private teardown(): void {
+    if (this.timer !== null) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+    this.timerInterval = 0
+    if (this.storeUnsub) {
+      this.storeUnsub()
+      this.storeUnsub = null
+    }
+    this.anchorStatus = null
   }
 }

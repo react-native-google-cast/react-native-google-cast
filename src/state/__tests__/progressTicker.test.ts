@@ -152,3 +152,88 @@ describe('ProgressTicker — derivation', () => {
     off()
   })
 })
+
+describe('ProgressTicker — timer & arbitration', () => {
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
+  async function playing() {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 0, playerState: 'playing' })
+    )
+    return { clock, ticker, transport }
+  }
+
+  it('notifies a subscriber once per interval while playing', async () => {
+    const { clock, ticker } = await playing()
+    const listener = jest.fn()
+    ticker.subscribe(listener, 1)
+
+    clock.advance(1000)
+    jest.advanceTimersByTime(1000)
+    clock.advance(1000)
+    jest.advanceTimersByTime(1000)
+
+    expect(listener).toHaveBeenCalledTimes(2)
+  })
+
+  it('runs ONE timer at the min interval for differing subscribers', async () => {
+    const { clock, ticker } = await playing()
+    const fast = jest.fn()
+    const slow = jest.fn()
+    ticker.subscribe(fast, 1)
+    ticker.subscribe(slow, 5)
+
+    // Min interval is 1s → both fire every second (tick-all policy).
+    clock.advance(1000)
+    jest.advanceTimersByTime(1000)
+    expect(fast).toHaveBeenCalledTimes(1)
+    expect(slow).toHaveBeenCalledTimes(1)
+    // Only one underlying interval exists.
+    expect(jest.getTimerCount()).toBe(1)
+  })
+
+  it('recomputes the min interval and stops on last unsubscribe', async () => {
+    const { ticker } = await playing()
+    const a = jest.fn()
+    const b = jest.fn()
+    const offA = ticker.subscribe(a, 1)
+    const offB = ticker.subscribe(b, 3)
+    expect(jest.getTimerCount()).toBe(1)
+
+    offA() // now only the 3s subscriber remains → timer restarts at 3s
+    expect(jest.getTimerCount()).toBe(1)
+
+    offB() // last one gone → timer stops
+    expect(jest.getTimerCount()).toBe(0)
+  })
+
+  it('stops the timer when playback pauses and restarts on resume', async () => {
+    const { ticker, transport } = await playing()
+    ticker.subscribe(jest.fn(), 1)
+    expect(jest.getTimerCount()).toBe(1)
+
+    transport.emitMediaStatus(
+      status({ streamPosition: 5, playerState: 'paused' })
+    )
+    expect(jest.getTimerCount()).toBe(0)
+
+    transport.emitMediaStatus(
+      status({ streamPosition: 5, playerState: 'playing' })
+    )
+    expect(jest.getTimerCount()).toBe(1)
+  })
+
+  it('stops the timer and returns null on session teardown', async () => {
+    const { ticker, transport } = await playing()
+    ticker.subscribe(jest.fn(), 1)
+    expect(jest.getTimerCount()).toBe(1)
+
+    transport.emitLifecycle({ type: 'ended' })
+    expect(jest.getTimerCount()).toBe(0)
+    expect(ticker.getPosition()).toBeNull()
+  })
+})
