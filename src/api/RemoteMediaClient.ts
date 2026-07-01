@@ -1,5 +1,7 @@
 import type { CastError, CastTransportApi } from '../transport/types'
 import type { CastStore } from '../state/CastStore'
+import type { EventSubscription } from './subscribeSelector'
+import { progressTicker } from '../state/progressTicker.singleton'
 import { MEDIA_SLICE_KEY, type MediaState } from '../state/media.slice'
 import type { MediaLoadRequest } from '../types/MediaLoadRequest'
 import type { MediaQueueItem } from '../types/MediaQueueItem'
@@ -121,6 +123,29 @@ export class RemoteMediaClient {
   getStreamPosition(): number | null {
     const status = this.getMediaStatus()
     return status ? status.streamPosition : null
+  }
+
+  /**
+   * Listen for ticking progress of the currently playing media. The handler
+   * receives `(position, duration)` in seconds, driven by a shared TS ticker
+   * (position advances locally while playing, resyncing on each status push).
+   *
+   * Unlike v4 (single listener), v5 supports multiple concurrent listeners;
+   * differing intervals share one timer at the smallest interval.
+   *
+   * @param handler called with `(position, duration)` on each update.
+   * @param interval update frequency in seconds (default `1`).
+   * @returns a subscription; call `remove()` to stop listening.
+   */
+  onMediaProgressUpdated(
+    handler: (position: number, duration: number) => void,
+    interval = 1
+  ): EventSubscription {
+    const unsubscribe = progressTicker.subscribe(() => {
+      const position = progressTicker.getPosition()
+      if (position !== null) handler(position, progressTicker.getDuration())
+    }, interval)
+    return { remove: unsubscribe }
   }
 
   // --- mutations (async; route to the transport, status streams back) ---

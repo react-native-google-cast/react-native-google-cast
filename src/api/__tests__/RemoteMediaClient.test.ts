@@ -8,7 +8,33 @@ import type { MediaQueueItem } from '../../types/MediaQueueItem'
 import type { TextTrackStyle } from '../../types/TextTrackStyle'
 import { CastStore } from '../../state/CastStore'
 import type { MediaState } from '../../state/media.slice'
+import { castStore, castTransport } from '../../state/castStore.singleton'
 import { RemoteMediaClient } from '../RemoteMediaClient'
+
+// `RemoteMediaClient` now imports the singleton progress ticker, which
+// transitively pulls in the native `CastTransport` (unloadable under jest).
+// Swap the store singleton for a fake-backed one so the module — and every
+// test in this file — loads. Mirrors `mediaHooks.test.ts`.
+jest.mock('../../state/castStore.singleton', () => {
+  const { CastStore: Store } = require('../../state/CastStore')
+  const {
+    FakeCastTransport,
+  } = require('../../transport/__fakes__/FakeCastTransport')
+  const transport = new FakeCastTransport()
+  const store = new Store(transport)
+  return { castStore: store, castTransport: transport }
+})
+
+// The singleton ticker captures Date.now at module load — before
+// jest.useFakeTimers() — so its clock can't be advanced by the test. Inject a
+// controllable clock (a mock-prefixed name, permitted by jest's hoist plugin)
+// bound to the SAME mocked castStore.singleton the progress test drives.
+let mockNow = 0
+jest.mock('../../state/progressTicker.singleton', () => {
+  const { ProgressTicker } = require('../../state/progressTicker')
+  const { castStore: store } = require('../../state/castStore.singleton')
+  return { progressTicker: new ProgressTicker(store, () => mockNow) }
+})
 
 function device(id: string): Device {
   return {
@@ -297,5 +323,64 @@ describe('RemoteMediaClient.current — per-generation memoization', () => {
     const second = RemoteMediaClient.current(store, transport)
     expect(second).not.toBe(first)
     expect(second).not.toBeNull()
+  })
+})
+
+describe('RemoteMediaClient.onMediaProgressUpdated — shared ticker', () => {
+  // This suite drives the mocked singleton store (the one the shared ticker is
+  // bound to), not a local store, since onMediaProgressUpdated reads the
+  // process-wide progressTicker.
+  beforeAll(async () => {
+    await castStore.ready
+  })
+
+  it('ticks (position, duration) forward while playing, silent after remove', () => {
+    // Fake timers BEFORE the playing status: the ticker's setInterval is created
+    // on that push, so it must already be a fake timer to be advanceable.
+    jest.useFakeTimers()
+    mockNow = 0
+
+    const transport = castTransport as unknown as FakeCastTransport
+    transport.emitLifecycle({ type: 'started', session: session('rmc') })
+
+    const client = RemoteMediaClient.current(castStore, castTransport)
+    expect(client).not.toBeNull()
+
+    const calls: Array<[number, number]> = []
+    const sub = client!.onMediaProgressUpdated((p, d) => calls.push([p, d]), 1)
+
+    // Playing status anchored at mockNow=0: base position 0, duration 100.
+    transport.emitMediaStatus({
+      streamPosition: 0,
+      playerState: 'playing',
+      playbackRate: 1,
+      volume: 1,
+      isMuted: false,
+      queueItems: [],
+      mediaInfo: { contentUrl: 'x', streamDuration: 100 },
+    })
+
+    // The status push notifies once at the anchor time → position 0.
+    expect(calls).toEqual([[0, 100]])
+
+    // Advance the injected clock and the timer in lockstep: interval 1s over 2s
+    // fires twice, both observing mockNow=2000 → position 2 (0 + 2s × rate 1).
+    mockNow = 2000
+    jest.advanceTimersByTime(2000)
+
+    expect(calls.length).toBe(3)
+    const [lastPos, lastDur] = calls[calls.length - 1]!
+    expect(lastDur).toBe(100)
+    expect(lastPos).toBe(2)
+
+    // After remove, further ticks are silent (the shared timer is torn down).
+    const frozen = calls.length
+    sub.remove()
+    mockNow = 5000
+    jest.advanceTimersByTime(5000)
+    expect(calls.length).toBe(frozen)
+
+    transport.emitLifecycle({ type: 'ended' })
+    jest.useRealTimers()
   })
 })
