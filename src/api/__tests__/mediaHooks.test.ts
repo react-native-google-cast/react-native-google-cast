@@ -108,3 +108,46 @@ describe('media hooks — useSyncExternalStore wiring', () => {
     })
   })
 })
+
+describe('useStreamPosition — ticking', () => {
+  beforeAll(async () => {
+    await castStore.ready
+  })
+
+  it('advances between status pushes while playing', async () => {
+    jest.useFakeTimers()
+    const positions: (number | null)[] = []
+    function Ticking(): null {
+      positions.push(useStreamPosition(1))
+      return null
+    }
+
+    let root!: TestRenderer.ReactTestRenderer
+    await act(async () => {
+      root = TestRenderer.create(React.createElement(Ticking))
+    })
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('tick') })
+      transport.emitMediaStatus({
+        streamPosition: 30,
+        playbackRate: 1,
+        volume: 1,
+        isMuted: false,
+        queueItems: [],
+        playerState: 'playing',
+      })
+    })
+
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
+
+    // The last observed position is >= the pushed base (it ticked forward).
+    expect(positions[positions.length - 1]!).toBeGreaterThanOrEqual(30)
+
+    act(() => {
+      root.unmount()
+    })
+    jest.useRealTimers()
+  })
+})
