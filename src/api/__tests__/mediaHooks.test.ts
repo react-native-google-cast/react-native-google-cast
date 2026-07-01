@@ -166,4 +166,73 @@ describe('useStreamPosition — ticking', () => {
     })
     jest.useRealTimers()
   })
+
+  it('returns null when there is no media', async () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    // The mocked singleton store persists between tests; a prior test may have
+    // left a session active. Force a clean no-media state before rendering.
+    act(() => {
+      transport.emitLifecycle({ type: 'ended' })
+    })
+
+    const observed: (number | null)[] = []
+    function Probe(): null {
+      observed.push(useStreamPosition(1))
+      return null
+    }
+
+    let root!: TestRenderer.ReactTestRenderer
+    await act(async () => {
+      root = TestRenderer.create(React.createElement(Probe))
+    })
+
+    expect(observed[observed.length - 1]).toBeNull()
+
+    act(() => {
+      root.unmount()
+    })
+    jest.useRealTimers()
+  })
+
+  it('re-subscribes when the interval changes', async () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    const observed: (number | null)[] = []
+    function Probe({ interval }: { interval: number }): null {
+      observed.push(useStreamPosition(interval))
+      return null
+    }
+
+    let root!: TestRenderer.ReactTestRenderer
+    await act(async () => {
+      root = TestRenderer.create(React.createElement(Probe, { interval: 1 }))
+    })
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('ivl') })
+      transport.emitMediaStatus({ ...mediaStatus(30), playerState: 'playing' })
+    })
+
+    // Re-render with a new interval → the effect deps change, so it must tear
+    // down the old subscription and re-subscribe (not stay torn down).
+    await act(async () => {
+      root.update(React.createElement(Probe, { interval: 2 }))
+    })
+
+    // Advance the ticker's clock + fire the timer; the position must still be a
+    // live (non-null) value that ticked forward, proving re-subscription.
+    mockNow = 1000
+    act(() => {
+      jest.advanceTimersByTime(2000)
+    })
+
+    const last = observed[observed.length - 1]
+    expect(last).not.toBeNull()
+    expect(last).toBe(31)
+
+    act(() => {
+      root.unmount()
+    })
+    jest.useRealTimers()
+  })
 })

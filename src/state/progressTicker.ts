@@ -47,8 +47,10 @@ export class ProgressTicker {
    * an unsubscribe.
    */
   subscribe(listener: Listener, interval = 1): () => void {
+    const safeInterval =
+      interval > 0 && Number.isFinite(interval) ? interval : 1
     const key = {}
-    this.subs.set(key, { listener, interval })
+    this.subs.set(key, { listener, interval: safeInterval })
     if (!this.storeUnsub) {
       this.storeUnsub = this.store.subscribe(() => this.onStoreChange())
       this.reanchor()
@@ -68,7 +70,7 @@ export class ProgressTicker {
     let pos = status.streamPosition
     if (status.playerState === 'playing' && status === this.anchorStatus) {
       pos +=
-        ((this.now() - this.anchorTime) / 1000) * (status.playbackRate || 1)
+        ((this.now() - this.anchorTime) / 1000) * (status.playbackRate ?? 1)
     }
     const duration = this.getDuration()
     if (duration > 0) return Math.min(Math.max(pos, 0), duration)

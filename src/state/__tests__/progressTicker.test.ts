@@ -236,4 +236,33 @@ describe('ProgressTicker — timer & arbitration', () => {
     expect(jest.getTimerCount()).toBe(0)
     expect(ticker.getPosition()).toBeNull()
   })
+
+  it('clamps a non-positive interval (no zero-delay busy loop)', async () => {
+    const { clock, ticker } = await playing()
+    const listener = jest.fn()
+    ticker.subscribe(listener, 0) // must be floored to 1s, not setInterval(fn, 0)
+
+    // Exactly one shared timer, running at the 1s floor.
+    expect(jest.getTimerCount()).toBe(1)
+
+    clock.advance(1000)
+    jest.advanceTimersByTime(1000)
+    expect(listener).toHaveBeenCalledTimes(1)
+  })
+
+  it('a second subscriber joining mid-play does NOT reanchor the position', async () => {
+    const { clock, ticker } = await playing()
+    ticker.subscribe(jest.fn(), 1) // first subscriber anchors at clock 0
+
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(2)
+
+    // A second subscriber must NOT re-anchor (the `if (!this.storeUnsub)`
+    // guard means only the first subscriber anchors); position stays at 2.
+    ticker.subscribe(jest.fn(), 5)
+    expect(ticker.getPosition()).toBe(2)
+
+    clock.advance(1000)
+    expect(ticker.getPosition()).toBe(3)
+  })
 })
