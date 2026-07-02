@@ -383,4 +383,85 @@ describe('RemoteMediaClient.onMediaProgressUpdated — shared ticker', () => {
     transport.emitLifecycle({ type: 'ended' })
     jest.useRealTimers()
   })
+
+  it('a stale client returns a no-op subscription (never a later session)', () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    const transport = castTransport as unknown as FakeCastTransport
+
+    transport.emitLifecycle({ type: 'started', session: session('stale1') })
+    const client = RemoteMediaClient.current(castStore, castTransport)!
+    // The session ends → this handle is now stale.
+    transport.emitLifecycle({ type: 'ended' })
+    expect(client.isActive).toBe(false)
+
+    const calls: number[] = []
+    const sub = client.onMediaProgressUpdated((p) => calls.push(p), 1)
+
+    // A brand-new session starts playing; the stale handle must stay silent.
+    transport.emitLifecycle({ type: 'started', session: session('stale2') })
+    transport.emitMediaStatus({
+      streamPosition: 5,
+      playerState: 'playing',
+      playbackRate: 1,
+      volume: 1,
+      isMuted: false,
+      queueItems: [],
+      mediaInfo: { contentUrl: 'x', streamDuration: 100 },
+    })
+    mockNow = 3000
+    jest.advanceTimersByTime(3000)
+    expect(calls).toEqual([])
+
+    sub.remove() // no-op, safe to call
+    transport.emitLifecycle({ type: 'ended' })
+    jest.useRealTimers()
+  })
+
+  it('auto-unsubscribes once its own session ends, never leaking the next', () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    const transport = castTransport as unknown as FakeCastTransport
+
+    transport.emitLifecycle({ type: 'started', session: session('live1') })
+    const client = RemoteMediaClient.current(castStore, castTransport)!
+
+    const calls: number[] = []
+    client.onMediaProgressUpdated((p) => calls.push(p), 1)
+    transport.emitMediaStatus({
+      streamPosition: 0,
+      playerState: 'playing',
+      playbackRate: 1,
+      volume: 1,
+      isMuted: false,
+      queueItems: [],
+      mediaInfo: { contentUrl: 'x', streamDuration: 100 },
+    })
+    mockNow = 1000
+    jest.advanceTimersByTime(1000)
+    const whileLive = calls.length
+    expect(whileLive).toBeGreaterThan(0)
+
+    // Its session ends: the teardown notification runs the callback once more,
+    // which sees the stale handle and self-unsubscribes.
+    transport.emitLifecycle({ type: 'ended' })
+
+    // A fresh session plays; the now-detached handler must not fire again.
+    transport.emitLifecycle({ type: 'started', session: session('live2') })
+    transport.emitMediaStatus({
+      streamPosition: 50,
+      playerState: 'playing',
+      playbackRate: 1,
+      volume: 1,
+      isMuted: false,
+      queueItems: [],
+      mediaInfo: { contentUrl: 'y', streamDuration: 100 },
+    })
+    mockNow = 5000
+    jest.advanceTimersByTime(4000)
+    expect(calls.length).toBe(whileLive)
+
+    transport.emitLifecycle({ type: 'ended' })
+    jest.useRealTimers()
+  })
 })

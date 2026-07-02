@@ -63,7 +63,7 @@ the store itself isolates the single long-lived native subscription.
 
 ## Derivation math
 
-```
+```text
 base     = status.streamPosition            // reset on every MediaStatus push
 anchor   = now()                            // reset on every MediaStatus push
 elapsed  = (now() - anchor) / 1000          // seconds

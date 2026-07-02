@@ -133,6 +133,10 @@ export class RemoteMediaClient {
    * Unlike v4 (single listener), v5 supports multiple concurrent listeners;
    * differing intervals share one timer at the smallest interval.
    *
+   * Scoped to this handle's generation like every other read: a stale client
+   * returns a no-op subscription, and a live one auto-unsubscribes the instant
+   * its session ends, so it can never leak a later session's progress.
+   *
    * @param handler called with `(position, duration)` on each update.
    * @param interval update frequency in seconds (default `1`).
    * @returns a subscription; call `remove()` to stop listening.
@@ -141,7 +145,14 @@ export class RemoteMediaClient {
     handler: (position: number, duration: number) => void,
     interval = 1
   ): EventSubscription {
-    const unsubscribe = progressTicker.subscribe(() => {
+    if (!this.isActive) return { remove: () => {} }
+
+    let unsubscribe = () => {}
+    unsubscribe = progressTicker.subscribe(() => {
+      if (!this.isActive) {
+        unsubscribe()
+        return
+      }
       const position = progressTicker.getPosition()
       if (position !== null) handler(position, progressTicker.getDuration())
     }, interval)

@@ -58,7 +58,7 @@ describe('ProgressTicker — derivation', () => {
   it('freezes at streamPosition when not playing', async () => {
     const clock = makeClock()
     const { ticker, transport } = await makeTicker(clock.now)
-    const off = ticker.subscribe(() => {}) // activates the store subscription
+    const off = ticker.subscribe(() => {}) // store subscription is already live
     transport.emitLifecycle({ type: 'started', session: session('s1') })
     transport.emitMediaStatus(
       status({ streamPosition: 10, playerState: 'paused' })
@@ -150,6 +150,48 @@ describe('ProgressTicker — derivation', () => {
     clock.advance(2000)
     expect(ticker.getPosition()).toBe(14)
     off()
+  })
+
+  it('a late subscriber reads the live position, not a stale re-anchor', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    // Playback runs 30s with NO listener attached — the store subscription is
+    // lifetime-bound, so the anchor stays pinned to the status push at clock 0.
+    clock.advance(30000)
+
+    // The first listener attaches only now. Position must reflect real elapsed
+    // time (10 + 30 = 40), NOT re-anchor the wall clock to the pushed base (10).
+    const off = ticker.subscribe(() => {})
+    expect(ticker.getPosition()).toBe(40)
+    off()
+  })
+
+  it('resubscribe after the timer went idle does not jump backward', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    const off1 = ticker.subscribe(() => {})
+    clock.advance(5000)
+    expect(ticker.getPosition()).toBe(15)
+
+    // Last subscriber leaves: the shared timer stops, but the anchor persists.
+    off1()
+    clock.advance(5000)
+
+    // Resubscribing 5s later keeps the position climbing (10 + 10 = 20) rather
+    // than resetting to the last-pushed base (10).
+    const off2 = ticker.subscribe(() => {})
+    expect(ticker.getPosition()).toBe(20)
+    off2()
   })
 })
 
@@ -250,15 +292,46 @@ describe('ProgressTicker — timer & arbitration', () => {
     expect(listener).toHaveBeenCalledTimes(1)
   })
 
+  it('clamps a tiny positive interval to the 0.25s floor (no busy loop)', async () => {
+    const { clock, ticker } = await playing()
+    const listener = jest.fn()
+    ticker.subscribe(listener, 0.001) // floored to 0.25s, not setInterval(fn, 1)
+
+    expect(jest.getTimerCount()).toBe(1)
+
+    // Just under the floor: no tick yet (an unclamped 1ms interval would have
+    // fired hundreds of times by now).
+    clock.advance(240)
+    jest.advanceTimersByTime(240)
+    expect(listener).not.toHaveBeenCalled()
+
+    // Crossing 250ms fires exactly once.
+    clock.advance(10)
+    jest.advanceTimersByTime(10)
+    expect(listener).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not notify listeners on an unrelated store change', async () => {
+    const { ticker, transport } = await playing()
+    const listener = jest.fn()
+    ticker.subscribe(listener, 1)
+    // subscribe() does not itself notify; start from a clean slate.
+    listener.mockClear()
+
+    // Cast-state churn leaves the media slice untouched → no progress callback.
+    transport.emitState('connected')
+    expect(listener).not.toHaveBeenCalled()
+  })
+
   it('a second subscriber joining mid-play does NOT reanchor the position', async () => {
     const { clock, ticker } = await playing()
-    ticker.subscribe(jest.fn(), 1) // first subscriber anchors at clock 0
+    ticker.subscribe(jest.fn(), 1) // anchor was set by the status push at clock 0
 
     clock.advance(2000)
     expect(ticker.getPosition()).toBe(2)
 
-    // A second subscriber must NOT re-anchor (the `if (!this.storeUnsub)`
-    // guard means only the first subscriber anchors); position stays at 2.
+    // subscribe() never anchors (the anchor is owned by the lifetime-bound store
+    // subscription), so a second subscriber can't reset it; position stays at 2.
     ticker.subscribe(jest.fn(), 5)
     expect(ticker.getPosition()).toBe(2)
 

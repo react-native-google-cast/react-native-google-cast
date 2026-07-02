@@ -14,6 +14,15 @@ interface Subscriber {
 }
 
 /**
+ * Floor for a subscriber's update interval (seconds). A tiny positive interval
+ * (e.g. `0.001`) would otherwise drive a near-busy timer; `interval` is public
+ * API, so clamp it. A non-positive/NaN interval still falls back to {@link
+ * DEFAULT_INTERVAL}.
+ */
+const MIN_INTERVAL = 0.25
+const DEFAULT_INTERVAL = 1
+
+/**
  * Derives a locally-ticking stream position from the store's media slice — pure
  * TS, no native timer. Position advances only while `playerState === 'playing'`,
  * resyncing to the receiver's reported `streamPosition` on every status push, so
@@ -22,13 +31,19 @@ interface Subscriber {
  * One shared `setInterval` runs at the smallest subscriber interval and only
  * while playing + subscribed; it is recomputed on every membership change and on
  * play-state transitions, and torn down when the last subscriber leaves.
+ *
+ * The store subscription, by contrast, is lifetime-bound (opened in the
+ * constructor, never closed): the anchor must resync on every media-status push
+ * even with zero listeners, so a listener attaching mid-playback — or a
+ * resubscribe after the timer went idle — reads a live position instead of
+ * re-anchoring the wall clock to a stale `streamPosition`. The ticker and its
+ * store are paired singletons, so this holds no resource open beyond the store.
  */
 export class ProgressTicker {
   private readonly store: TickerStoreView
   private readonly now: () => number
 
   private readonly subs = new Map<object, Subscriber>()
-  private storeUnsub: (() => void) | null = null
   private timer: ReturnType<typeof setInterval> | null = null
   private timerInterval = 0
 
@@ -38,6 +53,11 @@ export class ProgressTicker {
   constructor(store: TickerStoreView, now: () => number = Date.now) {
     this.store = store
     this.now = now
+    // Lifetime-bound (never unsubscribed): keep the anchor resynced to the last
+    // media-status push even while there are no listeners (see class doc). The
+    // ticker and its store are paired singletons, so this leaks nothing.
+    this.store.subscribe(() => this.onStoreChange())
+    this.reanchor()
   }
 
   /**
@@ -46,20 +66,19 @@ export class ProgressTicker {
    * media slice changes (a new status push, pause/resume, or teardown). Returns
    * an unsubscribe.
    */
-  subscribe(listener: Listener, interval = 1): () => void {
+  subscribe(listener: Listener, interval = DEFAULT_INTERVAL): () => void {
     const safeInterval =
-      interval > 0 && Number.isFinite(interval) ? interval : 1
+      interval > 0 && Number.isFinite(interval)
+        ? Math.max(interval, MIN_INTERVAL)
+        : DEFAULT_INTERVAL
     const key = {}
     this.subs.set(key, { listener, interval: safeInterval })
-    if (!this.storeUnsub) {
-      this.storeUnsub = this.store.subscribe(() => this.onStoreChange())
-      this.reanchor()
-    }
     this.reconcileTimer()
     return () => {
       if (!this.subs.delete(key)) return
-      if (this.subs.size === 0) this.teardown()
-      else this.reconcileTimer()
+      // The store subscription and anchor are lifetime-bound; only the shared
+      // timer is reconciled (and stopped once the last listener leaves).
+      this.reconcileTimer()
     }
   }
 
@@ -87,8 +106,13 @@ export class ProgressTicker {
   }
 
   private onStoreChange(): void {
+    // The ticker observes the whole store; ignore churn that leaves the media
+    // slice untouched (cast-state/device changes) so progress listeners only
+    // fire on their own interval, never off an unrelated store write. A real
+    // status push always yields a fresh `currentStatus` reference.
     const status = this.status()
-    if (status !== this.anchorStatus) this.reanchor()
+    if (status === this.anchorStatus) return
+    this.reanchor()
     this.reconcileTimer()
     this.notify()
   }
@@ -124,18 +148,5 @@ export class ProgressTicker {
 
   private notify(): void {
     for (const { listener } of [...this.subs.values()]) listener()
-  }
-
-  private teardown(): void {
-    if (this.timer !== null) {
-      clearInterval(this.timer)
-      this.timer = null
-    }
-    this.timerInterval = 0
-    if (this.storeUnsub) {
-      this.storeUnsub()
-      this.storeUnsub = null
-    }
-    this.anchorStatus = null
   }
 }
