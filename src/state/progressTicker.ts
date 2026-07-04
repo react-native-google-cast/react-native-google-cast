@@ -23,6 +23,19 @@ const MIN_INTERVAL = 0.25
 const DEFAULT_INTERVAL = 1
 
 /**
+ * A monotonic millisecond clock for measuring *elapsed* media time. `Date.now()`
+ * tracks the wall clock, so an NTP sync or a manual time change mid-playback
+ * would corrupt the `now() - anchorTime` delta and snap the derived position
+ * backward/forward until the next status push. `performance.now()` is monotonic
+ * (RN ≥0.72 / Hermes expose it), so deltas stay well-behaved; fall back to
+ * `Date.now` only where it is somehow unavailable.
+ */
+const monotonicNow: () => number =
+  typeof performance !== 'undefined' && typeof performance.now === 'function'
+    ? () => performance.now()
+    : () => Date.now()
+
+/**
  * Derives a locally-ticking stream position from the store's media slice — pure
  * TS, no native timer. Position advances only while `playerState === 'playing'`,
  * resyncing to the receiver's reported `streamPosition` on every status push, so
@@ -50,7 +63,7 @@ export class ProgressTicker {
   private anchorStatus: MediaStatus | null = null
   private anchorTime = 0
 
-  constructor(store: TickerStoreView, now: () => number = Date.now) {
+  constructor(store: TickerStoreView, now: () => number = monotonicNow) {
     this.store = store
     this.now = now
     // Lifetime-bound (never unsubscribed): keep the anchor resynced to the last
