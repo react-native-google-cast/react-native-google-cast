@@ -68,7 +68,9 @@ export const mediaSlice: Slice<MediaState> = {
         // event without a session payload yields no live session.
         const live = event.event.session != null
         const next = live ? EMPTY_LIVE : EMPTY_IDLE
-        return state.currentStatus === null && state.live === live ? state : next
+        return state.currentStatus === null && state.live === live
+          ? state
+          : next
       }
       if (SESSION_TEARDOWN_TYPES.has(type)) {
         return state.currentStatus === null && !state.live ? state : EMPTY_IDLE

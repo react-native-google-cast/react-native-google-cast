@@ -22,6 +22,17 @@ jest.mock('../../state/castStore.singleton', () => {
   return { castStore: store, castTransport: transport }
 })
 
+// The singleton ticker captures Date.now at module load — before
+// jest.useFakeTimers() — so its clock can't be moved by the test. Inject a
+// controllable clock (a mock-prefixed name, permitted by jest's hoist plugin)
+// bound to the SAME mocked castStore.singleton the test already drives.
+let mockNow = 0
+jest.mock('../../state/progressTicker.singleton', () => {
+  const { ProgressTicker } = require('../../state/progressTicker')
+  const { castStore } = require('../../state/castStore.singleton')
+  return { progressTicker: new ProgressTicker(castStore, () => mockNow) }
+})
+
 const transport = castTransport as unknown as FakeCastTransport
 
 function device(id: string): Device {
@@ -106,5 +117,122 @@ describe('media hooks — useSyncExternalStore wiring', () => {
     act(() => {
       root.unmount()
     })
+  })
+})
+
+describe('useStreamPosition — ticking', () => {
+  beforeAll(async () => {
+    await castStore.ready
+  })
+
+  it('advances between status pushes while playing', async () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    const positions: (number | null)[] = []
+    function Ticking(): null {
+      positions.push(useStreamPosition(1))
+      return null
+    }
+
+    let root!: TestRenderer.ReactTestRenderer
+    await act(async () => {
+      root = TestRenderer.create(React.createElement(Ticking))
+    })
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('tick') })
+      transport.emitMediaStatus({
+        streamPosition: 30,
+        playbackRate: 1,
+        volume: 1,
+        isMuted: false,
+        queueItems: [],
+        playerState: 'playing',
+      })
+    })
+
+    // Advance the ticker's clock, then fire the interval → derived position ticks.
+    mockNow = 1000
+    act(() => {
+      jest.advanceTimersByTime(1000)
+    })
+
+    // 30 (pushed base) + 1s × rate 1 = 31: it ticked strictly forward.
+    const last = positions[positions.length - 1]!
+    expect(last).toBeGreaterThan(30)
+    expect(last).toBe(31)
+
+    act(() => {
+      root.unmount()
+    })
+    jest.useRealTimers()
+  })
+
+  it('returns null when there is no media', async () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    // The mocked singleton store persists between tests; a prior test may have
+    // left a session active. Force a clean no-media state before rendering.
+    act(() => {
+      transport.emitLifecycle({ type: 'ended' })
+    })
+
+    const observed: (number | null)[] = []
+    function Probe(): null {
+      observed.push(useStreamPosition(1))
+      return null
+    }
+
+    let root!: TestRenderer.ReactTestRenderer
+    await act(async () => {
+      root = TestRenderer.create(React.createElement(Probe))
+    })
+
+    expect(observed[observed.length - 1]).toBeNull()
+
+    act(() => {
+      root.unmount()
+    })
+    jest.useRealTimers()
+  })
+
+  it('re-subscribes when the interval changes', async () => {
+    jest.useFakeTimers()
+    mockNow = 0
+    const observed: (number | null)[] = []
+    function Probe({ interval }: { interval: number }): null {
+      observed.push(useStreamPosition(interval))
+      return null
+    }
+
+    let root!: TestRenderer.ReactTestRenderer
+    await act(async () => {
+      root = TestRenderer.create(React.createElement(Probe, { interval: 1 }))
+    })
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('ivl') })
+      transport.emitMediaStatus({ ...mediaStatus(30), playerState: 'playing' })
+    })
+
+    // Re-render with a new interval → the effect deps change, so it must tear
+    // down the old subscription and re-subscribe (not stay torn down).
+    await act(async () => {
+      root.update(React.createElement(Probe, { interval: 2 }))
+    })
+
+    // Advance the ticker's clock + fire the timer; the position must still be a
+    // live (non-null) value that ticked forward, proving re-subscription.
+    mockNow = 1000
+    act(() => {
+      jest.advanceTimersByTime(2000)
+    })
+
+    const last = observed[observed.length - 1]
+    expect(last).not.toBeNull()
+    expect(last).toBe(31)
+
+    act(() => {
+      root.unmount()
+    })
+    jest.useRealTimers()
   })
 })
