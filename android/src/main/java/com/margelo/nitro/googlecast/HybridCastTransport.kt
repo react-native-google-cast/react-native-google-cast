@@ -3,6 +3,7 @@ package com.margelo.nitro.googlecast
 import android.os.Handler
 import android.os.Looper
 import androidx.mediarouter.media.MediaRouter
+import com.google.android.gms.cast.Cast
 import com.google.android.gms.cast.CastDevice
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
@@ -26,6 +27,7 @@ import com.margelo.nitro.googlecast.converters.toGckMediaQueueItem
 import com.margelo.nitro.googlecast.converters.toGckMediaSeekOptions
 import com.margelo.nitro.googlecast.converters.toGckTextTrackStyle
 import com.margelo.nitro.googlecast.converters.toMediaStatus
+import com.margelo.nitro.googlecast.converters.toSessionInfo
 
 /**
  * Nitro implementation of the singleton Cast transport (Android), backed by the
@@ -64,6 +66,13 @@ class HybridCastTransport : HybridCastTransportSpec() {
   // are touched only on the main thread.
   private var mediaCallback: RemoteMediaClient.Callback? = null
   private var observedClient: RemoteMediaClient? = null
+
+  // The `Cast.Listener` currently registered for device-detail changes (volume/mute,
+  // application metadata/status, standby, active-input), plus the exact session it is
+  // registered on (so it is removed from the right instance across session changes). Both
+  // are touched only on the main thread — mirrors the media-callback discipline above.
+  private var castListener: Cast.Listener? = null
+  private var observedCastSession: CastSession? = null
 
   // In-flight media `PendingResult`s, so teardown can cancel them (and drop our settlement
   // closures). Main-thread only — no extra synchronization needed.
@@ -122,6 +131,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
       // no media listener attached. Attach to the live client now; the `observedClient` guard
       // keeps this idempotent against a later session callback.
       attachMediaCallback(currentSession?.remoteMediaClient)
+      attachCastListener(currentSession)
       promise.resolve(
         InitialSnapshot(cachedCastState, playServicesState(), readDevices(), sessionInfo(currentSession))
       )
@@ -182,6 +192,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
     runOnMain {
       detachObservers()
       detachMediaCallback()
+      detachCastListener()
       // Cancel any in-flight media requests; JS is going away so the promises need not settle.
       pendingResults.forEach { it.cancel() }
       pendingResults.clear()
@@ -236,6 +247,42 @@ class HybridCastTransport : HybridCastTransportSpec() {
       }
       castContext.sessionManager.endCurrentSession(stopCasting)
       promise.resolve(Unit)
+    }
+    return promise
+  }
+
+  // MARK: - device-level volume/mute (act on the CastSession, not the media stream)
+
+  override fun setDeviceVolume(volume: Double): Promise<Unit> = sessionCall { it.setVolume(volume) }
+
+  override fun setDeviceMuted(muted: Boolean): Promise<Unit> = sessionCall { it.setMute(muted) }
+
+  /**
+   * Re-resolves the active [CastSession] on the main thread (Invariant 1 — no cached handle),
+   * runs the `void`/throwing setter [op], and settles the promise. Rejects with `noSession`
+   * when none is active, and `failed` (+ the exception message) if [op] throws — `CastSession`
+   * setters throw `IOException` / `IllegalStateException`, both `Exception` subtypes.
+   *
+   * This is the session-level analogue of [mediaCall], which cannot be reused: media requests
+   * return a `PendingResult` that settles asynchronously, whereas these setters return `void`
+   * and signal failure only by throwing synchronously.
+   */
+  private fun sessionCall(op: (CastSession) -> Unit): Promise<Unit> {
+    val promise = Promise<Unit>()
+    runOnMain {
+      val session = sharedCastContextOrNull()?.sessionManager?.currentCastSession
+      if (session == null) {
+        promise.reject(
+          CastRejection(castRejectionJson("noSession", "No active Cast session.", null))
+        )
+        return@runOnMain
+      }
+      try {
+        op(session)
+        promise.resolve(Unit)
+      } catch (e: Exception) {
+        promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+      }
     }
     return promise
   }
@@ -406,6 +453,51 @@ class HybridCastTransport : HybridCastTransportSpec() {
     observedClient = null
   }
 
+  /**
+   * Register the device-detail listener on [session], replacing any previous registration.
+   * Each callback re-reads a fresh `SessionInfo` and emits the matching lifecycle event so the
+   * store's device detail (volume/mute, app metadata/status, standby, active-input) stays live.
+   * Mirrors [attachMediaCallback]: nullable session + `observedCastSession` idempotency guard.
+   */
+  private fun attachCastListener(session: CastSession?) {
+    if (session == null || observedCastSession === session) return
+    detachCastListener()
+    val listener =
+      object : Cast.Listener() {
+        override fun onVolumeChanged() = emitDetail(SessionEventType.DEVICESTATUSCHANGED)
+        override fun onApplicationStatusChanged() = emitDetail(SessionEventType.DEVICESTATUSCHANGED)
+        // Fully-qualified param type: a bare `ApplicationMetadata` binds to the same-package Nitro
+        // struct and would silently fail to override the GCK callback.
+        override fun onApplicationMetadataChanged(
+          applicationMetadata: com.google.android.gms.cast.ApplicationMetadata?
+        ) = emitDetail(SessionEventType.DEVICESTATUSCHANGED)
+        override fun onStandbyStateChanged(standbyState: Int) =
+          emitDetail(SessionEventType.STANDBYSTATECHANGED)
+        override fun onActiveInputStateChanged(activeInputState: Int) =
+          emitDetail(SessionEventType.ACTIVEINPUTSTATECHANGED)
+      }
+    session.addCastListener(listener)
+    castListener = listener
+    observedCastSession = session
+  }
+
+  private fun detachCastListener() {
+    val listener = castListener ?: return
+    observedCastSession?.removeCastListener(listener)
+    castListener = null
+    observedCastSession = null
+  }
+
+  /**
+   * Emits [type] carrying a fresh full [SessionInfo] read from the *current* session (Invariant 1
+   * — re-resolved, not the closed-over handle from `attachCastListener`). A teardown race that
+   * nulls the session emits a null `sessionInfo`, consistent with how `ENDED` already emits null.
+   */
+  private fun emitDetail(type: SessionEventType) {
+    val session = sharedCastContextOrNull()?.sessionManager?.currentCastSession
+    emit(type, session = sessionInfo(session))
+  }
+
   // Queue/track IDs and indices cross the bridge as `Double`. A bare `toInt()` / `toLong()`
   // silently narrows NaN, ±Inf, fractional, and out-of-range values — quietly targeting the
   // *wrong* item — so validate before converting. Thrown from inside a `mediaCall` op lambda,
@@ -456,6 +548,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
         emit(SessionEventType.STARTING, deviceId = session.castDevice?.deviceId)
       override fun onSessionStarted(session: CastSession, sessionId: String) {
         attachMediaCallback(session.remoteMediaClient)
+        attachCastListener(session)
         emit(SessionEventType.STARTED, session = sessionInfo(session, sessionId))
       }
       override fun onSessionStartFailed(session: CastSession, error: Int) =
@@ -464,6 +557,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
         emit(SessionEventType.ENDING, session = sessionInfo(session))
       override fun onSessionEnded(session: CastSession, error: Int) {
         detachMediaCallback()
+        detachCastListener()
         emit(
           SessionEventType.ENDED,
           error = if (error != 0) castErrorFromStatusCode(error, null) else null
@@ -473,12 +567,14 @@ class HybridCastTransport : HybridCastTransportSpec() {
         emit(SessionEventType.RESUMING, sessionId = sessionId)
       override fun onSessionResumed(session: CastSession, wasSuspended: Boolean) {
         attachMediaCallback(session.remoteMediaClient)
+        attachCastListener(session)
         emit(SessionEventType.RESUMED, session = sessionInfo(session))
       }
       override fun onSessionResumeFailed(session: CastSession, error: Int) =
         emit(SessionEventType.RESUMEFAILED, error = castErrorFromStatusCode(error, null))
       override fun onSessionSuspended(session: CastSession, reason: Int) {
         detachMediaCallback()
+        detachCastListener()
         emit(SessionEventType.SUSPENDED, reason = suspendReason(reason))
       }
     }
@@ -509,11 +605,8 @@ class HybridCastTransport : HybridCastTransportSpec() {
       .toTypedArray()
   }
 
-  private fun sessionInfo(session: CastSession?, sessionId: String? = null): SessionInfo? {
-    if (session == null) return null
-    val device = session.castDevice ?: return null
-    return SessionInfo(sessionId ?: session.sessionId ?: "", device.toDevice())
-  }
+  private fun sessionInfo(session: CastSession?, sessionId: String? = null): SessionInfo? =
+    session?.toSessionInfo(sessionId)
 
   private fun playServicesState(): PlayServicesState {
     val context = NitroModules.applicationContext ?: return PlayServicesState.INVALID
