@@ -42,7 +42,7 @@ export class SessionManager {
     if (this.cached && this.cached.generation === current.generation) {
       return this.cached.session
     }
-    const session = new CastSession(this.store, current)
+    const session = new CastSession(this.store, this.transport, current)
     this.cached = { generation: current.generation, session }
     return session
   }

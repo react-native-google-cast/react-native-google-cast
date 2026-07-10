@@ -70,10 +70,32 @@ session operation on it throws/rejects `CastError` `noSession` _before_ anything
 crosses the native bridge, instead of crashing on a freed native object. Re-read
 `getCurrentCastSession()` to get the current session.
 
+## `CastSession` device detail is now synchronous
+
+`getVolume()`, `isMute()`, `getApplicationMetadata()`, `getApplicationStatus()`,
+`getStandbyState()`, and `getActiveInputState()` **return their value directly**
+instead of a `Promise` — they read the pushed session state from the store cache
+rather than crossing the bridge. Drop the `await`:
+
+```diff
+- const volume = await castSession.getVolume()
++ const volume = castSession.getVolume()
+```
+
+`setVolume()` / `setMute()` still return a `Promise` (they mutate the device),
+and — unlike v4, where `setVolume`/`setMute` did not resolve — they now settle
+when the request completes. They control the **device** volume/mute; for the
+media stream use `castSession.getClient()` →
+`setStreamVolume()` / `setStreamMuted()`. `onStandbyStateChanged` /
+`onActiveInputStateChanged` are unchanged from v4. `getClient()` now returns
+`null` when there is no live session (consistent with `useRemoteMediaClient`),
+so guard the result (`getClient()?.play()`).
+
 ## Deferred to later phases
 
 - `CastContext.showCastDialog()` / `showExpandedControls()` /
   `showIntroductoryOverlay()` / `showPlayServicesErrorDialog()` — **Phase 6**
   (they depend on the `CastButton` / cast activity).
-- `CastSession` volume / mute / `getClient()` — **Phase 5**.
+- Custom channels (`CastSession.addChannel` / `CastChannel`) — **Phase 5**
+  (slice 5.2).
 - Web / Chrome sender support — **Phase 8**.
