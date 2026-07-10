@@ -3,6 +3,22 @@ import type { CastError, Device, SessionInfo } from '../../transport/types'
 import { CastStore } from '../../state/CastStore'
 import { SessionManager } from '../SessionManager'
 import { DiscoveryManager } from '../DiscoveryManager'
+import { RemoteMediaClient } from '../RemoteMediaClient'
+
+// `CastSession.getClient()` imports `RemoteMediaClient`, which transitively
+// pulls the singleton progress ticker + native `CastTransport` (unloadable under
+// jest). Swap the store singleton for a fake-backed one so the module loads;
+// these tests drive their own `setup()` store, not this singleton. Mirrors
+// `RemoteMediaClient.test.ts` / `mediaHooks.test.ts`.
+jest.mock('../../state/castStore.singleton', () => {
+  const { CastStore } = require('../../state/CastStore')
+  const {
+    FakeCastTransport,
+  } = require('../../transport/__fakes__/FakeCastTransport')
+  const transport = new FakeCastTransport()
+  const store = new CastStore(transport)
+  return { castStore: store, castTransport: transport }
+})
 
 function device(id: string): Device {
   return {
@@ -15,8 +31,8 @@ function device(id: string): Device {
     modelName: 'TestCast',
   }
 }
-function session(id: string): SessionInfo {
-  return { sessionId: id, device: device(id) }
+function session(id: string, detail?: Partial<SessionInfo>): SessionInfo {
+  return { sessionId: id, device: device(id), ...detail }
 }
 
 async function setup(
@@ -159,6 +175,172 @@ describe('CastSession — generation guard (Invariant 3)', () => {
     transport.emitLifecycle({ type: 'started', session: session('s1') }) // reused id
     expect(stale.isActive).toBe(false)
     expect(sessionManager.getCurrentCastSession()!.isActive).toBe(true)
+  })
+})
+
+describe('CastSession — device detail (Phase 5)', () => {
+  const richSession = () =>
+    session('s1', {
+      deviceVolume: 0.4,
+      deviceMuted: true,
+      standbyState: 'active',
+      activeInputState: 'inactive',
+      applicationStatus: 'Ready to cast',
+      applicationMetadata: {
+        applicationId: 'APP1',
+        name: 'Test Receiver',
+        images: [],
+        namespaces: ['urn:x-cast:com.example'],
+      },
+    })
+
+  it('serves device detail synchronously from the store slice', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: richSession() })
+    const cs = sessionManager.getCurrentCastSession()!
+    expect(cs.getVolume()).toBe(0.4)
+    expect(cs.isMute()).toBe(true)
+    expect(cs.getStandbyState()).toBe('active')
+    expect(cs.getActiveInputState()).toBe('inactive')
+    expect(cs.getApplicationStatus()).toBe('Ready to cast')
+    expect(cs.getApplicationMetadata()?.applicationId).toBe('APP1')
+  })
+
+  it('applies defaults when the optional detail fields are absent', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    expect(cs.getVolume()).toBe(0)
+    expect(cs.isMute()).toBe(false)
+    expect(cs.getStandbyState()).toBe('unknown')
+    expect(cs.getActiveInputState()).toBe('unknown')
+    expect(cs.getApplicationMetadata()).toBeNull()
+    expect(cs.getApplicationStatus()).toBeNull()
+  })
+
+  it('reflects a detail-change event without churning the currentSession ref', async () => {
+    const { store, sessionManager, transport } = await setup()
+    transport.emitLifecycle({
+      type: 'started',
+      session: session('s1', { deviceVolume: 0.2 }),
+    })
+    const cs = sessionManager.getCurrentCastSession()!
+    const snapBefore = store.getSnapshot().currentSession
+    transport.emitLifecycle({
+      type: 'deviceStatusChanged',
+      session: session('s1', { deviceVolume: 0.9, deviceMuted: true }),
+    })
+    expect(cs.getVolume()).toBe(0.9)
+    expect(cs.isMute()).toBe(true)
+    // currentSession ref preserved → useCastSession does not re-render.
+    expect(store.getSnapshot().currentSession).toBe(snapBefore)
+  })
+
+  it('setVolume/setMute route to the DEVICE surface, never the media stream', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    await cs.setVolume(0.7)
+    await cs.setMute(true)
+    expect(transport.setDeviceVolumeCalls).toEqual([0.7])
+    expect(transport.setDeviceMutedCalls).toEqual([true])
+    const media = transport.mediaCalls.map((c) => c.method)
+    expect(media).not.toContain('setStreamVolume')
+    expect(media).not.toContain('setStreamMuted')
+  })
+
+  it('detail reads throw and mutations reject once the handle is stale', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    transport.emitLifecycle({ type: 'ended' })
+    expect(() => cs.getVolume()).toThrow()
+    await expect(cs.setVolume(0.5)).rejects.toMatchObject({ code: 'noSession' })
+    expect(transport.setDeviceVolumeCalls).toEqual([])
+  })
+})
+
+describe('CastSession — getClient (Phase 5)', () => {
+  it('returns a memoized RemoteMediaClient for the live session', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    const client = cs.getClient()
+    expect(client).toBeInstanceOf(RemoteMediaClient)
+    expect(cs.getClient()).toBe(client) // same ref within a generation
+  })
+
+  it('client mutations route through the transport', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const client = sessionManager.getCurrentCastSession()!.getClient()!
+    await client.play()
+    expect(transport.mediaCalls.map((c) => c.method)).toContain('play')
+  })
+
+  it('throws noSession on a stale handle', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    transport.emitLifecycle({ type: 'ended' })
+    expect(() => cs.getClient()).toThrow()
+  })
+})
+
+describe('CastSession — detail change listeners (Phase 5)', () => {
+  it('onStandbyStateChanged fires with the new state and stops after remove()', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    const handler = jest.fn()
+    const sub = cs.onStandbyStateChanged(handler)
+    transport.emitLifecycle({
+      type: 'standbyStateChanged',
+      session: session('s1', { standbyState: 'active' }),
+    })
+    expect(handler).toHaveBeenCalledWith('active')
+    sub.remove()
+    transport.emitLifecycle({
+      type: 'standbyStateChanged',
+      session: session('s1', { standbyState: 'inactive' }),
+    })
+    expect(handler).toHaveBeenCalledTimes(1)
+  })
+
+  it('onActiveInputStateChanged fires with the new state', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    const handler = jest.fn()
+    cs.onActiveInputStateChanged(handler)
+    transport.emitLifecycle({
+      type: 'activeInputStateChanged',
+      session: session('s1', { activeInputState: 'active' }),
+    })
+    expect(handler).toHaveBeenCalledWith('active')
+  })
+
+  it('a listener on a now-stale handle does not fire for a later session', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    const handler = jest.fn()
+    cs.onStandbyStateChanged(handler)
+    transport.emitLifecycle({ type: 'ended' })
+    transport.emitLifecycle({ type: 'started', session: session('s2') })
+    transport.emitLifecycle({
+      type: 'standbyStateChanged',
+      session: session('s2', { standbyState: 'active' }),
+    })
+    expect(handler).not.toHaveBeenCalled()
+  })
+
+  it('subscribing on an already-stale handle throws noSession', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const cs = sessionManager.getCurrentCastSession()!
+    transport.emitLifecycle({ type: 'ended' })
+    expect(() => cs.onStandbyStateChanged(jest.fn())).toThrow()
   })
 })
 

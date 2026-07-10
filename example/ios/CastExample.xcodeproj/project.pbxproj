@@ -13,6 +13,7 @@
 		1668586AFE5EA5F6F2E7AE4C /* mediaInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 56207C6DECEBF951ADFC44D5 /* mediaInfo.json */; };
 		187464540DC0627857A7D455 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 779854B72D9EB90F8D75DE24 /* Foundation.framework */; };
 		22EFC52CA9BDBE7206B9BBBB /* StateEnumConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ECD13393927F54CD7574E81 /* StateEnumConverterTests.swift */; };
+		3644FCF70720785683137ADB /* DeviceStatusListenerSelectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C66E907FAE7BB1E54C860CA8 /* DeviceStatusListenerSelectorTests.swift */; };
 		3793168C11FD428477BD36D2 /* ObjCExceptionCatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = BE0BC692AE34376D15117AB1 /* ObjCExceptionCatcher.m */; };
 		3A54B274C6391B2DF2F044B7 /* MediaLiveSeekableRangeConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6AC5B7F5FF4768DB12274F /* MediaLiveSeekableRangeConverterTests.swift */; };
 		458EC749E8545D5D14045EDF /* VideoInfoConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A304778A69B66DF7C7B92C51 /* VideoInfoConverterTests.swift */; };
@@ -98,6 +99,7 @@
 		AF59CECC66765DA0E4BBEAE4 /* NitroGoogleCastTests-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NitroGoogleCastTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		B26E6F8FA09FA976940564B8 /* mediaLiveSeekableRange.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaLiveSeekableRange.json; path = ../../fixtures/converters/mediaLiveSeekableRange.json; sourceTree = "<group>"; };
 		BE0BC692AE34376D15117AB1 /* ObjCExceptionCatcher.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ObjCExceptionCatcher.m; sourceTree = "<group>"; };
+		C66E907FAE7BB1E54C860CA8 /* DeviceStatusListenerSelectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceStatusListenerSelectorTests.swift; sourceTree = "<group>"; };
 		CD5368DB3979F7BED0E02B18 /* webImage.json */ = {isa = PBXFileReference; includeInIndex = 1; name = webImage.json; path = ../../fixtures/converters/webImage.json; sourceTree = "<group>"; };
 		D238C1D4072D586851C1CAC7 /* mediaMetadata.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaMetadata.json; path = ../../fixtures/converters/mediaMetadata.json; sourceTree = "<group>"; };
 		D7B3B0F935E6A6194186A0A6 /* mediaQueueItem.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaQueueItem.json; path = ../../fixtures/converters/mediaQueueItem.json; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				5F6AC5B7F5FF4768DB12274F /* MediaLiveSeekableRangeConverterTests.swift */,
 				0EAE69B317C350F01C826A60 /* MediaStatusConverterTests.swift */,
 				2ECD13393927F54CD7574E81 /* StateEnumConverterTests.swift */,
+				C66E907FAE7BB1E54C860CA8 /* DeviceStatusListenerSelectorTests.swift */,
 			);
 			name = NitroGoogleCastTests;
 			path = NitroGoogleCastTests;
@@ -483,6 +486,7 @@
 				3A54B274C6391B2DF2F044B7 /* MediaLiveSeekableRangeConverterTests.swift in Sources */,
 				CE9BA8E4E6CB702EA00ACDC4 /* MediaStatusConverterTests.swift in Sources */,
 				22EFC52CA9BDBE7206B9BBBB /* StateEnumConverterTests.swift in Sources */,
+				3644FCF70720785683137ADB /* DeviceStatusListenerSelectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

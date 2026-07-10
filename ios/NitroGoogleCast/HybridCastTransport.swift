@@ -47,6 +47,13 @@ final class HybridCastTransport: HybridCastTransportSpec {
   private weak var attachedMediaClient: GCKRemoteMediaClient?
   private var pendingRequests: Set<CastRequestDelegate> = []
 
+  // Device-status (standby / active-input) transport state — same ownership model
+  // as the media listener above. `deviceStatusListener` is the single strong
+  // owner of the GCK adapter (GCK holds it weakly); `attachedStatusSession` tracks
+  // which cast session it is bound to so re-resolution never double-attaches.
+  private var deviceStatusListener: CastDeviceStatusListener?
+  private weak var attachedStatusSession: GCKCastSession?
+
   private var cachedCastState: CastState = .notconnected
   private var cachedDiscovering = false
   private var cachedPassiveScan = false
@@ -84,8 +91,10 @@ final class HybridCastTransport: HybridCastTransportSpec {
       let context = GCKCastContext.sharedInstance()
       self.attachObservers(context)
       // If a session was already current before we subscribed, bind the media
-      // listener now so status updates flow without waiting for the next start.
+      // and device-status listeners now so updates flow without waiting for the
+      // next start.
       self.attachMediaListener()
+      self.attachDeviceStatusListener()
 
       self.cachedCastState = Self.mapState(context.castState)
       self.cachedPassiveScan = context.discoveryManager.passiveScan
@@ -122,9 +131,13 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
     let session = CastSessionListener(
       onEvent: { [weak self] event in self?.onLifecycle?(event) },
-      onSessionActive: { [weak self] in self?.attachMediaListener() },
+      onSessionActive: { [weak self] in
+        self?.attachMediaListener()
+        self?.attachDeviceStatusListener()
+      },
       onSessionInactive: { [weak self] in
         self?.detachMediaListener()
+        self?.detachDeviceStatusListener()
         self?.flushPendingRequests(code: "interrupted", message: "The Cast session ended.")
       })
     context.sessionManager.add(session)
@@ -155,8 +168,10 @@ final class HybridCastTransport: HybridCastTransportSpec {
       guard let self else { return }
       self.detachObservers()
       self.detachMediaListener()
+      self.detachDeviceStatusListener()
       self.flushPendingRequests(code: "interrupted", message: "The Cast transport was disposed.")
       self.mediaStatusListener = nil
+      self.deviceStatusListener = nil
       self.onState = nil
       self.onDevices = nil
       self.onLifecycle = nil
@@ -204,6 +219,16 @@ final class HybridCastTransport: HybridCastTransportSpec {
       }
     }
     return promise
+  }
+
+  // MARK: - device volume / mute (route to GCKCastSession — Invariant 1)
+
+  func setDeviceVolume(volume: Double) throws -> Promise<Void> {
+    withCastSession { $0.setDeviceVolume(Float(volume)) }
+  }
+
+  func setDeviceMuted(muted: Bool) throws -> Promise<Void> {
+    withCastSession { $0.setDeviceMuted(muted) }
   }
 
   // MARK: - media transport (route to GCKRemoteMediaClient — Invariant 1)
@@ -330,6 +355,35 @@ final class HybridCastTransport: HybridCastTransportSpec {
     return promise
   }
 
+  /// Sibling of `withClient` for session-level (non-media) GCK requests:
+  /// re-resolves the current `GCKCastSession` on the main thread per call (never
+  /// caches a handle — Invariant 1), runs `work` to issue the `GCKRequest`, and
+  /// tracks it for exactly-once settlement (so teardown rejects it). No cast
+  /// session → reject `noSession`; disposed before the block runs → `interrupted`.
+  private func withCastSession(
+    _ work: @escaping (GCKCastSession) -> GCKRequest
+  ) -> Promise<Void> {
+    let promise = Promise<Void>()
+    DispatchQueue.main.async { [weak self] in
+      guard let self else {
+        // Disposed before this block ran — settle so the caller never hangs.
+        promise.reject(
+          withError: castRejection(
+            code: "interrupted", message: "The Cast transport was disposed.", nativeCode: nil))
+        return
+      }
+      guard let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession else {
+        promise.reject(
+          withError: castRejection(
+            code: "noSession", message: "There is no active Cast session.", nativeCode: nil))
+        return
+      }
+      let request = work(session)
+      self.track(request, promise)
+    }
+    return promise
+  }
+
   private func track(_ request: GCKRequest, _ promise: Promise<Void>) {
     let delegate = CastRequestDelegate(promise: promise) { [weak self] settled in
       self?.pendingRequests.remove(settled)
@@ -381,6 +435,31 @@ final class HybridCastTransport: HybridCastTransportSpec {
       client.remove(listener)
     }
     attachedMediaClient = nil
+  }
+
+  /// Bind the device-status listener to the current cast session. Idempotent for
+  /// a given session; re-resolves the session per call (Invariant 1). Main thread.
+  /// Mirrors `attachMediaListener`.
+  private func attachDeviceStatusListener() {
+    guard let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession
+    else { return }
+    guard attachedStatusSession !== session else { return }
+
+    let listener =
+      deviceStatusListener
+      ?? CastDeviceStatusListener { [weak self] event in self?.onLifecycle?(event) }
+    deviceStatusListener = listener
+
+    if let previous = attachedStatusSession { previous.remove(listener) }
+    session.add(listener)
+    attachedStatusSession = session
+  }
+
+  private func detachDeviceStatusListener() {
+    if let session = attachedStatusSession, let listener = deviceStatusListener {
+      session.remove(listener)
+    }
+    attachedStatusSession = nil
   }
 
   /// Reject every still-pending media request. Used on session end / teardown so a
@@ -442,9 +521,24 @@ final class HybridCastTransport: HybridCastTransportSpec {
     return nil
   }
 
-  fileprivate static func sessionInfo(_ session: GCKSession?) -> SessionInfo? {
+  /// Build the generated `SessionInfo` from a GCK session. `internal` (not
+  /// `fileprivate`) so the separate-file `CastDeviceStatusListener` can reuse it.
+  /// The six detail fields are cast-only, so they populate only when the session
+  /// is a `GCKCastSession`; a plain `GCKSession` leaves them `nil`. Reads the
+  /// current values off the handle GCK hands us — never a cached one (Invariant 1).
+  internal static func sessionInfo(_ session: GCKSession?) -> SessionInfo? {
     guard let session else { return nil }
-    return SessionInfo(sessionId: session.sessionID ?? "", device: session.device.toDevice())
+    let castSession = session as? GCKCastSession
+    return SessionInfo(
+      sessionId: session.sessionID ?? "",
+      device: session.device.toDevice(),
+      applicationMetadata: castSession?.applicationMetadata?.toApplicationMetadata(),
+      applicationStatus: session.deviceStatusText,
+      deviceVolume: castSession.map { Double($0.currentDeviceVolume) },
+      deviceMuted: castSession.map { $0.currentDeviceMuted },
+      standbyState: castSession?.standbyStatus.toStandbyState(),
+      activeInputState: castSession?.activeInputStatus.toActiveInputState()
+    )
   }
 
   private static func mapState(_ state: GCKCastState) -> CastState {
@@ -551,5 +645,43 @@ private final class CastSessionListener: NSObject, GCKSessionManagerListener {
     // state JS already considers gone. Re-attached on `didResumeSession`.
     onSessionInactive()
     emit(.suspended, reason: HybridCastTransport.suspendReason(reason))
+  }
+
+  // MARK: device-status (all collapse to `deviceStatusChanged`, carrying a fresh
+  // full `sessionInfo`). GCK declares each volume/status callback in two flavors —
+  // a generic `session:` and a cast-specific `castSession:`. Which one(s) GCK
+  // actually invokes for a cast session is device-gated and unverified here, so we
+  // implement BOTH: a silent miss (only one flavor fires and we skipped it) is a
+  // real bug, whereas a double-emit (both fire) is harmless — each rebuilds the
+  // same fresh full `sessionInfo`, an idempotent overwrite downstream.
+  // `didUpdateDevice:` has only a `session:` flavor. All are *optional* selectors
+  // pinned from the GCK headers (a wrong signature compiles clean and never fires).
+  func sessionManager(
+    _ sessionManager: GCKSessionManager, session: GCKSession, didReceiveDeviceVolume volume: Float,
+    muted: Bool
+  ) {
+    emit(.devicestatuschanged, session: HybridCastTransport.sessionInfo(session))
+  }
+  func sessionManager(
+    _ sessionManager: GCKSessionManager, castSession: GCKCastSession,
+    didReceiveDeviceVolume volume: Float, muted: Bool
+  ) {
+    emit(.devicestatuschanged, session: HybridCastTransport.sessionInfo(castSession))
+  }
+  func sessionManager(
+    _ sessionManager: GCKSessionManager, session: GCKSession, didReceiveDeviceStatus statusText: String?
+  ) {
+    emit(.devicestatuschanged, session: HybridCastTransport.sessionInfo(session))
+  }
+  func sessionManager(
+    _ sessionManager: GCKSessionManager, castSession: GCKCastSession,
+    didReceiveDeviceStatus statusText: String?
+  ) {
+    emit(.devicestatuschanged, session: HybridCastTransport.sessionInfo(castSession))
+  }
+  func sessionManager(
+    _ sessionManager: GCKSessionManager, session: GCKSession, didUpdate device: GCKDevice
+  ) {
+    emit(.devicestatuschanged, session: HybridCastTransport.sessionInfo(session))
   }
 }
