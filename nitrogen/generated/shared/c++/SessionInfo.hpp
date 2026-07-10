@@ -30,9 +30,19 @@
 
 // Forward declaration of `Device` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `ApplicationMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
+// Forward declaration of `StandbyState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class StandbyState; }
+// Forward declaration of `ActiveInputState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 
 #include <string>
 #include "Device.hpp"
+#include "ApplicationMetadata.hpp"
+#include <optional>
+#include "StandbyState.hpp"
+#include "ActiveInputState.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -43,10 +53,16 @@ namespace margelo::nitro::googlecast {
   public:
     std::string sessionId     SWIFT_PRIVATE;
     Device device     SWIFT_PRIVATE;
+    std::optional<ApplicationMetadata> applicationMetadata     SWIFT_PRIVATE;
+    std::optional<std::string> applicationStatus     SWIFT_PRIVATE;
+    std::optional<double> deviceVolume     SWIFT_PRIVATE;
+    std::optional<bool> deviceMuted     SWIFT_PRIVATE;
+    std::optional<StandbyState> standbyState     SWIFT_PRIVATE;
+    std::optional<ActiveInputState> activeInputState     SWIFT_PRIVATE;
 
   public:
     SessionInfo() = default;
-    explicit SessionInfo(std::string sessionId, Device device): sessionId(sessionId), device(device) {}
+    explicit SessionInfo(std::string sessionId, Device device, std::optional<ApplicationMetadata> applicationMetadata, std::optional<std::string> applicationStatus, std::optional<double> deviceVolume, std::optional<bool> deviceMuted, std::optional<StandbyState> standbyState, std::optional<ActiveInputState> activeInputState): sessionId(sessionId), device(device), applicationMetadata(applicationMetadata), applicationStatus(applicationStatus), deviceVolume(deviceVolume), deviceMuted(deviceMuted), standbyState(standbyState), activeInputState(activeInputState) {}
 
   public:
     friend bool operator==(const SessionInfo& lhs, const SessionInfo& rhs) = default;
@@ -63,13 +79,25 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::googlecast::SessionInfo(
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "sessionId"))),
-        JSIConverter<margelo::nitro::googlecast::Device>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "device")))
+        JSIConverter<margelo::nitro::googlecast::Device>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "device"))),
+        JSIConverter<std::optional<margelo::nitro::googlecast::ApplicationMetadata>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "applicationMetadata"))),
+        JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "applicationStatus"))),
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "deviceVolume"))),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "deviceMuted"))),
+        JSIConverter<std::optional<margelo::nitro::googlecast::StandbyState>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "standbyState"))),
+        JSIConverter<std::optional<margelo::nitro::googlecast::ActiveInputState>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "activeInputState")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::googlecast::SessionInfo& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "sessionId"), JSIConverter<std::string>::toJSI(runtime, arg.sessionId));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "device"), JSIConverter<margelo::nitro::googlecast::Device>::toJSI(runtime, arg.device));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "applicationMetadata"), JSIConverter<std::optional<margelo::nitro::googlecast::ApplicationMetadata>>::toJSI(runtime, arg.applicationMetadata));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "applicationStatus"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.applicationStatus));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "deviceVolume"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.deviceVolume));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "deviceMuted"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.deviceMuted));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "standbyState"), JSIConverter<std::optional<margelo::nitro::googlecast::StandbyState>>::toJSI(runtime, arg.standbyState));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "activeInputState"), JSIConverter<std::optional<margelo::nitro::googlecast::ActiveInputState>>::toJSI(runtime, arg.activeInputState));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -82,6 +110,12 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "sessionId")))) return false;
       if (!JSIConverter<margelo::nitro::googlecast::Device>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "device")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::googlecast::ApplicationMetadata>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "applicationMetadata")))) return false;
+      if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "applicationStatus")))) return false;
+      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "deviceVolume")))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "deviceMuted")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::googlecast::StandbyState>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "standbyState")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::googlecast::ActiveInputState>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "activeInputState")))) return false;
       return true;
     }
   };

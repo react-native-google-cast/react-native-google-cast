@@ -24,7 +24,10 @@ enum class SessionEventType(@DoNotStrip @Keep val value: Int) {
   RESUMING(5),
   RESUMED(6),
   RESUMEFAILED(7),
-  SUSPENDED(8);
+  SUSPENDED(8),
+  DEVICESTATUSCHANGED(9),
+  STANDBYSTATECHANGED(10),
+  ACTIVEINPUTSTATECHANGED(11);
 
   companion object
 }

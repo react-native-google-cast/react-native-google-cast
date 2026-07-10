@@ -59,6 +59,8 @@ namespace margelo::nitro::googlecast {
     std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) override;
     std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) override;
     std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override;
+    std::shared_ptr<Promise<void>> setDeviceVolume(double volume) override;
+    std::shared_ptr<Promise<void>> setDeviceMuted(bool muted) override;
     std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override;
     std::shared_ptr<Promise<void>> play() override;
     std::shared_ptr<Promise<void>> pause() override;

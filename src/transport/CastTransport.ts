@@ -41,6 +41,10 @@ export const castTransport: CastTransportApi = {
   endCurrentSession: (stopCasting) =>
     mutate(() => hybrid.endCurrentSession(stopCasting)),
 
+  // CastSession device volume/mute — same error-translation wrapper.
+  setDeviceVolume: (volume) => mutate(() => hybrid.setDeviceVolume(volume)),
+  setDeviceMuted: (muted) => mutate(() => hybrid.setDeviceMuted(muted)),
+
   // RemoteMediaClient mutations — same error-translation wrapper as sessions.
   loadMedia: (request) => mutate(() => hybrid.loadMedia(request)),
   play: () => mutate(() => hybrid.play()),

@@ -23,7 +23,25 @@ data class SessionInfo(
   val sessionId: String,
   @DoNotStrip
   @Keep
-  val device: Device
+  val device: Device,
+  @DoNotStrip
+  @Keep
+  val applicationMetadata: ApplicationMetadata?,
+  @DoNotStrip
+  @Keep
+  val applicationStatus: String?,
+  @DoNotStrip
+  @Keep
+  val deviceVolume: Double?,
+  @DoNotStrip
+  @Keep
+  val deviceMuted: Boolean?,
+  @DoNotStrip
+  @Keep
+  val standbyState: StandbyState?,
+  @DoNotStrip
+  @Keep
+  val activeInputState: ActiveInputState?
 ) {
   /* primary constructor */
 
@@ -32,12 +50,24 @@ data class SessionInfo(
     if (other !is SessionInfo) return false
     return Objects.deepEquals(this.sessionId, other.sessionId)
       && Objects.deepEquals(this.device, other.device)
+      && Objects.deepEquals(this.applicationMetadata, other.applicationMetadata)
+      && Objects.deepEquals(this.applicationStatus, other.applicationStatus)
+      && Objects.deepEquals(this.deviceVolume, other.deviceVolume)
+      && Objects.deepEquals(this.deviceMuted, other.deviceMuted)
+      && Objects.deepEquals(this.standbyState, other.standbyState)
+      && Objects.deepEquals(this.activeInputState, other.activeInputState)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
       sessionId,
-      device
+      device,
+      applicationMetadata,
+      applicationStatus,
+      deviceVolume,
+      deviceMuted,
+      standbyState,
+      activeInputState
     ).contentDeepHashCode()
   }
 
@@ -49,8 +79,8 @@ data class SessionInfo(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(sessionId: String, device: Device): SessionInfo {
-      return SessionInfo(sessionId, device)
+    private fun fromCpp(sessionId: String, device: Device, applicationMetadata: ApplicationMetadata?, applicationStatus: String?, deviceVolume: Double?, deviceMuted: Boolean?, standbyState: StandbyState?, activeInputState: ActiveInputState?): SessionInfo {
+      return SessionInfo(sessionId, device, applicationMetadata, applicationStatus, deviceVolume, deviceMuted, standbyState, activeInputState)
     }
   }
 }

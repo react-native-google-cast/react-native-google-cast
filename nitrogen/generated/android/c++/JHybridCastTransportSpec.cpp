@@ -21,6 +21,12 @@ namespace margelo::nitro::googlecast { enum class DeviceCapability; }
 namespace margelo::nitro::googlecast { struct WebImage; }
 // Forward declaration of `SessionInfo` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `ApplicationMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
+// Forward declaration of `StandbyState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class StandbyState; }
+// Forward declaration of `ActiveInputState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 // Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 // Forward declaration of `SessionEventType` to properly resolve imports.
@@ -107,6 +113,12 @@ namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 #include <optional>
 #include "SessionInfo.hpp"
 #include "JSessionInfo.hpp"
+#include "ApplicationMetadata.hpp"
+#include "JApplicationMetadata.hpp"
+#include "StandbyState.hpp"
+#include "JStandbyState.hpp"
+#include "ActiveInputState.hpp"
+#include "JActiveInputState.hpp"
 #include <NitroModules/JUnit.hpp>
 #include <functional>
 #include "JFunc_void_CastState.hpp"
@@ -264,6 +276,36 @@ namespace margelo::nitro::googlecast {
   std::shared_ptr<Promise<void>> JHybridCastTransportSpec::endCurrentSession(bool stopCasting) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* stopCasting */)>("endCurrentSession");
     auto __result = method(_javaPart, stopCasting);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setDeviceVolume(double volume) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* volume */)>("setDeviceVolume");
+    auto __result = method(_javaPart, volume);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setDeviceMuted(bool muted) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* muted */)>("setDeviceMuted");
+    auto __result = method(_javaPart, muted);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

@@ -10,19 +10,25 @@
 #include <fbjni/fbjni.h>
 #include "SessionLifecycleEvent.hpp"
 
+#include "ActiveInputState.hpp"
+#include "ApplicationMetadata.hpp"
 #include "CastError.hpp"
 #include "CastErrorCode.hpp"
 #include "Device.hpp"
 #include "DeviceCapability.hpp"
+#include "JActiveInputState.hpp"
+#include "JApplicationMetadata.hpp"
 #include "JCastError.hpp"
 #include "JCastErrorCode.hpp"
 #include "JDevice.hpp"
 #include "JDeviceCapability.hpp"
 #include "JSessionEventType.hpp"
 #include "JSessionInfo.hpp"
+#include "JStandbyState.hpp"
 #include "JWebImage.hpp"
 #include "SessionEventType.hpp"
 #include "SessionInfo.hpp"
+#include "StandbyState.hpp"
 #include "WebImage.hpp"
 #include <optional>
 #include <string>

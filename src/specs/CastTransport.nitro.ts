@@ -43,6 +43,14 @@ export interface CastTransport
   startSession(deviceId: string): Promise<void>
   endCurrentSession(stopCasting: boolean): Promise<void>
 
+  // CastSession device-level surface (Phase 5) — device volume/mute is the
+  // receiver *device* output (GCKCastSession.setDeviceVolume: / Android
+  // CastSession.setVolume), NOT the media stream volume (setStreamVolume below).
+  // Detail changes stream back via the `deviceStatusChanged` /
+  // `standbyStateChanged` / `activeInputStateChanged` lifecycle events.
+  setDeviceVolume(volume: number): Promise<void>
+  setDeviceMuted(muted: boolean): Promise<void>
+
   // RemoteMediaClient mutation surface (Phase 4) — mirrors `CastTransportApi`;
   // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these
   // diverge from the API. Native impls route to GCKRemoteMediaClient (iOS) /

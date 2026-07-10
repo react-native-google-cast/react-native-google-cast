@@ -26,6 +26,12 @@ namespace margelo::nitro::googlecast { enum class DeviceCapability; }
 namespace margelo::nitro::googlecast { struct WebImage; }
 // Forward declaration of `SessionInfo` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `ApplicationMetadata` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
+// Forward declaration of `StandbyState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class StandbyState; }
+// Forward declaration of `ActiveInputState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 // Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 // Forward declaration of `SessionEventType` to properly resolve imports.
@@ -104,6 +110,9 @@ namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 #include "WebImage.hpp"
 #include <optional>
 #include "SessionInfo.hpp"
+#include "ApplicationMetadata.hpp"
+#include "StandbyState.hpp"
+#include "ActiveInputState.hpp"
 #include <functional>
 #include "SessionLifecycleEvent.hpp"
 #include "SessionEventType.hpp"
@@ -216,6 +225,22 @@ namespace margelo::nitro::googlecast {
     }
     inline std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override {
       auto __result = _swiftPart.endCurrentSession(std::forward<decltype(stopCasting)>(stopCasting));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setDeviceVolume(double volume) override {
+      auto __result = _swiftPart.setDeviceVolume(std::forward<decltype(volume)>(volume));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> setDeviceMuted(bool muted) override {
+      auto __result = _swiftPart.setDeviceMuted(std::forward<decltype(muted)>(muted));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

@@ -58,6 +58,14 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun setDeviceVolume(volume: Double): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun setDeviceMuted(muted: Boolean): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
   abstract fun loadMedia(request: MediaLoadRequest): Promise<Unit>
   
   @DoNotStrip

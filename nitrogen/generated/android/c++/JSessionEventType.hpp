@@ -69,6 +69,15 @@ namespace margelo::nitro::googlecast {
         case SessionEventType::SUSPENDED:
           static const auto fieldSUSPENDED = clazz->getStaticField<JSessionEventType>("SUSPENDED");
           return clazz->getStaticFieldValue(fieldSUSPENDED);
+        case SessionEventType::DEVICESTATUSCHANGED:
+          static const auto fieldDEVICESTATUSCHANGED = clazz->getStaticField<JSessionEventType>("DEVICESTATUSCHANGED");
+          return clazz->getStaticFieldValue(fieldDEVICESTATUSCHANGED);
+        case SessionEventType::STANDBYSTATECHANGED:
+          static const auto fieldSTANDBYSTATECHANGED = clazz->getStaticField<JSessionEventType>("STANDBYSTATECHANGED");
+          return clazz->getStaticFieldValue(fieldSTANDBYSTATECHANGED);
+        case SessionEventType::ACTIVEINPUTSTATECHANGED:
+          static const auto fieldACTIVEINPUTSTATECHANGED = clazz->getStaticField<JSessionEventType>("ACTIVEINPUTSTATECHANGED");
+          return clazz->getStaticFieldValue(fieldACTIVEINPUTSTATECHANGED);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");

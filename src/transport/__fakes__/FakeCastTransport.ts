@@ -55,6 +55,9 @@ export class FakeCastTransport implements CastTransportApi {
   /** Recorded mutation calls, for assertions. */
   readonly startSessionCalls: string[] = []
   readonly endCurrentSessionCalls: boolean[] = []
+  /** Recorded device volume/mute setter calls (Phase 5), in call order. */
+  readonly setDeviceVolumeCalls: number[] = []
+  readonly setDeviceMutedCalls: boolean[] = []
 
   /**
    * Recorded media-mutation calls, keyed by method name, in call order. Each
@@ -70,6 +73,8 @@ export class FakeCastTransport implements CastTransportApi {
   startSessionBehavior: (deviceId: string) => Promise<void> = async () => {}
   endCurrentSessionBehavior: (stopCasting: boolean) => Promise<void> =
     async () => {}
+  setDeviceVolumeBehavior: (volume: number) => Promise<void> = async () => {}
+  setDeviceMutedBehavior: (muted: boolean) => Promise<void> = async () => {}
 
   /**
    * Scriptable behaviour for every media mutation, keyed by method name.
@@ -121,6 +126,18 @@ export class FakeCastTransport implements CastTransportApi {
   async endCurrentSession(stopCasting: boolean): Promise<void> {
     this.endCurrentSessionCalls.push(stopCasting)
     return this.endCurrentSessionBehavior(stopCasting)
+  }
+
+  // --- CastSession device-level surface (Phase 5) ---
+
+  async setDeviceVolume(volume: number): Promise<void> {
+    this.setDeviceVolumeCalls.push(volume)
+    return this.setDeviceVolumeBehavior(volume)
+  }
+
+  async setDeviceMuted(muted: boolean): Promise<void> {
+    this.setDeviceMutedCalls.push(muted)
+    return this.setDeviceMutedBehavior(muted)
   }
 
   // --- RemoteMediaClient mutation surface (records + scriptable behaviour) ---

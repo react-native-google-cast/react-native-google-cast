@@ -32,6 +32,9 @@ export const castTransport: CastTransportApi = {
   startSession: unsupported,
   endCurrentSession: unsupported,
 
+  setDeviceVolume: unsupported,
+  setDeviceMuted: unsupported,
+
   loadMedia: unsupported,
   play: unsupported,
   pause: unsupported,

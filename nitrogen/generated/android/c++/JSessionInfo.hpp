@@ -10,11 +10,17 @@
 #include <fbjni/fbjni.h>
 #include "SessionInfo.hpp"
 
+#include "ActiveInputState.hpp"
+#include "ApplicationMetadata.hpp"
 #include "Device.hpp"
 #include "DeviceCapability.hpp"
+#include "JActiveInputState.hpp"
+#include "JApplicationMetadata.hpp"
 #include "JDevice.hpp"
 #include "JDeviceCapability.hpp"
+#include "JStandbyState.hpp"
 #include "JWebImage.hpp"
+#include "StandbyState.hpp"
 #include "WebImage.hpp"
 #include <optional>
 #include <string>
@@ -43,9 +49,27 @@ namespace margelo::nitro::googlecast {
       jni::local_ref<jni::JString> sessionId = this->getFieldValue(fieldSessionId);
       static const auto fieldDevice = clazz->getField<JDevice>("device");
       jni::local_ref<JDevice> device = this->getFieldValue(fieldDevice);
+      static const auto fieldApplicationMetadata = clazz->getField<JApplicationMetadata>("applicationMetadata");
+      jni::local_ref<JApplicationMetadata> applicationMetadata = this->getFieldValue(fieldApplicationMetadata);
+      static const auto fieldApplicationStatus = clazz->getField<jni::JString>("applicationStatus");
+      jni::local_ref<jni::JString> applicationStatus = this->getFieldValue(fieldApplicationStatus);
+      static const auto fieldDeviceVolume = clazz->getField<jni::JDouble>("deviceVolume");
+      jni::local_ref<jni::JDouble> deviceVolume = this->getFieldValue(fieldDeviceVolume);
+      static const auto fieldDeviceMuted = clazz->getField<jni::JBoolean>("deviceMuted");
+      jni::local_ref<jni::JBoolean> deviceMuted = this->getFieldValue(fieldDeviceMuted);
+      static const auto fieldStandbyState = clazz->getField<JStandbyState>("standbyState");
+      jni::local_ref<JStandbyState> standbyState = this->getFieldValue(fieldStandbyState);
+      static const auto fieldActiveInputState = clazz->getField<JActiveInputState>("activeInputState");
+      jni::local_ref<JActiveInputState> activeInputState = this->getFieldValue(fieldActiveInputState);
       return SessionInfo(
         sessionId->toStdString(),
-        device->toCpp()
+        device->toCpp(),
+        applicationMetadata != nullptr ? std::make_optional(applicationMetadata->toCpp()) : std::nullopt,
+        applicationStatus != nullptr ? std::make_optional(applicationStatus->toStdString()) : std::nullopt,
+        deviceVolume != nullptr ? std::make_optional(deviceVolume->value()) : std::nullopt,
+        deviceMuted != nullptr ? std::make_optional(static_cast<bool>(deviceMuted->value())) : std::nullopt,
+        standbyState != nullptr ? std::make_optional(standbyState->toCpp()) : std::nullopt,
+        activeInputState != nullptr ? std::make_optional(activeInputState->toCpp()) : std::nullopt
       );
     }
 
@@ -55,13 +79,19 @@ namespace margelo::nitro::googlecast {
      */
     [[maybe_unused]]
     static jni::local_ref<JSessionInfo::javaobject> fromCpp(const SessionInfo& value) {
-      using JSignature = JSessionInfo(jni::alias_ref<jni::JString>, jni::alias_ref<JDevice>);
+      using JSignature = JSessionInfo(jni::alias_ref<jni::JString>, jni::alias_ref<JDevice>, jni::alias_ref<JApplicationMetadata>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<JStandbyState>, jni::alias_ref<JActiveInputState>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         jni::make_jstring(value.sessionId),
-        JDevice::fromCpp(value.device)
+        JDevice::fromCpp(value.device),
+        value.applicationMetadata.has_value() ? JApplicationMetadata::fromCpp(value.applicationMetadata.value()) : nullptr,
+        value.applicationStatus.has_value() ? jni::make_jstring(value.applicationStatus.value()) : nullptr,
+        value.deviceVolume.has_value() ? jni::JDouble::valueOf(value.deviceVolume.value()) : nullptr,
+        value.deviceMuted.has_value() ? jni::JBoolean::valueOf(value.deviceMuted.value()) : nullptr,
+        value.standbyState.has_value() ? JStandbyState::fromCpp(value.standbyState.value()) : nullptr,
+        value.activeInputState.has_value() ? JActiveInputState::fromCpp(value.activeInputState.value()) : nullptr
       );
     }
   };

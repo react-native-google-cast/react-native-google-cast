@@ -8,6 +8,9 @@ import type { MediaSeekOptions } from '../types/MediaSeekOptions'
 import type { MediaQueueItem } from '../types/MediaQueueItem'
 import type { MediaRepeatMode } from '../types/MediaRepeatMode'
 import type { TextTrackStyle } from '../types/TextTrackStyle'
+import type { ApplicationMetadata } from '../types/ApplicationMetadata'
+import type { StandbyState } from '../types/StandbyState'
+import type { ActiveInputState } from '../types/ActiveInputState'
 
 export type { CastState, PlayServicesState, Device, CastError }
 
@@ -17,15 +20,37 @@ export type { CastState, PlayServicesState, Device, CastError }
  * façade bound to a lifecycle *generation* (see the store) — native never
  * holds a façade handle, so there is no use-after-free on disconnect.
  *
- * Kept deliberately thin for Phase 3: volume / mute / `getClient()` land in
- * Phase 5. This is a Nitro struct (shared with `CastTransport.nitro.ts`), so
- * all fields must be Nitro-marshallable (no `readonly`, no methods).
+ * This is a Nitro struct (shared with `CastTransport.nitro.ts`), so all fields
+ * must be Nitro-marshallable (no `readonly`, no methods).
+ *
+ * The device-detail fields (Phase 5) are all **optional**: native populates
+ * them (volume/standby/active-input always have a GCK value; metadata/status may
+ * genuinely be absent), but the TS store applies defaults, and keeping them
+ * optional lets the fake + tests build a `SessionInfo` without every field. The
+ * session-detail slice (5.1b) reads these; the façade serves synchronous
+ * `getVolume` / `isMuted` / `getApplicationMetadata` / … from that slice.
  */
 export interface SessionInfo {
   /** Stable session id from GCK. May be empty during a `starting` transition. */
   sessionId: string
   /** The connected receiver device. */
   device: Device
+  /** Metadata of the running receiver app; absent until the app reports it. */
+  applicationMetadata?: ApplicationMetadata
+  /** Receiver application status text (localized); absent when there is none. */
+  applicationStatus?: string
+  /**
+   * Device output volume in `[0, 1]` — the *receiver device* level, not the
+   * media stream (see `setDeviceVolume` vs `setStreamVolume`). Absent only
+   * before the first volume report.
+   */
+  deviceVolume?: number
+  /** Whether the device output is muted (device level, not stream). */
+  deviceMuted?: boolean
+  /** Connected TV/AVR standby state (CEC only; `unknown` off-CEC). */
+  standbyState?: StandbyState
+  /** Whether the receiver is the active video input (CEC only; `unknown` off-CEC). */
+  activeInputState?: ActiveInputState
 }
 
 /**
@@ -43,6 +68,17 @@ export type SessionEventType =
   | 'resumed'
   | 'resumeFailed'
   | 'suspended'
+  // Phase 5 — device-detail changes on the *current* live session. Each carries
+  // a full fresh `session` (the whole enriched `SessionInfo`, not a delta), so
+  // the session-detail slice can replace wholesale, and — because they travel on
+  // the same ordered lifecycle stream — a detail change that races a teardown is
+  // gated exactly like a media-status push. `standbyStateChanged` /
+  // `activeInputStateChanged` map to the two v4 façade change-listeners (routed
+  // via the store's typed bus); `deviceStatusChanged` covers volume / mute /
+  // application status / metadata (no dedicated v4 listener — slice-only).
+  | 'deviceStatusChanged'
+  | 'standbyStateChanged'
+  | 'activeInputStateChanged'
 
 /**
  * A single ordered session-lifecycle event streamed from native to the store.
@@ -64,10 +100,17 @@ export type SessionEventType =
  * | resumed        | session                     |
  * | resumeFailed   | error                       |
  * | suspended      | reason?                     |
+ * | deviceStatusChanged     | session (full fresh detail) |
+ * | standbyStateChanged     | session (full fresh detail) |
+ * | activeInputStateChanged | session (full fresh detail) |
  */
 export interface SessionLifecycleEvent {
   type: SessionEventType
-  /** The live (or ending) session. Present for `started` / `ending` / `resumed`. */
+  /**
+   * The live (or ending) session. Present for `started` / `ending` / `resumed`,
+   * and carries the full fresh device detail on the Phase 5 detail-change events
+   * (`deviceStatusChanged` / `standbyStateChanged` / `activeInputStateChanged`).
+   */
   session?: SessionInfo
   /** Failure detail. Present for `startFailed` / `resumeFailed`; optional on `ended`. */
   error?: CastError
@@ -146,6 +189,23 @@ export interface CastTransportApi {
    * disconnecting the sender). Rejects a {@link CastError} on failure.
    */
   endCurrentSession(stopCasting: boolean): Promise<void>
+
+  // --- CastSession device-level surface (Phase 5) ---
+  //
+  // Device volume / mute is the *receiver device* output level (iOS
+  // `GCKCastSession.setDeviceVolume:` / Android `CastSession.setVolume`) — NOT
+  // the media stream volume (`setStreamVolume` / `setStreamMuted` on the
+  // RemoteMediaClient surface below). Distinct GCK surfaces: do not conflate.
+  // Re-resolves the current session per call (never caches a handle); rejects a
+  // `noSession` {@link CastError} once disconnected. Reads (current device
+  // volume/mute) are served synchronously from the store's session-detail slice
+  // — the new value streams back through the `deviceStatusChanged` lifecycle
+  // event, never the return value.
+
+  /** Set the device output volume of the active session (0…1). */
+  setDeviceVolume(volume: number): Promise<void>
+  /** Mute/unmute the active session's device output. */
+  setDeviceMuted(muted: boolean): Promise<void>
 
   // --- RemoteMediaClient mutation surface (Phase 4) ---
   //

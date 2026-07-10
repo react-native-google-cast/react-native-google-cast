@@ -10,17 +10,23 @@
 #include <fbjni/fbjni.h>
 #include "InitialSnapshot.hpp"
 
+#include "ActiveInputState.hpp"
+#include "ApplicationMetadata.hpp"
 #include "CastState.hpp"
 #include "Device.hpp"
 #include "DeviceCapability.hpp"
+#include "JActiveInputState.hpp"
+#include "JApplicationMetadata.hpp"
 #include "JCastState.hpp"
 #include "JDevice.hpp"
 #include "JDeviceCapability.hpp"
 #include "JPlayServicesState.hpp"
 #include "JSessionInfo.hpp"
+#include "JStandbyState.hpp"
 #include "JWebImage.hpp"
 #include "PlayServicesState.hpp"
 #include "SessionInfo.hpp"
+#include "StandbyState.hpp"
 #include "WebImage.hpp"
 #include <optional>
 #include <string>

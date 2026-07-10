@@ -35,6 +35,12 @@ public extension SessionEventType {
         self = .resumefailed
       case "suspended":
         self = .suspended
+      case "deviceStatusChanged":
+        self = .devicestatuschanged
+      case "standbyStateChanged":
+        self = .standbystatechanged
+      case "activeInputStateChanged":
+        self = .activeinputstatechanged
       default:
         return nil
     }
@@ -63,6 +69,12 @@ public extension SessionEventType {
         return "resumeFailed"
       case .suspended:
         return "suspended"
+      case .devicestatuschanged:
+        return "deviceStatusChanged"
+      case .standbystatechanged:
+        return "standbyStateChanged"
+      case .activeinputstatechanged:
+        return "activeInputStateChanged"
     }
   }
 }

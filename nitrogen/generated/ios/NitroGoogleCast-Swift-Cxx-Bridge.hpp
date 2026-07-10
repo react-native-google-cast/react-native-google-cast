@@ -895,6 +895,51 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return vector;
   }
   
+  // pragma MARK: std::optional<ApplicationMetadata>
+  /**
+   * Specialized version of `std::optional<ApplicationMetadata>`.
+   */
+  using std__optional_ApplicationMetadata_ = std::optional<ApplicationMetadata>;
+  inline std::optional<ApplicationMetadata> create_std__optional_ApplicationMetadata_(const ApplicationMetadata& value) noexcept {
+    return std::optional<ApplicationMetadata>(value);
+  }
+  inline bool has_value_std__optional_ApplicationMetadata_(const std::optional<ApplicationMetadata>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline ApplicationMetadata get_std__optional_ApplicationMetadata_(const std::optional<ApplicationMetadata>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<StandbyState>
+  /**
+   * Specialized version of `std::optional<StandbyState>`.
+   */
+  using std__optional_StandbyState_ = std::optional<StandbyState>;
+  inline std::optional<StandbyState> create_std__optional_StandbyState_(const StandbyState& value) noexcept {
+    return std::optional<StandbyState>(value);
+  }
+  inline bool has_value_std__optional_StandbyState_(const std::optional<StandbyState>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline StandbyState get_std__optional_StandbyState_(const std::optional<StandbyState>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<ActiveInputState>
+  /**
+   * Specialized version of `std::optional<ActiveInputState>`.
+   */
+  using std__optional_ActiveInputState_ = std::optional<ActiveInputState>;
+  inline std::optional<ActiveInputState> create_std__optional_ActiveInputState_(const ActiveInputState& value) noexcept {
+    return std::optional<ActiveInputState>(value);
+  }
+  inline bool has_value_std__optional_ActiveInputState_(const std::optional<ActiveInputState>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline ActiveInputState get_std__optional_ActiveInputState_(const std::optional<ActiveInputState>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<SessionInfo>
   /**
    * Specialized version of `std::optional<SessionInfo>`.

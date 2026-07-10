@@ -18,8 +18,44 @@ public extension SessionInfo {
   /**
    * Create a new instance of `SessionInfo`.
    */
-  init(sessionId: String, device: Device) {
-    self.init(std.string(sessionId), device)
+  init(sessionId: String, device: Device, applicationMetadata: ApplicationMetadata?, applicationStatus: String?, deviceVolume: Double?, deviceMuted: Bool?, standbyState: StandbyState?, activeInputState: ActiveInputState?) {
+    self.init(std.string(sessionId), device, { () -> bridge.std__optional_ApplicationMetadata_ in
+      if let __unwrappedValue = applicationMetadata {
+        return bridge.create_std__optional_ApplicationMetadata_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_std__string_ in
+      if let __unwrappedValue = applicationStatus {
+        return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = deviceVolume {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = deviceMuted {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_StandbyState_ in
+      if let __unwrappedValue = standbyState {
+        return bridge.create_std__optional_StandbyState_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_ActiveInputState_ in
+      if let __unwrappedValue = activeInputState {
+        return bridge.create_std__optional_ActiveInputState_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }())
   }
 
   @inline(__always)
@@ -30,5 +66,56 @@ public extension SessionInfo {
   @inline(__always)
   var device: Device {
     return self.__device
+  }
+  
+  @inline(__always)
+  var applicationMetadata: ApplicationMetadata? {
+    return self.__applicationMetadata.value
+  }
+  
+  @inline(__always)
+  var applicationStatus: String? {
+    return { () -> String? in
+      if bridge.has_value_std__optional_std__string_(self.__applicationStatus) {
+        let __unwrapped = bridge.get_std__optional_std__string_(self.__applicationStatus)
+        return String(__unwrapped)
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var deviceVolume: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__deviceVolume) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__deviceVolume)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var deviceMuted: Bool? {
+    return { () -> Bool? in
+      if bridge.has_value_std__optional_bool_(self.__deviceMuted) {
+        let __unwrapped = bridge.get_std__optional_bool_(self.__deviceMuted)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var standbyState: StandbyState? {
+    return self.__standbyState.value
+  }
+  
+  @inline(__always)
+  var activeInputState: ActiveInputState? {
+    return self.__activeInputState.value
   }
 }

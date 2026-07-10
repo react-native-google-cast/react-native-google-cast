@@ -38,6 +38,9 @@ namespace margelo::nitro::googlecast {
     RESUMED      SWIFT_NAME(resumed) = 6,
     RESUMEFAILED      SWIFT_NAME(resumefailed) = 7,
     SUSPENDED      SWIFT_NAME(suspended) = 8,
+    DEVICESTATUSCHANGED      SWIFT_NAME(devicestatuschanged) = 9,
+    STANDBYSTATECHANGED      SWIFT_NAME(standbystatechanged) = 10,
+    ACTIVEINPUTSTATECHANGED      SWIFT_NAME(activeinputstatechanged) = 11,
   } CLOSED_ENUM;
 
 } // namespace margelo::nitro::googlecast
@@ -59,6 +62,9 @@ namespace margelo::nitro {
         case hashString("resumed"): return margelo::nitro::googlecast::SessionEventType::RESUMED;
         case hashString("resumeFailed"): return margelo::nitro::googlecast::SessionEventType::RESUMEFAILED;
         case hashString("suspended"): return margelo::nitro::googlecast::SessionEventType::SUSPENDED;
+        case hashString("deviceStatusChanged"): return margelo::nitro::googlecast::SessionEventType::DEVICESTATUSCHANGED;
+        case hashString("standbyStateChanged"): return margelo::nitro::googlecast::SessionEventType::STANDBYSTATECHANGED;
+        case hashString("activeInputStateChanged"): return margelo::nitro::googlecast::SessionEventType::ACTIVEINPUTSTATECHANGED;
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert \"" + unionValue + "\" to enum SessionEventType - invalid value!");
       }
@@ -74,6 +80,9 @@ namespace margelo::nitro {
         case margelo::nitro::googlecast::SessionEventType::RESUMED: return JSIConverter<std::string>::toJSI(runtime, "resumed");
         case margelo::nitro::googlecast::SessionEventType::RESUMEFAILED: return JSIConverter<std::string>::toJSI(runtime, "resumeFailed");
         case margelo::nitro::googlecast::SessionEventType::SUSPENDED: return JSIConverter<std::string>::toJSI(runtime, "suspended");
+        case margelo::nitro::googlecast::SessionEventType::DEVICESTATUSCHANGED: return JSIConverter<std::string>::toJSI(runtime, "deviceStatusChanged");
+        case margelo::nitro::googlecast::SessionEventType::STANDBYSTATECHANGED: return JSIConverter<std::string>::toJSI(runtime, "standbyStateChanged");
+        case margelo::nitro::googlecast::SessionEventType::ACTIVEINPUTSTATECHANGED: return JSIConverter<std::string>::toJSI(runtime, "activeInputStateChanged");
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert SessionEventType to JS - invalid value: "
                                     + std::to_string(static_cast<int>(arg)) + "!");
@@ -94,6 +103,9 @@ namespace margelo::nitro {
         case hashString("resumed"):
         case hashString("resumeFailed"):
         case hashString("suspended"):
+        case hashString("deviceStatusChanged"):
+        case hashString("standbyStateChanged"):
+        case hashString("activeInputStateChanged"):
           return true;
         default:
           return false;
