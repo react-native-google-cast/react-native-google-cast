@@ -39,7 +39,7 @@ abstract class HybridCastTransportSpec: HybridObject() {
   abstract val isPassiveScan: Boolean
 
   // Methods
-  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus) -> Unit, onChannelMessage: (namespace: String, message: String) -> Unit, onChannelStatus: (namespace: String, connected: Boolean, writable: Boolean) -> Unit): Promise<InitialSnapshot>
+  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus) -> Unit, onChannelMessage: (channelNamespace: String, message: String) -> Unit, onChannelStatus: (channelNamespace: String, connected: Boolean, writable: Boolean) -> Unit): Promise<InitialSnapshot>
   
   @DoNotStrip
   @Keep
@@ -66,15 +66,15 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun addChannel(namespace: String): Promise<Unit>
+  abstract fun addChannel(channelNamespace: String): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun removeChannel(namespace: String): Promise<Unit>
+  abstract fun removeChannel(channelNamespace: String): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun sendMessage(namespace: String, message: String): Promise<Unit>
+  abstract fun sendMessage(channelNamespace: String, message: String): Promise<Unit>
   
   @DoNotStrip
   @Keep

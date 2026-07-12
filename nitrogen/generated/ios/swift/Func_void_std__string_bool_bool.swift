@@ -8,21 +8,21 @@
 import NitroModules
 
 /**
- * Wraps a Swift `(_ namespace: String, _ connected: Bool, _ writable: Bool) -> Void` as a class.
+ * Wraps a Swift `(_ channelNamespace: String, _ connected: Bool, _ writable: Bool) -> Void` as a class.
  * This class can be used from C++, e.g. to wrap the Swift closure as a `std::function`.
  */
 public final class Func_void_std__string_bool_bool {
   public typealias bridge = margelo.nitro.googlecast.bridge.swift
 
-  private let closure: (_ namespace: String, _ connected: Bool, _ writable: Bool) -> Void
+  private let closure: (_ channelNamespace: String, _ connected: Bool, _ writable: Bool) -> Void
 
-  public init(_ closure: @escaping (_ namespace: String, _ connected: Bool, _ writable: Bool) -> Void) {
+  public init(_ closure: @escaping (_ channelNamespace: String, _ connected: Bool, _ writable: Bool) -> Void) {
     self.closure = closure
   }
 
   @inline(__always)
-  public func call(namespace: std.string, connected: Bool, writable: Bool) -> Void {
-    self.closure(String(namespace), connected, writable)
+  public func call(channelNamespace: std.string, connected: Bool, writable: Bool) -> Void {
+    self.closure(String(channelNamespace), connected, writable)
   }
 
   /**

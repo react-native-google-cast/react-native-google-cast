@@ -14,7 +14,7 @@ import dalvik.annotation.optimization.FastNative
 
 
 /**
- * Represents the JavaScript callback `(namespace: string, connected: boolean, writable: boolean) => void`.
+ * Represents the JavaScript callback `(channelNamespace: string, connected: boolean, writable: boolean) => void`.
  * This can be either implemented in C++ (in which case it might be a callback coming from JS),
  * or in Kotlin/Java (in which case it is a native callback).
  */
@@ -28,11 +28,11 @@ fun interface Func_void_std__string_bool_bool: (String, Boolean, Boolean) -> Uni
    */
   @DoNotStrip
   @Keep
-  override fun invoke(namespace: String, connected: Boolean, writable: Boolean): Unit
+  override fun invoke(channelNamespace: String, connected: Boolean, writable: Boolean): Unit
 }
 
 /**
- * Represents the JavaScript callback `(namespace: string, connected: boolean, writable: boolean) => void`.
+ * Represents the JavaScript callback `(channelNamespace: string, connected: boolean, writable: boolean) => void`.
  * This is implemented in C++, via a `std::function<...>`.
  * The callback might be coming from JS.
  */
@@ -56,15 +56,15 @@ class Func_void_std__string_bool_bool_cxx: Func_void_std__string_bool_bool {
 
   @DoNotStrip
   @Keep
-  override fun invoke(namespace: String, connected: Boolean, writable: Boolean): Unit
-    = invoke_cxx(namespace,connected,writable)
+  override fun invoke(channelNamespace: String, connected: Boolean, writable: Boolean): Unit
+    = invoke_cxx(channelNamespace,connected,writable)
 
   @FastNative
-  private external fun invoke_cxx(namespace: String, connected: Boolean, writable: Boolean): Unit
+  private external fun invoke_cxx(channelNamespace: String, connected: Boolean, writable: Boolean): Unit
 }
 
 /**
- * Represents the JavaScript callback `(namespace: string, connected: boolean, writable: boolean) => void`.
+ * Represents the JavaScript callback `(channelNamespace: string, connected: boolean, writable: boolean) => void`.
  * This is implemented in Java/Kotlin, via a `(String, Boolean, Boolean) -> Unit`.
  * The callback is always coming from native.
  */
@@ -74,7 +74,7 @@ class Func_void_std__string_bool_bool_cxx: Func_void_std__string_bool_bool {
 class Func_void_std__string_bool_bool_java(private val function: (String, Boolean, Boolean) -> Unit): Func_void_std__string_bool_bool {
   @DoNotStrip
   @Keep
-  override fun invoke(namespace: String, connected: Boolean, writable: Boolean): Unit {
-    return this.function(namespace, connected, writable)
+  override fun invoke(channelNamespace: String, connected: Boolean, writable: Boolean): Unit {
+    return this.function(channelNamespace, connected, writable)
   }
 }

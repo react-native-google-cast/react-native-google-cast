@@ -174,13 +174,13 @@ open class HybridCastTransportSpec_cxx {
         }
       }(), onChannelMessage: { () -> (String, String) -> Void in
         let __wrappedFunction = bridge.wrap_Func_void_std__string_std__string(onChannelMessage)
-        return { (__namespace: String, __message: String) -> Void in
-          __wrappedFunction.call(std.string(__namespace), std.string(__message))
+        return { (__channelNamespace: String, __message: String) -> Void in
+          __wrappedFunction.call(std.string(__channelNamespace), std.string(__message))
         }
       }(), onChannelStatus: { () -> (String, Bool, Bool) -> Void in
         let __wrappedFunction = bridge.wrap_Func_void_std__string_bool_bool(onChannelStatus)
-        return { (__namespace: String, __connected: Bool, __writable: Bool) -> Void in
-          __wrappedFunction.call(std.string(__namespace), __connected, __writable)
+        return { (__channelNamespace: String, __connected: Bool, __writable: Bool) -> Void in
+          __wrappedFunction.call(std.string(__channelNamespace), __connected, __writable)
         }
       }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_InitialSnapshot__ in
@@ -275,9 +275,9 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func addChannel(namespace: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func addChannel(channelNamespace: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.addChannel(namespace: String(namespace))
+      let __result = try self.__implementation.addChannel(channelNamespace: String(channelNamespace))
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -294,9 +294,9 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func removeChannel(namespace: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func removeChannel(channelNamespace: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.removeChannel(namespace: String(namespace))
+      let __result = try self.__implementation.removeChannel(channelNamespace: String(channelNamespace))
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -313,9 +313,9 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func sendMessage(namespace: std.string, message: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func sendMessage(channelNamespace: std.string, message: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.sendMessage(namespace: String(namespace), message: String(message))
+      let __result = try self.__implementation.sendMessage(channelNamespace: String(channelNamespace), message: String(message))
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)

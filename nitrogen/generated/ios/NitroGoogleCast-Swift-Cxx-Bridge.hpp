@@ -1114,44 +1114,44 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Func_void_MediaStatus_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::function<void(const std::string& /* namespace */, const std::string& /* message */)>
+  // pragma MARK: std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>
   /**
    * Specialized version of `std::function<void(const std::string&, const std::string&)>`.
    */
-  using Func_void_std__string_std__string = std::function<void(const std::string& /* namespace */, const std::string& /* message */)>;
+  using Func_void_std__string_std__string = std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>;
   /**
-   * Wrapper class for a `std::function<void(const std::string& / * namespace * /, const std::string& / * message * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(const std::string& / * channelNamespace * /, const std::string& / * message * /)>`, this can be used from Swift.
    */
   class Func_void_std__string_std__string_Wrapper final {
   public:
-    explicit Func_void_std__string_std__string_Wrapper(std::function<void(const std::string& /* namespace */, const std::string& /* message */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* namespace */, const std::string& /* message */)>>(std::move(func))) {}
-    inline void call(std::string namespace, std::string message) const noexcept {
-      _function->operator()(namespace, message);
+    explicit Func_void_std__string_std__string_Wrapper(std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>>(std::move(func))) {}
+    inline void call(std::string channelNamespace, std::string message) const noexcept {
+      _function->operator()(channelNamespace, message);
     }
   private:
-    std::unique_ptr<std::function<void(const std::string& /* namespace */, const std::string& /* message */)>> _function;
+    std::unique_ptr<std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>> _function;
   } SWIFT_NONCOPYABLE;
   Func_void_std__string_std__string create_Func_void_std__string_std__string(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__string_std__string_Wrapper wrap_Func_void_std__string_std__string(Func_void_std__string_std__string value) noexcept {
     return Func_void_std__string_std__string_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>
+  // pragma MARK: std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>
   /**
    * Specialized version of `std::function<void(const std::string&, bool, bool)>`.
    */
-  using Func_void_std__string_bool_bool = std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>;
+  using Func_void_std__string_bool_bool = std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>;
   /**
-   * Wrapper class for a `std::function<void(const std::string& / * namespace * /, bool / * connected * /, bool / * writable * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(const std::string& / * channelNamespace * /, bool / * connected * /, bool / * writable * /)>`, this can be used from Swift.
    */
   class Func_void_std__string_bool_bool_Wrapper final {
   public:
-    explicit Func_void_std__string_bool_bool_Wrapper(std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>>(std::move(func))) {}
-    inline void call(std::string namespace, bool connected, bool writable) const noexcept {
-      _function->operator()(namespace, connected, writable);
+    explicit Func_void_std__string_bool_bool_Wrapper(std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>&& func): _function(std::make_unique<std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>>(std::move(func))) {}
+    inline void call(std::string channelNamespace, bool connected, bool writable) const noexcept {
+      _function->operator()(channelNamespace, connected, writable);
     }
   private:
-    std::unique_ptr<std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>> _function;
+    std::unique_ptr<std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>> _function;
   } SWIFT_NONCOPYABLE;
   Func_void_std__string_bool_bool create_Func_void_std__string_bool_bool(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__string_bool_bool_Wrapper wrap_Func_void_std__string_bool_bool(Func_void_std__string_bool_bool value) noexcept {
