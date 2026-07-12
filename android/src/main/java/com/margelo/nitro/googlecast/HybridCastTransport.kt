@@ -493,7 +493,10 @@ class HybridCastTransport : HybridCastTransportSpec() {
     val promise = Promise<Boolean>()
     runOnMain {
       val activity = currentActivityOrNull()
-      if (activity == null) {
+      // Gate on the framework too: GCK's ExpandedControllerActivity resolves
+      // CastContext in its own onCreate, so launching without a working Cast
+      // framework would crash the *launched* activity after we resolved.
+      if (activity == null || sharedCastContextOrNull() == null) {
         promise.resolve(false)
         return@runOnMain
       }

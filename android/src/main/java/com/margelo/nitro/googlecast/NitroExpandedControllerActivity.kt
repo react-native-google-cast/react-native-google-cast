@@ -23,7 +23,12 @@ class NitroExpandedControllerActivity : ExpandedControllerActivity() {
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     super.onCreateOptionsMenu(menu)
     menuInflater.inflate(R.menu.cast_expanded_controller_menu, menu)
-    CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.media_route_menu_item)
+    try {
+      CastButtonFactory.setUpMediaRouteButton(this, menu, R.id.media_route_menu_item)
+    } catch (e: Exception) {
+      // Cast framework unavailable: degrade to a button-less toolbar instead
+      // of crashing the launched activity (same posture as HybridCastButton).
+    }
     return true
   }
 }

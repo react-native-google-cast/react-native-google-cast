@@ -5,7 +5,24 @@ import type {
   CastButtonProps as NativeCastButtonProps,
   CastButtonMethods,
 } from '../specs/CastButton.nitro'
-import CastButtonConfig from '../../nitrogen/generated/shared/json/CastButtonConfig.json'
+
+// Inline mirror of nitrogen/generated/shared/json/CastButtonConfig.json. It
+// must live in src/ (not be imported from nitrogen/): builder-bob preserves
+// relative paths when emitting lib/commonjs + lib/module, so a source-relative
+// `../../nitrogen/...` import would resolve to the non-existent lib/nitrogen/
+// for consumers of the `main`/`module` entry points. A jest drift test
+// (CastButton.test.tsx) fails the suite if this ever diverges from the
+// generated file after `yarn specs`.
+const CastButtonConfig = {
+  uiViewClassName: 'CastButton',
+  supportsRawText: false,
+  bubblingEventTypes: {},
+  directEventTypes: {},
+  validAttributes: {
+    tintColor: true,
+    hybridRef: true,
+  },
+}
 
 export interface CastButtonProps extends ViewProps {
   /** Tint color of the Cast icon (any RN `ColorValue`). Omit for the platform default. */
