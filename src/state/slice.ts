@@ -5,8 +5,8 @@ import type { MediaStatus } from '../types/MediaStatus'
 /**
  * Internal store event — the union of the native push sources fed through
  * {@link CastTransportApi.initAndSubscribe}. Later phases extend this union with
- * their own kinds (channel messages in P5) and feed them via their own native
- * HybridObject into `CastStore.dispatch`.
+ * their own kinds and feed them via their own native HybridObject into
+ * `CastStore.dispatch`.
  *
  * `mediaStatus` (P4) is the streamed `GCKMediaStatus` / `MediaStatus` of the
  * active session's RemoteMediaClient, pushed through the `onMediaStatus`
@@ -20,6 +20,19 @@ export type StoreEvent =
   | { readonly kind: 'devices'; readonly devices: Device[] }
   | { readonly kind: 'lifecycle'; readonly event: SessionLifecycleEvent }
   | { readonly kind: 'mediaStatus'; readonly status: MediaStatus }
+  // P5.2 custom channels. Connection status is state (slice + snapshot-replay);
+  // inbound channel *messages* are transient and deliberately NOT a StoreEvent —
+  // they ride the store's namespace-keyed message bus and are never replayed.
+  | {
+      readonly kind: 'channelStatus'
+      readonly namespace: string
+      readonly connected: boolean
+      readonly writable: boolean
+    }
+  // TS-only (dispatched by the CastChannel façade synchronously before the
+  // bridge removeChannel call, T1): deletes the namespace's slice entry so
+  // register-once bookkeeping frees the namespace for a later addChannel.
+  | { readonly kind: 'channelRemoved'; readonly namespace: string }
 
 /**
  * A registered piece of store state. Core slices (context / discovery / session)
