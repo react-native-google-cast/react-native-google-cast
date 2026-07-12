@@ -56,14 +56,14 @@ namespace margelo::nitro::googlecast {
 
   public:
     // Methods
-    std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) override;
+    std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) override;
     std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) override;
     std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) override;
     std::shared_ptr<Promise<void>> setDeviceVolume(double volume) override;
     std::shared_ptr<Promise<void>> setDeviceMuted(bool muted) override;
-    std::shared_ptr<Promise<void>> addChannel(const std::string& namespace) override;
-    std::shared_ptr<Promise<void>> removeChannel(const std::string& namespace) override;
-    std::shared_ptr<Promise<void>> sendMessage(const std::string& namespace, const std::string& message) override;
+    std::shared_ptr<Promise<void>> addChannel(const std::string& channelNamespace) override;
+    std::shared_ptr<Promise<void>> removeChannel(const std::string& channelNamespace) override;
+    std::shared_ptr<Promise<void>> sendMessage(const std::string& channelNamespace, const std::string& message) override;
     std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override;
     std::shared_ptr<Promise<void>> play() override;
     std::shared_ptr<Promise<void>> pause() override;

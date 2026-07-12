@@ -19,7 +19,7 @@ namespace margelo::nitro::googlecast {
   using namespace facebook;
 
   /**
-   * Represents the Java/Kotlin callback `(namespace: String, message: String) -> Unit`.
+   * Represents the Java/Kotlin callback `(channelNamespace: String, message: String) -> Unit`.
    * This can be passed around between C++ and Java/Kotlin.
    */
   struct JFunc_void_std__string_std__string: public jni::JavaClass<JFunc_void_std__string_std__string> {
@@ -30,9 +30,9 @@ namespace margelo::nitro::googlecast {
     /**
      * Invokes the function this `JFunc_void_std__string_std__string` instance holds through JNI.
      */
-    void invoke(const std::string& namespace, const std::string& message) const {
-      static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* namespace */, jni::alias_ref<jni::JString> /* message */)>("invoke");
-      method(self(), jni::make_jstring(namespace), jni::make_jstring(message));
+    void invoke(const std::string& channelNamespace, const std::string& message) const {
+      static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* channelNamespace */, jni::alias_ref<jni::JString> /* message */)>("invoke");
+      method(self(), jni::make_jstring(channelNamespace), jni::make_jstring(message));
     }
   };
 
@@ -41,7 +41,7 @@ namespace margelo::nitro::googlecast {
    */
   class JFunc_void_std__string_std__string_cxx final: public jni::HybridClass<JFunc_void_std__string_std__string_cxx, JFunc_void_std__string_std__string> {
   public:
-    static jni::local_ref<JFunc_void_std__string_std__string::javaobject> fromCpp(const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& func) {
+    static jni::local_ref<JFunc_void_std__string_std__string::javaobject> fromCpp(const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& func) {
       return JFunc_void_std__string_std__string_cxx::newObjectCxxArgs(func);
     }
 
@@ -49,13 +49,13 @@ namespace margelo::nitro::googlecast {
     /**
      * Invokes the C++ `std::function<...>` this `JFunc_void_std__string_std__string_cxx` instance holds.
      */
-    void invoke_cxx(jni::alias_ref<jni::JString> namespace, jni::alias_ref<jni::JString> message) {
-      _func(namespace->toStdString(), message->toStdString());
+    void invoke_cxx(jni::alias_ref<jni::JString> channelNamespace, jni::alias_ref<jni::JString> message) {
+      _func(channelNamespace->toStdString(), message->toStdString());
     }
 
   public:
     [[nodiscard]]
-    inline const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& getFunction() const {
+    inline const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& getFunction() const {
       return _func;
     }
 
@@ -66,11 +66,11 @@ namespace margelo::nitro::googlecast {
     }
 
   private:
-    explicit JFunc_void_std__string_std__string_cxx(const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& func): _func(func) { }
+    explicit JFunc_void_std__string_std__string_cxx(const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& func): _func(func) { }
 
   private:
     friend HybridBase;
-    std::function<void(const std::string& /* namespace */, const std::string& /* message */)> _func;
+    std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)> _func;
   };
 
 } // namespace margelo::nitro::googlecast

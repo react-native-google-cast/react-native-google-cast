@@ -244,7 +244,7 @@ namespace margelo::nitro::googlecast {
   }
 
   // Methods
-  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) {
+  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */, jni::alias_ref<JFunc_void_MediaStatus::javaobject> /* onMediaStatus */, jni::alias_ref<JFunc_void_std__string_std__string::javaobject> /* onChannelMessage */, jni::alias_ref<JFunc_void_std__string_bool_bool::javaobject> /* onChannelStatus */)>("initAndSubscribe_cxx");
     auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle), JFunc_void_MediaStatus_cxx::fromCpp(onMediaStatus), JFunc_void_std__string_std__string_cxx::fromCpp(onChannelMessage), JFunc_void_std__string_bool_bool_cxx::fromCpp(onChannelStatus));
     return [&]() {
@@ -320,9 +320,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::addChannel(const std::string& namespace) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* namespace */)>("addChannel");
-    auto __result = method(_javaPart, jni::make_jstring(namespace));
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::addChannel(const std::string& channelNamespace) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* channelNamespace */)>("addChannel");
+    auto __result = method(_javaPart, jni::make_jstring(channelNamespace));
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -335,9 +335,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::removeChannel(const std::string& namespace) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* namespace */)>("removeChannel");
-    auto __result = method(_javaPart, jni::make_jstring(namespace));
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::removeChannel(const std::string& channelNamespace) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* channelNamespace */)>("removeChannel");
+    auto __result = method(_javaPart, jni::make_jstring(channelNamespace));
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -350,9 +350,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::sendMessage(const std::string& namespace, const std::string& message) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* namespace */, jni::alias_ref<jni::JString> /* message */)>("sendMessage");
-    auto __result = method(_javaPart, jni::make_jstring(namespace), jni::make_jstring(message));
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::sendMessage(const std::string& channelNamespace, const std::string& message) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* channelNamespace */, jni::alias_ref<jni::JString> /* message */)>("sendMessage");
+    auto __result = method(_javaPart, jni::make_jstring(channelNamespace), jni::make_jstring(message));
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

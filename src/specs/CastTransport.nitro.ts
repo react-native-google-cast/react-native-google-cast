@@ -38,9 +38,11 @@ export interface CastTransport
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
     onMediaStatus: (status: MediaStatus) => void,
-    onChannelMessage: (namespace: string, message: string) => void,
+    // `channelNamespace` (not `namespace`): nitrogen emits parameter names
+    // verbatim into the generated C++, where `namespace` is a reserved keyword.
+    onChannelMessage: (channelNamespace: string, message: string) => void,
     onChannelStatus: (
-      namespace: string,
+      channelNamespace: string,
       connected: boolean,
       writable: boolean
     ) => void
@@ -60,9 +62,9 @@ export interface CastTransport
   // Custom channel surface (Phase 5.2) — string-only bridge; mirrors
   // `CastTransportApi` (drift guard in `__fakes__/FakeCastTransport.ts`).
   // Inbound messages/status stream via `onChannelMessage` / `onChannelStatus`.
-  addChannel(namespace: string): Promise<void>
-  removeChannel(namespace: string): Promise<void>
-  sendMessage(namespace: string, message: string): Promise<void>
+  addChannel(channelNamespace: string): Promise<void>
+  removeChannel(channelNamespace: string): Promise<void>
+  sendMessage(channelNamespace: string, message: string): Promise<void>
 
   // RemoteMediaClient mutation surface (Phase 4) — mirrors `CastTransportApi`;
   // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these

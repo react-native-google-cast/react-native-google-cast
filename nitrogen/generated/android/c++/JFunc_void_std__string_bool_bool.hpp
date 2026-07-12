@@ -19,7 +19,7 @@ namespace margelo::nitro::googlecast {
   using namespace facebook;
 
   /**
-   * Represents the Java/Kotlin callback `(namespace: String, connected: Boolean, writable: Boolean) -> Unit`.
+   * Represents the Java/Kotlin callback `(channelNamespace: String, connected: Boolean, writable: Boolean) -> Unit`.
    * This can be passed around between C++ and Java/Kotlin.
    */
   struct JFunc_void_std__string_bool_bool: public jni::JavaClass<JFunc_void_std__string_bool_bool> {
@@ -30,9 +30,9 @@ namespace margelo::nitro::googlecast {
     /**
      * Invokes the function this `JFunc_void_std__string_bool_bool` instance holds through JNI.
      */
-    void invoke(const std::string& namespace, bool connected, bool writable) const {
-      static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* namespace */, jboolean /* connected */, jboolean /* writable */)>("invoke");
-      method(self(), jni::make_jstring(namespace), connected, writable);
+    void invoke(const std::string& channelNamespace, bool connected, bool writable) const {
+      static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* channelNamespace */, jboolean /* connected */, jboolean /* writable */)>("invoke");
+      method(self(), jni::make_jstring(channelNamespace), connected, writable);
     }
   };
 
@@ -41,7 +41,7 @@ namespace margelo::nitro::googlecast {
    */
   class JFunc_void_std__string_bool_bool_cxx final: public jni::HybridClass<JFunc_void_std__string_bool_bool_cxx, JFunc_void_std__string_bool_bool> {
   public:
-    static jni::local_ref<JFunc_void_std__string_bool_bool::javaobject> fromCpp(const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& func) {
+    static jni::local_ref<JFunc_void_std__string_bool_bool::javaobject> fromCpp(const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& func) {
       return JFunc_void_std__string_bool_bool_cxx::newObjectCxxArgs(func);
     }
 
@@ -49,13 +49,13 @@ namespace margelo::nitro::googlecast {
     /**
      * Invokes the C++ `std::function<...>` this `JFunc_void_std__string_bool_bool_cxx` instance holds.
      */
-    void invoke_cxx(jni::alias_ref<jni::JString> namespace, jboolean connected, jboolean writable) {
-      _func(namespace->toStdString(), static_cast<bool>(connected), static_cast<bool>(writable));
+    void invoke_cxx(jni::alias_ref<jni::JString> channelNamespace, jboolean connected, jboolean writable) {
+      _func(channelNamespace->toStdString(), static_cast<bool>(connected), static_cast<bool>(writable));
     }
 
   public:
     [[nodiscard]]
-    inline const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& getFunction() const {
+    inline const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& getFunction() const {
       return _func;
     }
 
@@ -66,11 +66,11 @@ namespace margelo::nitro::googlecast {
     }
 
   private:
-    explicit JFunc_void_std__string_bool_bool_cxx(const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& func): _func(func) { }
+    explicit JFunc_void_std__string_bool_bool_cxx(const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& func): _func(func) { }
 
   private:
     friend HybridBase;
-    std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)> _func;
+    std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)> _func;
   };
 
 } // namespace margelo::nitro::googlecast

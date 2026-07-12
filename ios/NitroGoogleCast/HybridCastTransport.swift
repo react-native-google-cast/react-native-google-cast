@@ -31,6 +31,13 @@ final class HybridCastTransport: HybridCastTransportSpec {
   private var onDevices: (([Device]) -> Void)?
   private var onLifecycle: ((SessionLifecycleEvent) -> Void)?
   private var onMediaStatus: ((MediaStatus) -> Void)?
+  private var onChannelMessage: ((String, String) -> Void)?
+  private var onChannelStatus: ((String, Bool, Bool) -> Void)?
+  // Registered custom channels by namespace (Phase 5.2). The transport owns the
+  // single strong reference per channel; cleared explicitly on session
+  // end/suspend/replace and on dispose (A1), so a dead session's channels can
+  // never leak into the next one. Main thread only.
+  private var channels: [String: CastMessageChannel] = [:]
 
   private var castStateObserver: NSObjectProtocol?
   private var discoveryListener: CastDiscoveryListener?
@@ -72,12 +79,17 @@ final class HybridCastTransport: HybridCastTransportSpec {
     onState: @escaping (_ castState: CastState) -> Void,
     onDevices: @escaping (_ devices: [Device]) -> Void,
     onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void,
-    onMediaStatus: @escaping (_ status: MediaStatus) -> Void
+    onMediaStatus: @escaping (_ status: MediaStatus) -> Void,
+    onChannelMessage: @escaping (_ channelNamespace: String, _ message: String) -> Void,
+    onChannelStatus: @escaping (_ channelNamespace: String, _ connected: Bool, _ writable: Bool) ->
+      Void
   ) throws -> Promise<InitialSnapshot> {
     self.onState = onState
     self.onDevices = onDevices
     self.onLifecycle = onLifecycle
     self.onMediaStatus = onMediaStatus
+    self.onChannelMessage = onChannelMessage
+    self.onChannelStatus = onChannelStatus
 
     let promise = Promise<InitialSnapshot>()
     DispatchQueue.main.async { [weak self] in
@@ -138,6 +150,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
       onSessionInactive: { [weak self] in
         self?.detachMediaListener()
         self?.detachDeviceStatusListener()
+        self?.clearChannels()
         self?.flushPendingRequests(code: "interrupted", message: "The Cast session ended.")
       })
     context.sessionManager.add(session)
@@ -169,6 +182,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
       self.detachObservers()
       self.detachMediaListener()
       self.detachDeviceStatusListener()
+      self.clearChannels()
       self.flushPendingRequests(code: "interrupted", message: "The Cast transport was disposed.")
       self.mediaStatusListener = nil
       self.deviceStatusListener = nil
@@ -176,6 +190,8 @@ final class HybridCastTransport: HybridCastTransportSpec {
       self.onDevices = nil
       self.onLifecycle = nil
       self.onMediaStatus = nil
+      self.onChannelMessage = nil
+      self.onChannelStatus = nil
     }
   }
 
@@ -229,6 +245,107 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
   func setDeviceMuted(muted: Bool) throws -> Promise<Void> {
     withCastSession { $0.setDeviceMuted(muted) }
+  }
+
+  // MARK: - custom channels (Phase 5.2 — registry owned here, Invariant 1 for the session)
+
+  func addChannel(channelNamespace namespace: String) throws -> Promise<Void> {
+    let promise = Promise<Void>()
+    DispatchQueue.main.async { [weak self] in
+      guard let self else {
+        promise.reject(
+          withError: castRejection(
+            code: "interrupted", message: "The Cast transport was disposed.", nativeCode: nil))
+        return
+      }
+      guard let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession
+      else {
+        promise.reject(
+          withError: castRejection(
+            code: "noSession", message: "There is no active Cast session.", nativeCode: nil))
+        return
+      }
+      guard self.channels[namespace] == nil else {
+        promise.reject(
+          withError: castRejection(
+            code: "alreadyRegistered",
+            message: "A channel for \(namespace) is already registered.", nativeCode: nil))
+        return
+      }
+      let channel = CastMessageChannel(
+        namespace: namespace,
+        onMessage: { [weak self] message in self?.onChannelMessage?(namespace, message) },
+        onStatus: { [weak self] connected, writable in
+          self?.onChannelStatus?(namespace, connected, writable)
+        })
+      session.add(channel)
+      self.channels[namespace] = channel
+      // Initial status BEFORE resolving, so an awaiting façade reads a
+      // populated value. This is the REAL current value (A2): `isConnected` is
+      // often still false here — the virtual connection completes async and
+      // `didConnect` streams the update when it does.
+      self.onChannelStatus?(namespace, channel.isConnected, channel.isWritable)
+      promise.resolve(withResult: ())
+    }
+    return promise
+  }
+
+  func removeChannel(channelNamespace namespace: String) throws -> Promise<Void> {
+    let promise = Promise<Void>()
+    DispatchQueue.main.async { [weak self] in
+      guard let self else {
+        promise.reject(
+          withError: castRejection(
+            code: "interrupted", message: "The Cast transport was disposed.", nativeCode: nil))
+        return
+      }
+      if let channel = self.channels.removeValue(forKey: namespace) {
+        // Best-effort: the session may already be gone (GCK dropped the
+        // channel with it); removing from a live one keeps GCK in sync.
+        GCKCastContext.sharedInstance().sessionManager.currentCastSession?.remove(channel)
+      }
+      promise.resolve(withResult: ())  // idempotent — not-registered resolves
+    }
+    return promise
+  }
+
+  func sendMessage(channelNamespace namespace: String, message: String) throws -> Promise<Void> {
+    let promise = Promise<Void>()
+    DispatchQueue.main.async { [weak self] in
+      guard let self else {
+        promise.reject(
+          withError: castRejection(
+            code: "interrupted", message: "The Cast transport was disposed.", nativeCode: nil))
+        return
+      }
+      guard let channel = self.channels[namespace] else {
+        promise.reject(
+          withError: castRejection(
+            code: "invalidRequest",
+            message: "No channel registered for \(namespace) — call addChannel first.",
+            nativeCode: nil))
+        return
+      }
+      // `-[GCKCastChannel sendTextMessage:error:]` returns BOOL + a `GCKError **`
+      // out-param (not `NSError **`, so it is NOT bridged to `throws`). The BOOL
+      // is the authority: reject on NO even if GCK left the error pointer empty.
+      var error: GCKError?
+      if channel.sendTextMessage(message, error: &error) {
+        promise.resolve(withResult: ())
+      } else if let error {
+        // Reuse the transport's GCKError → CastError code mapping (same one the
+        // request delegate uses) so send failures reject typed codes.
+        promise.reject(
+          withError: castRejection(
+            code: error.toCastErrorCode(), message: error.localizedDescription,
+            nativeCode: error.code))
+      } else {
+        promise.reject(
+          withError: castRejection(
+            code: "failed", message: "The message could not be sent.", nativeCode: nil))
+      }
+    }
+    return promise
   }
 
   // MARK: - media transport (route to GCKRemoteMediaClient — Invariant 1)
@@ -460,6 +577,17 @@ final class HybridCastTransport: HybridCastTransportSpec {
       session.remove(listener)
     }
     attachedStatusSession = nil
+  }
+
+  /// Drop every registered custom channel (A1). Called on session end/suspend
+  /// and on dispose. Removes from the live session when one still exists
+  /// (`willEnd` fires while it does); otherwise GCK already dropped the channel
+  /// with the session and we only release our strong refs.
+  private func clearChannels() {
+    guard !channels.isEmpty else { return }
+    let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession
+    for channel in channels.values { session?.remove(channel) }
+    channels.removeAll()
   }
 
   /// Reject every still-pending media request. Used on session end / teardown so a
