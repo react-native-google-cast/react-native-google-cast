@@ -279,7 +279,16 @@ final class HybridCastTransport: HybridCastTransportSpec {
         onStatus: { [weak self] connected, writable in
           self?.onChannelStatus?(namespace, connected, writable)
         })
-      session.add(channel)
+      // GCK returns NO when it refuses the registration (e.g. the namespace is
+      // already registered on the session outside this registry) — recording
+      // the channel anyway would hand JS a handle that can never receive.
+      guard session.add(channel) else {
+        promise.reject(
+          withError: castRejection(
+            code: "failed",
+            message: "GCK refused to register a channel for \(namespace).", nativeCode: nil))
+        return
+      }
       self.channels[namespace] = channel
       // Initial status BEFORE resolving, so an awaiting façade reads a
       // populated value. This is the REAL current value (A2): `isConnected` is

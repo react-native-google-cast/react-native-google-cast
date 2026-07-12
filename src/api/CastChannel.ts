@@ -155,9 +155,12 @@ export class CastChannel {
    * registrable again. (Channels are also auto-removed when the session ends.)
    */
   async remove(): Promise<void> {
+    // Drop the listener even when stale: a remove racing the session teardown
+    // (the useCastChannel cleanup path) must not leave the closure retained on
+    // the message bus until a future message for the namespace evicts it.
+    this.offMessage()
     this.assertActive()
     this.removed = true // this handle is dead from here on (isActive → false)
-    this.offMessage()
     // Free the namespace SYNCHRONOUSLY, before the bridge call (T1): an
     // immediate re-add (e.g. a `useCastChannel` remount) must pass the
     // register-once check without awaiting the removal. Ordering stays safe on

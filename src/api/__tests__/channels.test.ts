@@ -196,6 +196,23 @@ describe('CastChannel — lifecycle (Invariant 3)', () => {
     void store
   })
 
+  it('remove() on a stale handle rejects but still drops the bus listener (no leak across sessions)', async () => {
+    const { castSession, transport, store } = await setup()
+    const listener = jest.fn()
+    const channel = await castSession.addChannel(NS, listener)
+    transport.emitLifecycle({ type: 'ended' })
+    await expect(channel.remove()).rejects.toMatchObject({ code: 'noSession' })
+    // White-box on purpose: the wrapper would no-op via the liveness guard
+    // anyway — the finding is the *retention* of the closure on the bus, which
+    // only a handler-count check can observe.
+    const bus = (
+      store as unknown as {
+        channelMessageBus: { handlers: Map<string, Set<unknown>> }
+      }
+    ).channelMessageBus
+    expect(bus.handlers.get(NS)?.size ?? 0).toBe(0)
+  })
+
   it('a removed handle is dead even though the session lives: it cannot send over or receive from a re-added channel', async () => {
     const { castSession, transport } = await setup()
     const staleListener = jest.fn()
