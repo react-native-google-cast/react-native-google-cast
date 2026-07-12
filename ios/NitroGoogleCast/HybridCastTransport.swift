@@ -661,17 +661,19 @@ final class HybridCastTransport: HybridCastTransportSpec {
     let promise = Promise<Bool>()
     DispatchQueue.main.async {
       let context = GCKCastContext.sharedInstance()
-      // iOS keeps GCK's own persistent "shown once" flag (E2 note): clearing
-      // it first makes the anchored present call below show again.
-      if !once {
-        context.clearCastInstructionsShownFlag()
-      }
       // The non-deprecated overlay API needs a visible button anchor; without
       // one the overlay cannot show → resolve `false` (never hang, never
       // reject).
       guard let button = CastButtonRegistry.current else {
         promise.resolve(withResult: false)
         return
+      }
+      // iOS keeps GCK's own persistent "shown once" flag (E2 note): clearing
+      // it makes the anchored present call below show again. Cleared only
+      // AFTER the anchor guard so a failed `{once: false}` call leaves the
+      // flag untouched — matching Android, whose false paths never write.
+      if !once {
+        context.clearCastInstructionsShownFlag()
       }
       // GCK's BOOL is authoritative here: `false` = not shown (already shown
       // before, or GCK could not locate the button).

@@ -40,6 +40,9 @@ function App() {
     discoveryManager.getDevices(),
   );
   const [log, setLog] = useState<string[]>([]);
+  // Device-pass toggle: unmounting the CastButton exercises the overlay's
+  // no-anchor → false path (and, on Android, stops the ACTIVE scan trigger).
+  const [showCastButton, setShowCastButton] = useState(true);
 
   const seq = useRef(0);
   const append = (line: string) => {
@@ -150,10 +153,16 @@ function App() {
           <Text style={[styles.title, isDarkMode && styles.textLight]}>
             react-native-google-cast v5 — spike
           </Text>
-          <CastButton
-            style={styles.castButton}
-            tintColor={isDarkMode ? '#fff' : '#1a73e8'}
-          />
+          <Pressable onLongPress={() => setShowCastButton(v => !v)}>
+            {showCastButton ? (
+              <CastButton
+                style={styles.castButton}
+                tintColor={isDarkMode ? '#fff' : '#1a73e8'}
+              />
+            ) : (
+              <Text style={text}>⌫</Text>
+            )}
+          </Pressable>
         </View>
         <Text style={text}>Cast state: {state}</Text>
         <Text style={text}>Play Services: {playServices}</Text>
@@ -171,14 +180,18 @@ function App() {
         <View style={styles.buttons}>
           <Pressable
             style={styles.button}
-            onPress={() => probeShow('showCastDialog', GoogleCast.showCastDialog)}
+            onPress={() =>
+              probeShow('showCastDialog', () => GoogleCast.showCastDialog())
+            }
           >
             <Text style={styles.buttonText}>Dialog</Text>
           </Pressable>
           <Pressable
             style={styles.button}
             onPress={() =>
-              probeShow('showExpandedControls', GoogleCast.showExpandedControls)
+              probeShow('showExpandedControls', () =>
+                GoogleCast.showExpandedControls(),
+              )
             }
           >
             <Text style={styles.buttonText}>Expanded</Text>

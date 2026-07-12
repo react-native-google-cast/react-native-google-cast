@@ -450,12 +450,27 @@ class HybridCastTransport : HybridCastTransportSpec() {
         promise.resolve(false)
         return@runOnMain
       }
+      val fragmentManager = activity.supportFragmentManager
+      // After onSaveInstanceState (backgrounding race) `show()` would throw an
+      // IllegalStateException — that's a can't-show-right-now, not a failure.
+      if (fragmentManager.isStateSaved) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      // A dialog is already up (rapid repeated calls): it is shown — done.
+      if (
+        fragmentManager.findFragmentByTag(CHOOSER_DIALOG_TAG) != null ||
+        fragmentManager.findFragmentByTag(CONTROLLER_DIALOG_TAG) != null
+      ) {
+        promise.resolve(true)
+        return@runOnMain
+      }
       try {
         if (castContext.sessionManager.currentCastSession != null) {
           // A session exists (`connecting` included, matching what a
           // MediaRouteButton would present) → in-session controller dialog.
           MediaRouteControllerDialogFragment()
-            .show(activity.supportFragmentManager, CONTROLLER_DIALOG_TAG)
+            .show(fragmentManager, CONTROLLER_DIALOG_TAG)
         } else {
           val selector = castContext.mergedSelector
           if (selector == null) {
@@ -464,7 +479,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
           }
           val fragment = MediaRouteChooserDialogFragment()
           fragment.routeSelector = selector
-          fragment.show(activity.supportFragmentManager, CHOOSER_DIALOG_TAG)
+          fragment.show(fragmentManager, CHOOSER_DIALOG_TAG)
         }
         promise.resolve(true)
       } catch (e: Exception) {

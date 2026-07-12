@@ -257,6 +257,18 @@ describe('useCastSession — ignoreSessionUpdatesInBackground', () => {
       })
     })
     expect(latestSession).toBeNull()
+
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s3') })
+    })
+    expect(latestSession).not.toBeNull()
+    act(() => {
+      transport.emitLifecycle({
+        type: 'startFailed',
+        error: { code: 'network' },
+      })
+    })
+    expect(latestSession).toBeNull()
     act(() => renderer.unmount())
   })
 

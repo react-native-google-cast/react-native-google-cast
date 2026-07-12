@@ -256,7 +256,8 @@ export interface CastTransportApi {
   /**
    * Show the Cast dialog: the device chooser, or on Android the in-session
    * controller dialog when a session exists. Unlike v4, no mounted CastButton
-   * is required. Resolves `false` when there is no Activity (Android).
+   * is required. Resolves `false` when it cannot be presented (Android: no
+   * Activity, Cast framework unavailable, or no route selector).
    */
   showCastDialog(): Promise<boolean>
   /**

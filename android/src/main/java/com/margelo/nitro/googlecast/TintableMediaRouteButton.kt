@@ -28,7 +28,9 @@ internal class TintableMediaRouteButton(context: Context) : MediaRouteButton(con
   fun applyTint(color: Int?) {
     tintColor = color
     val drawable = indicatorDrawable ?: return
-    val wrapped = DrawableCompat.wrap(drawable)
+    // mutate() un-shares the ConstantState: without it, tinting one mounted
+    // CastButton bleeds onto every other one using the same theme drawable.
+    val wrapped = DrawableCompat.wrap(drawable).mutate()
     if (color != null) {
       DrawableCompat.setTint(wrapped, color)
     } else {

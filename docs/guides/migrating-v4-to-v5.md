@@ -145,7 +145,8 @@ with these changes:
   worked by `performClick()` on a rendered button and resolved `false` without
   one; v5 presents the MediaRouter chooser/controller dialog directly (an
   in-session controller dialog when a session exists, the device chooser
-  otherwise). It resolves `false` only when there is no current Activity.
+  otherwise). It resolves `false` when the dialog cannot be presented — no
+  current Activity, the Cast framework unavailable, or no route selector.
 - **`showIntroductoryOverlay` resolves `false` instead of hanging.** v4's
   Android promise never settled when no `CastButton` was on screen, and — via
   the SDK's `setSingleTime()` — when the overlay had already been shown once.
