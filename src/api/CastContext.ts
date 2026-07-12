@@ -58,8 +58,10 @@ export class CastContext {
   /**
    * Show the Cast dialog: the device chooser, or on Android the in-session
    * controller dialog when a session exists. Unlike v4, no mounted
-   * {@link CastButton} is required. Resolves `false` when there is no current
-   * Activity (Android); on web it always resolves `false`.
+   * {@link CastButton} is required. Resolves `false` when Android cannot
+   * present it (no current Activity, Cast framework unavailable, no route
+   * selector, or saved FragmentManager state); on web it always resolves
+   * `false`.
    */
   static showCastDialog(): Promise<boolean> {
     return castTransport.showCastDialog()
@@ -80,9 +82,10 @@ export class CastContext {
    * Present the introductory overlay anchored to the currently attached,
    * visible {@link CastButton}. Resolves `true` once the overlay was actually
    * presented, and `false` when there is no visible button anchor or (with
-   * `once`) when it was already shown before. Android resolves on dismissal;
-   * iOS at presentation. The once-flag is platform-local (iOS: GCK's flag;
-   * Android: this library's own preference).
+   * `once`) when it was already shown before. Resolves at presentation on
+   * both platforms; Android records its "shown" flag when the user dismisses
+   * the overlay. The once-flag is platform-local (iOS: GCK's flag; Android:
+   * this library's own preference).
    *
    * @param options `once` (default `true`) shows the overlay only once per
    * install; pass `false` to show it again (iOS clears GCK's shown-flag).

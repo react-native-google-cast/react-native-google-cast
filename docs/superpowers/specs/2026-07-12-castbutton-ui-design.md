@@ -319,7 +319,10 @@ the amendment wins.
   *without* single-time, and on dismiss set the flag + resolve `true`. Every
   path settles. (iOS keeps GCK's native flag — its API returns `BOOL` and has
   `clearCastInstructionsShownFlag`.) Platform note: the two "once" flags are
-  independent stores; documented in the guide.
+  independent stores; documented in the guide. *PR #611 review addendum:* the
+  promise settles at presentation, not dismissal — GCK's dismiss listener is a
+  user-interaction callback and never fires if the Activity dies with the
+  overlay up; the listener only records the once-flag.
 - **E3 — `CastButton.web.tsx` split (P2).** `getHostComponent` deep-imports
   `react-native/Libraries/NativeComponent/NativeComponentRegistry`, which
   react-native-web does not provide — importing the native wrapper breaks web

@@ -269,8 +269,11 @@ export interface CastTransportApi {
   /**
    * Present the introductory overlay anchored to the currently attached,
    * visible CastButton. Resolves `false` with no anchor or (with `once`) when
-   * already shown before. Android resolves on dismissal; the once-flag is
-   * platform-local (iOS: GCK's flag; Android: our own SharedPreferences — E2).
+   * already shown before. Resolves at presentation on both platforms — GCK's
+   * Android dismiss listener is a user-interaction callback, not a lifecycle
+   * one, so settling there could strand the promise if the Activity dies
+   * while the overlay is up. Android records its once-flag on dismissal; the
+   * flag is platform-local (iOS: GCK's flag; Android: SharedPreferences — E2).
    */
   showIntroductoryOverlay(once: boolean): Promise<boolean>
 

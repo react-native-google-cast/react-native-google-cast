@@ -552,12 +552,17 @@ class HybridCastTransport : HybridCastTransportSpec() {
       }
       try {
         IntroductoryOverlay.Builder(activity, button)
+          // A user-interaction callback, NOT a lifecycle one: it never fires
+          // when the Activity dies with the overlay up, so the promise must
+          // not wait for it — it only records the once-flag (E2). An
+          // undismissed overlay therefore also re-shows next launch.
           .setOnOverlayDismissedListener {
             prefs.edit().putBoolean(OVERLAY_SHOWN_KEY, true).apply()
-            promise.resolve(true)
           }
           .build()
           .show()
+        // Settle at presentation (matches iOS and the other show* methods).
+        promise.resolve(true)
       } catch (e: Exception) {
         promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
       }
