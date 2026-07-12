@@ -2,6 +2,7 @@ import { FakeCastTransport } from '../../transport/__fakes__/FakeCastTransport'
 import type { Device, SessionInfo } from '../../transport/types'
 import type { Slice } from '../slice'
 import { CastStore } from '../CastStore'
+import { CHANNEL_SLICE_KEY, type ChannelState } from '../channel.slice'
 
 function device(id: string): Device {
   return {
@@ -352,6 +353,75 @@ describe('CastStore — slice registry', () => {
     expect(() =>
       store.registerSlice({ key: 'late', seed: () => 0, reduce: (s) => s })
     ).toThrow(/before init/)
+  })
+})
+
+describe('channel message bus (P5.2 — transient, never replayed)', () => {
+  const NS = 'urn:x-cast:com.example.a'
+  const NS_B = 'urn:x-cast:com.example.b'
+
+  it('routes onChannelMessage by namespace', async () => {
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    const a = jest.fn()
+    const b = jest.fn()
+    store.onChannelMessage(NS, a)
+    store.onChannelMessage(NS_B, b)
+    transport.emitChannelMessage(NS, 'hello')
+    expect(a).toHaveBeenCalledWith('hello')
+    expect(b).not.toHaveBeenCalled()
+  })
+
+  it('never replays messages to a late subscriber', async () => {
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    transport.emitChannelMessage(NS, 'early')
+    const late = jest.fn()
+    store.onChannelMessage(NS, late)
+    expect(late).not.toHaveBeenCalled()
+    transport.emitChannelMessage(NS, 'now')
+    expect(late).toHaveBeenCalledTimes(1)
+    expect(late).toHaveBeenCalledWith('now')
+  })
+
+  it('a message is not state: no snapshot rebuild, no subscriber notify', async () => {
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    const listener = jest.fn()
+    store.subscribe(listener)
+    const before = store.getSnapshot()
+    transport.emitChannelMessage(NS, 'transient')
+    expect(store.getSnapshot()).toBe(before)
+    expect(listener).not.toHaveBeenCalled()
+  })
+
+  it('onChannelStatus dispatches into the channel slice', async () => {
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    transport.emitLifecycle({
+      type: 'started',
+      session: { sessionId: 's1', device: device('d1') },
+    })
+    transport.emitChannelStatus(NS, true, false)
+    const state = store.getSliceState<ChannelState>(CHANNEL_SLICE_KEY)
+    expect(state.statuses[NS]).toEqual({ connected: true, writable: false })
+  })
+
+  it('dispose drops message handlers', async () => {
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    const handler = jest.fn()
+    store.onChannelMessage(NS, handler)
+    store.dispose()
+    transport.emitChannelMessage(NS, 'late')
+    expect(handler).not.toHaveBeenCalled()
+    // subscribing after dispose is a no-op unsubscribe, like on()
+    expect(typeof store.onChannelMessage(NS, jest.fn())).toBe('function')
   })
 })
 

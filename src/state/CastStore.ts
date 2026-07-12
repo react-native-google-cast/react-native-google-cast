@@ -21,6 +21,7 @@ import {
   sessionSlice,
 } from './session.slice'
 import { mediaSlice } from './media.slice'
+import { channelSlice } from './channel.slice'
 import { KeyedBus } from './keyedBus'
 
 export type { StoreSession }
@@ -87,6 +88,10 @@ export class CastStore {
     SessionEventType,
     SessionLifecycleEvent
   >()
+  // P5.2 — inbound custom-channel messages. Deliberately a separate bus and a
+  // dedicated path: messages are transient (never replayed, never state), so
+  // they must not run the slice dispatch loop or touch the snapshot.
+  private readonly channelMessageBus = new KeyedBus<string, string>()
 
   private snapshot: CastSnapshot
   private initialized = false
@@ -104,6 +109,7 @@ export class CastStore {
     this.push(discoverySlice)
     this.push(sessionSlice)
     this.push(mediaSlice)
+    this.push(channelSlice)
     for (const slice of options.slices ?? []) this.push(slice)
 
     // Seed safe defaults so getSnapshot() works before init resolves.
@@ -150,6 +156,19 @@ export class CastStore {
     return this.lifecycleBus.subscribe(type, handler)
   }
 
+  /**
+   * Subscribe to inbound messages for one custom-channel namespace (P5.2).
+   * Messages are transient: never replayed to a late subscriber, never in
+   * `getSnapshot`. The `CastChannel` façade is the intended consumer.
+   */
+  onChannelMessage(
+    namespace: string,
+    handler: (message: string) => void
+  ): () => void {
+    if (this.disposed) return () => {}
+    return this.channelMessageBus.subscribe(namespace, handler)
+  }
+
   // --- mutation entry (P4/P5 feed their native events here too) ---
 
   /** Apply a store event, updating slices and notifying state subscribers. */
@@ -181,6 +200,7 @@ export class CastStore {
     }
     this.subscribers.clear()
     this.lifecycleBus.clear()
+    this.channelMessageBus.clear()
   }
 
   /** Register an extra slice. Only valid before init has streamed any events. */
@@ -208,8 +228,14 @@ export class CastStore {
         (devices) => this.dispatch({ kind: 'devices', devices }),
         (event) => this.dispatchLifecycle(event),
         (status) => this.dispatch({ kind: 'mediaStatus', status }),
-        () => {}, // onChannelMessage — wired to the channel message bus in 5.2b
-        () => {} // onChannelStatus — dispatched as `channelStatus` in 5.2b
+        (namespace, message) => this.channelMessageBus.emit(namespace, message),
+        (namespace, connected, writable) =>
+          this.dispatch({
+            kind: 'channelStatus',
+            namespace,
+            connected,
+            writable,
+          })
       )
       this.seedAll(snapshot)
     } catch {
