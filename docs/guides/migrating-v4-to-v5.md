@@ -6,8 +6,8 @@ sidebar_label: Migrating v4 → v5
 
 > **Status:** v5 is a ground-up rewrite onto the React Native New Architecture
 > (Nitro Modules). This page is the running migration log; it is finalized in the
-> Phase 7 migration guide. It currently covers the Phase 3 changes (context,
-> discovery, sessions).
+> Phase 7 migration guide. It currently covers the Phase 3–6.1 changes (context,
+> discovery, sessions, media, channels, Cast UI + hooks).
 
 ## Read getters are now synchronous
 
@@ -123,9 +123,68 @@ with these changes:
   `sendMessage` / `remove` (channels are auto-removed with their session), and
   its retained listener can never receive a later session's messages.
 
+## Cast UI: `CastButton` and the `show*` methods
+
+`CastButton`, `CastContext.showCastDialog()`, `showExpandedControls()` and
+`showIntroductoryOverlay()` keep their v4 shape, with these changes:
+
+- **`CastButton` tint is a prop.** v4 read `style.tintColor`; v5 has a
+  dedicated `tintColor` prop (any `ColorValue`):
+
+  ```diff
+  - <CastButton style={{ width: 24, height: 24, tintColor: 'black' }} />
+  + <CastButton tintColor="black" style={{ width: 24, height: 24 }} />
+  ```
+
+- **The `show*` booleans mean "the present/launch call was issued."** iOS's
+  present APIs are void and Android cannot observe the launched activity, so
+  `true` does not guarantee what the presented UI did next. Only
+  `showIntroductoryOverlay` verifies actual presentation. Graceful can't-show
+  cases resolve `false`; genuine native failures reject a typed `CastError`.
+- **`showCastDialog` no longer needs a mounted `CastButton`.** v4 Android
+  worked by `performClick()` on a rendered button and resolved `false` without
+  one; v5 presents the MediaRouter chooser/controller dialog directly (an
+  in-session controller dialog when a session exists, the device chooser
+  otherwise). It resolves `false` when the dialog cannot be presented — no
+  current Activity, the Cast framework unavailable, or no route selector.
+- **`showIntroductoryOverlay` resolves `false` instead of hanging.** v4's
+  Android promise never settled when no `CastButton` was on screen, and — via
+  the SDK's `setSingleTime()` — when the overlay had already been shown once.
+  v5 resolves `false` in both cases (every path settles). A mounted, *visible*
+  `CastButton` is still required as the overlay's anchor on both platforms.
+- **The overlay's "shown once" flags are platform-local.** iOS uses the Cast
+  SDK's flag (cleared when you pass `{ once: false }`); Android uses this
+  library's own preference. The two stores are independent — resetting one
+  platform does not reset the other.
+- **`showExpandedControls` on Android requires a manifest entry.** Register
+  `com.margelo.nitro.googlecast.NitroExpandedControllerActivity` (see the
+  [ExpandedController](../../components/ExpandedController) doc); a missing
+  registration rejects `notSupported` instead of failing silently. Automatic
+  wiring (Expo plugin) comes later in v5.
+
+## Hooks: `useCastState` / `useDevices` / `useCastSession` / `useCastDevice`
+
+All four keep their v4 signatures. Behavioral notes:
+
+- **`useCastState` returns `CastState`, never `null`.** v4 returned `null`
+  before its async init; v5's store seeds synchronously, so during the brief
+  native-init window v5 reports `noDevicesAvailable` where v4 reported `null`.
+- **`useCastSession({ ignoreSessionUpdatesInBackground: true })` is
+  best-effort in v5.** The option still suppresses the `null` render while the
+  session is suspended, but the retained object is **inert during the
+  suspension** — calling methods on it rejects `noSession` (materially the
+  same as v4, whose retained object also failed natively while suspended).
+- **On resume, `useCastSession` hands out a fresh object reference** for the
+  same session (v4 kept the old object). Key effects on `castSession?.id` —
+  stable across a suspend/resume of the same session — not on the object
+  identity.
+- **`useCastDevice(options?)`** keeps its v4 parameter and delegates to
+  `useCastSession`, so the option keeps the device visible across a
+  suspension.
+
 ## Deferred to later phases
 
-- `CastContext.showCastDialog()` / `showExpandedControls()` /
-  `showIntroductoryOverlay()` / `showPlayServicesErrorDialog()` — **Phase 6**
-  (they depend on the `CastButton` / cast activity).
+- `CastContext.showPlayServicesErrorDialog()`, cast options / OptionsProvider
+  configuration, notifications & lock-screen controls, expanded-controller
+  customization, and the Expo config plugin — **Phase 6.2**.
 - Web / Chrome sender support — **Phase 8**.

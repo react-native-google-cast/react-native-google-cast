@@ -631,6 +631,58 @@ final class HybridCastTransport: HybridCastTransportSpec {
     }
   }
 
+  // MARK: - Cast UI (Phase 6.1 — main queue, Invariant 1)
+
+  // The `Bool` contract is E7: `true` means "the present call was issued" —
+  // GCK's `presentCastDialog` / `presentDefaultExpandedMediaControls` are
+  // `void`, so actual presentation is not observable. Only the introductory
+  // overlay verifies presentation (its GCK API returns a real `BOOL`). These
+  // resolve `false` only for the graceful can't-show cases; they never reject.
+
+  func showCastDialog() throws -> Promise<Bool> {
+    let promise = Promise<Bool>()
+    DispatchQueue.main.async {
+      GCKCastContext.sharedInstance().presentCastDialog()
+      promise.resolve(withResult: true)
+    }
+    return promise
+  }
+
+  func showExpandedControls() throws -> Promise<Bool> {
+    let promise = Promise<Bool>()
+    DispatchQueue.main.async {
+      GCKCastContext.sharedInstance().presentDefaultExpandedMediaControls()
+      promise.resolve(withResult: true)
+    }
+    return promise
+  }
+
+  func showIntroductoryOverlay(once: Bool) throws -> Promise<Bool> {
+    let promise = Promise<Bool>()
+    DispatchQueue.main.async {
+      let context = GCKCastContext.sharedInstance()
+      // The non-deprecated overlay API needs a visible button anchor; without
+      // one the overlay cannot show → resolve `false` (never hang, never
+      // reject).
+      guard let button = CastButtonRegistry.current else {
+        promise.resolve(withResult: false)
+        return
+      }
+      // iOS keeps GCK's own persistent "shown once" flag (E2 note): clearing
+      // it makes the anchored present call below show again. Cleared only
+      // AFTER the anchor guard so a failed `{once: false}` call leaves the
+      // flag untouched — matching Android, whose false paths never write.
+      if !once {
+        context.clearCastInstructionsShownFlag()
+      }
+      // GCK's BOOL is authoritative here: `false` = not shown (already shown
+      // before, or GCK could not locate the button).
+      promise.resolve(
+        withResult: context.presentCastInstructionsViewControllerOnce(with: button))
+    }
+    return promise
+  }
+
   // MARK: - helpers
 
   private func handleCastStateChange() {

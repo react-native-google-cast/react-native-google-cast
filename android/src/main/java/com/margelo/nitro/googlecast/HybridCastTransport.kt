@@ -1,7 +1,14 @@
 package com.margelo.nitro.googlecast
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import androidx.fragment.app.FragmentActivity
+import androidx.mediarouter.app.MediaRouteChooserDialogFragment
+import androidx.mediarouter.app.MediaRouteControllerDialogFragment
 import androidx.mediarouter.media.MediaRouter
 import com.google.android.gms.cast.Cast
 import com.google.android.gms.cast.CastDevice
@@ -9,6 +16,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.CastState as GckCastState
 import com.google.android.gms.cast.framework.CastStateListener
+import com.google.android.gms.cast.framework.IntroductoryOverlay
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.ConnectionResult
@@ -423,6 +431,158 @@ class HybridCastTransport : HybridCastTransportSpec() {
     return promise
   }
 
+  // MARK: - Cast UI (Phase 6.1 — imperative one-shots; main thread, Invariant 1)
+  //
+  // The boolean means "the present/launch call was issued" (E7); the graceful
+  // can't-show cases (no Cast framework, no/finishing Activity, no visible
+  // button anchor, overlay already shown once) resolve `false`. Only genuine
+  // native failures reject a typed CastError.
+
+  override fun showCastDialog(): Promise<Boolean> {
+    val promise = Promise<Boolean>()
+    runOnMain {
+      val castContext = sharedCastContextOrNull()
+      // The MediaRoute*DialogFragment forms are lifecycle-managed by the
+      // FragmentManager (ReactActivity is a FragmentActivity), so a rotation
+      // cannot leak the dialog window like the raw dialogs would (E9).
+      val activity = currentActivityOrNull() as? FragmentActivity
+      if (castContext == null || activity == null) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      val fragmentManager = activity.supportFragmentManager
+      // After onSaveInstanceState (backgrounding race) `show()` would throw an
+      // IllegalStateException — that's a can't-show-right-now, not a failure.
+      if (fragmentManager.isStateSaved) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      // A dialog is already up (rapid repeated calls): it is shown — done.
+      if (
+        fragmentManager.findFragmentByTag(CHOOSER_DIALOG_TAG) != null ||
+        fragmentManager.findFragmentByTag(CONTROLLER_DIALOG_TAG) != null
+      ) {
+        promise.resolve(true)
+        return@runOnMain
+      }
+      try {
+        if (castContext.sessionManager.currentCastSession != null) {
+          // A session exists (`connecting` included, matching what a
+          // MediaRouteButton would present) → in-session controller dialog.
+          MediaRouteControllerDialogFragment()
+            .show(fragmentManager, CONTROLLER_DIALOG_TAG)
+        } else {
+          val selector = castContext.mergedSelector
+          if (selector == null) {
+            promise.resolve(false)
+            return@runOnMain
+          }
+          val fragment = MediaRouteChooserDialogFragment()
+          fragment.routeSelector = selector
+          fragment.show(fragmentManager, CHOOSER_DIALOG_TAG)
+        }
+        promise.resolve(true)
+      } catch (e: Exception) {
+        promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+      }
+    }
+    return promise
+  }
+
+  override fun showExpandedControls(): Promise<Boolean> {
+    val promise = Promise<Boolean>()
+    runOnMain {
+      val activity = currentActivityOrNull()
+      // Gate on the framework too: GCK's ExpandedControllerActivity resolves
+      // CastContext in its own onCreate, so launching without a working Cast
+      // framework would crash the *launched* activity after we resolved.
+      if (activity == null || sharedCastContextOrNull() == null) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      val intent = Intent(activity, NitroExpandedControllerActivity::class.java)
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      try {
+        activity.startActivity(intent)
+        promise.resolve(true)
+      } catch (e: ActivityNotFoundException) {
+        // Missing manifest registration is a config error and must be loud
+        // (E8): the activity ships in this library, but Android only launches
+        // activities declared by the *app* manifest (automatic wiring → 6.2).
+        promise.reject(
+          CastRejection(
+            castRejectionJson(
+              "notSupported",
+              "NitroExpandedControllerActivity is not registered in your app. " +
+                "Add <activity android:name=\"com.margelo.nitro.googlecast.NitroExpandedControllerActivity\" /> " +
+                "to your AndroidManifest.xml.",
+              null
+            )
+          )
+        )
+      } catch (e: Exception) {
+        promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+      }
+    }
+    return promise
+  }
+
+  override fun showIntroductoryOverlay(once: Boolean): Promise<Boolean> {
+    val promise = Promise<Boolean>()
+    runOnMain {
+      val context = NitroModules.applicationContext
+      if (context == null) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      // Own once-flag (E2): GCK's `IntroductoryOverlay.setSingleTime()` makes
+      // `show()` a silent no-op when the overlay was ever shown before and the
+      // dismiss listener never fires — one of the two v4 promise hangs. It is
+      // therefore never used; this SharedPreferences flag is the only "once"
+      // bookkeeping, and every path below settles the promise.
+      val prefs = context.getSharedPreferences(OVERLAY_PREFS, Context.MODE_PRIVATE)
+      if (once && prefs.getBoolean(OVERLAY_SHOWN_KEY, false)) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      val activity = currentActivityOrNull()
+      val button = CastButtonRegistry.current
+      if (activity == null || button == null) {
+        // No Activity or no attached+visible CastButton anchor: resolve
+        // `false` instead of hanging forever (the other v4 hang).
+        promise.resolve(false)
+        return@runOnMain
+      }
+      try {
+        IntroductoryOverlay.Builder(activity, button)
+          // A user-interaction callback, NOT a lifecycle one: it never fires
+          // when the Activity dies with the overlay up, so the promise must
+          // not wait for it — it only records the once-flag (E2). An
+          // undismissed overlay therefore also re-shows next launch.
+          .setOnOverlayDismissedListener {
+            prefs.edit().putBoolean(OVERLAY_SHOWN_KEY, true).apply()
+          }
+          .build()
+          .show()
+        // Settle at presentation (matches iOS and the other show* methods).
+        promise.resolve(true)
+      } catch (e: Exception) {
+        promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+      }
+    }
+    return promise
+  }
+
+  /**
+   * The foreground Activity, re-resolved per call (Invariant 1 — never cached);
+   * `null` when there is none or it is already finishing/destroyed.
+   */
+  private fun currentActivityOrNull(): Activity? {
+    val activity = NitroModules.applicationContext?.currentActivity ?: return null
+    if (activity.isFinishing || activity.isDestroyed) return null
+    return activity
+  }
+
   // MARK: - media transport (route to the active session's RemoteMediaClient)
   //
   // Every call re-resolves the current `RemoteMediaClient` on the main thread (Invariant 1 —
@@ -802,5 +962,18 @@ class HybridCastTransport : HybridCastTransportSpec() {
     // GoogleApiClient.ConnectionCallbacks suspend causes.
     const val CAUSE_SERVICE_DISCONNECTED = 1
     const val CAUSE_NETWORK_LOST = 2
+  }
+
+  private companion object {
+    // FragmentManager tags for the Cast UI dialogs (E9).
+    const val CHOOSER_DIALOG_TAG = "NitroGoogleCastChooserDialog"
+    const val CONTROLLER_DIALOG_TAG = "NitroGoogleCastControllerDialog"
+
+    // Our own introductory-overlay once-flag (E2 — GCK's `setSingleTime` is
+    // never used because it silently swallows the dismiss callback). Note the
+    // iOS flag is GCK's own and lives in a different store; the two are
+    // independent (documented in the guide).
+    const val OVERLAY_PREFS = "nitro_googlecast"
+    const val OVERLAY_SHOWN_KEY = "nitro_googlecast_intro_overlay_shown"
   }
 }

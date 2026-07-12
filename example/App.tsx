@@ -21,6 +21,7 @@ import {
   View,
 } from 'react-native';
 import GoogleCast, {
+  CastButton,
   type CastError,
   type CastState,
   type Device,
@@ -39,6 +40,9 @@ function App() {
     discoveryManager.getDevices(),
   );
   const [log, setLog] = useState<string[]>([]);
+  // Device-pass toggle: unmounting the CastButton exercises the overlay's
+  // no-anchor → false path (and, on Android, stops the ACTIVE scan trigger).
+  const [showCastButton, setShowCastButton] = useState(true);
 
   const seq = useRef(0);
   const append = (line: string) => {
@@ -122,6 +126,21 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Phase 6.1 — Cast UI one-shots; each logs its boolean resolution (or the
+  // typed CastError) into the event log for the device pass.
+  const probeShow = async (
+    name: string,
+    call: () => Promise<boolean>,
+  ) => {
+    try {
+      const shown = await call();
+      append(`${name} → ${shown}`);
+    } catch (e) {
+      const err = e as CastError;
+      append(`${name} rejected: ${err.code} / ${err.message}`);
+    }
+  };
+
   const text = [styles.text, isDarkMode && styles.textLight];
 
   return (
@@ -130,9 +149,21 @@ function App() {
     >
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <View style={styles.content}>
-        <Text style={[styles.title, isDarkMode && styles.textLight]}>
-          react-native-google-cast v5 — spike
-        </Text>
+        <View style={styles.header}>
+          <Text style={[styles.title, isDarkMode && styles.textLight]}>
+            react-native-google-cast v5 — spike
+          </Text>
+          <Pressable onLongPress={() => setShowCastButton(v => !v)}>
+            {showCastButton ? (
+              <CastButton
+                style={styles.castButton}
+                tintColor={isDarkMode ? '#fff' : '#1a73e8'}
+              />
+            ) : (
+              <Text style={text}>⌫</Text>
+            )}
+          </Pressable>
+        </View>
         <Text style={text}>Cast state: {state}</Text>
         <Text style={text}>Play Services: {playServices}</Text>
         <Text style={text}>Devices: {devices.length}</Text>
@@ -143,6 +174,47 @@ function App() {
           </Pressable>
           <Pressable style={styles.button} onPress={endSession}>
             <Text style={styles.buttonText}>End session</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.buttons}>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              probeShow('showCastDialog', () => GoogleCast.showCastDialog())
+            }
+          >
+            <Text style={styles.buttonText}>Dialog</Text>
+          </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              probeShow('showExpandedControls', () =>
+                GoogleCast.showExpandedControls(),
+              )
+            }
+          >
+            <Text style={styles.buttonText}>Expanded</Text>
+          </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              probeShow('showIntroductoryOverlay', () =>
+                GoogleCast.showIntroductoryOverlay(),
+              )
+            }
+          >
+            <Text style={styles.buttonText}>Overlay</Text>
+          </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              probeShow('overlay(once:false)', () =>
+                GoogleCast.showIntroductoryOverlay({ once: false }),
+              )
+            }
+          >
+            <Text style={styles.buttonText}>Overlay∞</Text>
           </Pressable>
         </View>
 
@@ -175,7 +247,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   containerDark: { backgroundColor: '#000' },
   content: { flex: 1, padding: 20, gap: 8 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   title: { fontSize: 18, fontWeight: '600', marginBottom: 4, color: '#000' },
+  castButton: { width: 28, height: 28 },
   text: { fontSize: 15, color: '#000' },
   textLight: { color: '#fff' },
   buttons: { flexDirection: 'row', gap: 8, marginTop: 8 },
