@@ -14,6 +14,7 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.Status
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.googlecast.converters.CastRejection
@@ -55,6 +56,18 @@ class HybridCastTransport : HybridCastTransportSpec() {
   private var onDevices: ((Array<Device>) -> Unit)? = null
   private var onLifecycle: ((SessionLifecycleEvent) -> Unit)? = null
   private var onMediaStatus: ((MediaStatus) -> Unit)? = null
+  private var onChannelMessage: ((String, String) -> Unit)? = null
+  private var onChannelStatus: ((String, Boolean, Boolean) -> Unit)? = null
+
+  // Registered custom channels by namespace (Phase 5.2). Cleared explicitly on
+  // session end/suspend and on dispose (A1) so a dead session's callbacks never
+  // leak into the next one. Main thread only.
+  private val channels = mutableMapOf<String, Cast.MessageReceivedCallback>()
+
+  // In-flight sendMessage results, so dispose can cancel them (mirrors
+  // `pendingResults`; sendMessage returns PendingResult<Status>, not
+  // MediaChannelResult, hence the separate set).
+  private val pendingChannelResults = mutableSetOf<PendingResult<Status>>()
 
   private var castStateListener: CastStateListener? = null
   private var sessionListener: SessionManagerListener<CastSession>? = null
@@ -101,12 +114,16 @@ class HybridCastTransport : HybridCastTransportSpec() {
     onState: (castState: CastState) -> Unit,
     onDevices: (devices: Array<Device>) -> Unit,
     onLifecycle: (event: SessionLifecycleEvent) -> Unit,
-    onMediaStatus: (status: MediaStatus) -> Unit
+    onMediaStatus: (status: MediaStatus) -> Unit,
+    onChannelMessage: (namespace: String, message: String) -> Unit,
+    onChannelStatus: (namespace: String, connected: Boolean, writable: Boolean) -> Unit
   ): Promise<InitialSnapshot> {
     this.onState = onState
     this.onDevices = onDevices
     this.onLifecycle = onLifecycle
     this.onMediaStatus = onMediaStatus
+    this.onChannelMessage = onChannelMessage
+    this.onChannelStatus = onChannelStatus
 
     val promise = Promise<InitialSnapshot>()
     runOnMain {
@@ -193,13 +210,18 @@ class HybridCastTransport : HybridCastTransportSpec() {
       detachObservers()
       detachMediaCallback()
       detachCastListener()
+      clearChannels(sharedCastContextOrNull()?.sessionManager?.currentCastSession)
       // Cancel any in-flight media requests; JS is going away so the promises need not settle.
       pendingResults.forEach { it.cancel() }
       pendingResults.clear()
+      pendingChannelResults.forEach { it.cancel() }
+      pendingChannelResults.clear()
       onState = null
       onDevices = null
       onLifecycle = null
       onMediaStatus = null
+      onChannelMessage = null
+      onChannelStatus = null
     }
     super.dispose()
   }
@@ -282,6 +304,116 @@ class HybridCastTransport : HybridCastTransportSpec() {
         promise.resolve(Unit)
       } catch (e: Exception) {
         promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+      }
+    }
+    return promise
+  }
+
+  // MARK: - custom channels (Phase 5.2 — registry owned here, Invariant 1 for the session)
+
+  override fun addChannel(namespace: String): Promise<Unit> {
+    val promise = Promise<Unit>()
+    runOnMain {
+      val session = sharedCastContextOrNull()?.sessionManager?.currentCastSession
+      if (session == null) {
+        promise.reject(
+          CastRejection(castRejectionJson("noSession", "No active Cast session.", null))
+        )
+        return@runOnMain
+      }
+      if (channels.containsKey(namespace)) {
+        promise.reject(
+          CastRejection(
+            castRejectionJson(
+              "alreadyRegistered", "A channel for $namespace is already registered.", null
+            )
+          )
+        )
+        return@runOnMain
+      }
+      val callback = Cast.MessageReceivedCallback { _, ns, message ->
+        onChannelMessage?.invoke(ns, message)
+      }
+      try {
+        session.setMessageReceivedCallbacks(namespace, callback)
+      } catch (e: Exception) {
+        // setMessageReceivedCallbacks throws IOException / IllegalStateException.
+        promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+        return@runOnMain
+      }
+      channels[namespace] = callback
+      // Register-once status (v4 parity, A2): the Android SDK has no
+      // per-channel connect/writable callbacks, so {true, true} is emitted
+      // exactly once at registration and never updated — emitted BEFORE
+      // resolving so an awaiting façade reads a populated value.
+      onChannelStatus?.invoke(namespace, true, true)
+      promise.resolve(Unit)
+    }
+    return promise
+  }
+
+  override fun removeChannel(namespace: String): Promise<Unit> {
+    val promise = Promise<Unit>()
+    runOnMain {
+      if (channels.remove(namespace) != null) {
+        // Best-effort: the session may already be gone (its callbacks died
+        // with it); unregistering from a live one keeps GCK in sync.
+        try {
+          sharedCastContextOrNull()?.sessionManager?.currentCastSession
+            ?.removeMessageReceivedCallbacks(namespace)
+        } catch (_: Exception) {}
+      }
+      promise.resolve(Unit) // idempotent — not-registered resolves
+    }
+    return promise
+  }
+
+  override fun sendMessage(namespace: String, message: String): Promise<Unit> {
+    val promise = Promise<Unit>()
+    runOnMain {
+      val session = sharedCastContextOrNull()?.sessionManager?.currentCastSession
+      if (session == null) {
+        promise.reject(
+          CastRejection(castRejectionJson("noSession", "No active Cast session.", null))
+        )
+        return@runOnMain
+      }
+      if (!channels.containsKey(namespace)) {
+        promise.reject(
+          CastRejection(
+            castRejectionJson(
+              "invalidRequest", "No channel registered for $namespace — call addChannel first.",
+              null
+            )
+          )
+        )
+        return@runOnMain
+      }
+      val pending =
+        try {
+          session.sendMessage(namespace, message)
+        } catch (e: Exception) {
+          promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+          return@runOnMain
+        }
+      // A2-minor: await the PendingResult — never fire-and-forget a send.
+      pendingChannelResults.add(pending)
+      pending.setResultCallback { result ->
+        pendingChannelResults.remove(pending)
+        val status = result.status
+        if (status.isSuccess) {
+          promise.resolve(Unit)
+        } else {
+          promise.reject(
+            CastRejection(
+              castRejectionJson(
+                castErrorCodeFromGckStatusCode(status.statusCode),
+                status.statusMessage,
+                status.statusCode
+              )
+            )
+          )
+        }
       }
     }
     return promise
@@ -489,6 +621,22 @@ class HybridCastTransport : HybridCastTransportSpec() {
   }
 
   /**
+   * Drop every registered custom channel (A1). Called on session end/suspend
+   * (with the callback's still-valid session handle, so the GCK-side
+   * unregistration succeeds) and on dispose. The app re-adds channels on the
+   * next session, per the guide.
+   */
+  private fun clearChannels(session: CastSession?) {
+    if (channels.isEmpty()) return
+    channels.keys.forEach { namespace ->
+      try {
+        session?.removeMessageReceivedCallbacks(namespace)
+      } catch (_: Exception) {}
+    }
+    channels.clear()
+  }
+
+  /**
    * Emits [type] carrying a fresh full [SessionInfo] read from the *current* session (Invariant 1
    * — re-resolved, not the closed-over handle from `attachCastListener`). A teardown race that
    * nulls the session emits a null `sessionInfo`, consistent with how `ENDED` already emits null.
@@ -558,6 +706,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
       override fun onSessionEnded(session: CastSession, error: Int) {
         detachMediaCallback()
         detachCastListener()
+        clearChannels(session)
         emit(
           SessionEventType.ENDED,
           error = if (error != 0) castErrorFromStatusCode(error, null) else null
@@ -575,6 +724,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
       override fun onSessionSuspended(session: CastSession, reason: Int) {
         detachMediaCallback()
         detachCastListener()
+        clearChannels(session)
         emit(SessionEventType.SUSPENDED, reason = suspendReason(reason))
       }
     }
