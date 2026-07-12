@@ -8,63 +8,33 @@ The [expanded controller](https://developers.google.com/cast/docs/design_checkli
 
 ### Setup
 
-To use the default expanded controller:
-
-#### Expo
-
-```json
-{
-  "expo": {
-    "plugins": [
-      [
-        "react-native-google-cast",
-        {
-          // ...
-          "expandedController": true
-        }
-      ]
-    ]
-  }
-}
-```
-
 #### iOS
 
-In `AppDelegate`'s `application:didFinishLaunchingWithOptions` method add
-
-<!--DOCUSAURUS_CODE_TABS-->
-<!--Objective-C-->
-
-```obj-c
-[GCKCastContext sharedInstance].useDefaultExpandedMediaControls = true;
-```
-
-<!--Swift-->
-
-```swift
-GCKCastContext.sharedInstance().useDefaultExpandedMediaControls = true
-```
-
-<!--END_DOCUSAURUS_CODE_TABS-->
+No setup is needed — `showExpandedControls()` presents the Cast SDK's default expanded controls directly.
 
 #### Android
 
-In `AndroidManifest.xml` add
+Register the library's expanded controller activity in your app's `AndroidManifest.xml`:
 
 ```xml
-<activity android:name="com.reactnative.googlecast.RNGCExpandedControllerActivity" />
+<activity
+  android:name="com.margelo.nitro.googlecast.NitroExpandedControllerActivity"
+  android:exported="false"
+  android:theme="@style/Theme.AppCompat.NoActionBar" />
 ```
+
+> Automatic wiring (including the Expo config plugin) ships in a later v5 release. Until then the manifest entry is required — calling `showExpandedControls()` without it rejects a `CastError` with code `notSupported` whose message points you here.
 
 ### Usage
 
-Then, to show the expanded controller, call
+To show the expanded controller, call
 
 ```js
-GoogleCast.showExpandedControls()
+const shown = await GoogleCast.showExpandedControls()
 ```
 
-The expanded controller will also be shown automatically when the user taps the mini controller.
+It resolves `true` once the present/launch call was issued (what the launched controller does next is not observable from JS), and `false` when there is no current Activity (Android).
 
 ## Customizing expanded controller
 
-Not implemented yet
+Not implemented yet (planned for a later v5 release, along with notifications and the mini controller integration).

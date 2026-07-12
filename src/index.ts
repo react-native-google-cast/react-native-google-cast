@@ -15,6 +15,15 @@ export { useRemoteMediaClient } from './api/useRemoteMediaClient'
 export { useMediaStatus } from './api/useMediaStatus'
 export { useStreamPosition } from './api/useStreamPosition'
 export { useCastChannel } from './api/useCastChannel'
+export { useCastState } from './api/useCastState'
+export { useDevices } from './api/useDevices'
+export { useCastSession } from './api/useCastSession'
+export { useCastDevice } from './api/useCastDevice'
+export type { UseCastSessionOptions } from './api/useCastSession'
+
+// Components (CastButton resolves to CastButton.web on web — renders null).
+export { CastButton } from './components/CastButton'
+export type { CastButtonProps } from './components/CastButton'
 export type { SessionEventHandler } from './api/SessionManager'
 export type { EventSubscription } from './api/subscribeSelector'
 

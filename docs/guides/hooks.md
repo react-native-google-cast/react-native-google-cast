@@ -16,13 +16,15 @@ import { useCastState } from 'react-native-google-cast'
 function MyComponent() {
   const castState = useCastState()
 
-  // ...
+  // 'noDevicesAvailable' | 'notConnected' | 'connecting' | 'connected'
 }
 ```
 
-## Device Hook
+Unlike v4 (which returned `null` until its async initialization finished), v5 always returns a `CastState` — during the brief native-init window it reports the seeded `noDevicesAvailable`.
 
-Receive a list of available [Device](../api/interfaces/device)s.
+## Devices Hook
+
+Receive a list of available [Device](../api/interfaces/device)s. The array is frozen and referentially stable while the list is unchanged.
 
 ```js
 import GoogleCast, { useDevices } from 'react-native-google-cast'
@@ -59,6 +61,41 @@ function MyComponent() {
   }
 }
 ```
+
+The same session reference is returned for the lifetime of a session, then a fresh one once a new session starts.
+
+By default, a **suspended** session (e.g. the app was backgrounded on iOS) reads as `null` until it resumes. Pass `{ ignoreSessionUpdatesInBackground: true }` to keep the last session visible across the suspension instead:
+
+```js
+const castSession = useCastSession({ ignoreSessionUpdatesInBackground: true })
+```
+
+Two caveats with this option:
+
+- The retained session is **inert while suspended** — calling methods on it rejects a `CastError` with code `noSession`. Use it for rendering ("still connected to X"), not for calls.
+- Once the session **resumes**, the hook hands out a **fresh object reference** (even though it's the same session). Key your effects on `castSession?.id`, which is stable across a suspend/resume of the same session, rather than on the object:
+
+```js
+useEffect(() => {
+  // ...
+}, [castSession?.id])
+```
+
+## Cast Device Hook
+
+Receive the [Device](../api/interfaces/device) the current session is connected to, or `null` when not connected.
+
+```js
+import { useCastDevice } from 'react-native-google-cast'
+
+function MyComponent() {
+  const castDevice = useCastDevice()
+
+  // castDevice?.friendlyName
+}
+```
+
+It delegates to `useCastSession`, so the same options apply — `useCastDevice({ ignoreSessionUpdatesInBackground: true })` keeps the device visible while the session is suspended. The device reference is stable for the session's lifetime.
 
 ## Custom Channel Hook
 
