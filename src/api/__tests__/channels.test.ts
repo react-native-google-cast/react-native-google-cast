@@ -196,6 +196,27 @@ describe('CastChannel — lifecycle (Invariant 3)', () => {
     void store
   })
 
+  it('a removed handle is dead even though the session lives: it cannot send over or receive from a re-added channel', async () => {
+    const { castSession, transport } = await setup()
+    const staleListener = jest.fn()
+    const old = await castSession.addChannel(NS, staleListener)
+    await old.remove()
+    // Same session, same namespace, new channel.
+    const freshListener = jest.fn()
+    await castSession.addChannel(NS, freshListener)
+
+    await expect(old.sendMessage('x')).rejects.toMatchObject({
+      code: 'noSession',
+    })
+    expect(transport.sendMessageCalls).toEqual([])
+    old.onMessage(staleListener) // no-ops on a removed handle
+    transport.emitChannelMessage(NS, 'for-fresh')
+    expect(staleListener).not.toHaveBeenCalled()
+    expect(freshListener).toHaveBeenCalledWith('for-fresh')
+    expect(old.isActive).toBe(false)
+    expect(old.connected).toBeUndefined()
+  })
+
   it('teardown clears the slice so the namespace is re-addable in a new session', async () => {
     const { castSession, transport, sessionManager } = await setup()
     await castSession.addChannel(NS)

@@ -39,6 +39,12 @@ export class CastChannel {
   private readonly transport: CastTransportApi
   private readonly generation: number
   private offMessageFn: (() => void) | null = null
+  /**
+   * Set by {@link remove}. The generation alone can't catch removal (the
+   * session lives on), and without this a removed handle could send over — or
+   * subscribe to — a *new* channel later registered on the same namespace.
+   */
+  private removed = false
 
   /** @internal Created by {@link CastSession.addChannel} — do not construct directly. */
   constructor(
@@ -53,9 +59,14 @@ export class CastChannel {
     this.generation = generation
   }
 
-  /** Whether this channel still belongs to the current live session. */
+  /**
+   * Whether this channel still belongs to the current live session and has
+   * not been {@link remove}d.
+   */
   get isActive(): boolean {
-    return this.store.getCurrentGeneration() === this.generation
+    return (
+      !this.removed && this.store.getCurrentGeneration() === this.generation
+    )
   }
 
   /**
@@ -145,6 +156,7 @@ export class CastChannel {
    */
   async remove(): Promise<void> {
     this.assertActive()
+    this.removed = true // this handle is dead from here on (isActive → false)
     this.offMessage()
     // Free the namespace SYNCHRONOUSLY, before the bridge call (T1): an
     // immediate re-add (e.g. a `useCastChannel` remount) must pass the

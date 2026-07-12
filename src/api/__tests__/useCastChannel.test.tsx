@@ -4,6 +4,7 @@ import type { Device, SessionInfo } from '../../transport/types'
 import type { FakeCastTransport } from '../../transport/__fakes__/FakeCastTransport'
 import { castTransport } from '../../state/castStore.singleton'
 import type { CastChannel } from '../CastChannel'
+import { CastSession } from '../CastSession'
 import { useCastChannel } from '../useCastChannel'
 
 jest.mock('../../state/castStore.singleton', () => {
@@ -105,6 +106,35 @@ describe('useCastChannel', () => {
     })
     expect(onMessage).toHaveBeenCalledWith('hi')
     act(() => renderer.unmount())
+  })
+
+  it('installs the listener at addChannel time and forwards to the LATEST onMessage', async () => {
+    // The forwarder is passed INTO addChannel (wired before the channel is
+    // exposed), so an initial receiver message can't be dropped in the gap a
+    // separate post-render wiring effect would leave.
+    const spy = jest.spyOn(CastSession.prototype, 'addChannel')
+    const first = jest.fn()
+    const renderer = createProbe(<Probe namespace={NS} onMessage={first} />)
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    await flush()
+    expect(spy).toHaveBeenCalledWith(NS, expect.any(Function))
+
+    // Handler identity change: no re-registration, forwarder reads the ref.
+    const second = jest.fn()
+    act(() => {
+      renderer.update(<Probe namespace={NS} onMessage={second} />)
+    })
+    await flush()
+    expect(transport.addChannelCalls).toEqual([NS]) // still one registration
+    act(() => {
+      transport.emitChannelMessage(NS, 'm')
+    })
+    expect(first).not.toHaveBeenCalled()
+    expect(second).toHaveBeenCalledWith('m')
+    act(() => renderer.unmount())
+    spy.mockRestore()
   })
 
   it('removes the channel on unmount', async () => {

@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { castStore } from '../state/castStore.singleton'
 import { CastContext } from './CastContext'
 import type { CastChannel } from './CastChannel'
@@ -7,10 +7,13 @@ import type { CastChannel } from './CastChannel'
  * Hook that establishes a custom {@link CastChannel} on the current session.
  *
  * The channel is added when a session is live, removed on unmount and when the
- * session or `namespace` changes, and re-created on the next session. Passing
- * `onMessage` makes the hook the owner of the channel's **single** message
- * listener (replace-on-set, v4 parity) — do not also call `channel.onMessage`
- * elsewhere, or the two will clobber each other.
+ * session or `namespace` changes, and re-created on the next session. The hook
+ * owns the channel's **single** message listener (replace-on-set, v4 parity):
+ * it installs a forwarder at `addChannel` time — *before* the channel is
+ * exposed, so an initial message from the receiver is never dropped — that
+ * always invokes the latest `onMessage` (identity changes take effect without
+ * re-registering the channel). Do not also call `channel.onMessage` elsewhere,
+ * or the two will clobber each other.
  *
  * Note that a namespace can only be registered once at a time. To use a
  * channel from multiple screens, lift the hook to a common parent (or manage
@@ -43,6 +46,11 @@ export function useCastChannel(
     CastContext.getSessionManager().getCurrentCastSession()
   )
   const [channel, setChannel] = useState<CastChannel | null>(null)
+  // Latest-ref for the listener: the forwarder installed at addChannel time
+  // always calls the current `onMessage`, so a changed handler needs no
+  // re-registration and an initial message can't slip through unheard.
+  const onMessageRef = useRef(onMessage)
+  onMessageRef.current = onMessage
 
   useEffect(() => {
     if (!castSession) {
@@ -52,7 +60,7 @@ export function useCastChannel(
     let active = true
     let created: CastChannel | null = null
     castSession
-      .addChannel(namespace)
+      .addChannel(namespace, (message) => onMessageRef.current?.(message))
       .then((c) => {
         if (active) {
           created = c
@@ -77,12 +85,6 @@ export function useCastChannel(
       void created?.remove().catch(() => {})
     }
   }, [castSession, namespace])
-
-  useEffect(() => {
-    if (!channel || !onMessage) return
-    channel.onMessage(onMessage)
-    return () => channel.offMessage()
-  }, [channel, onMessage])
 
   return channel
 }
