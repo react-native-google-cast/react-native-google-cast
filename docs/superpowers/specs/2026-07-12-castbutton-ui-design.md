@@ -292,6 +292,101 @@ Cast devices):
   buttons, manifest registration); quality gates + two-stage subagent review;
   single squashed PR to v5 (driver approves merge); then the device pass above.
 
+## Eng-review amendments (2026-07-12)
+
+Accepted findings from the eng review (4-section pass + outside-voice
+cross-model challenge). Where an amendment contradicts a body section above,
+the amendment wins.
+
+- **E1 — Android ViewManager registration (P1).** Nitrogen generates
+  `HybridCastButtonManager` (package `com.margelo.nitro.googlecast.views`) but
+  registers **nothing** into RN's ViewManager registry — neither the generated
+  autolinking nor `NitroModulesPackage` does it (verified in nitrogen 0.35.10 +
+  core sources). The Android lane must change
+  `NitroGoogleCastPackage.createViewManagers()` to return
+  `listOf(HybridCastButtonManager())` and update the package's now-stale
+  "intentionally provides no view managers" doc comment. Without this the
+  button compiles clean and fails only at runtime. iOS needs no counterpart:
+  the generated `.mm` self-registers via `+load` →
+  `RCTComponentViewFactory registerComponentViewClass:`.
+- **E2 — Android overlay owns its own "once" flag (P1 — kills the second v4
+  hang).** GCK Android's `IntroductoryOverlay` with `setSingleTime()` silently
+  no-ops `show()` when the overlay was ever shown before and never fires the
+  dismiss listener — v4's promise hung in that case too, not just the
+  no-button case. v5 therefore does **not** use `setSingleTime()` at all: the
+  transport tracks shown-state in its own SharedPreferences flag. `once=true`
+  + flag set → resolve `false` immediately; otherwise build the overlay
+  *without* single-time, and on dismiss set the flag + resolve `true`. Every
+  path settles. (iOS keeps GCK's native flag — its API returns `BOOL` and has
+  `clearCastInstructionsShownFlag`.) Platform note: the two "once" flags are
+  independent stores; documented in the guide.
+- **E3 — `CastButton.web.tsx` split (P2).** `getHostComponent` deep-imports
+  `react-native/Libraries/NativeComponent/NativeComponentRegistry`, which
+  react-native-web does not provide — importing the native wrapper breaks web
+  *bundling*, not just runtime. The TS lane adds a `CastButton.web.tsx` that
+  renders `null` (graceful degradation, matches the web transport stub).
+- **E4 — `useCastSession` simplified + race closed (P2).** Default (no
+  options) path is plain
+  `useSyncExternalStore(castStore.subscribe, () => sessionManager.getCurrentCastSession())`
+  — race-free and consistent with the other hooks (the body's event-based
+  sketch is superseded for this path). The event-based path exists **only**
+  for `ignoreSessionUpdatesInBackground`, and closes the seed→subscribe mount
+  gap by subscribing first, then synchronously re-reading
+  `getCurrentCastSession()` inside the effect.
+- **E5 — `ignoreSessionUpdatesInBackground` honesty (P2, docs).** The option
+  is retained for v4 parity but its v5 value is narrower: it suppresses the
+  `null` render during suspension, and the retained façade is inert while
+  suspended (mutations reject `noSession` — materially the same as v4, whose
+  retained object also failed natively while the session was suspended). On
+  `resumed` the hook always hands out the fresh generation-bound façade (new
+  reference). Both gaps go in the hook JSDoc + migration guide; effect
+  identity guidance stays "key on `castSession?.id`".
+- **E6 — `useCastDevice(options?)` keeps its v4 parameter (P3).** v4's
+  `useCastDevice` delegates to `useCastSession(options)`; dropping the
+  parameter silently changes suspension behavior. v5 mirrors: implemented as
+  `useCastSession(options)`, returning the session's device (ref-stable per
+  session), so the option keeps the device visible across a suspension.
+- **E7 — `show*` boolean contract reworded (P3, docs).** iOS
+  `presentCastDialog` / `presentDefaultExpandedMediaControls` are `void`, and
+  Android's expanded-controls `startActivity` cannot observe what GCK's
+  activity does next. Honest contract: `true` = "the present/launch call was
+  issued"; only `showIntroductoryOverlay` verifies actual presentation. Public
+  JSDoc + the body's contract paragraph read accordingly.
+- **E8 — `showExpandedControls` misconfiguration is a typed rejection, not a
+  hang or crash (P3).** Android catches `ActivityNotFoundException` and
+  rejects a `CastError` (`notSupported`) whose message says to register
+  `NitroExpandedControllerActivity` in the app manifest (automatic wiring →
+  6.2). Missing-activity is a config error and must be loud; only "no current
+  Activity" resolves `false`.
+- **E9 — MediaRouter dialogs via DialogFragments (P3).** Raw
+  `MediaRouteChooserDialog`/`MediaRouteControllerDialog` leak their window on
+  rotation. `showCastDialog` uses
+  `MediaRouteChooserDialogFragment` / `MediaRouteControllerDialogFragment` on
+  the current activity's `supportFragmentManager` (ReactActivity is a
+  FragmentActivity), which are lifecycle-managed; resolve `false` when the
+  activity is missing, finishing, or not a FragmentActivity. Chooser-vs-
+  controller branch: controller when `sessionManager.currentCastSession` is
+  non-null (covers `connecting` too, matching MediaRouteButton), else chooser
+  with `mergedSelector`.
+- **E10 — Registries aligned on attach-order (P3).** Both platforms register
+  on attach-to-window and unregister on detach (Android:
+  `onAttachedToWindow`/`onDetachedFromWindow` + `onDropView`; iOS: a small
+  host-view `didMoveToWindow` hook), so "last attached wins" resolves
+  identically. iOS `prepareForRecycle` unregisters; the anchor check is
+  attached + visible (`!isHidden` / `visibility == VISIBLE`).
+- **E11 — `tintColor` reset path (P3).** Nitrogen's generated prop parser
+  keeps the cached value when a key is *absent* from the prop diff, so
+  removing the prop would strand the old tint. The React wrapper therefore
+  always includes the key — `tintColor={processColor(tintColor) ?? null}` —
+  and native treats nil/absent-value as "reset to default color".
+- **Rejected — `useCastState(): CastState | null`.** The outside voice argued
+  the seeded `'noDevicesAvailable'` is an affirmative answer where v4's `null`
+  meant "unknown (still initializing)". Rejected for the hook signature: the
+  synchronous seeded store is a Phase 3 core decision already shipped in
+  `CastContext.getCastState()`, and the hook must match it. Accepted as a
+  migration-guide note ("during the brief native-init window v5 reports
+  `noDevicesAvailable` where v4 reported `null`").
+
 ## Non-goals / deferred (→ 6.2, bead `v5-9yc`)
 
 - OptionsProvider guidance/refresh, notifications & lock-screen controls,
