@@ -18,6 +18,7 @@ internal fun castErrorCode(value: String): CastErrorCode =
     "authentication" -> CastErrorCode.AUTHENTICATION
     "notAllowed" -> CastErrorCode.NOTALLOWED
     "appNotFound" -> CastErrorCode.APPNOTFOUND
+    "alreadyRegistered" -> CastErrorCode.ALREADYREGISTERED
     else -> CastErrorCode.FAILED
   }
 

@@ -11,6 +11,12 @@ import type { StandbyState } from '../types/StandbyState'
 import type { ActiveInputState } from '../types/ActiveInputState'
 import type { EventSubscription } from './subscribeSelector'
 import { RemoteMediaClient } from './RemoteMediaClient'
+import {
+  CastChannel,
+  CAST_NAMESPACE_PREFIX,
+  RESERVED_MEDIA_NAMESPACE,
+} from './CastChannel'
+import { CHANNEL_SLICE_KEY, type ChannelState } from '../state/channel.slice'
 
 /** Fallback detail — unreachable after `assertActive` (a live session is seeded). */
 const DEFAULT_DETAIL: SessionDetail = {
@@ -183,6 +189,90 @@ export class CastSession {
   getClient(): RemoteMediaClient | null {
     this.assertActive()
     return RemoteMediaClient.current(this.store, this.transport)
+  }
+
+  // --- custom channels (Phase 5.2) ---
+
+  /**
+   * Add a custom channel for `namespace` to this session and return its
+   * {@link CastChannel}. The namespace must start with `urn:x-cast:` and is
+   * register-once: adding a namespace that is already registered rejects
+   * `alreadyRegistered` — remove the existing channel first (or lift the
+   * channel to a common parent; see the guide).
+   *
+   * Resolves once native has registered the channel and reported its initial
+   * status, so `channel.connected` is populated — but not necessarily `true`:
+   * on iOS the connection completes asynchronously, and a receiver with no
+   * listener for the namespace never connects (a `console.warn` flags this,
+   * as in v4).
+   *
+   * @param namespace custom channel identifier starting with `urn:x-cast:`.
+   * @param onMessage optional message listener (equivalent to `channel.onMessage`).
+   */
+  async addChannel(
+    namespace: string,
+    onMessage?: (message: string) => void
+  ): Promise<CastChannel> {
+    this.assertActive()
+    if (!namespace.startsWith(CAST_NAMESPACE_PREFIX)) {
+      const error: CastError = {
+        code: 'invalidParameter',
+        message: `Custom channel namespaces must start with "${CAST_NAMESPACE_PREFIX}" (got "${namespace}").`,
+      }
+      throw error
+    }
+    if (namespace === RESERVED_MEDIA_NAMESPACE) {
+      const error: CastError = {
+        code: 'invalidParameter',
+        message: `The namespace "${RESERVED_MEDIA_NAMESPACE}" is reserved. Please use a different name.`,
+      }
+      throw error
+    }
+    const registered =
+      this.store.getSliceState<ChannelState>(CHANNEL_SLICE_KEY).statuses[
+        namespace
+      ]
+    if (registered) {
+      const error: CastError = {
+        code: 'alreadyRegistered',
+        message: `A channel for "${namespace}" is already registered (channels are register-once per namespace). Remove the existing channel first.`,
+      }
+      throw error
+    }
+
+    await this.transport.addChannel(namespace)
+
+    if (!this.isActive) {
+      // The session was replaced while the native registration was in flight.
+      // Native re-resolves the current session per call (Invariant 1), so the
+      // channel got registered on the NEW session — while the façade we'd
+      // return is bound to this stale generation and could never remove it
+      // (`remove()` rejects `noSession`), poisoning the namespace for the
+      // whole live session. Undo both sides, then reject.
+      this.store.dispatch({ kind: 'channelRemoved', namespace })
+      void this.transport.removeChannel(namespace).catch(() => {})
+      const error: CastError = {
+        code: 'noSession',
+        message: 'This Cast session has ended.',
+      }
+      throw error
+    }
+
+    const channel = new CastChannel(
+      this.store,
+      this.transport,
+      namespace,
+      this.generation
+    )
+    if (onMessage) channel.onMessage(onMessage)
+    if (!channel.connected) {
+      // v4-parity hint (A2): the most common cause is a receiver that never
+      // registered a listener for this namespace.
+      console.warn(
+        `Channel ${namespace} is not connected. Make sure a session is established and you've set a listener in your custom receiver: https://developers.google.com/cast/docs/web_receiver/core_features#custom_messages`
+      )
+    }
+    return channel
   }
 
   // --- detail change listeners (via the store's typed bus; never replayed) ---

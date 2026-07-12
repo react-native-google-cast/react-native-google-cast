@@ -9,10 +9,12 @@ export { CastContext }
 export { DiscoveryManager } from './api/DiscoveryManager'
 export { SessionManager } from './api/SessionManager'
 export { CastSession } from './api/CastSession'
+export { CastChannel } from './api/CastChannel'
 export { RemoteMediaClient } from './api/RemoteMediaClient'
 export { useRemoteMediaClient } from './api/useRemoteMediaClient'
 export { useMediaStatus } from './api/useMediaStatus'
 export { useStreamPosition } from './api/useStreamPosition'
+export { useCastChannel } from './api/useCastChannel'
 export type { SessionEventHandler } from './api/SessionManager'
 export type { EventSubscription } from './api/subscribeSelector'
 

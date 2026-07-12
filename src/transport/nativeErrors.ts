@@ -27,6 +27,7 @@ const KNOWN_CODES: readonly CastErrorCode[] = [
   'authentication',
   'notAllowed',
   'appNotFound',
+  'alreadyRegistered',
 ]
 
 function isCastErrorCode(value: unknown): value is CastErrorCode {

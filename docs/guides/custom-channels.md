@@ -4,7 +4,7 @@ title: Custom Channels
 sidebar_label: Custom Channels
 ---
 
-If you've built a [custom web receiver](https://developers.google.com/cast/docs/web_receiver/basic) or an [Android TV receiver](https://developers.google.com/cast/docs/android_tv_receiver) and want to send custom messages between your Cast sender (the mobile app you're building with this library) and the Cast receiver (on Chromecast or Android TV), you need to establist a custom channel.
+If you've built a [custom web receiver](https://developers.google.com/cast/docs/web_receiver/basic) or an [Android TV receiver](https://developers.google.com/cast/docs/android_tv_receiver) and want to send custom messages between your Cast sender (the mobile app you're building with this library) and the Cast receiver (on Chromecast or Android TV), you need to establish a custom channel.
 
 > Don't forget to set your custom receiver app ID as described in the [Setup](../getting-started/setup).
 
@@ -13,7 +13,7 @@ Each custom channel is defined by a unique namespace and must start with the pre
 A [CastChannel](../api/classes/castchannel) can be created on a [CastSession](../api/classes/castsession) by calling:
 
 ```ts
-const channel = castSession.addChannel('urn:x-cast:...')
+const channel = await castSession.addChannel('urn:x-cast:...')
 ```
 
 Or, if you're using hooks:
@@ -57,6 +57,9 @@ channel.onMessage(message => { ... })
 // you may also remove the listener if no longer needed
 channel.offMessage()
 ```
+
+> The message is always delivered as the **raw string** received from the
+> receiver — if your receiver sends JSON, parse it with `JSON.parse(message)`.
 
 When you no longer need the channel, you can remove it:
 
