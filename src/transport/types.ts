@@ -243,6 +243,36 @@ export interface CastTransportApi {
   /** Send a message on the custom channel for `namespace` (must be registered). */
   sendMessage(namespace: string, message: string): Promise<void>
 
+  // --- Cast UI surface (Phase 6.1) ---
+  //
+  // Imperative one-shots presenting GCK's own UI. Nothing streams back and no
+  // state is cached. The boolean means "the present/launch call was issued";
+  // only `showIntroductoryOverlay` verifies actual presentation (E7). The
+  // graceful can't-show cases resolve `false` (no Activity, no visible
+  // CastButton anchor, overlay already shown once) — genuine native failures
+  // reject a typed CastError via the adapter. All UI work on the main thread;
+  // CastContext/Activity re-resolved per call (Invariant 1).
+
+  /**
+   * Show the Cast dialog: the device chooser, or on Android the in-session
+   * controller dialog when a session exists. Unlike v4, no mounted CastButton
+   * is required. Resolves `false` when there is no Activity (Android).
+   */
+  showCastDialog(): Promise<boolean>
+  /**
+   * Present the platform's default expanded media controls. Android launches
+   * `NitroExpandedControllerActivity` (must be registered in the app manifest;
+   * missing registration rejects `notSupported` — E8).
+   */
+  showExpandedControls(): Promise<boolean>
+  /**
+   * Present the introductory overlay anchored to the currently attached,
+   * visible CastButton. Resolves `false` with no anchor or (with `once`) when
+   * already shown before. Android resolves on dismissal; the once-flag is
+   * platform-local (iOS: GCK's flag; Android: our own SharedPreferences — E2).
+   */
+  showIntroductoryOverlay(once: boolean): Promise<boolean>
+
   // --- RemoteMediaClient mutation surface (Phase 4) ---
   //
   // Every method re-resolves the active session's `GCKRemoteMediaClient` /

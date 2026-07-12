@@ -22,6 +22,8 @@ namespace margelo::nitro::googlecast { enum class CastState; }
 namespace margelo::nitro::googlecast { enum class DeviceCapability; }
 // Forward declaration of `Device` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `HybridCastButtonSpec` to properly resolve imports.
+namespace margelo::nitro::googlecast { class HybridCastButtonSpec; }
 // Forward declaration of `HybridCastDebugSpec` to properly resolve imports.
 namespace margelo::nitro::googlecast { class HybridCastDebugSpec; }
 // Forward declaration of `HybridCastTransportSpec` to properly resolve imports.
@@ -107,6 +109,7 @@ namespace margelo::nitro::googlecast { struct WebImage; }
 #include "CastState.hpp"
 #include "Device.hpp"
 #include "DeviceCapability.hpp"
+#include "HybridCastButtonSpec.hpp"
 #include "HybridCastDebugSpec.hpp"
 #include "HybridCastTransportSpec.hpp"
 #include "InitialSnapshot.hpp"
@@ -165,6 +168,8 @@ namespace margelo::nitro::googlecast { struct WebImage; }
 #include <NitroModules/DateToChronoDate.hpp>
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridCastButtonSpec_cxx` to properly resolve imports.
+namespace NitroGoogleCast { class HybridCastButtonSpec_cxx; }
 // Forward declaration of `HybridCastDebugSpec_cxx` to properly resolve imports.
 namespace NitroGoogleCast { class HybridCastDebugSpec_cxx; }
 // Forward declaration of `HybridCastTransportSpec_cxx` to properly resolve imports.

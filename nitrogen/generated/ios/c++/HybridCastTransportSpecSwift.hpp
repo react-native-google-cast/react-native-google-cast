@@ -271,6 +271,30 @@ namespace margelo::nitro::googlecast {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<bool>> showCastDialog() override {
+      auto __result = _swiftPart.showCastDialog();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> showExpandedControls() override {
+      auto __result = _swiftPart.showExpandedControls();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> showIntroductoryOverlay(bool once) override {
+      auto __result = _swiftPart.showIntroductoryOverlay(std::forward<decltype(once)>(once));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override {
       auto __result = _swiftPart.loadMedia(std::forward<decltype(request)>(request));
       if (__result.hasError()) [[unlikely]] {

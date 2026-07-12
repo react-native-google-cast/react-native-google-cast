@@ -12,6 +12,18 @@ import NitroModules
 public final class NitroGoogleCastAutolinking {
   public typealias bridge = margelo.nitro.googlecast.bridge.swift
 
+  public static func createCastButton() -> bridge.std__shared_ptr_HybridCastButtonSpec_ {
+    let hybridObject = HybridCastButton()
+    return { () -> bridge.std__shared_ptr_HybridCastButtonSpec_ in
+      let __cxxWrapped = hybridObject.getCxxWrapper()
+      return __cxxWrapped.getCxxPart()
+    }()
+  }
+  
+  public static func isCastButtonRecyclable() -> Bool {
+    return HybridCastButton.self is any RecyclableView.Type
+  }
+  
   public static func createCastTransport() -> bridge.std__shared_ptr_HybridCastTransportSpec_ {
     let hybridObject = HybridCastTransport()
     return { () -> bridge.std__shared_ptr_HybridCastTransportSpec_ in

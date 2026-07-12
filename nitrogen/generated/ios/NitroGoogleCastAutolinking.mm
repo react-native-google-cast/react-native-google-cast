@@ -10,6 +10,7 @@
 #import "NitroGoogleCast-Swift-Cxx-Umbrella.hpp"
 #import <type_traits>
 
+#include "HybridCastButtonSpecSwift.hpp"
 #include "HybridCastTransportSpecSwift.hpp"
 #include "HybridCastDebugSpecSwift.hpp"
 
@@ -22,6 +23,13 @@
   using namespace margelo::nitro;
   using namespace margelo::nitro::googlecast;
 
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "CastButton",
+    []() -> std::shared_ptr<HybridObject> {
+      std::shared_ptr<HybridCastButtonSpec> hybridObject = NitroGoogleCast::NitroGoogleCastAutolinking::createCastButton();
+      return hybridObject;
+    }
+  );
   HybridObjectRegistry::registerHybridObjectConstructor(
     "CastTransport",
     []() -> std::shared_ptr<HybridObject> {

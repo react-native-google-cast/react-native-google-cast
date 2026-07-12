@@ -22,6 +22,12 @@ function unsupported(): Promise<never> {
   })
 }
 
+// Cast UI one-shots resolve `false` ("was it shown" — it never is on web)
+// rather than rejecting: they are UI affordances, not state mutations.
+function neverShown(): Promise<boolean> {
+  return Promise.resolve(false)
+}
+
 export const castTransport: CastTransportApi = {
   isAvailable: false,
   isDiscovering: false,
@@ -38,6 +44,10 @@ export const castTransport: CastTransportApi = {
   addChannel: unsupported,
   removeChannel: unsupported,
   sendMessage: unsupported,
+
+  showCastDialog: neverShown,
+  showExpandedControls: neverShown,
+  showIntroductoryOverlay: neverShown,
 
   loadMedia: unsupported,
   play: unsupported,

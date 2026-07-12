@@ -78,6 +78,18 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun showCastDialog(): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun showExpandedControls(): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun showIntroductoryOverlay(once: Boolean): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
   abstract fun loadMedia(request: MediaLoadRequest): Promise<Unit>
   
   @DoNotStrip

@@ -90,6 +90,9 @@ namespace margelo::nitro::googlecast {
       virtual std::shared_ptr<Promise<void>> addChannel(const std::string& channelNamespace) = 0;
       virtual std::shared_ptr<Promise<void>> removeChannel(const std::string& channelNamespace) = 0;
       virtual std::shared_ptr<Promise<void>> sendMessage(const std::string& channelNamespace, const std::string& message) = 0;
+      virtual std::shared_ptr<Promise<bool>> showCastDialog() = 0;
+      virtual std::shared_ptr<Promise<bool>> showExpandedControls() = 0;
+      virtual std::shared_ptr<Promise<bool>> showIntroductoryOverlay(bool once) = 0;
       virtual std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) = 0;
       virtual std::shared_ptr<Promise<void>> play() = 0;
       virtual std::shared_ptr<Promise<void>> pause() = 0;

@@ -15,6 +15,8 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
+#include "JHybridCastButtonSpec.hpp"
+#include "views/JHybridCastButtonStateUpdater.hpp"
 #include "JHybridCastDebugSpec.hpp"
 #include "JHybridCastTransportSpec.hpp"
 #include "JFunc_void_CastState.hpp"
@@ -33,6 +35,14 @@ int initialize(JavaVM* vm) {
   });
 }
 
+struct JHybridCastButtonSpecImpl: public jni::JavaClass<JHybridCastButtonSpecImpl, JHybridCastButtonSpec::JavaPart> {
+  static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/googlecast/HybridCastButton;";
+  static std::shared_ptr<JHybridCastButtonSpec> create() {
+    static const auto constructorFn = javaClassStatic()->getConstructor<JHybridCastButtonSpecImpl::javaobject()>();
+    jni::local_ref<JHybridCastButtonSpec::JavaPart> javaPart = javaClassStatic()->newObject(constructorFn);
+    return javaPart->getJHybridCastButtonSpec();
+  }
+};
 struct JHybridCastTransportSpecImpl: public jni::JavaClass<JHybridCastTransportSpecImpl, JHybridCastTransportSpec::JavaPart> {
   static constexpr auto kJavaDescriptor = "Lcom/margelo/nitro/googlecast/HybridCastTransport;";
   static std::shared_ptr<JHybridCastTransportSpec> create() {
@@ -55,6 +65,8 @@ void registerAllNatives() {
   using namespace margelo::nitro::googlecast;
 
   // Register native JNI methods
+  margelo::nitro::googlecast::JHybridCastButtonSpec::CxxPart::registerNatives();
+  margelo::nitro::googlecast::views::JHybridCastButtonStateUpdater::registerNatives();
   margelo::nitro::googlecast::JHybridCastDebugSpec::CxxPart::registerNatives();
   margelo::nitro::googlecast::JHybridCastTransportSpec::CxxPart::registerNatives();
   margelo::nitro::googlecast::JFunc_void_CastState_cxx::registerNatives();
@@ -65,6 +77,12 @@ void registerAllNatives() {
   margelo::nitro::googlecast::JFunc_void_std__string_bool_bool_cxx::registerNatives();
 
   // Register Nitro Hybrid Objects
+  HybridObjectRegistry::registerHybridObjectConstructor(
+    "CastButton",
+    []() -> std::shared_ptr<HybridObject> {
+      return JHybridCastButtonSpecImpl::create();
+    }
+  );
   HybridObjectRegistry::registerHybridObjectConstructor(
     "CastTransport",
     []() -> std::shared_ptr<HybridObject> {

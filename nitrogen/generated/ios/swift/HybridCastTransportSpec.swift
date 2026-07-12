@@ -23,6 +23,9 @@ public protocol HybridCastTransportSpec_protocol: HybridObject {
   func addChannel(channelNamespace: String) throws -> Promise<Void>
   func removeChannel(channelNamespace: String) throws -> Promise<Void>
   func sendMessage(channelNamespace: String, message: String) throws -> Promise<Void>
+  func showCastDialog() throws -> Promise<Bool>
+  func showExpandedControls() throws -> Promise<Bool>
+  func showIntroductoryOverlay(once: Bool) throws -> Promise<Bool>
   func loadMedia(request: MediaLoadRequest) throws -> Promise<Void>
   func play() throws -> Promise<Void>
   func pause() throws -> Promise<Void>

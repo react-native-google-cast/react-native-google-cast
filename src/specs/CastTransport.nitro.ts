@@ -66,6 +66,12 @@ export interface CastTransport
   removeChannel(channelNamespace: string): Promise<void>
   sendMessage(channelNamespace: string, message: string): Promise<void>
 
+  // Cast UI surface (Phase 6.1) — imperative one-shots; mirrors
+  // `CastTransportApi` (drift guard in `__fakes__/FakeCastTransport.ts`).
+  showCastDialog(): Promise<boolean>
+  showExpandedControls(): Promise<boolean>
+  showIntroductoryOverlay(once: boolean): Promise<boolean>
+
   // RemoteMediaClient mutation surface (Phase 4) — mirrors `CastTransportApi`;
   // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these
   // diverge from the API. Native impls route to GCKRemoteMediaClient (iOS) /

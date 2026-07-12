@@ -62,6 +62,10 @@ export class FakeCastTransport implements CastTransportApi {
   readonly addChannelCalls: string[] = []
   readonly removeChannelCalls: string[] = []
   readonly sendMessageCalls: Array<{ namespace: string; message: string }> = []
+  /** Recorded Cast-UI calls (Phase 6.1). Dialog/expanded are argless → counts. */
+  showCastDialogCalls = 0
+  showExpandedControlsCalls = 0
+  readonly showIntroductoryOverlayCalls: boolean[] = []
 
   /**
    * Recorded media-mutation calls, keyed by method name, in call order. Each
@@ -95,6 +99,12 @@ export class FakeCastTransport implements CastTransportApi {
   removeChannelBehavior: (namespace: string) => Promise<void> = async () => {}
   sendMessageBehavior: (namespace: string, message: string) => Promise<void> =
     async () => {}
+
+  /** Scriptable Cast-UI behaviour (default: "shown" → resolve `true`). */
+  showCastDialogBehavior: () => Promise<boolean> = async () => true
+  showExpandedControlsBehavior: () => Promise<boolean> = async () => true
+  showIntroductoryOverlayBehavior: (once: boolean) => Promise<boolean> =
+    async () => true
 
   /**
    * Scriptable behaviour for every media mutation, keyed by method name.
@@ -189,6 +199,23 @@ export class FakeCastTransport implements CastTransportApi {
   async sendMessage(namespace: string, message: string): Promise<void> {
     this.sendMessageCalls.push({ namespace, message })
     return this.sendMessageBehavior(namespace, message)
+  }
+
+  // --- Cast UI surface (Phase 6.1) ---
+
+  async showCastDialog(): Promise<boolean> {
+    this.showCastDialogCalls++
+    return this.showCastDialogBehavior()
+  }
+
+  async showExpandedControls(): Promise<boolean> {
+    this.showExpandedControlsCalls++
+    return this.showExpandedControlsBehavior()
+  }
+
+  async showIntroductoryOverlay(once: boolean): Promise<boolean> {
+    this.showIntroductoryOverlayCalls.push(once)
+    return this.showIntroductoryOverlayBehavior(once)
   }
 
   // --- RemoteMediaClient mutation surface (records + scriptable behaviour) ---

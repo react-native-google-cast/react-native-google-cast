@@ -22,6 +22,8 @@ namespace margelo::nitro::googlecast { enum class CastState; }
 namespace margelo::nitro::googlecast { enum class DeviceCapability; }
 // Forward declaration of `Device` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct Device; }
+// Forward declaration of `HybridCastButtonSpec` to properly resolve imports.
+namespace margelo::nitro::googlecast { class HybridCastButtonSpec; }
 // Forward declaration of `HybridCastDebugSpec` to properly resolve imports.
 namespace margelo::nitro::googlecast { class HybridCastDebugSpec; }
 // Forward declaration of `HybridCastTransportSpec` to properly resolve imports.
@@ -100,6 +102,8 @@ namespace margelo::nitro::googlecast { struct VideoInfo; }
 namespace margelo::nitro::googlecast { struct WebImage; }
 
 // Forward declarations of Swift defined types
+// Forward declaration of `HybridCastButtonSpec_cxx` to properly resolve imports.
+namespace NitroGoogleCast { class HybridCastButtonSpec_cxx; }
 // Forward declaration of `HybridCastDebugSpec_cxx` to properly resolve imports.
 namespace NitroGoogleCast { class HybridCastDebugSpec_cxx; }
 // Forward declaration of `HybridCastTransportSpec_cxx` to properly resolve imports.
@@ -113,6 +117,7 @@ namespace NitroGoogleCast { class HybridCastTransportSpec_cxx; }
 #include "CastState.hpp"
 #include "Device.hpp"
 #include "DeviceCapability.hpp"
+#include "HybridCastButtonSpec.hpp"
 #include "HybridCastDebugSpec.hpp"
 #include "HybridCastTransportSpec.hpp"
 #include "InitialSnapshot.hpp"
@@ -182,6 +187,18 @@ namespace margelo::nitro::googlecast::bridge::swift {
   inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
     return optional.value();
   }
+  
+  // pragma MARK: std::shared_ptr<HybridCastButtonSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridCastButtonSpec>`.
+   */
+  using std__shared_ptr_HybridCastButtonSpec_ = std::shared_ptr<HybridCastButtonSpec>;
+  std::shared_ptr<HybridCastButtonSpec> create_std__shared_ptr_HybridCastButtonSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridCastButtonSpec_(std__shared_ptr_HybridCastButtonSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridCastButtonSpec>
+  using std__weak_ptr_HybridCastButtonSpec_ = std::weak_ptr<HybridCastButtonSpec>;
+  inline std__weak_ptr_HybridCastButtonSpec_ weakify_std__shared_ptr_HybridCastButtonSpec_(const std::shared_ptr<HybridCastButtonSpec>& strong) noexcept { return strong; }
   
   // pragma MARK: std::vector<DeviceCapability>
   /**
@@ -1192,6 +1209,40 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Func_void_Wrapper(std::move(value));
   }
   
+  // pragma MARK: std::shared_ptr<Promise<bool>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<bool>>`.
+   */
+  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
+  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
+    return Promise<bool>::create();
+  }
+  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
+    return PromiseHolder<bool>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(bool /* result */)>
+  /**
+   * Specialized version of `std::function<void(bool)>`.
+   */
+  using Func_void_bool = std::function<void(bool /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_bool_Wrapper final {
+  public:
+    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
+    inline void call(bool result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(bool /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
+    return Func_void_bool_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::shared_ptr<HybridCastTransportSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridCastTransportSpec>`.
@@ -1220,6 +1271,15 @@ namespace margelo::nitro::googlecast::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<void>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<bool>>>
+  using Result_std__shared_ptr_Promise_bool___ = Result<std::shared_ptr<Promise<bool>>>;
+  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::shared_ptr<Promise<bool>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<bool>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
   // pragma MARK: Result<void>

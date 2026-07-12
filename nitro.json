@@ -9,6 +9,16 @@
     "androidCxxLibName": "NitroGoogleCast"
   },
   "autolinking": {
+    "CastButton": {
+      "ios": {
+        "language": "swift",
+        "implementationClassName": "HybridCastButton"
+      },
+      "android": {
+        "language": "kotlin",
+        "implementationClassName": "HybridCastButton"
+      }
+    },
     "CastTransport": {
       "ios": {
         "language": "swift",

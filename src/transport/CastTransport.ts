@@ -15,9 +15,9 @@ import { parseCastError } from './nativeErrors'
  */
 const hybrid = NitroModules.createHybridObject<CastTransport>('CastTransport')
 
-async function mutate(op: () => Promise<void>): Promise<void> {
+async function mutate<T>(op: () => Promise<T>): Promise<T> {
   try {
-    await op()
+    return await op()
   } catch (error) {
     throw parseCastError(error)
   }
@@ -64,6 +64,12 @@ export const castTransport: CastTransportApi = {
   removeChannel: (namespace) => mutate(() => hybrid.removeChannel(namespace)),
   sendMessage: (namespace, message) =>
     mutate(() => hybrid.sendMessage(namespace, message)),
+
+  // Cast UI one-shots — same error-translation wrapper.
+  showCastDialog: () => mutate(() => hybrid.showCastDialog()),
+  showExpandedControls: () => mutate(() => hybrid.showExpandedControls()),
+  showIntroductoryOverlay: (once) =>
+    mutate(() => hybrid.showIntroductoryOverlay(once)),
 
   // RemoteMediaClient mutations — same error-translation wrapper as sessions.
   loadMedia: (request) => mutate(() => hybrid.loadMedia(request)),

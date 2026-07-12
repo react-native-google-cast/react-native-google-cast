@@ -1,0 +1,10 @@
+{
+  "uiViewClassName": "CastButton",
+  "supportsRawText": false,
+  "bubblingEventTypes": {},
+  "directEventTypes": {},
+  "validAttributes": {
+    "tintColor": true,
+    "hybridRef": true
+  }
+}

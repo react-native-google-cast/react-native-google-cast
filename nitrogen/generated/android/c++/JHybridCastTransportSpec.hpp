@@ -64,6 +64,9 @@ namespace margelo::nitro::googlecast {
     std::shared_ptr<Promise<void>> addChannel(const std::string& channelNamespace) override;
     std::shared_ptr<Promise<void>> removeChannel(const std::string& channelNamespace) override;
     std::shared_ptr<Promise<void>> sendMessage(const std::string& channelNamespace, const std::string& message) override;
+    std::shared_ptr<Promise<bool>> showCastDialog() override;
+    std::shared_ptr<Promise<bool>> showExpandedControls() override;
+    std::shared_ptr<Promise<bool>> showIntroductoryOverlay(bool once) override;
     std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override;
     std::shared_ptr<Promise<void>> play() override;
     std::shared_ptr<Promise<void>> pause() override;

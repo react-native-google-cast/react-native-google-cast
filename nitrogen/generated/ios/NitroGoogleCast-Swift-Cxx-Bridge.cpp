@@ -8,6 +8,7 @@
 #include "NitroGoogleCast-Swift-Cxx-Bridge.hpp"
 
 // Include C++ implementation defined types
+#include "HybridCastButtonSpecSwift.hpp"
 #include "HybridCastDebugSpecSwift.hpp"
 #include "HybridCastTransportSpecSwift.hpp"
 #include "NitroGoogleCast-Swift-Cxx-Umbrella.hpp"
@@ -15,6 +16,22 @@
 
 namespace margelo::nitro::googlecast::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<HybridCastButtonSpec>
+  std::shared_ptr<HybridCastButtonSpec> create_std__shared_ptr_HybridCastButtonSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    NitroGoogleCast::HybridCastButtonSpec_cxx swiftPart = NitroGoogleCast::HybridCastButtonSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::googlecast::HybridCastButtonSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridCastButtonSpec_(std__shared_ptr_HybridCastButtonSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::googlecast::HybridCastButtonSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::googlecast::HybridCastButtonSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridCastButtonSpec\" is not implemented in Swift!");
+    }
+    #endif
+    NitroGoogleCast::HybridCastButtonSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
   // pragma MARK: std::shared_ptr<HybridCastDebugSpec>
   std::shared_ptr<HybridCastDebugSpec> create_std__shared_ptr_HybridCastDebugSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     NitroGoogleCast::HybridCastDebugSpec_cxx swiftPart = NitroGoogleCast::HybridCastDebugSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -100,6 +117,14 @@ namespace margelo::nitro::googlecast::bridge::swift {
     auto swiftClosure = NitroGoogleCast::Func_void::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
       swiftClosure.call();
+    };
+  }
+  
+  // pragma MARK: std::function<void(bool /* result */)>
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_bool::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
+      swiftClosure.call(result);
     };
   }
   
