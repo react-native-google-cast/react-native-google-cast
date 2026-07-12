@@ -242,6 +242,22 @@ export class CastSession {
 
     await this.transport.addChannel(namespace)
 
+    if (!this.isActive) {
+      // The session was replaced while the native registration was in flight.
+      // Native re-resolves the current session per call (Invariant 1), so the
+      // channel got registered on the NEW session — while the façade we'd
+      // return is bound to this stale generation and could never remove it
+      // (`remove()` rejects `noSession`), poisoning the namespace for the
+      // whole live session. Undo both sides, then reject.
+      this.store.dispatch({ kind: 'channelRemoved', namespace })
+      void this.transport.removeChannel(namespace).catch(() => {})
+      const error: CastError = {
+        code: 'noSession',
+        message: 'This Cast session has ended.',
+      }
+      throw error
+    }
+
     const channel = new CastChannel(
       this.store,
       this.transport,

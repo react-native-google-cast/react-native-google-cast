@@ -204,4 +204,28 @@ describe('CastChannel — lifecycle (Invariant 3)', () => {
     const fresh = sessionManager.getCurrentCastSession()!
     await expect(fresh.addChannel(NS)).resolves.toBeDefined()
   })
+
+  it('addChannel racing a session REPLACE undoes the registration and rejects noSession', async () => {
+    const { castSession, transport, sessionManager } = await setup()
+    transport.addChannelBehavior = async (ns) => {
+      // The session is replaced while the native registration is in flight;
+      // native (Invariant 1) registers on the NEW session and emits its
+      // initial status there — the slice (live for s2) records the entry.
+      transport.emitLifecycle({ type: 'ended' })
+      transport.emitLifecycle({ type: 'started', session: session('s2') })
+      transport.emitChannelStatus(ns, true, true)
+    }
+    await expect(castSession.addChannel(NS)).rejects.toMatchObject({
+      code: 'noSession',
+    })
+    // The undo freed BOTH sides — otherwise the live session's namespace
+    // would be poisoned (its own addChannel would reject alreadyRegistered
+    // forever, and the stale façade could never remove it).
+    expect(transport.removeChannelCalls).toEqual([NS])
+    transport.addChannelBehavior = async (ns) => {
+      transport.emitChannelStatus(ns, true, true)
+    }
+    const fresh = sessionManager.getCurrentCastSession()!
+    await expect(fresh.addChannel(NS)).resolves.toBeDefined()
+  })
 })

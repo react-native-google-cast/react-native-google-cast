@@ -52,6 +52,17 @@ async function flush() {
   await act(async () => {})
 }
 
+/** Mount inside act() so the initial render/effects are properly flushed. */
+function createProbe(
+  element: React.ReactElement
+): TestRenderer.ReactTestRenderer {
+  let renderer!: TestRenderer.ReactTestRenderer
+  act(() => {
+    renderer = TestRenderer.create(element)
+  })
+  return renderer
+}
+
 beforeEach(async () => {
   latest = null
   transport.addChannelCalls.length = 0
@@ -67,7 +78,7 @@ afterEach(() => {
 
 describe('useCastChannel', () => {
   it('is null with no session and adds the channel once one is live', async () => {
-    const renderer = TestRenderer.create(<Probe namespace={NS} />)
+    const renderer = createProbe(<Probe namespace={NS} />)
     await flush()
     expect(latest).toBeNull()
 
@@ -79,14 +90,12 @@ describe('useCastChannel', () => {
     expect(latest).not.toBeNull()
     expect(latest!.namespace).toBe(NS)
     expect(latest!.connected).toBe(true)
-    renderer.unmount()
+    act(() => renderer.unmount())
   })
 
   it('wires onMessage through the hook', async () => {
     const onMessage = jest.fn()
-    const renderer = TestRenderer.create(
-      <Probe namespace={NS} onMessage={onMessage} />
-    )
+    const renderer = createProbe(<Probe namespace={NS} onMessage={onMessage} />)
     act(() => {
       transport.emitLifecycle({ type: 'started', session: session('s1') })
     })
@@ -95,40 +104,40 @@ describe('useCastChannel', () => {
       transport.emitChannelMessage(NS, 'hi')
     })
     expect(onMessage).toHaveBeenCalledWith('hi')
-    renderer.unmount()
+    act(() => renderer.unmount())
   })
 
   it('removes the channel on unmount', async () => {
-    const renderer = TestRenderer.create(<Probe namespace={NS} />)
+    const renderer = createProbe(<Probe namespace={NS} />)
     act(() => {
       transport.emitLifecycle({ type: 'started', session: session('s1') })
     })
     await flush()
-    renderer.unmount()
+    act(() => renderer.unmount())
     await act(async () => {})
     expect(transport.removeChannelCalls).toEqual([NS])
   })
 
   it('a remount on the same namespace does not self-collide (T1)', async () => {
-    const first = TestRenderer.create(<Probe namespace={NS} />)
+    const first = createProbe(<Probe namespace={NS} />)
     act(() => {
       transport.emitLifecycle({ type: 'started', session: session('s1') })
     })
     await flush()
-    first.unmount()
+    act(() => first.unmount())
     // Immediately remount — remove() frees the namespace synchronously (T1),
     // so the re-add must not reject `alreadyRegistered` against its predecessor.
-    const second = TestRenderer.create(<Probe namespace={NS} />)
+    const second = createProbe(<Probe namespace={NS} />)
     await flush()
     await flush()
     expect(latest).not.toBeNull()
     expect(transport.addChannelCalls).toEqual([NS, NS])
     expect(transport.removeChannelCalls).toEqual([NS])
-    second.unmount()
+    act(() => second.unmount())
   })
 
   it('switches channels when the namespace changes', async () => {
-    const renderer = TestRenderer.create(<Probe namespace={NS} />)
+    const renderer = createProbe(<Probe namespace={NS} />)
     act(() => {
       transport.emitLifecycle({ type: 'started', session: session('s1') })
     })
@@ -141,11 +150,11 @@ describe('useCastChannel', () => {
     expect(transport.removeChannelCalls).toEqual([NS])
     expect(transport.addChannelCalls).toEqual([NS, NS_B])
     expect(latest!.namespace).toBe(NS_B)
-    renderer.unmount()
+    act(() => renderer.unmount())
   })
 
   it('drops to null when the session ends', async () => {
-    const renderer = TestRenderer.create(<Probe namespace={NS} />)
+    const renderer = createProbe(<Probe namespace={NS} />)
     act(() => {
       transport.emitLifecycle({ type: 'started', session: session('s1') })
     })
@@ -156,6 +165,6 @@ describe('useCastChannel', () => {
     })
     await flush()
     expect(latest).toBeNull()
-    renderer.unmount()
+    act(() => renderer.unmount())
   })
 })

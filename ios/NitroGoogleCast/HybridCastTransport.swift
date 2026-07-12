@@ -35,8 +35,9 @@ final class HybridCastTransport: HybridCastTransportSpec {
   private var onChannelStatus: ((String, Bool, Bool) -> Void)?
   // Registered custom channels by namespace (Phase 5.2). The transport owns the
   // single strong reference per channel; cleared explicitly on session
-  // end/suspend/replace and on dispose (A1), so a dead session's channels can
-  // never leak into the next one. Main thread only.
+  // end/suspend and on dispose (A1), so a dead session's channels can never
+  // leak into the next one (a replace is covered too: GCK always ends the old
+  // session before starting its replacement). Main thread only.
   private var channels: [String: CastMessageChannel] = [:]
 
   private var castStateObserver: NSObjectProtocol?

@@ -63,6 +63,9 @@ export class CastChannel {
    * channel (or its session) is gone. iOS reports live values — often `false`
    * right after {@link CastSession.addChannel} (the connection completes
    * asynchronously); Android always reports `true` (register-once, v4 parity).
+   *
+   * A point-in-time read of the store cache, not a reactive value: a component
+   * rendering it does not re-render when the status changes (v4 parity).
    */
   get connected(): boolean | undefined {
     return this.status()?.connected

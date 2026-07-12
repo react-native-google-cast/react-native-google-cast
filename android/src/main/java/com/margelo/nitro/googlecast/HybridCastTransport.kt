@@ -61,7 +61,8 @@ class HybridCastTransport : HybridCastTransportSpec() {
 
   // Registered custom channels by namespace (Phase 5.2). Cleared explicitly on
   // session end/suspend and on dispose (A1) so a dead session's callbacks never
-  // leak into the next one. Main thread only.
+  // leak into the next one (a replace is covered too: GCK always ends the old
+  // session before starting its replacement). Main thread only.
   private val channels = mutableMapOf<String, Cast.MessageReceivedCallback>()
 
   // In-flight sendMessage results, so dispose can cancel them (mirrors

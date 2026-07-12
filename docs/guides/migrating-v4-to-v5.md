@@ -115,7 +115,9 @@ with these changes:
   asynchronously; a `console.warn` flags a receiver with no listener for the
   namespace, as in v4). Android's SDK has no per-channel status callbacks: it
   reports `{connected: true, writable: true}` once at registration and never
-  updates — exactly v4's hardcoded values.
+  updates — exactly v4's hardcoded values. As in v4, the getters are
+  point-in-time reads: rendering `channel.connected` in a component does not
+  re-render when the status changes.
 - **Stale channels reject instead of crashing.** Like `CastSession`, a
   `CastChannel` retained across a disconnect rejects `noSession` on
   `sendMessage` / `remove` (channels are auto-removed with their session), and
