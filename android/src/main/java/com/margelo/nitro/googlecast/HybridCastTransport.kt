@@ -311,7 +311,9 @@ class HybridCastTransport : HybridCastTransportSpec() {
 
   // MARK: - custom channels (Phase 5.2 — registry owned here, Invariant 1 for the session)
 
-  override fun addChannel(namespace: String): Promise<Unit> {
+  // The parameter is named `channelNamespace` (matching the generated spec,
+  // where `namespace` is a C++ keyword); `namespace` stays the local term.
+  override fun addChannel(channelNamespace: String): Promise<Unit> {
     val promise = Promise<Unit>()
     runOnMain {
       val session = sharedCastContextOrNull()?.sessionManager?.currentCastSession
@@ -321,11 +323,11 @@ class HybridCastTransport : HybridCastTransportSpec() {
         )
         return@runOnMain
       }
-      if (channels.containsKey(namespace)) {
+      if (channels.containsKey(channelNamespace)) {
         promise.reject(
           CastRejection(
             castRejectionJson(
-              "alreadyRegistered", "A channel for $namespace is already registered.", null
+              "alreadyRegistered", "A channel for $channelNamespace is already registered.", null
             )
           )
         )
@@ -335,32 +337,32 @@ class HybridCastTransport : HybridCastTransportSpec() {
         onChannelMessage?.invoke(ns, message)
       }
       try {
-        session.setMessageReceivedCallbacks(namespace, callback)
+        session.setMessageReceivedCallbacks(channelNamespace, callback)
       } catch (e: Exception) {
         // setMessageReceivedCallbacks throws IOException / IllegalStateException.
         promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
         return@runOnMain
       }
-      channels[namespace] = callback
+      channels[channelNamespace] = callback
       // Register-once status (v4 parity, A2): the Android SDK has no
       // per-channel connect/writable callbacks, so {true, true} is emitted
       // exactly once at registration and never updated — emitted BEFORE
       // resolving so an awaiting façade reads a populated value.
-      onChannelStatus?.invoke(namespace, true, true)
+      onChannelStatus?.invoke(channelNamespace, true, true)
       promise.resolve(Unit)
     }
     return promise
   }
 
-  override fun removeChannel(namespace: String): Promise<Unit> {
+  override fun removeChannel(channelNamespace: String): Promise<Unit> {
     val promise = Promise<Unit>()
     runOnMain {
-      if (channels.remove(namespace) != null) {
+      if (channels.remove(channelNamespace) != null) {
         // Best-effort: the session may already be gone (its callbacks died
         // with it); unregistering from a live one keeps GCK in sync.
         try {
           sharedCastContextOrNull()?.sessionManager?.currentCastSession
-            ?.removeMessageReceivedCallbacks(namespace)
+            ?.removeMessageReceivedCallbacks(channelNamespace)
         } catch (_: Exception) {}
       }
       promise.resolve(Unit) // idempotent — not-registered resolves
@@ -368,7 +370,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
     return promise
   }
 
-  override fun sendMessage(namespace: String, message: String): Promise<Unit> {
+  override fun sendMessage(channelNamespace: String, message: String): Promise<Unit> {
     val promise = Promise<Unit>()
     runOnMain {
       val session = sharedCastContextOrNull()?.sessionManager?.currentCastSession
@@ -378,11 +380,12 @@ class HybridCastTransport : HybridCastTransportSpec() {
         )
         return@runOnMain
       }
-      if (!channels.containsKey(namespace)) {
+      if (!channels.containsKey(channelNamespace)) {
         promise.reject(
           CastRejection(
             castRejectionJson(
-              "invalidRequest", "No channel registered for $namespace — call addChannel first.",
+              "invalidRequest",
+              "No channel registered for $channelNamespace — call addChannel first.",
               null
             )
           )
@@ -391,7 +394,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
       }
       val pending =
         try {
-          session.sendMessage(namespace, message)
+          session.sendMessage(channelNamespace, message)
         } catch (e: Exception) {
           promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
           return@runOnMain

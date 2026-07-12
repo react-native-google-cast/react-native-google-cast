@@ -27,6 +27,19 @@ describe('parseCastError (critical-gap #12 translation)', () => {
     expect(parseCastError(raw)).toEqual({ code: 'cancelled', nativeCode: 3 })
   })
 
+  it('parses the P5.2 alreadyRegistered rejection (native register-once guard)', () => {
+    const raw = new Error(
+      JSON.stringify({
+        code: 'alreadyRegistered',
+        message: 'A channel for urn:x-cast:x is already registered.',
+      })
+    )
+    expect(parseCastError(raw)).toEqual({
+      code: 'alreadyRegistered',
+      message: 'A channel for urn:x-cast:x is already registered.',
+    })
+  })
+
   it('falls back to "failed" with the raw message for unknown codes', () => {
     const raw = new Error(JSON.stringify({ code: 'banana' }))
     expect(parseCastError(raw)).toEqual({
