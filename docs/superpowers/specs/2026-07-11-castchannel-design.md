@@ -206,6 +206,38 @@ All three drift surfaces updated in lockstep + `yarn nitrogen`. **Barrier**: 2b/
 - **`v5-8me.9` (2d)** — Android `Cast.MessageReceivedCallback` + registry + the
   register-once `onChannelStatus(true,true)`.
 
+## Eng-review amendments (2026-07-12)
+
+Accepted findings from `/plan-eng-review`, folded into the implementation plan
+(`docs/superpowers/plans/2026-07-12-castchannel-implementation.md`):
+
+- **A1 — explicit native registry lifecycle.** "Implicitly cleared on teardown"
+  is upgraded to explicit: `HybridCastTransport` clears its channel registry on
+  session end/suspend/replace and on dispose (mirroring the shipped
+  `attachMediaCallback`/`detachMediaCallback` discipline). The app re-adds
+  channels on the new session, per the v4 guide.
+- **A2 — real initial status + v4 warning.** The initial `onChannelStatus`
+  emitted before `addChannel` resolves carries the **real** GCK value — on iOS
+  `connected` is often still `false` right after `add(channel:)` (the virtual
+  connection completes asynchronously); Android is `{true, true}`. The line
+  above stating the façade "sees a populated value" means *populated*, not
+  *true*. TS `addChannel` replicates v4's `console.warn` when the channel is
+  not connected after resolve (the load-bearing hint for an unwired receiver).
+- **C1 — `KeyedBus<K, V>`.** The channel message bus and the existing lifecycle
+  bus share identical mechanics; one generic keyed multi-handler bus
+  (subscribe→unsubscribe, copy-on-emit) backs both. The lifecycle-bus retrofit
+  is behavior-preserving and covered by the existing store tests.
+- **T1 — duplicate-namespace rejection.** `addChannel` on an already-registered
+  namespace rejects a new typed `CastError` code **`alreadyRegistered`** with a
+  remove-first message (v4: register-once). Registration presence is tracked in
+  `channel.slice`; a new TS-only `channelRemoved` StoreEvent deletes the entry.
+  `CastChannel.remove()` dispatches it **synchronously, before** the bridge
+  call, so an immediate re-add (a `useCastChannel` remount) passes the
+  register-once check without awaiting the removal — native ordering stays
+  safe because the main-thread queue processes the remove before the re-add.
+- **2d minor — `sendMessage` awaits its `PendingResult<Status>`** and rejects a
+  typed `CastError` on non-success (no fire-and-forget).
+
 ## Non-goals / deferred
 
 - No message-envelope struct / binary messages (string bridge only).
