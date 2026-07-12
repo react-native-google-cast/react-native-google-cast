@@ -21,6 +21,7 @@ import {
   sessionSlice,
 } from './session.slice'
 import { mediaSlice } from './media.slice'
+import { KeyedBus } from './keyedBus'
 
 export type { StoreSession }
 
@@ -82,9 +83,9 @@ export class CastStore {
   private readonly slices: RegisteredSlice[] = []
   private readonly states = new Map<string, unknown>()
   private readonly subscribers = new Set<() => void>()
-  private readonly busHandlers = new Map<
+  private readonly lifecycleBus = new KeyedBus<
     SessionEventType,
-    Set<(event: SessionLifecycleEvent) => void>
+    SessionLifecycleEvent
   >()
 
   private snapshot: CastSnapshot
@@ -146,15 +147,7 @@ export class CastStore {
     handler: (event: SessionLifecycleEvent) => void
   ): () => void {
     if (this.disposed) return () => {}
-    let handlers = this.busHandlers.get(type)
-    if (!handlers) {
-      handlers = new Set()
-      this.busHandlers.set(type, handlers)
-    }
-    handlers.add(handler)
-    return () => {
-      handlers!.delete(handler)
-    }
+    return this.lifecycleBus.subscribe(type, handler)
   }
 
   // --- mutation entry (P4/P5 feed their native events here too) ---
@@ -187,7 +180,7 @@ export class CastStore {
       // teardown is best-effort; never throw out of dispose
     }
     this.subscribers.clear()
-    this.busHandlers.clear()
+    this.lifecycleBus.clear()
   }
 
   /** Register an extra slice. Only valid before init has streamed any events. */
@@ -236,9 +229,7 @@ export class CastStore {
   }
 
   private emit(event: SessionLifecycleEvent): void {
-    const handlers = this.busHandlers.get(event.type)
-    if (!handlers) return
-    for (const handler of [...handlers]) handler(event)
+    this.lifecycleBus.emit(event.type, event)
   }
 
   private seedAll(snapshot: InitialSnapshot): void {
