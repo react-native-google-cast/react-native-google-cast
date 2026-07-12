@@ -58,6 +58,9 @@ channel.onMessage(message => { ... })
 channel.offMessage()
 ```
 
+> The message is always delivered as the **raw string** received from the
+> receiver — if your receiver sends JSON, parse it with `JSON.parse(message)`.
+
 When you no longer need the channel, you can remove it:
 
 ```ts
