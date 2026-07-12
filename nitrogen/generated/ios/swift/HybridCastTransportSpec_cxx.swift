@@ -144,7 +144,7 @@ open class HybridCastTransportSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func initAndSubscribe(onState: bridge.Func_void_CastState, onDevices: bridge.Func_void_std__vector_Device_, onLifecycle: bridge.Func_void_SessionLifecycleEvent, onMediaStatus: bridge.Func_void_MediaStatus) -> bridge.Result_std__shared_ptr_Promise_InitialSnapshot___ {
+  public final func initAndSubscribe(onState: bridge.Func_void_CastState, onDevices: bridge.Func_void_std__vector_Device_, onLifecycle: bridge.Func_void_SessionLifecycleEvent, onMediaStatus: bridge.Func_void_MediaStatus, onChannelMessage: bridge.Func_void_std__string_std__string, onChannelStatus: bridge.Func_void_std__string_bool_bool) -> bridge.Result_std__shared_ptr_Promise_InitialSnapshot___ {
     do {
       let __result = try self.__implementation.initAndSubscribe(onState: { () -> (CastState) -> Void in
         let __wrappedFunction = bridge.wrap_Func_void_CastState(onState)
@@ -171,6 +171,16 @@ open class HybridCastTransportSpec_cxx {
         let __wrappedFunction = bridge.wrap_Func_void_MediaStatus(onMediaStatus)
         return { (__status: MediaStatus) -> Void in
           __wrappedFunction.call(__status)
+        }
+      }(), onChannelMessage: { () -> (String, String) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_std__string_std__string(onChannelMessage)
+        return { (__namespace: String, __message: String) -> Void in
+          __wrappedFunction.call(std.string(__namespace), std.string(__message))
+        }
+      }(), onChannelStatus: { () -> (String, Bool, Bool) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_std__string_bool_bool(onChannelStatus)
+        return { (__namespace: String, __connected: Bool, __writable: Bool) -> Void in
+          __wrappedFunction.call(std.string(__namespace), __connected, __writable)
         }
       }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_InitialSnapshot__ in
@@ -249,6 +259,63 @@ open class HybridCastTransportSpec_cxx {
   public final func setDeviceMuted(muted: Bool) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
       let __result = try self.__implementation.setDeviceMuted(muted: muted)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func addChannel(namespace: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+    do {
+      let __result = try self.__implementation.addChannel(namespace: String(namespace))
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func removeChannel(namespace: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+    do {
+      let __result = try self.__implementation.removeChannel(namespace: String(namespace))
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func sendMessage(namespace: std.string, message: std.string) -> bridge.Result_std__shared_ptr_Promise_void___ {
+    do {
+      let __result = try self.__implementation.sendMessage(namespace: String(namespace), message: String(message))
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)

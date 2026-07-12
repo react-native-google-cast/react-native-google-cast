@@ -34,8 +34,22 @@ export const castTransport: CastTransportApi = {
     return hybrid.isPassiveScan
   },
 
-  initAndSubscribe: (onState, onDevices, onLifecycle, onMediaStatus) =>
-    hybrid.initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus),
+  initAndSubscribe: (
+    onState,
+    onDevices,
+    onLifecycle,
+    onMediaStatus,
+    onChannelMessage,
+    onChannelStatus
+  ) =>
+    hybrid.initAndSubscribe(
+      onState,
+      onDevices,
+      onLifecycle,
+      onMediaStatus,
+      onChannelMessage,
+      onChannelStatus
+    ),
 
   startSession: (deviceId) => mutate(() => hybrid.startSession(deviceId)),
   endCurrentSession: (stopCasting) =>
@@ -44,6 +58,12 @@ export const castTransport: CastTransportApi = {
   // CastSession device volume/mute — same error-translation wrapper.
   setDeviceVolume: (volume) => mutate(() => hybrid.setDeviceVolume(volume)),
   setDeviceMuted: (muted) => mutate(() => hybrid.setDeviceMuted(muted)),
+
+  // Custom channels — same error-translation wrapper.
+  addChannel: (namespace) => mutate(() => hybrid.addChannel(namespace)),
+  removeChannel: (namespace) => mutate(() => hybrid.removeChannel(namespace)),
+  sendMessage: (namespace, message) =>
+    mutate(() => hybrid.sendMessage(namespace, message)),
 
   // RemoteMediaClient mutations — same error-translation wrapper as sessions.
   loadMedia: (request) => mutate(() => hybrid.loadMedia(request)),

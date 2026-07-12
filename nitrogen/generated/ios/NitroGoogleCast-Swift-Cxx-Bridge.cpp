@@ -79,6 +79,22 @@ namespace margelo::nitro::googlecast::bridge::swift {
     };
   }
   
+  // pragma MARK: std::function<void(const std::string& /* namespace */, const std::string& /* message */)>
+  Func_void_std__string_std__string create_Func_void_std__string_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_std__string_std__string::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::string& namespace, const std::string& message) mutable -> void {
+      swiftClosure.call(namespace, message);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>
+  Func_void_std__string_bool_bool create_Func_void_std__string_bool_bool(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_std__string_bool_bool::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::string& namespace, bool connected, bool writable) mutable -> void {
+      swiftClosure.call(namespace, connected, writable);
+    };
+  }
+  
   // pragma MARK: std::function<void()>
   Func_void create_Func_void(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroGoogleCast::Func_void::fromUnsafe(swiftClosureWrapper);

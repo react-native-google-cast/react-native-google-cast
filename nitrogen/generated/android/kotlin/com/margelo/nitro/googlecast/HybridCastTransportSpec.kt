@@ -39,12 +39,12 @@ abstract class HybridCastTransportSpec: HybridObject() {
   abstract val isPassiveScan: Boolean
 
   // Methods
-  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus) -> Unit): Promise<InitialSnapshot>
+  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus) -> Unit, onChannelMessage: (namespace: String, message: String) -> Unit, onChannelStatus: (namespace: String, connected: Boolean, writable: Boolean) -> Unit): Promise<InitialSnapshot>
   
   @DoNotStrip
   @Keep
-  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent, onMediaStatus: Func_void_MediaStatus): Promise<InitialSnapshot> {
-    val __result = initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus)
+  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent, onMediaStatus: Func_void_MediaStatus, onChannelMessage: Func_void_std__string_std__string, onChannelStatus: Func_void_std__string_bool_bool): Promise<InitialSnapshot> {
+    val __result = initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus, onChannelMessage, onChannelStatus)
     return __result
   }
   
@@ -63,6 +63,18 @@ abstract class HybridCastTransportSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun setDeviceMuted(muted: Boolean): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun addChannel(namespace: String): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun removeChannel(namespace: String): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun sendMessage(namespace: String, message: String): Promise<Unit>
   
   @DoNotStrip
   @Keep

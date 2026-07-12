@@ -22,6 +22,9 @@ namespace margelo::nitro::googlecast {
       prototype.registerHybridMethod("endCurrentSession", &HybridCastTransportSpec::endCurrentSession);
       prototype.registerHybridMethod("setDeviceVolume", &HybridCastTransportSpec::setDeviceVolume);
       prototype.registerHybridMethod("setDeviceMuted", &HybridCastTransportSpec::setDeviceMuted);
+      prototype.registerHybridMethod("addChannel", &HybridCastTransportSpec::addChannel);
+      prototype.registerHybridMethod("removeChannel", &HybridCastTransportSpec::removeChannel);
+      prototype.registerHybridMethod("sendMessage", &HybridCastTransportSpec::sendMessage);
       prototype.registerHybridMethod("loadMedia", &HybridCastTransportSpec::loadMedia);
       prototype.registerHybridMethod("play", &HybridCastTransportSpec::play);
       prototype.registerHybridMethod("pause", &HybridCastTransportSpec::pause);

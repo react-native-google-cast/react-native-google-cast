@@ -41,6 +41,8 @@ public extension CastErrorCode {
         self = .notallowed
       case "appNotFound":
         self = .appnotfound
+      case "alreadyRegistered":
+        self = .alreadyregistered
       default:
         return nil
     }
@@ -75,6 +77,8 @@ public extension CastErrorCode {
         return "notAllowed"
       case .appnotfound:
         return "appNotFound"
+      case .alreadyregistered:
+        return "alreadyRegistered"
     }
   }
 }

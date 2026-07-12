@@ -41,6 +41,7 @@ namespace margelo::nitro::googlecast {
     AUTHENTICATION      SWIFT_NAME(authentication) = 9,
     NOTALLOWED      SWIFT_NAME(notallowed) = 10,
     APPNOTFOUND      SWIFT_NAME(appnotfound) = 11,
+    ALREADYREGISTERED      SWIFT_NAME(alreadyregistered) = 12,
   } CLOSED_ENUM;
 
 } // namespace margelo::nitro::googlecast
@@ -65,6 +66,7 @@ namespace margelo::nitro {
         case hashString("authentication"): return margelo::nitro::googlecast::CastErrorCode::AUTHENTICATION;
         case hashString("notAllowed"): return margelo::nitro::googlecast::CastErrorCode::NOTALLOWED;
         case hashString("appNotFound"): return margelo::nitro::googlecast::CastErrorCode::APPNOTFOUND;
+        case hashString("alreadyRegistered"): return margelo::nitro::googlecast::CastErrorCode::ALREADYREGISTERED;
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert \"" + unionValue + "\" to enum CastErrorCode - invalid value!");
       }
@@ -83,6 +85,7 @@ namespace margelo::nitro {
         case margelo::nitro::googlecast::CastErrorCode::AUTHENTICATION: return JSIConverter<std::string>::toJSI(runtime, "authentication");
         case margelo::nitro::googlecast::CastErrorCode::NOTALLOWED: return JSIConverter<std::string>::toJSI(runtime, "notAllowed");
         case margelo::nitro::googlecast::CastErrorCode::APPNOTFOUND: return JSIConverter<std::string>::toJSI(runtime, "appNotFound");
+        case margelo::nitro::googlecast::CastErrorCode::ALREADYREGISTERED: return JSIConverter<std::string>::toJSI(runtime, "alreadyRegistered");
         default: [[unlikely]]
           throw std::invalid_argument("Cannot convert CastErrorCode to JS - invalid value: "
                                     + std::to_string(static_cast<int>(arg)) + "!");
@@ -106,6 +109,7 @@ namespace margelo::nitro {
         case hashString("authentication"):
         case hashString("notAllowed"):
         case hashString("appNotFound"):
+        case hashString("alreadyRegistered"):
           return true;
         default:
           return false;

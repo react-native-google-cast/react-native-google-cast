@@ -214,7 +214,9 @@ export class CastStore {
         (castState) => this.dispatch({ kind: 'state', castState }),
         (devices) => this.dispatch({ kind: 'devices', devices }),
         (event) => this.dispatchLifecycle(event),
-        (status) => this.dispatch({ kind: 'mediaStatus', status })
+        (status) => this.dispatch({ kind: 'mediaStatus', status }),
+        () => {}, // onChannelMessage — wired to the channel message bus in 5.2b
+        () => {} // onChannelStatus — dispatched as `channelStatus` in 5.2b
       )
       this.seedAll(snapshot)
     } catch {

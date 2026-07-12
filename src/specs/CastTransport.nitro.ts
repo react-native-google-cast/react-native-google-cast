@@ -37,7 +37,13 @@ export interface CastTransport
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
-    onMediaStatus: (status: MediaStatus) => void
+    onMediaStatus: (status: MediaStatus) => void,
+    onChannelMessage: (namespace: string, message: string) => void,
+    onChannelStatus: (
+      namespace: string,
+      connected: boolean,
+      writable: boolean
+    ) => void
   ): Promise<InitialSnapshot>
 
   startSession(deviceId: string): Promise<void>
@@ -50,6 +56,13 @@ export interface CastTransport
   // `standbyStateChanged` / `activeInputStateChanged` lifecycle events.
   setDeviceVolume(volume: number): Promise<void>
   setDeviceMuted(muted: boolean): Promise<void>
+
+  // Custom channel surface (Phase 5.2) — string-only bridge; mirrors
+  // `CastTransportApi` (drift guard in `__fakes__/FakeCastTransport.ts`).
+  // Inbound messages/status stream via `onChannelMessage` / `onChannelStatus`.
+  addChannel(namespace: string): Promise<void>
+  removeChannel(namespace: string): Promise<void>
+  sendMessage(namespace: string, message: string): Promise<void>
 
   // RemoteMediaClient mutation surface (Phase 4) — mirrors `CastTransportApi`;
   // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these

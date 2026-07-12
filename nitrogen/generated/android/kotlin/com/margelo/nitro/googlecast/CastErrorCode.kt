@@ -27,7 +27,8 @@ enum class CastErrorCode(@DoNotStrip @Keep val value: Int) {
   INVALIDREQUEST(8),
   AUTHENTICATION(9),
   NOTALLOWED(10),
-  APPNOTFOUND(11);
+  APPNOTFOUND(11),
+  ALREADYREGISTERED(12);
 
   companion object
 }

@@ -78,6 +78,9 @@ namespace margelo::nitro::googlecast {
         case CastErrorCode::APPNOTFOUND:
           static const auto fieldAPPNOTFOUND = clazz->getStaticField<JCastErrorCode>("APPNOTFOUND");
           return clazz->getStaticFieldValue(fieldAPPNOTFOUND);
+        case CastErrorCode::ALREADYREGISTERED:
+          static const auto fieldALREADYREGISTERED = clazz->getStaticField<JCastErrorCode>("ALREADYREGISTERED");
+          return clazz->getStaticFieldValue(fieldALREADYREGISTERED);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");

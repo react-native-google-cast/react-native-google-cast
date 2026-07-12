@@ -166,15 +166,22 @@ export interface CastTransportApi {
 
   /**
    * Attach the native GCK observers and atomically return the initial snapshot.
-   * Call exactly once for the transport's lifetime. The three callbacks are
-   * persistent: cast-state changes, device-list changes, and the ordered
-   * session-lifecycle stream. Resolves after observers are live.
+   * Call exactly once for the transport's lifetime. The callbacks are
+   * persistent: cast-state changes, device-list changes, the ordered
+   * session-lifecycle stream, media-status pushes, and the custom-channel
+   * message/status streams. Resolves after observers are live.
    */
   initAndSubscribe(
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
-    onMediaStatus: (status: MediaStatus) => void
+    onMediaStatus: (status: MediaStatus) => void,
+    onChannelMessage: (namespace: string, message: string) => void,
+    onChannelStatus: (
+      namespace: string,
+      connected: boolean,
+      writable: boolean
+    ) => void
   ): Promise<InitialSnapshot>
 
   /**
@@ -206,6 +213,35 @@ export interface CastTransportApi {
   setDeviceVolume(volume: number): Promise<void>
   /** Mute/unmute the active session's device output. */
   setDeviceMuted(muted: boolean): Promise<void>
+
+  // --- Custom channel surface (Phase 5.2) ---
+  //
+  // v4-parity custom namespaces (`urn:x-cast:…`). String-only bridge: messages
+  // cross as plain strings both ways (objects are JSON.stringified in the TS
+  // façade; inbound is the raw string GCK produced). Registration is
+  // register-once per namespace (duplicate → `alreadyRegistered`; enforced in
+  // the TS façade, re-checked natively). Each call re-resolves the current
+  // session (Invariant 1); no live session rejects `noSession`. Inbound
+  // messages and connection status stream back through the `onChannelMessage`
+  // / `onChannelStatus` callbacks — messages are transient (never replayed,
+  // never in the snapshot); status is state (the channel slice). The native
+  // registry is cleared explicitly on session end/suspend/replace (A1).
+
+  /**
+   * Register a custom channel for `namespace` on the active session. Native
+   * emits the initial `onChannelStatus` for the namespace *before* this
+   * resolves, so an awaiting caller reads a populated status. The initial
+   * status carries the real platform value: on iOS `connected` is often still
+   * `false` immediately after registration (the virtual connection completes
+   * asynchronously and streams an update when it does); Android reports
+   * `{connected: true, writable: true}` once and never updates it (its SDK
+   * has no per-channel status callbacks — v4 parity).
+   */
+  addChannel(namespace: string): Promise<void>
+  /** Unregister the custom channel for `namespace`. Resolves if not registered. */
+  removeChannel(namespace: string): Promise<void>
+  /** Send a message on the custom channel for `namespace` (must be registered). */
+  sendMessage(namespace: string, message: string): Promise<void>
 
   // --- RemoteMediaClient mutation surface (Phase 4) ---
   //

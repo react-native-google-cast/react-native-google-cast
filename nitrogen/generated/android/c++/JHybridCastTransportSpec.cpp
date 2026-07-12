@@ -180,6 +180,8 @@ namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 #include "JMediaQueueItem.hpp"
 #include "MediaRepeatMode.hpp"
 #include "JMediaRepeatMode.hpp"
+#include "JFunc_void_std__string_std__string.hpp"
+#include "JFunc_void_std__string_bool_bool.hpp"
 #include "MediaLoadRequest.hpp"
 #include "JMediaLoadRequest.hpp"
 #include "MediaQueueData.hpp"
@@ -242,9 +244,9 @@ namespace margelo::nitro::googlecast {
   }
 
   // Methods
-  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */, jni::alias_ref<JFunc_void_MediaStatus::javaobject> /* onMediaStatus */)>("initAndSubscribe_cxx");
-    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle), JFunc_void_MediaStatus_cxx::fromCpp(onMediaStatus));
+  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */, jni::alias_ref<JFunc_void_MediaStatus::javaobject> /* onMediaStatus */, jni::alias_ref<JFunc_void_std__string_std__string::javaobject> /* onChannelMessage */, jni::alias_ref<JFunc_void_std__string_bool_bool::javaobject> /* onChannelStatus */)>("initAndSubscribe_cxx");
+    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle), JFunc_void_MediaStatus_cxx::fromCpp(onMediaStatus), JFunc_void_std__string_std__string_cxx::fromCpp(onChannelMessage), JFunc_void_std__string_bool_bool_cxx::fromCpp(onChannelStatus));
     return [&]() {
       auto __promise = Promise<InitialSnapshot>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
@@ -306,6 +308,51 @@ namespace margelo::nitro::googlecast {
   std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setDeviceMuted(bool muted) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* muted */)>("setDeviceMuted");
     auto __result = method(_javaPart, muted);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::addChannel(const std::string& namespace) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* namespace */)>("addChannel");
+    auto __result = method(_javaPart, jni::make_jstring(namespace));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::removeChannel(const std::string& namespace) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* namespace */)>("removeChannel");
+    auto __result = method(_javaPart, jni::make_jstring(namespace));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::sendMessage(const std::string& namespace, const std::string& message) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* namespace */, jni::alias_ref<jni::JString> /* message */)>("sendMessage");
+    auto __result = method(_javaPart, jni::make_jstring(namespace), jni::make_jstring(message));
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

@@ -21,6 +21,8 @@
 #include "JFunc_void_std__vector_Device_.hpp"
 #include "JFunc_void_SessionLifecycleEvent.hpp"
 #include "JFunc_void_MediaStatus.hpp"
+#include "JFunc_void_std__string_std__string.hpp"
+#include "JFunc_void_std__string_bool_bool.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::googlecast {
@@ -59,6 +61,8 @@ void registerAllNatives() {
   margelo::nitro::googlecast::JFunc_void_std__vector_Device__cxx::registerNatives();
   margelo::nitro::googlecast::JFunc_void_SessionLifecycleEvent_cxx::registerNatives();
   margelo::nitro::googlecast::JFunc_void_MediaStatus_cxx::registerNatives();
+  margelo::nitro::googlecast::JFunc_void_std__string_std__string_cxx::registerNatives();
+  margelo::nitro::googlecast::JFunc_void_std__string_bool_bool_cxx::registerNatives();
 
   // Register Nitro Hybrid Objects
   HybridObjectRegistry::registerHybridObjectConstructor(

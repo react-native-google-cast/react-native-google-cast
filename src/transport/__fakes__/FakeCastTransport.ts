@@ -58,6 +58,10 @@ export class FakeCastTransport implements CastTransportApi {
   /** Recorded device volume/mute setter calls (Phase 5), in call order. */
   readonly setDeviceVolumeCalls: number[] = []
   readonly setDeviceMutedCalls: boolean[] = []
+  /** Recorded custom-channel calls (Phase 5.2), in call order. */
+  readonly addChannelCalls: string[] = []
+  readonly removeChannelCalls: string[] = []
+  readonly sendMessageCalls: Array<{ namespace: string; message: string }> = []
 
   /**
    * Recorded media-mutation calls, keyed by method name, in call order. Each
@@ -77,6 +81,22 @@ export class FakeCastTransport implements CastTransportApi {
   setDeviceMutedBehavior: (muted: boolean) => Promise<void> = async () => {}
 
   /**
+   * Scriptable channel behaviour. The default `addChannel` mirrors the native
+   * contract — it emits the initial `onChannelStatus` for the namespace
+   * *before* resolving (here the Android register-once `{true, true}` shape).
+   * Override to script the iOS not-yet-connected case:
+   * `t.addChannelBehavior = async (ns) => { t.emitChannelStatus(ns, false, false) }`.
+   */
+  addChannelBehavior: (namespace: string) => Promise<void> = async (
+    namespace
+  ) => {
+    this.emitChannelStatus(namespace, true, true)
+  }
+  removeChannelBehavior: (namespace: string) => Promise<void> = async () => {}
+  sendMessageBehavior: (namespace: string, message: string) => Promise<void> =
+    async () => {}
+
+  /**
    * Scriptable behaviour for every media mutation, keyed by method name.
    * Defaults to resolve; override to reject a specific call:
    * `t.mediaBehavior.seek = async () => { throw { code: 'noSession' } }`.
@@ -89,6 +109,12 @@ export class FakeCastTransport implements CastTransportApi {
   private onDevices?: (devices: Device[]) => void
   private onLifecycle?: (event: SessionLifecycleEvent) => void
   private onMediaStatus?: (status: MediaStatus) => void
+  private onChannelMessage?: (namespace: string, message: string) => void
+  private onChannelStatus?: (
+    namespace: string,
+    connected: boolean,
+    writable: boolean
+  ) => void
 
   /** Record a media mutation and run its scripted behaviour (resolve default). */
   private media(method: string, ...args: unknown[]): Promise<void> {
@@ -108,13 +134,21 @@ export class FakeCastTransport implements CastTransportApi {
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
-    onMediaStatus: (status: MediaStatus) => void
+    onMediaStatus: (status: MediaStatus) => void,
+    onChannelMessage: (namespace: string, message: string) => void,
+    onChannelStatus: (
+      namespace: string,
+      connected: boolean,
+      writable: boolean
+    ) => void
   ): Promise<InitialSnapshot> {
     this.initCount++
     this.onState = onState
     this.onDevices = onDevices
     this.onLifecycle = onLifecycle
     this.onMediaStatus = onMediaStatus
+    this.onChannelMessage = onChannelMessage
+    this.onChannelStatus = onChannelStatus
     return this.snapshot
   }
 
@@ -138,6 +172,23 @@ export class FakeCastTransport implements CastTransportApi {
   async setDeviceMuted(muted: boolean): Promise<void> {
     this.setDeviceMutedCalls.push(muted)
     return this.setDeviceMutedBehavior(muted)
+  }
+
+  // --- Custom channel surface (Phase 5.2) ---
+
+  async addChannel(namespace: string): Promise<void> {
+    this.addChannelCalls.push(namespace)
+    return this.addChannelBehavior(namespace)
+  }
+
+  async removeChannel(namespace: string): Promise<void> {
+    this.removeChannelCalls.push(namespace)
+    return this.removeChannelBehavior(namespace)
+  }
+
+  async sendMessage(namespace: string, message: string): Promise<void> {
+    this.sendMessageCalls.push({ namespace, message })
+    return this.sendMessageBehavior(namespace, message)
   }
 
   // --- RemoteMediaClient mutation surface (records + scriptable behaviour) ---
@@ -223,6 +274,8 @@ export class FakeCastTransport implements CastTransportApi {
     this.onDevices = undefined
     this.onLifecycle = undefined
     this.onMediaStatus = undefined
+    this.onChannelMessage = undefined
+    this.onChannelStatus = undefined
   }
 
   // --- test scripting helpers (not part of CastTransportApi) ---
@@ -245,6 +298,20 @@ export class FakeCastTransport implements CastTransportApi {
   /** Emit a media-status update to the subscribed store. */
   emitMediaStatus(status: MediaStatus): void {
     this.onMediaStatus?.(status)
+  }
+
+  /** Emit an inbound custom-channel message to the subscribed store. */
+  emitChannelMessage(namespace: string, message: string): void {
+    this.onChannelMessage?.(namespace, message)
+  }
+
+  /** Emit a custom-channel status update to the subscribed store. */
+  emitChannelStatus(
+    namespace: string,
+    connected: boolean,
+    writable: boolean
+  ): void {
+    this.onChannelStatus?.(namespace, connected, writable)
   }
 }
 

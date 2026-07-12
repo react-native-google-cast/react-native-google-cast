@@ -189,6 +189,8 @@ describe('FakeCastTransport — media mutation recording', () => {
       () => {},
       () => {},
       () => {},
+      () => {},
+      () => {},
       () => {}
     )
 

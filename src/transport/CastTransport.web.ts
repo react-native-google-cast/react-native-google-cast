@@ -35,6 +35,10 @@ export const castTransport: CastTransportApi = {
   setDeviceVolume: unsupported,
   setDeviceMuted: unsupported,
 
+  addChannel: unsupported,
+  removeChannel: unsupported,
+  sendMessage: unsupported,
+
   loadMedia: unsupported,
   play: unsupported,
   pause: unsupported,

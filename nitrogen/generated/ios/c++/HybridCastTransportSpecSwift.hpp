@@ -207,8 +207,8 @@ namespace margelo::nitro::googlecast {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus) override {
-      auto __result = _swiftPart.initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus);
+    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* namespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* namespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) override {
+      auto __result = _swiftPart.initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus, onChannelMessage, onChannelStatus);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
@@ -241,6 +241,30 @@ namespace margelo::nitro::googlecast {
     }
     inline std::shared_ptr<Promise<void>> setDeviceMuted(bool muted) override {
       auto __result = _swiftPart.setDeviceMuted(std::forward<decltype(muted)>(muted));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> addChannel(const std::string& namespace) override {
+      auto __result = _swiftPart.addChannel(namespace);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> removeChannel(const std::string& namespace) override {
+      auto __result = _swiftPart.removeChannel(namespace);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> sendMessage(const std::string& namespace, const std::string& message) override {
+      auto __result = _swiftPart.sendMessage(namespace, message);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

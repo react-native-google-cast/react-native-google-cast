@@ -33,6 +33,8 @@ export type CastErrorCode =
   | 'notAllowed'
   /** The requested Cast application could not be found or is not running. */
   | 'appNotFound'
+  /** A custom channel for this namespace is already registered (channels are register-once). */
+  | 'alreadyRegistered'
 
 /**
  * Structured error returned by async Cast operations.

@@ -15,11 +15,14 @@ public protocol HybridCastTransportSpec_protocol: HybridObject {
   var isPassiveScan: Bool { get }
 
   // Methods
-  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void, onMediaStatus: @escaping (_ status: MediaStatus) -> Void) throws -> Promise<InitialSnapshot>
+  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void, onMediaStatus: @escaping (_ status: MediaStatus) -> Void, onChannelMessage: @escaping (_ namespace: String, _ message: String) -> Void, onChannelStatus: @escaping (_ namespace: String, _ connected: Bool, _ writable: Bool) -> Void) throws -> Promise<InitialSnapshot>
   func startSession(deviceId: String) throws -> Promise<Void>
   func endCurrentSession(stopCasting: Bool) throws -> Promise<Void>
   func setDeviceVolume(volume: Double) throws -> Promise<Void>
   func setDeviceMuted(muted: Bool) throws -> Promise<Void>
+  func addChannel(namespace: String) throws -> Promise<Void>
+  func removeChannel(namespace: String) throws -> Promise<Void>
+  func sendMessage(namespace: String, message: String) throws -> Promise<Void>
   func loadMedia(request: MediaLoadRequest) throws -> Promise<Void>
   func play() throws -> Promise<Void>
   func pause() throws -> Promise<Void>
