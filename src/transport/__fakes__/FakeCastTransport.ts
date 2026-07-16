@@ -66,6 +66,8 @@ export class FakeCastTransport implements CastTransportApi {
   showCastDialogCalls = 0
   showExpandedControlsCalls = 0
   readonly showIntroductoryOverlayCalls: boolean[] = []
+  /** Recorded Play-Services-dialog calls (Phase 6.2): the errorCode values. */
+  readonly showPlayServicesErrorDialogCalls: number[] = []
 
   /**
    * Recorded media-mutation calls, keyed by method name, in call order. Each
@@ -104,6 +106,8 @@ export class FakeCastTransport implements CastTransportApi {
   showCastDialogBehavior: () => Promise<boolean> = async () => true
   showExpandedControlsBehavior: () => Promise<boolean> = async () => true
   showIntroductoryOverlayBehavior: (once: boolean) => Promise<boolean> =
+    async () => true
+  showPlayServicesErrorDialogBehavior: (errorCode: number) => Promise<boolean> =
     async () => true
 
   /**
@@ -216,6 +220,13 @@ export class FakeCastTransport implements CastTransportApi {
   async showIntroductoryOverlay(once: boolean): Promise<boolean> {
     this.showIntroductoryOverlayCalls.push(once)
     return this.showIntroductoryOverlayBehavior(once)
+  }
+
+  // --- Cast setup / diagnostics UI (Phase 6.2) ---
+
+  async showPlayServicesErrorDialog(errorCode: number): Promise<boolean> {
+    this.showPlayServicesErrorDialogCalls.push(errorCode)
+    return this.showPlayServicesErrorDialogBehavior(errorCode)
   }
 
   // --- RemoteMediaClient mutation surface (records + scriptable behaviour) ---

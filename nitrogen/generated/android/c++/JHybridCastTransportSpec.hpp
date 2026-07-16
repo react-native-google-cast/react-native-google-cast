@@ -67,6 +67,7 @@ namespace margelo::nitro::googlecast {
     std::shared_ptr<Promise<bool>> showCastDialog() override;
     std::shared_ptr<Promise<bool>> showExpandedControls() override;
     std::shared_ptr<Promise<bool>> showIntroductoryOverlay(bool once) override;
+    std::shared_ptr<Promise<bool>> showPlayServicesErrorDialog(double errorCode) override;
     std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override;
     std::shared_ptr<Promise<void>> play() override;
     std::shared_ptr<Promise<void>> pause() override;

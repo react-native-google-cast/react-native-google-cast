@@ -90,6 +90,10 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
+  abstract fun showPlayServicesErrorDialog(errorCode: Double): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
   abstract fun loadMedia(request: MediaLoadRequest): Promise<Unit>
   
   @DoNotStrip

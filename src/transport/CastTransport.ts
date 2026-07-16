@@ -71,6 +71,10 @@ export const castTransport: CastTransportApi = {
   showIntroductoryOverlay: (once) =>
     mutate(() => hybrid.showIntroductoryOverlay(once)),
 
+  // Play Services diagnostics dialog — same error-translation wrapper.
+  showPlayServicesErrorDialog: (errorCode) =>
+    mutate(() => hybrid.showPlayServicesErrorDialog(errorCode)),
+
   // RemoteMediaClient mutations — same error-translation wrapper as sessions.
   loadMedia: (request) => mutate(() => hybrid.loadMedia(request)),
   play: () => mutate(() => hybrid.play()),

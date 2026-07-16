@@ -295,6 +295,14 @@ namespace margelo::nitro::googlecast {
       auto __value = std::move(__result.value());
       return __value;
     }
+    inline std::shared_ptr<Promise<bool>> showPlayServicesErrorDialog(double errorCode) override {
+      auto __result = _swiftPart.showPlayServicesErrorDialog(std::forward<decltype(errorCode)>(errorCode));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
     inline std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) override {
       auto __result = _swiftPart.loadMedia(std::forward<decltype(request)>(request));
       if (__result.hasError()) [[unlikely]] {

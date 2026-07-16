@@ -26,6 +26,7 @@ public protocol HybridCastTransportSpec_protocol: HybridObject {
   func showCastDialog() throws -> Promise<Bool>
   func showExpandedControls() throws -> Promise<Bool>
   func showIntroductoryOverlay(once: Bool) throws -> Promise<Bool>
+  func showPlayServicesErrorDialog(errorCode: Double) throws -> Promise<Bool>
   func loadMedia(request: MediaLoadRequest) throws -> Promise<Void>
   func play() throws -> Promise<Void>
   func pause() throws -> Promise<Void>

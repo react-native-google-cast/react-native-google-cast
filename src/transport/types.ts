@@ -277,6 +277,18 @@ export interface CastTransportApi {
    */
   showIntroductoryOverlay(once: boolean): Promise<boolean>
 
+  // --- Cast setup / diagnostics UI (Phase 6.2) ---
+
+  /**
+   * Present the Google Play Services error-resolution dialog for `errorCode`
+   * (a ConnectionResult value — the façade converts from PlayServicesState).
+   * `true` = the dialog was shown (GoogleApiAvailability's own boolean). The
+   * graceful can't-show cases resolve `false`: no current Activity, a code
+   * needing no dialog (`success`), or a non-Android platform (contract ii /
+   * 8A). Genuine native failures reject a typed CastError via the adapter.
+   */
+  showPlayServicesErrorDialog(errorCode: number): Promise<boolean>
+
   // --- RemoteMediaClient mutation surface (Phase 4) ---
   //
   // Every method re-resolves the active session's `GCKRemoteMediaClient` /

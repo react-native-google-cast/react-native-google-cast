@@ -28,6 +28,7 @@ namespace margelo::nitro::googlecast {
       prototype.registerHybridMethod("showCastDialog", &HybridCastTransportSpec::showCastDialog);
       prototype.registerHybridMethod("showExpandedControls", &HybridCastTransportSpec::showExpandedControls);
       prototype.registerHybridMethod("showIntroductoryOverlay", &HybridCastTransportSpec::showIntroductoryOverlay);
+      prototype.registerHybridMethod("showPlayServicesErrorDialog", &HybridCastTransportSpec::showPlayServicesErrorDialog);
       prototype.registerHybridMethod("loadMedia", &HybridCastTransportSpec::loadMedia);
       prototype.registerHybridMethod("play", &HybridCastTransportSpec::play);
       prototype.registerHybridMethod("pause", &HybridCastTransportSpec::pause);

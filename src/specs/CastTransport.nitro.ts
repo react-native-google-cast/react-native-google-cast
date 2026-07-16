@@ -72,6 +72,9 @@ export interface CastTransport
   showExpandedControls(): Promise<boolean>
   showIntroductoryOverlay(once: boolean): Promise<boolean>
 
+  // Cast setup / diagnostics UI (Phase 6.2) — mirrors `CastTransportApi`.
+  showPlayServicesErrorDialog(errorCode: number): Promise<boolean>
+
   // RemoteMediaClient mutation surface (Phase 4) — mirrors `CastTransportApi`;
   // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these
   // diverge from the API. Native impls route to GCKRemoteMediaClient (iOS) /

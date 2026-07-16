@@ -48,6 +48,7 @@ export const castTransport: CastTransportApi = {
   showCastDialog: neverShown,
   showExpandedControls: neverShown,
   showIntroductoryOverlay: neverShown,
+  showPlayServicesErrorDialog: neverShown,
 
   loadMedia: unsupported,
   play: unsupported,

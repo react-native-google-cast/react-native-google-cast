@@ -1,0 +1,62 @@
+{
+  "comment": "v4-parity image-pick + notification-action heuristics (design 2026-07-12, amendments E1/E3). Both native test suites load this file; drift between the Kotlin and Swift implementations is a red test. Surfaces map per platform — castDialog: Android IMAGE_TYPE_MEDIA_ROUTE_CONTROLLER_DIALOG_BACKGROUND / iOS GCKMediaMetadataImageTypeCastDialog; background: Android IMAGE_TYPE_EXPANDED_CONTROLLER_BACKGROUND / iOS .background; miniController: Android IMAGE_TYPE_MINI_CONTROLLER_THUMBNAIL / iOS .miniController; notificationThumbnail + lockScreenBackground: Android-only; custom: iOS-only. Loaders skip surfaces their platform cannot represent. Rule: no images -> null; single image -> first; castDialog surface -> first; anything else -> second (v4 ImagePickerImpl, validated by #238/#252).",
+  "pickImage": [
+    { "surface": "castDialog", "imageCount": 0, "expectedIndex": null },
+    { "surface": "background", "imageCount": 0, "expectedIndex": null },
+    { "surface": "castDialog", "imageCount": 1, "expectedIndex": 0 },
+    { "surface": "background", "imageCount": 1, "expectedIndex": 0 },
+    { "surface": "notificationThumbnail", "imageCount": 1, "expectedIndex": 0 },
+    { "surface": "castDialog", "imageCount": 2, "expectedIndex": 0 },
+    { "surface": "castDialog", "imageCount": 3, "expectedIndex": 0 },
+    { "surface": "background", "imageCount": 2, "expectedIndex": 1 },
+    { "surface": "miniController", "imageCount": 2, "expectedIndex": 1 },
+    { "surface": "notificationThumbnail", "imageCount": 2, "expectedIndex": 1 },
+    { "surface": "lockScreenBackground", "imageCount": 2, "expectedIndex": 1 },
+    { "surface": "custom", "imageCount": 2, "expectedIndex": 1 },
+    { "surface": "background", "imageCount": 3, "expectedIndex": 1 }
+  ],
+  "notificationActions": [
+    {
+      "queueItemCount": 0,
+      "mediaType": "generic",
+      "actions": ["REWIND", "TOGGLE_PLAYBACK", "FORWARD", "STOP_CASTING"],
+      "compactViewIndices": [1, 3]
+    },
+    {
+      "queueItemCount": 1,
+      "mediaType": "movie",
+      "actions": ["REWIND", "TOGGLE_PLAYBACK", "FORWARD", "STOP_CASTING"],
+      "compactViewIndices": [1, 3]
+    },
+    {
+      "queueItemCount": 0,
+      "mediaType": null,
+      "actions": ["REWIND", "TOGGLE_PLAYBACK", "FORWARD", "STOP_CASTING"],
+      "compactViewIndices": [1, 3]
+    },
+    {
+      "queueItemCount": 2,
+      "mediaType": "movie",
+      "actions": ["SKIP_PREV", "TOGGLE_PLAYBACK", "SKIP_NEXT", "STOP_CASTING"],
+      "compactViewIndices": [1, 2]
+    },
+    {
+      "queueItemCount": 5,
+      "mediaType": "photo",
+      "actions": ["SKIP_PREV", "TOGGLE_PLAYBACK", "SKIP_NEXT", "STOP_CASTING"],
+      "compactViewIndices": [1, 2]
+    },
+    {
+      "queueItemCount": 1,
+      "mediaType": "photo",
+      "actions": ["TOGGLE_PLAYBACK", "STOP_CASTING"],
+      "compactViewIndices": [0, 1]
+    },
+    {
+      "queueItemCount": 0,
+      "mediaType": "photo",
+      "actions": ["TOGGLE_PLAYBACK", "STOP_CASTING"],
+      "compactViewIndices": [0, 1]
+    }
+  ]
+}
