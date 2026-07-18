@@ -114,6 +114,25 @@ function MyComponent() {
 }
 ```
 
+A namespace can only be registered once at a time. If it is currently held elsewhere (including a just-unmounted predecessor of the same hook whose removal is still in flight), the hook returns `null` and waits — it registers the channel automatically as soon as the namespace frees.
+
+## Channel Status Hook
+
+Receive the live connection status of a registered custom channel, or `null` while none is registered for the namespace. This is the reactive counterpart to the point-in-time `channel.connected` / `channel.writable` getters.
+
+```js
+import { useChannelStatus } from 'react-native-google-cast'
+
+function MyComponent() {
+  const status = useChannelStatus('urn:x-cast:com.example.custom')
+
+  // disable sending until the receiver end is up
+  const canSend = status?.writable ?? false
+}
+```
+
+Platform note: iOS streams real dynamic values (often `connected: false` right after the channel is added, until the connection completes); Android reports `{ connected: true, writable: true }` once at registration and never updates (its SDK has no per-channel callbacks).
+
 ## Client Hook
 
 Receive the current [RemoteMediaClient](../api/classes/remotemediaclient).

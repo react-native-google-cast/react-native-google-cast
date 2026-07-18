@@ -76,7 +76,8 @@ export class CastChannel {
    * asynchronously); Android always reports `true` (register-once, v4 parity).
    *
    * A point-in-time read of the store cache, not a reactive value: a component
-   * rendering it does not re-render when the status changes (v4 parity).
+   * rendering it does not re-render when the status changes (v4 parity). For
+   * a reactive status, use the {@link useChannelStatus} hook.
    */
   get connected(): boolean | undefined {
     return this.status()?.connected

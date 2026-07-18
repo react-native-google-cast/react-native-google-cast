@@ -19,6 +19,8 @@ const channel = await castSession.addChannel('urn:x-cast:...')
 Or, if you're using hooks:
 
 > Note that a channel with the same namespace can only be registered once at a time (you'd need to unregister previous one to create the same one again). If you need to access the channel from multiple screens, either move the call to their parent (e.g. navigator), or don't use the hook and instead call `addChannel` in a global store (e.g. Redux or Mobx). More info in [issue #316](https://github.com/react-native-google-cast/react-native-google-cast/issues/316#issuecomment-1065734844).
+>
+> While the namespace is registered elsewhere, the hook returns `null` and waits — it registers the channel automatically as soon as the namespace frees (for example when the holding screen unmounts).
 
 ```ts
 import { useCastChannel } from 'react-native-google-cast'
@@ -60,6 +62,28 @@ channel.offMessage()
 
 > The message is always delivered as the **raw string** received from the
 > receiver — if your receiver sends JSON, parse it with `JSON.parse(message)`.
+
+To check whether the channel is connected and writable, read the point-in-time getters:
+
+```ts
+channel.connected // boolean | undefined (undefined once the channel/session is gone)
+channel.writable
+```
+
+These do not cause a re-render when the status changes. For a reactive value, use the `useChannelStatus` hook:
+
+```ts
+import { useChannelStatus } from 'react-native-google-cast'
+
+function MyComponent() {
+  const status = useChannelStatus('urn:x-cast:com.example.custom')
+
+  // status is `null` while no channel is registered for the namespace
+  const canSend = status?.writable ?? false
+}
+```
+
+> Platform note: iOS streams real dynamic values — `connected` is often `false` right after the channel is added, until the connection completes (and stays `false` if the receiver never registered a listener for the namespace). Android reports `{ connected: true, writable: true }` once at registration and never updates (its SDK has no per-channel callbacks).
 
 When you no longer need the channel, you can remove it:
 
