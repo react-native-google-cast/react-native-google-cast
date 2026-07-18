@@ -41,43 +41,20 @@ Thanks to autolinking, the package and its Google Cast SDK dependency are automa
 
 ## Android
 
-The react-native-google-cast library is autolinked but we need to add the Google Cast SDK dependency to `android/app/build.gradle`:
+The react-native-google-cast library is autolinked and already depends on the Google Cast SDK (`play-services-cast-framework`), so no gradle changes are needed.
 
-```java
-dependencies {
-  // ...
-  implementation "com.google.android.gms:play-services-cast-framework:+"
-}
-```
-
-By default, the latest version (`+`) of the Cast SDK is used.
-
-> To use a specific version, add `castFrameworkVersion` in the root `android/build.gradle`:
+> To use a specific Cast SDK version, add `castFrameworkVersion` in the root `android/build.gradle` — the library picks it up automatically:
 >
 > ```java
 > buildscript {
 >   ext {
->     buildToolsVersion = "34.0.0"
->     minSdkVersion = 22
->     compileSdkVersion = 34
->     targetSdkVersion = 34
+>     // ...
 >     castFrameworkVersion = "22.1.0" // <-- Cast SDK version
 >   }
 > }
 > ```
 >
-> and update `android/app/build.gradle`:
->
-> ```java
-> dependencies {
->   // ...
->   implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
-> }
->
-> def safeExtGet(prop, fallback) {
->   rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-> }
-> ```
+> Versions below `21.3.0` are strongly discouraged — see the [Notifications guide](../guides/notifications#cast-framework-version-floor--2130).
 
 ## Chrome
 

@@ -6,6 +6,21 @@ import { subscribeSelector } from './subscribeSelector'
 import type { EventSubscription } from './subscribeSelector'
 
 /**
+ * PlayServicesState → ConnectionResult code, for the Play Services error
+ * dialog. Pinned to the Android converter's value map (contract ii) — the
+ * byte-for-byte twin of `PlayServicesState.toGckConnectionResult`
+ * (android/.../converters/PlayServicesState+toGckConnectionResult.kt).
+ */
+const PLAY_SERVICES_ERROR_CODE: Record<PlayServicesState, number> = {
+  success: 0,
+  missing: 1,
+  updateRequired: 2,
+  disabled: 3,
+  invalid: 9,
+  updating: 18,
+}
+
+/**
  * Root of the Cast SDK — global state and the manager façades. Default export
  * of the library (`GoogleCast` and `CastContext` are equivalent).
  *
@@ -70,9 +85,11 @@ export class CastContext {
   /**
    * Present the platform's default expanded media controls. Resolves `true`
    * once the present/launch call was issued (the launched UI is not
-   * observable). On Android, `NitroExpandedControllerActivity` must be
-   * registered in the app manifest — a missing registration rejects a
-   * `CastError` with code `notSupported`.
+   * observable). On Android, `NitroExpandedControllerActivity` is registered
+   * automatically by the library manifest; a `notSupported` rejection means
+   * the manifest merge was overridden (e.g. a stale manual declaration) or
+   * Play Services is unavailable — check the merged manifest and
+   * {@link CastContext.getPlayServicesState}.
    */
   static showExpandedControls(): Promise<boolean> {
     return castTransport.showExpandedControls()
@@ -94,6 +111,25 @@ export class CastContext {
     once?: boolean
   }): Promise<boolean> {
     return castTransport.showIntroductoryOverlay(options?.once ?? true)
+  }
+
+  /**
+   * Show a dialog with a localized message about the error state. Upon user
+   * confirmation the dialog directs them to the Play Store if Google Play
+   * services is out of date or missing, or to system settings if it's
+   * disabled on the device.
+   *
+   * @platform android — resolves `false` on iOS and web (8A).
+   * @param playServicesState state returned from
+   * {@link CastContext.getPlayServicesState}. If it's `success`, the dialog
+   * is not shown and the promise resolves `false`.
+   */
+  static showPlayServicesErrorDialog(
+    playServicesState: PlayServicesState
+  ): Promise<boolean> {
+    return castTransport.showPlayServicesErrorDialog(
+      PLAY_SERVICES_ERROR_CODE[playServicesState]
+    )
   }
 
   /** Listen for changes of the cast state. */

@@ -53,6 +53,10 @@ android {
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
+    // The Cast SDK instantiates NitroCastOptionsProvider reflectively via the
+    // OPTIONS_PROVIDER_CLASS_NAME meta-data — keep it in consumer R8 builds (E5).
+    consumerProguardFiles 'proguard-rules.pro'
+
     externalNativeBuild {
       cmake {
         cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
@@ -150,12 +154,19 @@ dependencies {
   // Nitro core
   implementation project(":react-native-nitro-modules")
 
-  // Google Cast SDK
-  implementation "com.google.android.gms:play-services-cast-framework:${castFrameworkVersion}"
+  // Google Cast SDK. `api`, not `implementation`: GCK types are part of the
+  // library's public ABI since 6.2 — `NitroCastOptionsProvider` and its
+  // protected seams (`NotificationOptions`, `ImagePicker`, `CastOptions`)
+  // are the documented subclassing surface, so consumers writing a custom
+  // provider need the Cast SDK on their compile classpath.
+  api "com.google.android.gms:play-services-cast-framework:${castFrameworkVersion}"
 
   // Converter parity suite (Robolectric, JVM unit tests).
   testImplementation "junit:junit:4.13.2"
   testImplementation "org.robolectric:robolectric:4.13"
+  // Real org.json for the plain-JUnit heuristic-vector suite: the mockable
+  // android.jar only stubs it (Robolectric tests use their own sandboxed copy).
+  testImplementation "org.json:json:20240303"
 
   // Instrumented converter parity suite (androidTest) for AnyMap-carrying types.
   // AnyMap is JNI-backed; these tests require a connected emulator or device.

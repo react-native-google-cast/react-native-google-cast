@@ -262,8 +262,9 @@ export interface CastTransportApi {
   showCastDialog(): Promise<boolean>
   /**
    * Present the platform's default expanded media controls. Android launches
-   * `NitroExpandedControllerActivity` (must be registered in the app manifest;
-   * missing registration rejects `notSupported` — E8).
+   * `NitroExpandedControllerActivity` (auto-registered by the library
+   * manifest since 6.2; an unresolvable activity — overridden manifest merge
+   * or missing Cast framework — rejects `notSupported`, E8 fallback).
    */
   showExpandedControls(): Promise<boolean>
   /**

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Theme for NitroExpandedControllerActivity (library-manifest declared,
+       Decision 1). Consumers restyle the expanded controller by redefining
+       this style in their app resources (resource merging: app wins).
+       appcompat is a direct dependency of play-services-cast-framework, so
+       the parent always resolves regardless of the app's own theme family. -->
+  <style name="NitroCastExpandedController" parent="Theme.AppCompat.NoActionBar" />
+</resources>

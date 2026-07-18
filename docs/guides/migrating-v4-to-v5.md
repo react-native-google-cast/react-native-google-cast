@@ -6,8 +6,8 @@ sidebar_label: Migrating v4 → v5
 
 > **Status:** v5 is a ground-up rewrite onto the React Native New Architecture
 > (Nitro Modules). This page is the running migration log; it is finalized in the
-> Phase 7 migration guide. It currently covers the Phase 3–6.1 changes (context,
-> discovery, sessions, media, channels, Cast UI + hooks).
+> Phase 7 migration guide. It currently covers the Phase 3–6.2 changes (context,
+> discovery, sessions, media, channels, Cast UI + hooks, setup/notifications).
 
 ## Read getters are now synchronous
 
@@ -156,11 +156,11 @@ with these changes:
   SDK's flag (cleared when you pass `{ once: false }`); Android uses this
   library's own preference. The two stores are independent — resetting one
   platform does not reset the other.
-- **`showExpandedControls` on Android requires a manifest entry.** Register
-  `com.margelo.nitro.googlecast.NitroExpandedControllerActivity` (see the
-  [ExpandedController](../../components/ExpandedController) doc); a missing
-  registration rejects `notSupported` instead of failing silently. Automatic
-  wiring (Expo plugin) comes later in v5.
+- **`showExpandedControls` on Android needs no setup.** The
+  `NitroExpandedControllerActivity` ships pre-registered in the library
+  manifest (see the [ExpandedController](../../components/ExpandedController)
+  doc). The defensive `notSupported` rejection remains for the pathological
+  case where the manifest merge was overridden.
 
 ## Hooks: `useCastState` / `useDevices` / `useCastSession` / `useCastDevice`
 
@@ -182,9 +182,52 @@ All four keep their v4 signatures. Behavioral notes:
   `useCastSession`, so the option keeps the device visible across a
   suspension.
 
+## Cast setup, notifications & the Play Services dialog
+
+### Android setup shrinks
+
+- **The receiver-id meta-data key is renamed (breaking, bare-RN).** v4's
+  `com.reactnative.googlecast.RECEIVER_APPLICATION_ID` becomes
+  `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID`, and the options
+  provider is now `com.margelo.nitro.googlecast.NitroCastOptionsProvider`
+  (was `com.reactnative.googlecast.GoogleCastOptionsProvider`). Bare-RN
+  upgraders must update both in `AndroidManifest.xml` (see
+  [Setup](../../getting-started/setup#android)); Expo apps get the rename from
+  prebuild automatically — the v5 plugin also actively removes the v4 plugin's
+  manifest and MainActivity emissions on `--no-clean` prebuilds.
+- **No `MainActivity` init anymore.** v4's
+  `RNGCCastContext.getSharedInstance(this)` in `onCreate` is gone — delete it
+  (and its import); the library initializes lazily.
+- **Upgrading from v5 6.1: remove the manual expanded-controller
+  `<activity>`.** It's now declared in the library manifest with a theme; a
+  stale manual declaration in your app manifest fails the build with an
+  `android:theme` attribute conflict from the manifest merger. Fix: delete
+  your declaration (or use `tools:replace="android:theme"` if you're
+  intentionally overriding — prefer the
+  [style override](../../components/ExpandedController#overriding-the-theme)
+  instead).
+
+### Notifications & artwork match v4's defaults
+
+The library `NitroCastOptionsProvider` reproduces v4's notification actions
+(queue → prev/play-pause/next/stop, photo → play-pause/stop, default →
+rewind/play-pause/forward/stop) and its artwork-selection heuristic — see the
+[Notifications](../notifications) and [Customize UI](../customize-ui) guides.
+New in v5: iOS gets the same default image picker (v4 had none), and
+notifications can be disabled via the `NOTIFICATIONS_ENABLED` meta-data or the
+`androidNotificationsEnabled` Expo prop.
+
+### `showPlayServicesErrorDialog` takes the state, resolves a boolean
+
+`CastContext.showPlayServicesErrorDialog(playServicesState)` keeps its v4
+shape (pass the result of `getPlayServicesState()`). It now resolves `true`
+when the dialog was shown and `false` when it can't or needn't be — including
+**always `false` on iOS and web** (Android-only diagnostic, as in v4), when
+the state is `success`, or when there's no foreground Activity. Genuine
+native failures reject a typed `CastError`.
+
 ## Deferred to later phases
 
-- `CastContext.showPlayServicesErrorDialog()`, cast options / OptionsProvider
-  configuration, notifications & lock-screen controls, expanded-controller
-  customization, and the Expo config plugin — **Phase 6.2**.
+- Expanded-controller UI customization (beyond the Android theme override) and
+  mini-controller integration — later v5 release.
 - Web / Chrome sender support — **Phase 8**.

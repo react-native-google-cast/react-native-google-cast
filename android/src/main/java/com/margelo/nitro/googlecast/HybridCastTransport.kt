@@ -506,16 +506,19 @@ class HybridCastTransport : HybridCastTransportSpec() {
         activity.startActivity(intent)
         promise.resolve(true)
       } catch (e: ActivityNotFoundException) {
-        // Missing manifest registration is a config error and must be loud
-        // (E8): the activity ships in this library, but Android only launches
-        // activities declared by the *app* manifest (automatic wiring → 6.2).
+        // Defensive fallback (E8/1A): the activity is pre-registered by this
+        // library's manifest since 6.2, so a healthy install can't get here —
+        // stay loud with a diagnosis instead of a stale how-to-register.
         promise.reject(
           CastRejection(
             castRejectionJson(
               "notSupported",
-              "NitroExpandedControllerActivity is not registered in your app. " +
-                "Add <activity android:name=\"com.margelo.nitro.googlecast.NitroExpandedControllerActivity\" /> " +
-                "to your AndroidManifest.xml.",
+              "NitroExpandedControllerActivity could not be launched even though it is " +
+                "pre-registered via the react-native-google-cast library manifest. This " +
+                "means the manifest merge was overridden (e.g. a stale manual <activity> " +
+                "declaration removed it via tools:node=\"remove\") or Google Play " +
+                "Services / the Cast framework is unavailable — check the merged " +
+                "AndroidManifest.xml and getPlayServicesState().",
               null
             )
           )
@@ -566,6 +569,34 @@ class HybridCastTransport : HybridCastTransportSpec() {
           .show()
         // Settle at presentation (matches iOS and the other show* methods).
         promise.resolve(true)
+      } catch (e: Exception) {
+        promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
+      }
+    }
+    return promise
+  }
+
+  // MARK: - Cast setup / diagnostics UI (Phase 6.2)
+
+  /**
+   * Present the Play Services error-resolution dialog for a ConnectionResult
+   * `errorCode` (contract ii, v4 parity). `true` is GoogleApiAvailability's
+   * own shown-boolean; the graceful can't-show cases resolve `false` — no
+   * current Activity, or a code needing no dialog (`success`, for which the
+   * SDK documents a null dialog). Only genuine native throws reject.
+   */
+  override fun showPlayServicesErrorDialog(errorCode: Double): Promise<Boolean> {
+    val promise = Promise<Boolean>()
+    runOnMain {
+      val activity = currentActivityOrNull()
+      if (activity == null) {
+        promise.resolve(false)
+        return@runOnMain
+      }
+      try {
+        val shown = GoogleApiAvailability.getInstance()
+          .showErrorDialogFragment(activity, errorCode.toInt(), 0)
+        promise.resolve(shown)
       } catch (e: Exception) {
         promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
       }
@@ -739,7 +770,43 @@ class HybridCastTransport : HybridCastTransportSpec() {
   }
 
   private fun emitMediaStatus(client: RemoteMediaClient) {
-    client.mediaStatus?.let { status -> onMediaStatus?.invoke(status.toMediaStatus()) }
+    client.mediaStatus?.let { status ->
+      refreshNotificationActionsIfNeeded(status)
+      onMediaStatus?.invoke(status.toMediaStatus())
+    }
+  }
+
+  /**
+   * The default notification actions come from a [NotificationActionsProvider]
+   * whose output depends on the queue size and media type — GCK only re-queries
+   * the provider when the notification is rebuilt, so a session that starts with
+   * a single video and later loads a queue (or a photo) would keep the stale
+   * button set. Per the official provider-actions guidance, nudge
+   * `MediaNotificationManager.updateNotification()` when (and only when) the
+   * action-determining inputs flip. Main thread (all media callbacks are).
+   */
+  private var lastNotificationActionsKey: Pair<Boolean, Boolean>? = null
+
+  private fun refreshNotificationActionsIfNeeded(
+    status: com.google.android.gms.cast.MediaStatus
+  ) {
+    val key =
+      Pair(
+        status.queueItemCount > 1,
+        status.mediaInfo?.metadata?.mediaType ==
+          com.google.android.gms.cast.MediaMetadata.MEDIA_TYPE_PHOTO
+      )
+    if (key == lastNotificationActionsKey) return
+    val isFirst = lastNotificationActionsKey == null
+    lastNotificationActionsKey = key
+    // First status of a session establishes the baseline the notification was
+    // built with — nothing to refresh yet.
+    if (isFirst) return
+    try {
+      sharedCastContextOrNull()?.mediaNotificationManager?.updateNotification()
+    } catch (e: Exception) {
+      // Notification refresh is best-effort; never let it break status flow.
+    }
   }
 
   private fun detachMediaCallback() {
@@ -747,6 +814,9 @@ class HybridCastTransport : HybridCastTransportSpec() {
     observedClient?.unregisterCallback(callback)
     mediaCallback = null
     observedClient = null
+    // Next session re-baselines the notification-actions key (its first status
+    // is what the fresh notification is built from).
+    lastNotificationActionsKey = null
   }
 
   /**
