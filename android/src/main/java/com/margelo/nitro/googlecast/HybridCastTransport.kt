@@ -770,7 +770,43 @@ class HybridCastTransport : HybridCastTransportSpec() {
   }
 
   private fun emitMediaStatus(client: RemoteMediaClient) {
-    client.mediaStatus?.let { status -> onMediaStatus?.invoke(status.toMediaStatus()) }
+    client.mediaStatus?.let { status ->
+      refreshNotificationActionsIfNeeded(status)
+      onMediaStatus?.invoke(status.toMediaStatus())
+    }
+  }
+
+  /**
+   * The default notification actions come from a [NotificationActionsProvider]
+   * whose output depends on the queue size and media type — GCK only re-queries
+   * the provider when the notification is rebuilt, so a session that starts with
+   * a single video and later loads a queue (or a photo) would keep the stale
+   * button set. Per the official provider-actions guidance, nudge
+   * `MediaNotificationManager.updateNotification()` when (and only when) the
+   * action-determining inputs flip. Main thread (all media callbacks are).
+   */
+  private var lastNotificationActionsKey: Pair<Boolean, Boolean>? = null
+
+  private fun refreshNotificationActionsIfNeeded(
+    status: com.google.android.gms.cast.MediaStatus
+  ) {
+    val key =
+      Pair(
+        status.queueItemCount > 1,
+        status.mediaInfo?.metadata?.mediaType ==
+          com.google.android.gms.cast.MediaMetadata.MEDIA_TYPE_PHOTO
+      )
+    if (key == lastNotificationActionsKey) return
+    val isFirst = lastNotificationActionsKey == null
+    lastNotificationActionsKey = key
+    // First status of a session establishes the baseline the notification was
+    // built with — nothing to refresh yet.
+    if (isFirst) return
+    try {
+      sharedCastContextOrNull()?.mediaNotificationManager?.updateNotification()
+    } catch (e: Exception) {
+      // Notification refresh is best-effort; never let it break status flow.
+    }
   }
 
   private fun detachMediaCallback() {
@@ -778,6 +814,9 @@ class HybridCastTransport : HybridCastTransportSpec() {
     observedClient?.unregisterCallback(callback)
     mediaCallback = null
     observedClient = null
+    // Next session re-baselines the notification-actions key (its first status
+    // is what the fresh notification is built from).
+    lastNotificationActionsKey = null
   }
 
   /**

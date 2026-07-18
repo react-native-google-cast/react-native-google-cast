@@ -32,14 +32,16 @@ class MyImagePicker: NSObject, GCKUIImagePicker {
   }
 }
 
+// in your AppDelegate:
+let imagePicker = MyImagePicker() // stored property, not a local
+
 // in application(_:didFinishLaunchingWithOptions:), after GCKCastContext.setSharedInstanceWith(options):
-let imagePicker = MyImagePicker()
 GCKCastContext.sharedInstance().imagePicker = imagePicker
 ```
 
 If you don't set a picker, the SDK exposes its own default (which always selects the first image); the library replaces only that default with its v4-parity picker above. A **custom picker you set in AppDelegate is never overwritten** — the library checks before installing, and AppDelegate runs before the library initializes.
 
-> Keep a strong reference to your picker (e.g. a property on the AppDelegate) — `GCKCastContext.imagePicker` alone may not retain it.
+> `GCKCastContext.imagePicker` holds a strong reference, but keeping your picker in an AppDelegate property (as above) also keeps it reachable if the context is ever re-created.
 
 ### Overriding on Android
 

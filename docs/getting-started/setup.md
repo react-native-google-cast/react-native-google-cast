@@ -168,7 +168,7 @@ That's it — unlike v4, v5 requires **no `MainActivity` changes** (the Cast con
 
 ### Custom `OptionsProvider`
 
-The library's `NitroCastOptionsProvider` wires the receiver app id, media notifications, the default [image picker](../guides/customize-ui), and the expanded controller. If you need to customize one of those concerns, **subclass it and override exactly one seam**:
+The library's `NitroCastOptionsProvider` wires the receiver app id, media notifications, the default [image picker](../guides/customize-ui), and the expanded controller. If you need to customize one of those concerns, **subclass it and override the seam(s) you need** — each is independent, so overriding one leaves the others at their library defaults:
 
 - `getReceiverApplicationId(context)` — the receiver app id (default: meta-data, falling back to `CC1AD845`),
 - `getNotificationOptions(context)` — the `NotificationOptions` (return `null` to disable notifications; override to customize actions),

@@ -91,6 +91,18 @@ describe('applyGoogleCastAppDelegate (Swift, RN 0.86 template)', () => {
     ).toThrow(/GCKCastContext[\s\S]*iosSkipAppDelegateInit/)
   })
 
+  it('ignores a commented-out manual init (no false-positive conflict)', () => {
+    const commentedOut = readFixture('AppDelegate.swift').replace(
+      'let delegate = ReactNativeDelegate()',
+      '// GCKCastContext.setSharedInstanceWith(options) — removed for the plugin\n' +
+        '    /* GCKCastContext.setSharedInstanceWith(options) */\n' +
+        '    let delegate = ReactNativeDelegate()'
+    )
+    expect(() =>
+      applyGoogleCastAppDelegate(commentedOut, 'swift', {})
+    ).not.toThrow()
+  })
+
   it('detects the manual-init conflict in objc AppDelegates too', () => {
     const objcWithManualInit = fs
       .readFileSync(path.join(__dirname, 'AppDelegate.mm'), 'utf8')

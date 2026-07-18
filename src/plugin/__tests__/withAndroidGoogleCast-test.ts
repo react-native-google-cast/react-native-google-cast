@@ -209,6 +209,21 @@ describe('gradle emissions (unchanged from v4)', () => {
     )
   })
 
+  it('applies the CAF floor warning to a pre-existing gradle castFrameworkVersion', () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const withOldPin = readFixture('project-build.gradle').replace(
+        /buildscript(\s+)?\{/,
+        'buildscript {\n  ext {\n    castFrameworkVersion = "21.2.0"\n  }'
+      )
+      addGoogleCastVersionImport(withOldPin, { version: '22.0.0' })
+      const messages = warnSpy.mock.calls.map((c) => String(c[0]))
+      expect(messages.some((m) => m.includes('below 21.3.0'))).toBe(true)
+    } finally {
+      warnSpy.mockRestore()
+    }
+  })
+
   it('keeps gradle blocks single on a double run (E4)', () => {
     const projectOnce = addGoogleCastVersionImport(
       readFixture('project-build.gradle'),

@@ -131,7 +131,10 @@ const CAF_FLOOR: [number, number, number] = [21, 3, 0]
  * 21.3.0 — versions before that post media notifications from a foreground
  * service, the Android 14+ crash class of #447/#527.
  */
-function warnOnCastFrameworkVersionBelowFloor(version: string | undefined) {
+function warnOnCastFrameworkVersionBelowFloor(
+  version: string | undefined,
+  source = 'androidPlayServicesCastFrameworkVersion'
+) {
   if (version == null) return
   const parsed = parseCafVersion(version)
   if (!parsed) return
@@ -143,7 +146,7 @@ function warnOnCastFrameworkVersionBelowFloor(version: string | undefined) {
       (minor < fMinor || (minor === fMinor && patch < fPatch)))
   if (belowFloor) {
     console.warn(
-      `react-native-google-cast: androidPlayServicesCastFrameworkVersion "${version}" is below 21.3.0. ` +
+      `react-native-google-cast: ${source} "${version}" is below 21.3.0. ` +
         'Cast framework versions before 21.3.0 post media notifications from a foreground service, ' +
         'which crashes on Android 14+ unless you declare the foreground-service permissions ' +
         '(FOREGROUND_SERVICE, FOREGROUND_SERVICE_MEDIA_PLAYBACK) yourself — see ' +
@@ -326,6 +329,13 @@ export function addGoogleCastVersionImport(
   if (src.match(/castFrameworkVersion\s*=/)) {
     console.warn(
       `react-native-google-cast config plugin: Skipping adding castFrameworkVersion as it already exists in the project build.gradle.`
+    )
+    // The gradle ext value is what the app actually builds against (it
+    // overrides the plugin prop) — apply the CAF floor warning to it too.
+    const existing = src.match(/castFrameworkVersion\s*=\s*["']([^"']+)["']/)
+    warnOnCastFrameworkVersionBelowFloor(
+      existing?.[1],
+      'castFrameworkVersion (pre-existing in your project build.gradle)'
     )
     return src
   }

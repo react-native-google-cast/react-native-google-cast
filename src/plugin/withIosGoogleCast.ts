@@ -22,6 +22,17 @@ const MANUAL_INIT_RE =
   /GCKCastContext[\s.]*(setSharedInstanceWith|sharedInstanceWithOptions)/
 
 /**
+ * Strip `/* *\/` blocks and `//` line remainders before the conflict scan so a
+ * commented-out manual init (common right after adopting the plugin) doesn't
+ * trigger the contract-v error. String literals are deliberately left alone —
+ * an init call inside a string is vanishingly rare, and naive string stripping
+ * risks eating real code.
+ */
+function stripCodeComments(src: string): string {
+  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '')
+}
+
+/**
  * On iOS, a dialog asking the user for the local network permission will now be displayed immediately when the app is opened.
  *
  * @param {*} config
@@ -99,7 +110,7 @@ export function applyGoogleCastAppDelegate(
     src,
     tag: APP_DELEGATE_TAG,
   }).contents
-  if (MANUAL_INIT_RE.test(withoutOurBlock)) {
+  if (MANUAL_INIT_RE.test(stripCodeComments(withoutOurBlock))) {
     throw new Error(
       'react-native-google-cast: your AppDelegate already initializes GCKCastContext ' +
         '(`setSharedInstanceWith` found outside the plugin-managed block). The Expo config ' +
