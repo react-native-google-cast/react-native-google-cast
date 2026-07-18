@@ -31,6 +31,10 @@ public protocol HybridCastDebugSpec_protocol: HybridObject {
   func roundTripActiveInputState(value: ActiveInputState) throws -> ActiveInputState
   func roundTripStandbyState(value: StandbyState) throws -> StandbyState
   func roundTripPlayServicesState(value: PlayServicesState) throws -> PlayServicesState
+  func injectCastState(castState: CastState) throws -> Promise<Bool>
+  func injectDevices(devices: [Device]) throws -> Promise<Bool>
+  func injectLifecycleEvent(event: SessionLifecycleEvent) throws -> Promise<Bool>
+  func injectMediaStatus(status: MediaStatus) throws -> Promise<Bool>
 }
 
 public extension HybridCastDebugSpec_protocol {

@@ -79,6 +79,18 @@ namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 namespace margelo::nitro::googlecast { enum class StandbyState; }
 // Forward declaration of `PlayServicesState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `CastState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastState; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
+// Forward declaration of `SessionEventType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class SessionEventType; }
+// Forward declaration of `SessionInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `CastError` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct CastError; }
+// Forward declaration of `CastErrorCode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 
 #include "WebImage.hpp"
 #include "JWebImage.hpp"
@@ -157,6 +169,20 @@ namespace margelo::nitro::googlecast { enum class PlayServicesState; }
 #include "JStandbyState.hpp"
 #include "PlayServicesState.hpp"
 #include "JPlayServicesState.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "CastState.hpp"
+#include "JCastState.hpp"
+#include "SessionLifecycleEvent.hpp"
+#include "JSessionLifecycleEvent.hpp"
+#include "SessionEventType.hpp"
+#include "JSessionEventType.hpp"
+#include "SessionInfo.hpp"
+#include "JSessionInfo.hpp"
+#include "CastError.hpp"
+#include "JCastError.hpp"
+#include "CastErrorCode.hpp"
+#include "JCastErrorCode.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -280,6 +306,79 @@ namespace margelo::nitro::googlecast {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPlayServicesState>(jni::alias_ref<JPlayServicesState> /* value */)>("roundTripPlayServicesState");
     auto __result = method(_javaPart, JPlayServicesState::fromCpp(value));
     return __result->toCpp();
+  }
+  std::shared_ptr<Promise<bool>> JHybridCastDebugSpec::injectCastState(CastState castState) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JCastState> /* castState */)>("injectCastState");
+    auto __result = method(_javaPart, JCastState::fromCpp(castState));
+    return [&]() {
+      auto __promise = Promise<bool>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JBoolean>(__boxedResult);
+        __promise->resolve(static_cast<bool>(__result->value()));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<bool>> JHybridCastDebugSpec::injectDevices(const std::vector<Device>& devices) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JDevice>> /* devices */)>("injectDevices");
+    auto __result = method(_javaPart, [&](auto&& __input) {
+      size_t __size = __input.size();
+      jni::local_ref<jni::JArrayClass<JDevice>> __array = jni::JArrayClass<JDevice>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = __input[__i];
+        auto __elementJni = JDevice::fromCpp(__element);
+        __array->setElement(__i, *__elementJni);
+      }
+      return __array;
+    }(devices));
+    return [&]() {
+      auto __promise = Promise<bool>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JBoolean>(__boxedResult);
+        __promise->resolve(static_cast<bool>(__result->value()));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<bool>> JHybridCastDebugSpec::injectLifecycleEvent(const SessionLifecycleEvent& event) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JSessionLifecycleEvent> /* event */)>("injectLifecycleEvent");
+    auto __result = method(_javaPart, JSessionLifecycleEvent::fromCpp(event));
+    return [&]() {
+      auto __promise = Promise<bool>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JBoolean>(__boxedResult);
+        __promise->resolve(static_cast<bool>(__result->value()));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<bool>> JHybridCastDebugSpec::injectMediaStatus(const MediaStatus& status) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaStatus> /* status */)>("injectMediaStatus");
+    auto __result = method(_javaPart, JMediaStatus::fromCpp(status));
+    return [&]() {
+      auto __promise = Promise<bool>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<jni::JBoolean>(__boxedResult);
+        __promise->resolve(static_cast<bool>(__result->value()));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
 
 } // namespace margelo::nitro::googlecast

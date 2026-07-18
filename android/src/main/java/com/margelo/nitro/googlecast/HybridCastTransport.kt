@@ -134,6 +134,18 @@ class HybridCastTransport : HybridCastTransportSpec() {
     this.onChannelMessage = onChannelMessage
     this.onChannelStatus = onChannelStatus
 
+    // Debug-only fake seam (T3): expose the freshly stored callbacks to
+    // `HybridCastDebug.inject*`. Gating (host-app debuggable) lives in the sink;
+    // the closures read the current fields, so `dispose()` also silences the seam.
+    CastDebugEventSink.attach(
+      CastDebugEventSink.Emitters(
+        emitState = { this.onState?.invoke(it) },
+        emitDevices = { this.onDevices?.invoke(it) },
+        emitLifecycle = { this.onLifecycle?.invoke(it) },
+        emitMediaStatus = { this.onMediaStatus?.invoke(it) },
+      )
+    )
+
     val promise = Promise<InitialSnapshot>()
     runOnMain {
       val castContext = sharedCastContextOrNull()
@@ -215,6 +227,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
   }
 
   override fun dispose() {
+    CastDebugEventSink.detach()
     runOnMain {
       detachObservers()
       detachMediaCallback()

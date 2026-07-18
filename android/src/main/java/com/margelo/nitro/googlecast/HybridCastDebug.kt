@@ -1,7 +1,10 @@
 package com.margelo.nitro.googlecast
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.googlecast.converters.fromGckActiveInputState
 import com.margelo.nitro.googlecast.converters.fromGckConnectionResult
 import com.margelo.nitro.googlecast.converters.fromGckStandbyState
@@ -46,6 +49,11 @@ import com.margelo.nitro.googlecast.converters.toWebImage
  * `struct → GCK → struct` so the shared golden-fixture parity suite (T1) can assert
  * round-trip identity and cross-platform (iOS == Android) equality. Converters live in
  * one-per-type files under `converters/`; this object only wires them together.
+ *
+ * The `inject*` methods are the native-boundary fake seam (T3): they deliver a synthetic
+ * event through the live transport's stored `initAndSubscribe` callbacks (via
+ * [CastDebugEventSink]), posted to the main thread, mirroring real GCK delivery. A
+ * `false` no-op when the host app is not debuggable.
  */
 @DoNotStrip
 @Keep
@@ -112,4 +120,36 @@ class HybridCastDebug : HybridCastDebugSpec() {
     value: PlayServicesState
   ): PlayServicesState =
     PlayServicesState.fromGckConnectionResult(value.toGckConnectionResult())
+
+  // MARK: - Native-boundary fake seam (T3) — debuggable host apps only
+
+  override fun injectCastState(castState: CastState): Promise<Boolean> =
+    inject { it.emitState(castState) }
+
+  override fun injectDevices(devices: Array<Device>): Promise<Boolean> =
+    inject { it.emitDevices(devices) }
+
+  override fun injectLifecycleEvent(event: SessionLifecycleEvent): Promise<Boolean> =
+    inject { it.emitLifecycle(event) }
+
+  override fun injectMediaStatus(status: MediaStatus): Promise<Boolean> =
+    inject { it.emitMediaStatus(status) }
+
+  /**
+   * Resolves `true` after delivering on the main thread; `false` when the seam is
+   * inactive (non-debuggable app, or `CastTransport.initAndSubscribe` has not run).
+   */
+  private fun inject(deliver: (CastDebugEventSink.Emitters) -> Unit): Promise<Boolean> {
+    val promise = Promise<Boolean>()
+    val emitters = CastDebugEventSink.current()
+    if (emitters == null) {
+      promise.resolve(false)
+      return promise
+    }
+    Handler(Looper.getMainLooper()).post {
+      deliver(emitters)
+      promise.resolve(true)
+    }
+    return promise
+  }
 }

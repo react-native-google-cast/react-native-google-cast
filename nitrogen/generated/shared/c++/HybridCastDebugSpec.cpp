@@ -32,6 +32,10 @@ namespace margelo::nitro::googlecast {
       prototype.registerHybridMethod("roundTripActiveInputState", &HybridCastDebugSpec::roundTripActiveInputState);
       prototype.registerHybridMethod("roundTripStandbyState", &HybridCastDebugSpec::roundTripStandbyState);
       prototype.registerHybridMethod("roundTripPlayServicesState", &HybridCastDebugSpec::roundTripPlayServicesState);
+      prototype.registerHybridMethod("injectCastState", &HybridCastDebugSpec::injectCastState);
+      prototype.registerHybridMethod("injectDevices", &HybridCastDebugSpec::injectDevices);
+      prototype.registerHybridMethod("injectLifecycleEvent", &HybridCastDebugSpec::injectLifecycleEvent);
+      prototype.registerHybridMethod("injectMediaStatus", &HybridCastDebugSpec::injectMediaStatus);
     });
   }
 

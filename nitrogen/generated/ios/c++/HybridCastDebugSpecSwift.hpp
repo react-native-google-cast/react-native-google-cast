@@ -84,6 +84,18 @@ namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 namespace margelo::nitro::googlecast { enum class StandbyState; }
 // Forward declaration of `PlayServicesState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `CastState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastState; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
+// Forward declaration of `SessionEventType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class SessionEventType; }
+// Forward declaration of `SessionInfo` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `CastError` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct CastError; }
+// Forward declaration of `CastErrorCode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 
 #include "WebImage.hpp"
 #include <string>
@@ -125,6 +137,13 @@ namespace margelo::nitro::googlecast { enum class PlayServicesState; }
 #include "ActiveInputState.hpp"
 #include "StandbyState.hpp"
 #include "PlayServicesState.hpp"
+#include <NitroModules/Promise.hpp>
+#include "CastState.hpp"
+#include "SessionLifecycleEvent.hpp"
+#include "SessionEventType.hpp"
+#include "SessionInfo.hpp"
+#include "CastError.hpp"
+#include "CastErrorCode.hpp"
 
 #include "NitroGoogleCast-Swift-Cxx-Umbrella.hpp"
 
@@ -314,6 +333,38 @@ namespace margelo::nitro::googlecast {
     }
     inline PlayServicesState roundTripPlayServicesState(PlayServicesState value) override {
       auto __result = _swiftPart.roundTripPlayServicesState(static_cast<int>(value));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> injectCastState(CastState castState) override {
+      auto __result = _swiftPart.injectCastState(static_cast<int>(castState));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> injectDevices(const std::vector<Device>& devices) override {
+      auto __result = _swiftPart.injectDevices(devices);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> injectLifecycleEvent(const SessionLifecycleEvent& event) override {
+      auto __result = _swiftPart.injectLifecycleEvent(std::forward<decltype(event)>(event));
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<bool>> injectMediaStatus(const MediaStatus& status) override {
+      auto __result = _swiftPart.injectMediaStatus(std::forward<decltype(status)>(status));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

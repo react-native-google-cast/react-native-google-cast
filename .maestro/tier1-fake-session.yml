@@ -1,0 +1,28 @@
+# Tier-1 E2E (T3, issue #604): drives the REAL Nitro module on an emulator with
+# no Chromecast (Cast discovery does not work on emulators — official Google
+# limitation). "Fake start" / "Fake end" call the debug-only native seam
+# (`CastDebug.inject*`), which delivers synthetic events through the SAME stored
+# `initAndSubscribe` callbacks the real GCK listeners invoke on `CastTransport` —
+# so every assertion below has crossed the genuine native↔JS boundary twice
+# (JS→native struct conversion in, native→JS callback out) before reaching the UI.
+#
+# Requires a debug (android:debuggable) build of the example app; the seam is a
+# `delivered=false` no-op otherwise. Run locally via scripts/e2e-android.sh.
+appId: com.castexample
+---
+- launchApp
+# Bundled-JS debug build: allow time for the RN runtime to boot on a cold CI emulator.
+- extendedWaitUntil:
+    visible: 'Session: none'
+    timeout: 60000
+- tapOn: 'Fake start'
+# The seam must report real native delivery (not a silent no-op)…
+- assertVisible: '.*fake session started delivered=true.*'
+# …and the injected events must round-trip through the Nitro boundary + store into the UI:
+- assertVisible: 'Session: fake-session-1'
+- assertVisible: 'Cast state: connected'
+- assertVisible: 'Devices: 1'
+- tapOn: 'Fake end'
+- assertVisible: '.*fake session ended delivered=true.*'
+- assertVisible: 'Session: none'
+- assertVisible: 'Cast state: notConnected'

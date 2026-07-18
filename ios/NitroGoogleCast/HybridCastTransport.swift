@@ -92,6 +92,15 @@ final class HybridCastTransport: HybridCastTransportSpec {
     self.onChannelMessage = onChannelMessage
     self.onChannelStatus = onChannelStatus
 
+    // Debug-only fake seam (T3): expose the freshly stored callbacks to
+    // `HybridCastDebug.inject*`. Gating (`#if DEBUG`) lives in the sink; the
+    // closures read the current vars, so `dispose()` also silences the seam.
+    CastDebugEventSink.attach(
+      emitState: { [weak self] in self?.onState?($0) },
+      emitDevices: { [weak self] in self?.onDevices?($0) },
+      emitLifecycle: { [weak self] in self?.onLifecycle?($0) },
+      emitMediaStatus: { [weak self] in self?.onMediaStatus?($0) })
+
     let promise = Promise<InitialSnapshot>()
     DispatchQueue.main.async { [weak self] in
       guard let self else {
@@ -183,6 +192,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
   /// Override of `HybridObject.dispose()` — detach every GCK observer.
   func dispose() {
+    CastDebugEventSink.detach()
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
       self.detachObservers()

@@ -1,6 +1,8 @@
 import type { HybridObject } from 'react-native-nitro-modules'
+import type { SessionLifecycleEvent } from '../transport/types'
 import type { ActiveInputState } from '../types/ActiveInputState'
 import type { ApplicationMetadata } from '../types/ApplicationMetadata'
+import type { CastState } from '../types/CastState'
 import type { Device } from '../types/Device'
 import type { MediaInfo } from '../types/MediaInfo'
 import type { MediaLiveSeekableRange } from '../types/MediaLiveSeekableRange'
@@ -32,8 +34,15 @@ import type { WebImage } from '../types/WebImage'
  *    `struct → GCK → struct` natively, so the shared golden-fixture suite can assert
  *    round-trip identity and cross-platform (iOS == Android) equality on a real device or
  *    simulator without a physical Chromecast.
+ * 3. **Native-boundary fake seam (T3).** The `inject*` methods feed a synthetic event
+ *    through the *same* stored `initAndSubscribe` callbacks the real GCK listeners
+ *    invoke on `CastTransport` (via `CastDebugEventSink`), so tier-1 Maestro E2E can
+ *    drive the real Nitro boundary — JS→native struct conversion in, native→JS
+ *    callback out — on an emulator/simulator where Cast discovery cannot work.
+ *    Active in debug builds only (`#if DEBUG` on iOS; host-app `FLAG_DEBUGGABLE` on
+ *    Android); in release builds they resolve `false` and deliver nothing.
  *
- * All methods are synchronous pure transforms (no native session, no I/O).
+ * All `roundTrip*` methods are synchronous pure transforms (no native session, no I/O).
  */
 export interface CastDebug
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
@@ -59,4 +68,20 @@ export interface CastDebug
   roundTripActiveInputState(value: ActiveInputState): ActiveInputState
   roundTripStandbyState(value: StandbyState): StandbyState
   roundTripPlayServicesState(value: PlayServicesState): PlayServicesState
+
+  // --- Native-boundary fake seam (T3) — debug builds only ---
+  //
+  // Each resolves `true` when the event was delivered through the live
+  // transport's stored callbacks, `false` when the seam is inactive (release
+  // build, or `CastTransport.initAndSubscribe` has not run). Delivery happens
+  // on the platform main thread, mirroring real GCK event delivery.
+
+  /** Deliver a synthetic cast-state change through the transport's `onState`. */
+  injectCastState(castState: CastState): Promise<boolean>
+  /** Deliver a synthetic device-list update through the transport's `onDevices`. */
+  injectDevices(devices: Device[]): Promise<boolean>
+  /** Deliver a synthetic session-lifecycle event through the transport's `onLifecycle`. */
+  injectLifecycleEvent(event: SessionLifecycleEvent): Promise<boolean>
+  /** Deliver a synthetic media-status push through the transport's `onMediaStatus`. */
+  injectMediaStatus(status: MediaStatus): Promise<boolean>
 }
