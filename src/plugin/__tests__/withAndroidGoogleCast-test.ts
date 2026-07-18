@@ -147,6 +147,27 @@ describe('setCastAndroidManifest', () => {
     ])
   })
 
+  it('removes a stale manual 6.1 NitroExpandedControllerActivity declaration', async () => {
+    // The 6.1 docs told users to declare the activity manually with
+    // Theme.AppCompat.NoActionBar — under `prebuild --no-clean` that stale
+    // entry collides with the library manifest's theme (merger conflict).
+    const input = await readManifest('AndroidManifest-clean.xml')
+    getMainApplicationOrThrow(input).activity?.push({
+      $: {
+        'android:name':
+          'com.margelo.nitro.googlecast.NitroExpandedControllerActivity',
+        'android:exported': 'false',
+        'android:theme': '@style/Theme.AppCompat.NoActionBar',
+      } as never,
+    })
+    const manifest = setCastAndroidManifest(input, {})
+    expect(
+      getMainApplicationOrThrow(manifest).activity?.map(
+        (a) => a.$['android:name']
+      )
+    ).toEqual(['.MainActivity'])
+  })
+
   it('is idempotent — a double run deep-equals the single run (E4)', async () => {
     const props = { receiverAppId: 'ABCD1234', notificationsEnabled: false }
     const once = setCastAndroidManifest(

@@ -35,6 +35,14 @@ const V4_META_RECEIVER_APP_ID =
   'com.reactnative.googlecast.RECEIVER_APPLICATION_ID'
 const V4_EXPANDED_CONTROLLER_ACTIVITY =
   'com.reactnative.googlecast.RNGCExpandedControllerActivity'
+/**
+ * The 6.1 docs told users to declare the activity manually; the library
+ * manifest now owns it, and a stale app-level declaration (with the old
+ * `Theme.AppCompat.NoActionBar` theme) is exactly what triggers the
+ * `android:theme` manifest-merger conflict — remove it too.
+ */
+const STALE_NITRO_EXPANDED_CONTROLLER_ACTIVITY =
+  'com.margelo.nitro.googlecast.NitroExpandedControllerActivity'
 const V4_MAIN_ACTIVITY_TAG = 'react-native-google-cast-onCreate'
 const V4_MAIN_ACTIVITY_IMPORT_RE =
   /^[ \t]*import\s+com\.reactnative\.googlecast\.api\.RNGCCastContext;?[ \t]*\r?\n/gm
@@ -66,7 +74,9 @@ export function setCastAndroidManifest(
   if (Array.isArray(mainApplication.activity)) {
     mainApplication.activity = mainApplication.activity.filter(
       (activity) =>
-        activity.$?.['android:name'] !== V4_EXPANDED_CONTROLLER_ACTIVITY
+        activity.$?.['android:name'] !== V4_EXPANDED_CONTROLLER_ACTIVITY &&
+        activity.$?.['android:name'] !==
+          STALE_NITRO_EXPANDED_CONTROLLER_ACTIVITY
     )
   }
 
