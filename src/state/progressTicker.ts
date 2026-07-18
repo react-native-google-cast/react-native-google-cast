@@ -5,6 +5,13 @@ import type { MediaStatus } from '../types/MediaStatus'
 /** The store capability the ticker needs (both already on {@link CastStore}). */
 type TickerStoreView = Pick<CastStore, 'getSliceState' | 'subscribe'>
 
+/**
+ * Ask the receiver for a fresh media status (the transport's
+ * `requestMediaStatus`). The result arrives as a status push through the
+ * store, never via the return value; the promise only reports settlement.
+ */
+type RequestFreshStatus = () => Promise<void>
+
 /** A progress listener; pulls the current value via the ticker's getters. */
 type Listener = () => void
 
@@ -51,10 +58,20 @@ const monotonicNow: () => number =
  * resubscribe after the timer went idle — reads a live position instead of
  * re-anchoring the wall clock to a stale `streamPosition`. The ticker and its
  * store are paired singletons, so this holds no resource open beyond the store.
+ *
+ * The local anchor can still drift from the receiver across an idle gap — GCK
+ * pushes status event-driven, not on a cadence, so a receiver-side change with
+ * no push (or a JS clock throttled in the background) leaves the derived
+ * position stale. To heal that, the first subscriber after an idle period
+ * triggers a one-shot {@link RequestFreshStatus}: the fresh push re-times the
+ * anchor through the normal store path. Best-effort only — with no active
+ * session the request rejects and is swallowed (the ticker keeps deriving from
+ * the last known status).
  */
 export class ProgressTicker {
   private readonly store: TickerStoreView
   private readonly now: () => number
+  private readonly requestFreshStatus?: RequestFreshStatus
 
   private readonly subs = new Map<object, Subscriber>()
   private timer: ReturnType<typeof setInterval> | null = null
@@ -63,9 +80,14 @@ export class ProgressTicker {
   private anchorStatus: MediaStatus | null = null
   private anchorTime = 0
 
-  constructor(store: TickerStoreView, now: () => number = monotonicNow) {
+  constructor(
+    store: TickerStoreView,
+    now: () => number = monotonicNow,
+    requestFreshStatus?: RequestFreshStatus
+  ) {
     this.store = store
     this.now = now
+    this.requestFreshStatus = requestFreshStatus
     // Lifetime-bound (never unsubscribed): keep the anchor resynced to the last
     // media-status push even while there are no listeners (see class doc). The
     // ticker and its store are paired singletons, so this leaks nothing.
@@ -85,8 +107,14 @@ export class ProgressTicker {
         ? Math.max(interval, MIN_INTERVAL)
         : DEFAULT_INTERVAL
     const key = {}
+    const isFirst = this.subs.size === 0
     this.subs.set(key, { listener, interval: safeInterval })
     this.reconcileTimer()
+    // One-shot per idle→active transition (never per subscriber): the FIRST
+    // subscriber asks the receiver for a fresh status so the anchor re-times
+    // off a live push instead of a possibly stale event-driven one (see class
+    // doc). Best-effort — a rejection (e.g. no active session) is swallowed.
+    if (isFirst) void this.requestFreshStatus?.().catch(() => {})
     return () => {
       if (!this.subs.delete(key)) return
       // The store subscription and anchor are lifetime-bound; only the shared

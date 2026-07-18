@@ -43,8 +43,18 @@ async function makeTicker(now: () => number) {
   const transport = new FakeCastTransport()
   const store = new CastStore(transport)
   await store.ready
-  const ticker = new ProgressTicker(store, now)
+  // Mirror the singleton wiring: the first subscriber fires a one-shot
+  // requestMediaStatus through the transport (recorded in `mediaCalls`).
+  const ticker = new ProgressTicker(store, now, () =>
+    transport.requestMediaStatus()
+  )
   return { transport, store, ticker }
+}
+
+/** Number of requestMediaStatus calls the fake transport has recorded. */
+function statusRequests(transport: FakeCastTransport): number {
+  return transport.mediaCalls.filter((c) => c.method === 'requestMediaStatus')
+    .length
 }
 
 describe('ProgressTicker — derivation', () => {
@@ -192,6 +202,130 @@ describe('ProgressTicker — derivation', () => {
     const off2 = ticker.subscribe(() => {})
     expect(ticker.getPosition()).toBe(20)
     off2()
+  })
+})
+
+describe('ProgressTicker — fresh status on first subscriber', () => {
+  it('the first subscriber triggers a one-shot requestMediaStatus', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    expect(statusRequests(transport)).toBe(0)
+
+    const off = ticker.subscribe(() => {})
+    expect(statusRequests(transport)).toBe(1)
+    off()
+  })
+
+  it('subsequent subscribers while already ticking do NOT re-request', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    const off1 = ticker.subscribe(() => {})
+    const off2 = ticker.subscribe(() => {}, 5)
+    const off3 = ticker.subscribe(() => {}, 0.5)
+    expect(statusRequests(transport)).toBe(1)
+    off1()
+    off2()
+    off3()
+  })
+
+  it('re-requests once per idle→active transition (rapid unsubscribe/resubscribe)', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    const off1 = ticker.subscribe(() => {})
+    expect(statusRequests(transport)).toBe(1)
+
+    // Last subscriber leaves, a new first subscriber attaches: exactly one
+    // more request — per 0→1 transition, never per subscriber.
+    off1()
+    const off2 = ticker.subscribe(() => {})
+    const off3 = ticker.subscribe(() => {})
+    expect(statusRequests(transport)).toBe(2)
+    off2()
+    off3()
+  })
+
+  it('re-subscribe after an idle gap re-times the anchor from the fresh push', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    const off1 = ticker.subscribe(() => {})
+    off1()
+
+    // Idle gap: cast playback continues, but the receiver seeks to 100 with
+    // NO status push (GCK is event-driven) — the local derivation is stale.
+    clock.advance(30000)
+    transport.mediaBehavior.requestMediaStatus = async () => {
+      // The receiver answers the request with a fresh, correctly-timed push.
+      transport.emitMediaStatus(
+        status({ streamPosition: 100, playerState: 'playing' })
+      )
+    }
+
+    // Re-subscribing requests a fresh status; the push re-anchors at 100
+    // (stale derivation would have reported 10 + 30 = 40).
+    const off2 = ticker.subscribe(() => {})
+    expect(statusRequests(transport)).toBe(2)
+    expect(ticker.getPosition()).toBe(100)
+
+    // And the anchor is re-timed off the push, not the old base.
+    clock.advance(1000)
+    expect(ticker.getPosition()).toBe(101)
+    off2()
+  })
+
+  it('swallows a requestMediaStatus rejection (no active session)', async () => {
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    transport.mediaBehavior.requestMediaStatus = async () => {
+      throw { code: 'noSession' }
+    }
+
+    const onUnhandled = jest.fn()
+    process.on('unhandledRejection', onUnhandled)
+    try {
+      // No session: subscribing must not throw…
+      const off = ticker.subscribe(() => {})
+      expect(statusRequests(transport)).toBe(1)
+      expect(ticker.getPosition()).toBeNull()
+      off()
+      // …and the rejection must be swallowed, not left unhandled.
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      expect(onUnhandled).not.toHaveBeenCalled()
+    } finally {
+      process.removeListener('unhandledRejection', onUnhandled)
+    }
+  })
+
+  it('works without a fresh-status dependency (none injected)', async () => {
+    const clock = makeClock()
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    const ticker = new ProgressTicker(store, clock.now)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    const off = ticker.subscribe(() => {})
+    expect(statusRequests(transport)).toBe(0)
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(12)
+    off()
   })
 })
 
