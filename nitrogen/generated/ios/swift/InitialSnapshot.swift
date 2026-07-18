@@ -18,7 +18,7 @@ public extension InitialSnapshot {
   /**
    * Create a new instance of `InitialSnapshot`.
    */
-  init(castState: CastState, playServicesState: PlayServicesState, devices: [Device], currentSession: SessionInfo?) {
+  init(castState: CastState, playServicesState: PlayServicesState, devices: [Device], currentSession: SessionInfo?, mediaStatus: MediaStatus?) {
     self.init(castState, playServicesState, { () -> bridge.std__vector_Device_ in
       var __vector = bridge.create_std__vector_Device_(devices.count)
       for __item in devices {
@@ -28,6 +28,12 @@ public extension InitialSnapshot {
     }(), { () -> bridge.std__optional_SessionInfo_ in
       if let __unwrappedValue = currentSession {
         return bridge.create_std__optional_SessionInfo_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_MediaStatus_ in
+      if let __unwrappedValue = mediaStatus {
+        return bridge.create_std__optional_MediaStatus_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -52,5 +58,10 @@ public extension InitialSnapshot {
   @inline(__always)
   var currentSession: SessionInfo? {
     return self.__currentSession.value
+  }
+  
+  @inline(__always)
+  var mediaStatus: MediaStatus? {
+    return self.__mediaStatus.value
   }
 }

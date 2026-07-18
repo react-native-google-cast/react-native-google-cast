@@ -82,6 +82,52 @@ describe('media slice', () => {
     expect(mediaState(store).currentStatus).toMatchObject({ streamPosition: 5 })
   })
 
+  it('seeds the status from a cold-start snapshot carrying mediaStatus (v5-az2)', async () => {
+    // App relaunch into active playback (or GCK auto-resume before JS init):
+    // the snapshot carries both the live session and its media status, so
+    // useMediaStatus consumers see playback state immediately on mount.
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status(42),
+      },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    expect(mediaState(store)).toMatchObject({
+      currentStatus: { streamPosition: 42 },
+      live: true,
+    })
+  })
+
+  it('seeds an empty live slice when the cold-start snapshot has no mediaStatus', async () => {
+    // Session live at init but native had no GCKMediaStatus yet (the field is
+    // omitted, never null): the slice stays empty until the first push.
+    const transport = new FakeCastTransport({
+      initialSnapshot: { currentSession: session('s1') },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    expect(mediaState(store)).toMatchObject({ currentStatus: null, live: true })
+  })
+
+  it('drops a seeded mediaStatus that arrives without a session', async () => {
+    // Defensive: media exists only with a live session — same rule the reducer
+    // applies to pushes. A snapshot status without a session is dropped.
+    const transport = new FakeCastTransport({
+      initialSnapshot: { mediaStatus: status(42) },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    expect(mediaState(store)).toMatchObject({
+      currentStatus: null,
+      live: false,
+    })
+  })
+
   it('notifies subscribers when media status changes', async () => {
     const { store, transport } = await makeStore()
     transport.emitLifecycle({ type: 'started', session: session('s1') })

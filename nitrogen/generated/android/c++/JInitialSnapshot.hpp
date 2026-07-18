@@ -20,14 +20,60 @@
 #include "JCastState.hpp"
 #include "JDevice.hpp"
 #include "JDeviceCapability.hpp"
+#include "JMediaHlsSegmentFormat.hpp"
+#include "JMediaHlsVideoSegmentFormat.hpp"
+#include "JMediaInfo.hpp"
+#include "JMediaLiveSeekableRange.hpp"
+#include "JMediaMetadata.hpp"
+#include "JMediaMetadataType.hpp"
+#include "JMediaPlayerIdleReason.hpp"
+#include "JMediaPlayerState.hpp"
+#include "JMediaQueueItem.hpp"
+#include "JMediaRepeatMode.hpp"
+#include "JMediaStatus.hpp"
+#include "JMediaStreamType.hpp"
+#include "JMediaTrack.hpp"
+#include "JMediaTrackSubtype.hpp"
+#include "JMediaTrackType.hpp"
 #include "JPlayServicesState.hpp"
 #include "JSessionInfo.hpp"
 #include "JStandbyState.hpp"
+#include "JTextTrackEdgeType.hpp"
+#include "JTextTrackFontGenericFamily.hpp"
+#include "JTextTrackFontStyle.hpp"
+#include "JTextTrackStyle.hpp"
+#include "JTextTrackWindowType.hpp"
+#include "JVideoHdrType.hpp"
+#include "JVideoInfo.hpp"
 #include "JWebImage.hpp"
+#include "MediaHlsSegmentFormat.hpp"
+#include "MediaHlsVideoSegmentFormat.hpp"
+#include "MediaInfo.hpp"
+#include "MediaLiveSeekableRange.hpp"
+#include "MediaMetadata.hpp"
+#include "MediaMetadataType.hpp"
+#include "MediaPlayerIdleReason.hpp"
+#include "MediaPlayerState.hpp"
+#include "MediaQueueItem.hpp"
+#include "MediaRepeatMode.hpp"
+#include "MediaStatus.hpp"
+#include "MediaStreamType.hpp"
+#include "MediaTrack.hpp"
+#include "MediaTrackSubtype.hpp"
+#include "MediaTrackType.hpp"
 #include "PlayServicesState.hpp"
 #include "SessionInfo.hpp"
 #include "StandbyState.hpp"
+#include "TextTrackEdgeType.hpp"
+#include "TextTrackFontGenericFamily.hpp"
+#include "TextTrackFontStyle.hpp"
+#include "TextTrackStyle.hpp"
+#include "TextTrackWindowType.hpp"
+#include "VideoHdrType.hpp"
+#include "VideoInfo.hpp"
 #include "WebImage.hpp"
+#include <NitroModules/AnyMap.hpp>
+#include <NitroModules/JAnyMap.hpp>
 #include <optional>
 #include <string>
 #include <vector>
@@ -59,6 +105,8 @@ namespace margelo::nitro::googlecast {
       jni::local_ref<jni::JArrayClass<JDevice>> devices = this->getFieldValue(fieldDevices);
       static const auto fieldCurrentSession = clazz->getField<JSessionInfo>("currentSession");
       jni::local_ref<JSessionInfo> currentSession = this->getFieldValue(fieldCurrentSession);
+      static const auto fieldMediaStatus = clazz->getField<JMediaStatus>("mediaStatus");
+      jni::local_ref<JMediaStatus> mediaStatus = this->getFieldValue(fieldMediaStatus);
       return InitialSnapshot(
         castState->toCpp(),
         playServicesState->toCpp(),
@@ -72,7 +120,8 @@ namespace margelo::nitro::googlecast {
           }
           return __vector;
         }(devices),
-        currentSession != nullptr ? std::make_optional(currentSession->toCpp()) : std::nullopt
+        currentSession != nullptr ? std::make_optional(currentSession->toCpp()) : std::nullopt,
+        mediaStatus != nullptr ? std::make_optional(mediaStatus->toCpp()) : std::nullopt
       );
     }
 
@@ -82,7 +131,7 @@ namespace margelo::nitro::googlecast {
      */
     [[maybe_unused]]
     static jni::local_ref<JInitialSnapshot::javaobject> fromCpp(const InitialSnapshot& value) {
-      using JSignature = JInitialSnapshot(jni::alias_ref<JCastState>, jni::alias_ref<JPlayServicesState>, jni::alias_ref<jni::JArrayClass<JDevice>>, jni::alias_ref<JSessionInfo>);
+      using JSignature = JInitialSnapshot(jni::alias_ref<JCastState>, jni::alias_ref<JPlayServicesState>, jni::alias_ref<jni::JArrayClass<JDevice>>, jni::alias_ref<JSessionInfo>, jni::alias_ref<JMediaStatus>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -99,7 +148,8 @@ namespace margelo::nitro::googlecast {
           }
           return __array;
         }(value.devices),
-        value.currentSession.has_value() ? JSessionInfo::fromCpp(value.currentSession.value()) : nullptr
+        value.currentSession.has_value() ? JSessionInfo::fromCpp(value.currentSession.value()) : nullptr,
+        value.mediaStatus.has_value() ? JMediaStatus::fromCpp(value.mediaStatus.value()) : nullptr
       );
     }
   };

@@ -126,13 +126,20 @@ final class HybridCastTransport: HybridCastTransportSpec {
       self.cachedCastState = Self.mapState(context.castState)
       self.cachedPassiveScan = context.discoveryManager.passiveScan
       let devices = self.readDevices(context.discoveryManager)
-      let current = Self.sessionInfo(context.sessionManager.currentCastSession)
+      let currentCastSession = context.sessionManager.currentCastSession
+      let current = Self.sessionInfo(currentCastSession)
+      // Cold-start media status (v5-az2): a session live before JS init (app
+      // relaunch during playback / auto-resume) already has a MediaStatus that
+      // would otherwise only arrive on the next push. Same convention as the
+      // push path: a nil GCKMediaStatus is omitted, never delivered as nil.
+      let mediaStatus = currentCastSession?.remoteMediaClient?.mediaStatus?.toMediaStatus()
       promise.resolve(
         withResult: InitialSnapshot(
           castState: self.cachedCastState,
           playServicesState: .success,
           devices: devices,
-          currentSession: current
+          currentSession: current,
+          mediaStatus: mediaStatus
         )
       )
     }

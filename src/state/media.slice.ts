@@ -48,9 +48,17 @@ const EMPTY_LIVE: MediaState = { currentStatus: null, live: true }
 export const mediaSlice: Slice<MediaState> = {
   key: MEDIA_SLICE_KEY,
 
-  // A fresh init never carries media status (cold-start status is a separate
-  // deferred concern); only liveness is known up front.
-  seed: (snapshot) => (snapshot.currentSession ? EMPTY_LIVE : EMPTY_IDLE),
+  // Cold start into an active cast (app relaunch during playback, or GCK
+  // auto-resume completing before JS init): the snapshot may carry the live
+  // session's media status, so hooks render playback state on mount instead
+  // of waiting for the next native push. A status without a session is
+  // dropped — same "no session, no media" rule the reducer applies (v5-az2).
+  seed: (snapshot) =>
+    snapshot.currentSession
+      ? snapshot.mediaStatus != null
+        ? { currentStatus: snapshot.mediaStatus, live: true }
+        : EMPTY_LIVE
+      : EMPTY_IDLE,
 
   reduce: (state, event) => {
     if (event.kind === 'mediaStatus') {

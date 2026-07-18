@@ -158,6 +158,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
             CastState.NODEVICESAVAILABLE,
             playServicesState(),
             emptyArray(),
+            null,
             null
           )
         )
@@ -172,8 +173,19 @@ class HybridCastTransport : HybridCastTransportSpec() {
       // keeps this idempotent against a later session callback.
       attachMediaCallback(currentSession?.remoteMediaClient)
       attachCastListener(currentSession)
+      // Cold-start media status (v5-az2): a session live before JS init (app
+      // relaunch during playback / auto-resume) already has a MediaStatus that
+      // would otherwise only arrive on the next push. Same convention as the
+      // push path: a null GCK MediaStatus is omitted, never delivered as null.
+      val coldStartMediaStatus = currentSession?.remoteMediaClient?.mediaStatus?.toMediaStatus()
       promise.resolve(
-        InitialSnapshot(cachedCastState, playServicesState(), readDevices(), sessionInfo(currentSession))
+        InitialSnapshot(
+          cachedCastState,
+          playServicesState(),
+          readDevices(),
+          sessionInfo(currentSession),
+          coldStartMediaStatus
+        )
       )
     }
     return promise

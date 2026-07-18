@@ -205,6 +205,72 @@ describe('ProgressTicker — derivation', () => {
   })
 })
 
+describe('ProgressTicker — cold-start seeded status (v5-az2)', () => {
+  it('anchors from a snapshot-seeded status (ticker built after ready)', async () => {
+    const clock = makeClock()
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status({ streamPosition: 10, playerState: 'playing' }),
+      },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+    const ticker = new ProgressTicker(store, clock.now, () =>
+      transport.requestMediaStatus()
+    )
+
+    // The constructor re-anchor picks up the seeded status directly.
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(12)
+  })
+
+  it('anchors from the seed when built before init resolves (singleton wiring)', async () => {
+    const clock = makeClock()
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status({ streamPosition: 10, playerState: 'playing' }),
+      },
+    })
+    const store = new CastStore(transport)
+    // Real wiring: progressTicker.singleton constructs at module import,
+    // before `store.ready` resolves. The seedAll notify re-anchors it.
+    const ticker = new ProgressTicker(store, clock.now, () =>
+      transport.requestMediaStatus()
+    )
+    await store.ready
+
+    clock.advance(3000)
+    expect(ticker.getPosition()).toBe(13)
+  })
+
+  it('seeding does not consume the first-subscriber one-shot request', async () => {
+    const clock = makeClock()
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status({ streamPosition: 10, playerState: 'playing' }),
+      },
+    })
+    const store = new CastStore(transport)
+    const ticker = new ProgressTicker(store, clock.now, () =>
+      transport.requestMediaStatus()
+    )
+    await store.ready
+    // Seeding itself never requests a fresh status…
+    expect(statusRequests(transport)).toBe(0)
+
+    // …and the first subscriber still fires exactly one, with the seeded
+    // anchor intact until the (event-driven) fresh push lands.
+    const off = ticker.subscribe(() => {})
+    expect(statusRequests(transport)).toBe(1)
+    clock.advance(1000)
+    expect(ticker.getPosition()).toBe(11)
+    off()
+  })
+})
+
 describe('ProgressTicker — fresh status on first subscriber', () => {
   it('the first subscriber triggers a one-shot requestMediaStatus', async () => {
     const clock = makeClock()

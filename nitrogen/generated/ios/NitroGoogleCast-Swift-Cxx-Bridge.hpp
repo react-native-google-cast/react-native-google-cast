@@ -1052,6 +1052,21 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
+  // pragma MARK: std::optional<MediaStatus>
+  /**
+   * Specialized version of `std::optional<MediaStatus>`.
+   */
+  using std__optional_MediaStatus_ = std::optional<MediaStatus>;
+  inline std::optional<MediaStatus> create_std__optional_MediaStatus_(const MediaStatus& value) noexcept {
+    return std::optional<MediaStatus>(value);
+  }
+  inline bool has_value_std__optional_MediaStatus_(const std::optional<MediaStatus>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaStatus get_std__optional_MediaStatus_(const std::optional<MediaStatus>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<InitialSnapshot>>
   /**
    * Specialized version of `std::shared_ptr<Promise<InitialSnapshot>>`.

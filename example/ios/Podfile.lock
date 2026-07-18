@@ -2190,7 +2190,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   FBLazyVector: b3e7ad108f0d882e30445c5527d774e3fd432f3d
   google-cast-sdk: 32f65af50d164e3c475e79ad123db3cc26fbcd37
-  hermes-engine: edf411b644bf5e6f70042f399ec9891b0dc248b3
+  hermes-engine: 2814d16bdfa22e819935c53659d873bdc43429bb
   NitroGoogleCast: 0f07e6ce149b7ba81c659d0b29b077af20486454
   NitroModules: 994eaa7fc39d1fb4b76bb61054312c9796c4a649
   RCTDeprecation: 2a74a2c57675e64419bd89078efde81f7c1de90b
