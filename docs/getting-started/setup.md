@@ -11,13 +11,16 @@ If you're using Expo, you can configure your build using the included plugin (se
 The plugin provides props for extra customization. Every time you change the props or plugins, you'll need to rebuild (and `prebuild`) the native app. If no extra properties are added, defaults will be used.
 
 - `receiverAppId` (_string_): custom receiver app id. Default `CC1AD845` (default receiver provided by Google). Sets both `iosReceiverAppId` and `androidReceiverAppId`.
-- `expandedController` (_boolean_): Whether to use the default expanded controller. Default `true`.
-- `androidReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
-- `androidPlayServicesCastFrameworkVersion` (_string_): Version for the Android Cast SDK. Default `+` (latest).
+- `expandedController` (_boolean_): Whether to use the default expanded controller. Default `true`. **iOS-only effect** (`useDefaultExpandedMediaControls`) — on Android the expanded controller is automatic in v5 (registered by the library manifest).
+- `androidReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`. Written to the `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID` meta-data.
+- `androidOptionsProvider` (_string_): fully-qualified class name of a custom Android `OptionsProvider`, written to the `OPTIONS_PROVIDER_CLASS_NAME` meta-data. Default `com.margelo.nitro.googlecast.NitroCastOptionsProvider` (the library provider).
+- `androidNotificationsEnabled` (_boolean_): whether the library provider shows media notifications (and lock-screen controls) during a session. Default `true`. Setting `false` writes the `com.margelo.nitro.googlecast.NOTIFICATIONS_ENABLED` meta-data. See the [Notifications guide](../guides/notifications).
+- `androidPlayServicesCastFrameworkVersion` (_string_): Version for the Android Cast SDK. Default `+` (latest). Pinning a version below `21.3.0` triggers a prebuild warning — older versions post notifications from a foreground service, the Android 14+ crash class of [#447](https://github.com/react-native-google-cast/react-native-google-cast/issues/447)/[#527](https://github.com/react-native-google-cast/react-native-google-cast/issues/527).
 - `iosReceiverAppId` (_string_): custom receiver app id. Default `CC1AD845`.
 - `iosDisableDiscoveryAutostart` (_boolean_): Whether the discovery of Cast devices should not start automatically at context initialization time. Default `false`. if set to `true`, you'll need to start it later by calling [DiscoveryManager.startDiscovery](../api/classes/discoverymanager#startdiscovery).
 - `iosStartDiscoveryAfterFirstTapOnCastButton` (_boolean_): Whether cast devices discovery start only after a user taps on the Cast button for the first time. Default `true`. If set to `false`, discovery will start as soon as the SDK is initialized. Note that this will ask the user for network permissions immediately when the app is opened for the first time.
 - `iosSuspendSessionsWhenBackgrounded` (_boolean_): Whether sessions should be suspended when the sender application goes into the background (and resumed when it returns to the foreground). Default `true`. It is appropriate to set this to `false` in applications that are able to maintain network connections indefinitely while in the background.
+- `iosSkipAppDelegateInit` (_boolean_): skip the AppDelegate `GCKCastContext` init injection entirely, for apps that need fully custom `GCKCastOptions`. Default `false`. Info.plist wiring (Bonjour services, local-network usage description) still applies. The plugin also raises a descriptive prebuild error if your AppDelegate already initializes `GCKCastContext` manually — either remove the manual init (the plugin owns it) or set this prop to `true`.
 
 ```json
 {
@@ -34,6 +37,10 @@ The plugin provides props for extra customization. Every time you change the pro
   }
 }
 ```
+
+### How the Android props interplay
+
+`receiverAppId` / `androidReceiverAppId` and `androidNotificationsEnabled` are **meta-data writers**: they emit manifest `<meta-data>` entries that are *consumed by `NitroCastOptionsProvider`* (or by subclasses that call `super`). If you point `androidOptionsProvider` at a from-scratch `OptionsProvider` that doesn't read these keys, those props have no effect — your provider is the source of truth.
 
 ## iOS
 
@@ -126,75 +133,77 @@ The plugin provides props for extra customization. Every time you change the pro
 
 ## Android
 
-1. Add to `AndroidManifest.xml` (in `android/app/src/main`):
+Add to `AndroidManifest.xml` (in `android/app/src/main`), inside `<application>`:
 
-   ```xml
-   <application ...>
-     ...
-     <meta-data
-       android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-       android:value="com.reactnative.googlecast.GoogleCastOptionsProvider" />
-   </application>
-   ```
+```xml
+<application ...>
+  ...
+  <meta-data
+    android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+    android:value="com.margelo.nitro.googlecast.NitroCastOptionsProvider" />
+</application>
+```
 
-   Additionally, if you're using a custom receiver, also add (replace `ABCD1234` with your receiver app id):
+Additionally, if you're using a custom receiver, also add (replace `ABCD1234` with your receiver app id):
 
-   ```xml
-     <meta-data
-       android:name="com.reactnative.googlecast.RECEIVER_APPLICATION_ID"
-       android:value="ABCD1234" />
-   ```
+```xml
+  <meta-data
+    android:name="com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID"
+    android:value="ABCD1234" />
+```
 
-   Alternatively, you may provide your own `OptionsProvider` class. See `GoogleCastOptionsProvider.java` for inspiration.
+When the receiver meta-data is absent (or blank), the library falls back to the Default Media Receiver (`CC1AD845`).
 
-2. In your `MainActivity.kt` or `MainActivity.java`, initialize CastContext by overriding the `onCreate` method.
+To disable media notifications and lock-screen controls, add (see the [Notifications guide](../guides/notifications)):
 
-  <!--DOCUSAURUS_CODE_TABS-->
-  <!--Kotlin-->
+```xml
+  <meta-data
+    android:name="com.margelo.nitro.googlecast.NOTIFICATIONS_ENABLED"
+    android:value="false" />
+```
 
-  ```kt
-  import android.os.Bundle
-  import androidx.annotation.Nullable
-  import com.reactnative.googlecast.api.RNGCCastContext
+That's it — unlike v4, v5 requires **no `MainActivity` changes** (the Cast context is initialized lazily by the library) and **no expanded-controller `<activity>`** (it ships pre-registered in the library manifest).
 
-  class MainActivity : ReactActivity() {
-    // ...
+> The Cast framework requires Google Play Services to be available on your device. If your device doesn't have them by default, you can install them either from the [Play Store](https://play.google.com/store/apps/details?id=com.google.android.gms&hl=en_US&gl=US), from [OpenGApps](http://opengapps.org/) or follow tutorials online.
 
-    override fun onCreate(@Nullable savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
+### Custom `OptionsProvider`
 
-      // lazy load Google Cast context (if supported on this device)
-      RNGCCastContext.getSharedInstance(this)
-    }
+The library's `NitroCastOptionsProvider` wires the receiver app id, media notifications, the default [image picker](../guides/customize-ui), and the expanded controller. If you need to customize one of those concerns, **subclass it and override exactly one seam**:
+
+- `getReceiverApplicationId(context)` — the receiver app id (default: meta-data, falling back to `CC1AD845`),
+- `getNotificationOptions(context)` — the `NotificationOptions` (return `null` to disable notifications; override to customize actions),
+- `getImagePicker()` — the artwork selection heuristic.
+
+```kotlin
+package com.example
+
+import android.content.Context
+import com.google.android.gms.cast.framework.media.NotificationOptions
+import com.margelo.nitro.googlecast.NitroCastOptionsProvider
+
+class MyOptionsProvider : NitroCastOptionsProvider() {
+  override fun getNotificationOptions(context: Context): NotificationOptions? {
+    // customize actions here; return null to disable notifications
+    return super.getNotificationOptions(context)
   }
-  ```
+}
+```
 
-  <!--Java-->
+Then point the manifest (or the `androidOptionsProvider` Expo prop) at your class:
 
-  ```java
-  // ...
-  import android.os.Bundle;
-  import androidx.annotation.Nullable;
-  import com.reactnative.googlecast.api.RNGCCastContext;
+```xml
+<meta-data
+  android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+  android:value="com.example.MyOptionsProvider" />
+```
 
-  public class MainActivity extends ReactActivity {
-    // ...
+Alternatively, write a from-scratch [`OptionsProvider`](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/OptionsProvider) — the escape hatch for fully custom `CastOptions`. Note that a from-scratch provider ignores the library meta-data (receiver id, notifications toggle) unless you read it yourself, and don't call `CastContext.getSharedInstance()` inside `getCastOptions` (it's called *during* that initialization).
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-
-      // lazy load Google Cast context (if supported on this device)
-      RNGCCastContext.getSharedInstance(this);
-    }
-  }
-  ```
-
-  <!--END_DOCUSAURUS_CODE_TABS-->
-
-   This works if you're extending `ReactActivity` (or `NavigationActivity` if you're using react-native-navigation). If you're extending a different activity, make sure it is a descendant of `androidx.appcompat.app.AppCompatActivity`.
-
-   > The Cast framework requires Google Play Services to be available on your device. If your device doesn't have them by default, you can install them either from the [Play Store](<(https://play.google.com/store/apps/details?id=com.google.android.gms&hl=en_US&gl=US)>), from [OpenGApps](http://opengapps.org/) or follow tutorials online.
+> **R8/ProGuard:** the provider class is instantiated reflectively via the `OPTIONS_PROVIDER_CLASS_NAME` meta-data, which is invisible to R8. The library ships a consumer keep rule for `NitroCastOptionsProvider`, but a **custom or subclassed provider needs your own keep rule** in `proguard-rules.pro`:
+>
+> ```
+> -keep class com.example.MyOptionsProvider { <init>(); }
+> ```
 
 ## Chrome
 

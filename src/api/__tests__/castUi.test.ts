@@ -1,4 +1,5 @@
 import type { FakeCastTransport } from '../../transport/__fakes__/FakeCastTransport'
+import type { PlayServicesState } from '../../transport/types'
 import { castTransport } from '../../state/castStore.singleton'
 import { CastContext } from '../CastContext'
 
@@ -20,9 +21,11 @@ beforeEach(() => {
   transport.showCastDialogCalls = 0
   transport.showExpandedControlsCalls = 0
   transport.showIntroductoryOverlayCalls.length = 0
+  transport.showPlayServicesErrorDialogCalls.length = 0
   transport.showCastDialogBehavior = async () => true
   transport.showExpandedControlsBehavior = async () => true
   transport.showIntroductoryOverlayBehavior = async () => true
+  transport.showPlayServicesErrorDialogBehavior = async () => true
 })
 
 describe('CastContext.showCastDialog', () => {
@@ -98,5 +101,47 @@ describe('CastContext.showIntroductoryOverlay', () => {
     await expect(
       CastContext.showIntroductoryOverlay({ once: false })
     ).rejects.toMatchObject({ code: 'unknown' })
+  })
+})
+
+describe('CastContext.showPlayServicesErrorDialog', () => {
+  // Pinned to the Android converter's ConnectionResult value map (contract ii).
+  const STATE_TO_CODE: Array<[PlayServicesState, number]> = [
+    ['success', 0],
+    ['missing', 1],
+    ['updateRequired', 2],
+    ['disabled', 3],
+    ['invalid', 9],
+    ['updating', 18],
+  ]
+
+  it.each(STATE_TO_CODE)(
+    'converts %s to ConnectionResult code %d',
+    async (state, code) => {
+      await CastContext.showPlayServicesErrorDialog(state)
+      expect(transport.showPlayServicesErrorDialogCalls).toEqual([code])
+    }
+  )
+
+  it('passes a `true` resolution through (dialog shown)', async () => {
+    await expect(
+      CastContext.showPlayServicesErrorDialog('missing')
+    ).resolves.toBe(true)
+  })
+
+  it('passes a `false` resolution through (no Activity / success / iOS)', async () => {
+    transport.showPlayServicesErrorDialogBehavior = async () => false
+    await expect(
+      CastContext.showPlayServicesErrorDialog('success')
+    ).resolves.toBe(false)
+  })
+
+  it('surfaces a typed CastError rejection', async () => {
+    transport.showPlayServicesErrorDialogBehavior = async () => {
+      throw { code: 'failed', message: 'native failure' }
+    }
+    await expect(
+      CastContext.showPlayServicesErrorDialog('disabled')
+    ).rejects.toMatchObject({ code: 'failed' })
   })
 })

@@ -6,6 +6,20 @@ import { subscribeSelector } from './subscribeSelector'
 import type { EventSubscription } from './subscribeSelector'
 
 /**
+ * PlayServicesState → ConnectionResult code, for the Play Services error
+ * dialog. Pinned to the Android converter's value map (contract ii) — the
+ * exact reverse of `playServicesStateFromConnectionResult`.
+ */
+const PLAY_SERVICES_ERROR_CODE: Record<PlayServicesState, number> = {
+  success: 0,
+  missing: 1,
+  updateRequired: 2,
+  disabled: 3,
+  invalid: 9,
+  updating: 18,
+}
+
+/**
  * Root of the Cast SDK — global state and the manager façades. Default export
  * of the library (`GoogleCast` and `CastContext` are equivalent).
  *
@@ -94,6 +108,25 @@ export class CastContext {
     once?: boolean
   }): Promise<boolean> {
     return castTransport.showIntroductoryOverlay(options?.once ?? true)
+  }
+
+  /**
+   * Show a dialog with a localized message about the error state. Upon user
+   * confirmation the dialog directs them to the Play Store if Google Play
+   * services is out of date or missing, or to system settings if it's
+   * disabled on the device.
+   *
+   * @platform android — resolves `false` on iOS and web (8A).
+   * @param playServicesState state returned from
+   * {@link CastContext.getPlayServicesState}. If it's `success`, the dialog
+   * is not shown and the promise resolves `false`.
+   */
+  static showPlayServicesErrorDialog(
+    playServicesState: PlayServicesState
+  ): Promise<boolean> {
+    return castTransport.showPlayServicesErrorDialog(
+      PLAY_SERVICES_ERROR_CODE[playServicesState]
+    )
   }
 
   /** Listen for changes of the cast state. */
