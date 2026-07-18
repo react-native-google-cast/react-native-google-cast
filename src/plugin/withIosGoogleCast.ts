@@ -86,6 +86,12 @@ export function applyGoogleCastAppDelegate(
   language: 'swift' | 'objc' | 'objcpp' | string,
   props: IosProps = {}
 ): string {
+  // Unknown AppDelegate language — leave untouched (v4 behavior). Checked
+  // before the conflict scan: with no injection there is no double-init, so a
+  // manual GCKCastContext init in an exotic delegate is not a conflict.
+  if (language !== 'swift' && language !== 'objc' && language !== 'objcpp') {
+    return src
+  }
   // Contract v conflict policy: a manual GCKCastContext init *outside* our
   // tagged block means the app owns initialization — error out loudly rather
   // than injecting a second init (E10 names the escape hatch).
@@ -113,25 +119,21 @@ export function applyGoogleCastAppDelegate(
     )
     contents = mergeWithDescriptiveAnchorError(
       () => addSwiftGoogleCastAppDelegateImport(contents).contents,
-      /import React/
+      SWIFT_IMPORT_ANCHOR
     )
     return contents
   }
-  if (language === 'objc' || language === 'objcpp') {
-    let contents = mergeWithDescriptiveAnchorError(
-      () =>
-        addGoogleCastAppDelegateDidFinishLaunchingWithOptions(src, props)
-          .contents,
-      MATCH_INIT
-    )
-    contents = mergeWithDescriptiveAnchorError(
-      () => addGoogleCastAppDelegateImport(contents).contents,
-      /#import "AppDelegate\.h"/
-    )
-    return contents
-  }
-  // Unknown AppDelegate language — leave untouched (v4 behavior).
-  return src
+  let contents = mergeWithDescriptiveAnchorError(
+    () =>
+      addGoogleCastAppDelegateDidFinishLaunchingWithOptions(src, props)
+        .contents,
+    MATCH_INIT
+  )
+  contents = mergeWithDescriptiveAnchorError(
+    () => addGoogleCastAppDelegateImport(contents).contents,
+    OBJC_IMPORT_ANCHOR
+  )
+  return contents
 }
 
 // TODO: Use AppDelegate swizzling
@@ -183,6 +185,11 @@ export const MATCH_INIT =
 
 /** RN 0.86 Swift template anchor (contract v). */
 export const SWIFT_MATCH_INIT = /let\s+delegate\s*=\s*ReactNativeDelegate\(\)/
+
+// Import anchors — single source for both the merge and its anchor-miss error
+// message (a drifting duplicate would make the error name the wrong anchor).
+const OBJC_IMPORT_ANCHOR = /#import "AppDelegate\.h"/
+const SWIFT_IMPORT_ANCHOR = /import React/
 
 type IosProps = {
   disableDiscoveryAutostart?: boolean
@@ -250,7 +257,7 @@ function addGoogleCastAppDelegateImport(src: string) {
     tag: 'react-native-google-cast-import',
     src,
     newSrc: newSrc.join('\n'),
-    anchor: /#import "AppDelegate\.h"/,
+    anchor: OBJC_IMPORT_ANCHOR,
     offset: 1,
     comment: '//',
   })
@@ -268,7 +275,7 @@ function addSwiftGoogleCastAppDelegateImport(src: string) {
     tag: 'react-native-google-cast-import',
     src,
     newSrc: newSrc.join('\n'),
-    anchor: /import React/,
+    anchor: SWIFT_IMPORT_ANCHOR,
     offset: 0,
     comment: '//',
   })

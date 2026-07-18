@@ -165,6 +165,24 @@ class NitroCastOptionsProviderTest {
     assertNotNull(checkNotNull(options.castMediaOptions).notificationOptions)
   }
 
+  @Test
+  fun subclassCanOverrideJustImagePicker() {
+    setMetaData(null)
+    val subclassed = object : NitroCastOptionsProvider() {
+      override fun getImagePicker(): ImagePicker? = null
+    }
+    val options = subclassed.getCastOptions(context)
+    val mediaOptions = checkNotNull(options.castMediaOptions)
+    assertNull(mediaOptions.imagePicker)
+    // Every other seam still produces the library defaults.
+    assertEquals(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID, options.receiverApplicationId)
+    assertNotNull(mediaOptions.notificationOptions)
+    assertEquals(
+      NitroExpandedControllerActivity::class.java.name,
+      mediaOptions.expandedControllerActivityClassName
+    )
+  }
+
   // MARK: - NitroImagePicker shim (GCK-typed delegation over the pure heuristic)
 
   @Test

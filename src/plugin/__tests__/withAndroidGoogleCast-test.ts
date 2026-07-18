@@ -252,12 +252,15 @@ describe('CAF floor warning (E8)', () => {
     expect(message).toContain('#527')
   })
 
-  it.each([['22.1.0'], ['+']])('does not warn for %s', (version) => {
-    withAndroidGoogleCast(baseConfig(), {
-      androidPlayServicesCastFrameworkVersion: version,
-    })
-    expect(warnSpy).not.toHaveBeenCalled()
-  })
+  it.each([['21.3.0'], ['22.1.0'], ['+']])(
+    'does not warn for %s',
+    (version) => {
+      withAndroidGoogleCast(baseConfig(), {
+        androidPlayServicesCastFrameworkVersion: version,
+      })
+      expect(warnSpy).not.toHaveBeenCalled()
+    }
+  )
 
   it('does not warn when the version is unset', () => {
     withAndroidGoogleCast(baseConfig(), {})

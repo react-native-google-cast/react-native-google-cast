@@ -263,8 +263,9 @@ export const withAndroidGoogleCast: ConfigPlugin<{
   return config
 }
 
-// TODO: Add this ability to autolinking
-// dependencies { implementation "com.google.android.gms:play-services-cast-framework:+" }
+// Deliberate v4-parity redundancy: the library's android/build.gradle already
+// declares play-services-cast-framework itself; this app-level injection only
+// pins the version the app resolves (overridable via ext.castFrameworkVersion).
 export function addGoogleCastImport(
   src: string,
   { version }: { version?: string } = {}

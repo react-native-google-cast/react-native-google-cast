@@ -8,7 +8,8 @@ import type { EventSubscription } from './subscribeSelector'
 /**
  * PlayServicesState → ConnectionResult code, for the Play Services error
  * dialog. Pinned to the Android converter's value map (contract ii) — the
- * exact reverse of `playServicesStateFromConnectionResult`.
+ * byte-for-byte twin of `PlayServicesState.toGckConnectionResult`
+ * (android/.../converters/PlayServicesState+toGckConnectionResult.kt).
  */
 const PLAY_SERVICES_ERROR_CODE: Record<PlayServicesState, number> = {
   success: 0,

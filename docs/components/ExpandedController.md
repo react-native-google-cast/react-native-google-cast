@@ -25,7 +25,7 @@ The activity uses the library-defined theme `NitroCastExpandedController` (paren
 ```xml
 <style name="NitroCastExpandedController" parent="Theme.AppCompat.NoActionBar">
   <!-- your customizations -->
-  <item name="android:windowBackground">@color/black</item>
+  <item name="android:windowBackground">@android:color/black</item>
 </style>
 ```
 

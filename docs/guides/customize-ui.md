@@ -46,7 +46,10 @@ If you don't set a picker, the SDK exposes its own default (which always selects
 Subclass `NitroCastOptionsProvider` and override `getImagePicker()` (see [Custom OptionsProvider](../getting-started/setup#custom-optionsprovider)):
 
 ```kotlin
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.framework.media.ImageHints
 import com.google.android.gms.cast.framework.media.ImagePicker
+import com.google.android.gms.common.images.WebImage
 import com.margelo.nitro.googlecast.NitroCastOptionsProvider
 
 class MyOptionsProvider : NitroCastOptionsProvider() {
