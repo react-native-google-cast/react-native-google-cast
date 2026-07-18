@@ -59,6 +59,16 @@ const withGoogleCast: ConfigPlugin<
     iosReceiverAppId?: string
 
     /**
+     * Skip the AppDelegate `GCKCastContext` init injection entirely, for apps
+     * that need fully custom `GCKCastOptions` (E10 escape hatch). Info.plist
+     * wiring (Bonjour services, local-network usage description) still
+     * applies.
+     *
+     * @default false
+     */
+    iosSkipAppDelegateInit?: boolean
+
+    /**
      * Whether cast devices discovery start only after a user taps on the Cast button the first time.
      *
      * @default true
@@ -86,6 +96,7 @@ const withGoogleCast: ConfigPlugin<
     receiverAppId: props.iosReceiverAppId ?? props.receiverAppId,
     disableDiscoveryAutostart: props.iosDisableDiscoveryAutostart,
     expandedController: props.expandedController ?? true,
+    skipAppDelegateInit: props.iosSkipAppDelegateInit,
     suspendSessionsWhenBackgrounded: props.iosSuspendSessionsWhenBackgrounded,
     startDiscoveryAfterFirstTapOnCastButton:
       props.iosStartDiscoveryAfterFirstTapOnCastButton,
