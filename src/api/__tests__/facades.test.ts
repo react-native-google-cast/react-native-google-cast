@@ -202,6 +202,28 @@ describe('CastSession — device (live read)', () => {
     expect(castSession.isActive).toBe(true)
   })
 
+  it('retains a device update that nothing read before the session suspended', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const castSession = sessionManager.getCurrentCastSession()!
+
+    // Rename lands while live, but NOTHING reads `device` before the session
+    // suspends — the slice's `current` is gone by the time it is read, so a
+    // read-time-only refresh would regress to the constructor-time device.
+    // The SessionManager store subscription captures it as it happens.
+    transport.emitLifecycle({
+      type: 'deviceStatusChanged',
+      session: {
+        ...session('s1'),
+        device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+      },
+    })
+    transport.emitLifecycle({ type: 'suspended' })
+
+    expect(castSession.isActive).toBe(false)
+    expect(castSession.device.friendlyName).toBe('Bedroom TV')
+  })
+
   it('keeps the last-known device once stale (snapshot semantics)', async () => {
     const { sessionManager, transport } = await setup()
     transport.emitLifecycle({ type: 'started', session: session('s1') })

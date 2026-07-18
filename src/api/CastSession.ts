@@ -90,13 +90,29 @@ export class CastSession {
    * the last-known device (a snapshot; valid even once stale).
    */
   get device(): Device {
+    this.refreshDeviceFromStore()
+    return this.lastKnownDevice
+  }
+
+  /**
+   * Refresh {@link lastKnownDevice} from the session slice while this façade is
+   * the live generation. Called by the {@link device} getter on read, and by
+   * `SessionManager` on every store change — the latter is what keeps a
+   * *retained* façade's snapshot current: a device update never changes the
+   * generation (so no new façade is created), and if nothing happened to read
+   * `device` between the update and a suspension, the slice's `current` is
+   * gone by the time it *is* read — a read-time refresh alone would regress to
+   * the constructor-time device.
+   *
+   * @internal — not part of the public façade surface.
+   */
+  refreshDeviceFromStore(): void {
     const current = this.store.getSliceState<SessionState>(
       SESSION_SLICE_KEY
     ).current
     if (current && current.generation === this.generation) {
       this.lastKnownDevice = current.device
     }
-    return this.lastKnownDevice
   }
 
   /** Whether this façade still refers to the current live session. */

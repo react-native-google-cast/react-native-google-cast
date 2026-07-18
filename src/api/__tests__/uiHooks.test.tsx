@@ -391,4 +391,33 @@ describe('useCastDevice', () => {
     expect(latestDevice).toBe(before)
     act(() => renderer.unmount())
   })
+
+  it('keeps a renamed device across suspension (ignoreSessionUpdatesInBackground)', async () => {
+    const renderer = createProbe(
+      <DeviceProbe options={{ ignoreSessionUpdatesInBackground: true }} />
+    )
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    await flush()
+
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: {
+          ...session('s1'),
+          device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+        },
+      })
+    })
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+
+    // Suspension clears the slice's `current`; the retained façade must keep
+    // the renamed device, not regress to its constructor-time snapshot.
+    act(() => {
+      transport.emitLifecycle({ type: 'suspended' })
+    })
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+    act(() => renderer.unmount())
+  })
 })

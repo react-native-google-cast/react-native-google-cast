@@ -30,6 +30,15 @@ export class SessionManager {
   constructor(store: CastStore, transport: CastTransportApi) {
     this.store = store
     this.transport = transport
+    // Keep the memoized façade's device snapshot fresh at the moment the
+    // session slice swaps it (see CastSession.refreshDeviceFromStore) — a
+    // read-time-only refresh would miss a device update that nothing read
+    // before the session suspended, regressing the retained façade to its
+    // constructor-time device. Held for the manager's lifetime (one per
+    // CastContext); a no-op unless a façade is cached and still live.
+    this.store.subscribe(() => {
+      this.cached?.session.refreshDeviceFromStore()
+    })
   }
 
   /** The current Cast session, or `null`. Synchronous (v4: returned a Promise). */
