@@ -61,15 +61,19 @@ main-queue hop (the library's first touch of `GCKCastContext`; GCK UI-category
 work is main-thread by convention — the SDK documents main-thread only for
 `setSharedInstanceWithOptions:`, so we follow the stricter convention).
 
-**Don't-clobber rule:** assign only when `context.imagePicker == nil`. The
-GCK 4.8.4 header (`GCKCastContext+UI.h:63-66`) declares the property
-`nullable` — "A default implementation will be used if one is not provided by
-the application. May be set to `nil` to reinstate the default image picker" —
-i.e. *unset reads `nil`*; the internal default is not exposed through the
-property. A consumer-set picker (assigned in AppDelegate, which always runs
-before RN/transport init) therefore reads non-nil and is never overwritten.
-An XCTest pins the unset-reads-nil assumption empirically against the real
-SDK (if a GCK upgrade ever breaks it, the test fails loudly).
+**Don't-clobber rule** *(as amended by the implementation-time finding, see
+E12)*: assign only when the current picker is "absent" — `nil` **or** GCK's
+own internal default. The GCK 4.8.4 header (`GCKCastContext+UI.h:63-66`)
+declares the property `nullable` ("A default implementation will be used if
+one is not provided…"), but **empirically the unset property reads an
+internal `GCKUIDefaultImagePicker` instance, not `nil`** — the iOS lane's
+mandated pin test caught this on first run; a nil-only guard would have made
+the library picker a silent no-op. `installIfAbsent` therefore matches
+`nil` or the exact class name `GCKUIDefaultImagePicker`. A consumer-set
+picker (assigned in AppDelegate, which always runs before RN/transport init)
+never matches and is never overwritten. The guarded singleton XCTest pins
+these unset-representation semantics against the real SDK (if a GCK upgrade
+changes them, the test fails loudly).
 
 Neither the Expo plugin nor the bare-app recipe injects picker code — the
 single assignment point in the library covers both consumer classes
@@ -628,6 +632,16 @@ Where an amendment contradicts a body section above, the amendment wins.
   skips only the AppDelegate mod (Info.plist wiring still applies) for apps
   that need fully custom `GCKCastOptions`. Fixture-tested (skip leaves
   AppDelegate untouched).
+- **E12 — implementation-time amendment (2026-07-18, iOS lane): unset
+  `imagePicker` is the SDK default instance, not `nil`.** The contract-i pin
+  test failed on first run against GCK 4.8.4: reading a never-set
+  `GCKCastContext.imagePicker` returns an internal `GCKUIDefaultImagePicker`
+  object (the header's "nullable / default used if not provided" wording is
+  misleading). The install guard treats "absent" as `nil` **or** that exact
+  class; the pin test asserts the amended semantics. Docs must not claim
+  "unset reads nil". (This is the E-table's "GCK changes unset-picker
+  semantics" failure mode working as designed — caught at test time, not on
+  devices.)
 - **E11 — editorial.** (a) The graceful-degradation claim in criterion iv is
   backed by enumerating the guarded first-touch paths: the transport
   (`sharedCastContextOrNull()`), `HybridCastButton` (v4-style try/catch
