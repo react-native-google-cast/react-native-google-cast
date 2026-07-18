@@ -420,4 +420,41 @@ describe('useCastDevice', () => {
     expect(latestDevice!.friendlyName).toBe('Bedroom TV')
     act(() => renderer.unmount())
   })
+
+  it('pairs the device with the façade it returns across a session replacement', async () => {
+    const renderer = createProbe(
+      <DeviceProbe options={{ ignoreSessionUpdatesInBackground: true }} />
+    )
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    await flush()
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: {
+          ...session('s1'),
+          device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+        },
+      })
+    })
+    act(() => {
+      transport.emitLifecycle({ type: 'suspended' })
+    })
+    // Retained old façade: its OWN (renamed) device — the read is scoped
+    // through `castSession.device`, never an unscoped slice read (the
+    // façade-level scoping guarantee is pinned in facades.test.ts: a stale
+    // façade keeps its own device even while a NEW session is live).
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+
+    // A NEW session replaces the suspended one: the hook hands out the new
+    // façade and must pair it with the NEW session's device — never a mix.
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s2') })
+    })
+    await flush()
+    expect(latestDevice!.deviceId).toBe('s2')
+    expect(latestDevice!.friendlyName).toBe('Device s2')
+    act(() => renderer.unmount())
+  })
 })
