@@ -25,9 +25,11 @@
       </activity>
 
       <!-- Google Cast: the library OptionsProvider (v4-parity notifications,
-           image picker, expanded controller). Mirrors the Expo plugin output;
-           NitroExpandedControllerActivity is auto-registered by the library
-           manifest — no manual <activity> needed. -->
+           image picker, expanded controller). Mirrors the Expo plugin output
+           for receiverAppId "CC1AD845" (explicit here to exercise the
+           meta-data read path); NitroExpandedControllerActivity is
+           auto-registered by the library manifest — no manual <activity>
+           needed. -->
       <meta-data
         android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
         android:value="com.margelo.nitro.googlecast.NitroCastOptionsProvider" />

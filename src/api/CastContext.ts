@@ -85,9 +85,11 @@ export class CastContext {
   /**
    * Present the platform's default expanded media controls. Resolves `true`
    * once the present/launch call was issued (the launched UI is not
-   * observable). On Android, `NitroExpandedControllerActivity` must be
-   * registered in the app manifest — a missing registration rejects a
-   * `CastError` with code `notSupported`.
+   * observable). On Android, `NitroExpandedControllerActivity` is registered
+   * automatically by the library manifest; a `notSupported` rejection means
+   * the manifest merge was overridden (e.g. a stale manual declaration) or
+   * Play Services is unavailable — check the merged manifest and
+   * {@link CastContext.getPlayServicesState}.
    */
   static showExpandedControls(): Promise<boolean> {
     return castTransport.showExpandedControls()

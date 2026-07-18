@@ -64,7 +64,8 @@ describe('CastContext.showExpandedControls', () => {
     transport.showExpandedControlsBehavior = async () => {
       throw {
         code: 'notSupported',
-        message: 'Register NitroExpandedControllerActivity in your manifest.',
+        message:
+          'NitroExpandedControllerActivity could not be launched (manifest merge overridden?).',
       }
     }
     await expect(CastContext.showExpandedControls()).rejects.toMatchObject({
