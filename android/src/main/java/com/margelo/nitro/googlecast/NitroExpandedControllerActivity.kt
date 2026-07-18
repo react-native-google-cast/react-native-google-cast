@@ -7,17 +7,15 @@ import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActi
 /**
  * GCK's default expanded controller with a Cast button in the toolbar (the v4
  * `RNGCExpandedControllerActivity`, ported). Launched by
- * `CastContext.showExpandedControls()`.
+ * `CastContext.showExpandedControls()` and by Cast-notification taps (wired by
+ * `NitroCastOptionsProvider`).
  *
- * Android only launches activities declared in the *app* manifest, so the
- * consuming app must register it (automatic wiring lands in slice 6.2):
- *
- * ```xml
- * <activity
- *   android:name="com.margelo.nitro.googlecast.NitroExpandedControllerActivity"
- *   android:exported="false"
- *   android:theme="@style/Theme.AppCompat.NoActionBar" />
- * ```
+ * Registration is automatic (Decision 1): this library's manifest declares
+ * the activity (`android:exported="false"`), so consuming apps must NOT add
+ * their own `<activity>` — a stale manual declaration from 6.1 causes an
+ * `android:theme` manifest-merger conflict. The theme is the library-defined
+ * `@style/NitroCastExpandedController`; consumers restyle the controller by
+ * redefining that style in their app resources.
  */
 class NitroExpandedControllerActivity : ExpandedControllerActivity() {
   override fun onCreateOptionsMenu(menu: Menu): Boolean {

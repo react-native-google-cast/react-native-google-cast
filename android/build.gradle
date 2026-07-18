@@ -53,6 +53,10 @@ android {
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
+    // The Cast SDK instantiates NitroCastOptionsProvider reflectively via the
+    // OPTIONS_PROVIDER_CLASS_NAME meta-data — keep it in consumer R8 builds (E5).
+    consumerProguardFiles 'proguard-rules.pro'
+
     externalNativeBuild {
       cmake {
         cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
@@ -156,6 +160,9 @@ dependencies {
   // Converter parity suite (Robolectric, JVM unit tests).
   testImplementation "junit:junit:4.13.2"
   testImplementation "org.robolectric:robolectric:4.13"
+  // Real org.json for the plain-JUnit heuristic-vector suite: the mockable
+  // android.jar only stubs it (Robolectric tests use their own sandboxed copy).
+  testImplementation "org.json:json:20240303"
 
   // Instrumented converter parity suite (androidTest) for AnyMap-carrying types.
   // AnyMap is JNI-backed; these tests require a connected emulator or device.
