@@ -711,7 +711,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
       val json = customData?.toJsonObject()
       if (playPosition != null) {
         // Seconds (TS) → milliseconds (GCK Android), same as the seek converter.
-        it.queueInsertAndPlayItem(gckItem, before, (playPosition * 1000).toLong(), json)
+        it.queueInsertAndPlayItem(gckItem, before, playPosition.toPlayPositionMs(), json)
       } else {
         // No explicit position — the item's startTime governs its first play.
         it.queueInsertAndPlayItem(gckItem, before, json)
@@ -955,6 +955,18 @@ class HybridCastTransport : HybridCastTransportSpec() {
       "$name must be a finite integer in Long range, got $this"
     }
     return toLong()
+  }
+
+  // `playPosition` seconds → GCK milliseconds. Same silent-narrowing hazard as the ID
+  // converters above (`(NaN).toLong() == 0`, `(+Inf).toLong() == Long.MAX_VALUE` — a garbage
+  // value would become a *real* start position), so validate: finite, non-negative, and small
+  // enough that the ms conversion stays in Long range. Fractional seconds are fine (it is a
+  // time, not an id). Thrown inside a `mediaCall` op lambda → JS sees a `failed` rejection.
+  private fun Double.toPlayPositionMs(): Long {
+    require(isFinite() && this >= 0.0 && this <= Long.MAX_VALUE.toDouble() / 1000.0) {
+      "playPosition must be a finite non-negative number of seconds, got $this"
+    }
+    return (this * 1000).toLong()
   }
 
   private fun gckRepeatMode(mode: MediaRepeatMode): Int =

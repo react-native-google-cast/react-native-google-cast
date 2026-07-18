@@ -280,37 +280,42 @@ export class RemoteMediaClient {
 
   /**
    * Insert `items` before `beforeItemId`. A `beforeItemId` of `0` (GCK's
-   * invalid-item sentinel, the default) appends to the end of the queue.
+   * invalid-item sentinel, the default) or `null` (the v4 shape) appends to
+   * the end of the queue.
    *
    * @param customData Custom application-specific data to pass along with the request.
    */
   async queueInsertItems(
     items: MediaQueueItem[],
-    beforeItemId = 0,
+    beforeItemId: number | null = 0,
     customData?: AnyMap
   ): Promise<void> {
     this.assertActive()
-    return this.transport.queueInsertItems(items, beforeItemId, customData)
+    return this.transport.queueInsertItems(
+      items,
+      beforeItemId ?? 0, // v4 compat: `null` = append (GCK's `0` sentinel)
+      customData
+    )
   }
 
   /**
-   * Insert a single `item` before `beforeItemId` (`0`, the default, appends).
-   * A v4-compat convenience over {@link queueInsertItems}.
+   * Insert a single `item` before `beforeItemId` (`0` or `null`, the default,
+   * appends). A v4-compat convenience over {@link queueInsertItems}.
    *
    * @param customData Custom application-specific data to pass along with the request.
    */
   async queueInsertItem(
     item: MediaQueueItem,
-    beforeItemId = 0,
+    beforeItemId: number | null = 0,
     customData?: AnyMap
   ): Promise<void> {
     return this.queueInsertItems([item], beforeItemId, customData)
   }
 
   /**
-   * Insert a single `item` before `beforeItemId` (`0`, the default, appends)
-   * and make it the current item — one atomic GCK request (the receiver
-   * assigns the new item's id, so this is *not* expressible as
+   * Insert a single `item` before `beforeItemId` (`0` or `null`, the default,
+   * appends) and make it the current item — one atomic GCK request (the
+   * receiver assigns the new item's id, so this is *not* expressible as
    * `queueInsertItems` + `queueJumpToItem` without a racy status round-trip).
    *
    * @param playPosition Initial playback position in seconds for the item's
@@ -320,14 +325,14 @@ export class RemoteMediaClient {
    */
   async queueInsertAndPlayItem(
     item: MediaQueueItem,
-    beforeItemId = 0,
+    beforeItemId: number | null = 0,
     playPosition?: number,
     customData?: AnyMap
   ): Promise<void> {
     this.assertActive()
     return this.transport.queueInsertAndPlayItem(
       item,
-      beforeItemId,
+      beforeItemId ?? 0, // v4 compat: `null` = append (GCK's `0` sentinel)
       playPosition,
       customData
     )

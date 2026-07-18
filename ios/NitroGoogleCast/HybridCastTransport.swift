@@ -460,6 +460,12 @@ final class HybridCastTransport: HybridCastTransportSpec {
     guard let before = Self.queueIndex(beforeItemId) else {
       return Self.rejectedIndex("beforeItemId", beforeItemId)
     }
+    // Mirror the Android `toPlayPositionMs` guard: a NaN/±Inf/negative
+    // playPosition would flow into GCK as a "real" TimeInterval (and NaN can't
+    // even be JSON-serialized) — reject it before issuing the request.
+    if let playPosition, !(playPosition.isFinite && playPosition >= 0) {
+      return Self.rejectedIndex("playPosition", playPosition)
+    }
     // GCK's only customData-capable variant also takes playPosition; an absent
     // playPosition maps to kGCKInvalidTimeInterval ("unset" — the item's
     // startTime governs), which is what the playPosition-less variant sends.

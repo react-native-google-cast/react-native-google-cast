@@ -399,6 +399,22 @@ describe('RemoteMediaClient — ergonomic defaults', () => {
     ])
   })
 
+  it('normalizes a v4-style null beforeItemId to the 0 append sentinel', async () => {
+    // v4 typed beforeItemId as `number | null` and did `beforeItemId || 0`;
+    // drop-in callers like queueInsertItem(item, null, customData) must not
+    // leak `null` into the (strictly numeric) bridge argument.
+    const { client, transport } = await withSession()
+    const customData: AnyMap = { via: 'v4' }
+    await client.queueInsertItem(queueItems[0]!, null, customData)
+    await client.queueInsertItems(queueItems, null)
+    await client.queueInsertAndPlayItem(queueItems[0]!, null)
+    expect(transport.mediaCalls).toEqual([
+      { method: 'queueInsertItems', args: [[queueItems[0]], 0, customData] },
+      { method: 'queueInsertItems', args: [queueItems, 0] },
+      { method: 'queueInsertAndPlayItem', args: [queueItems[0], 0] },
+    ])
+  })
+
   it('setActiveMediaTracks (deprecated alias) defaults to clear, like setActiveTrackIds', async () => {
     const { client, transport } = await withSession()
     await client.setActiveMediaTracks()
