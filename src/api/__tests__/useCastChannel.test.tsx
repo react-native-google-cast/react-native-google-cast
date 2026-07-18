@@ -4,6 +4,7 @@ import type { Device, SessionInfo } from '../../transport/types'
 import type { FakeCastTransport } from '../../transport/__fakes__/FakeCastTransport'
 import { castTransport } from '../../state/castStore.singleton'
 import type { CastChannel } from '../CastChannel'
+import { CastContext } from '../CastContext'
 import { CastSession } from '../CastSession'
 import { useCastChannel } from '../useCastChannel'
 
@@ -69,6 +70,14 @@ beforeEach(async () => {
   transport.addChannelCalls.length = 0
   transport.removeChannelCalls.length = 0
   await flush()
+})
+
+afterEach(() => {
+  // Restore default scriptable behaviours mutated by the race tests.
+  transport.addChannelBehavior = async (namespace) => {
+    transport.emitChannelStatus(namespace, true, true)
+  }
+  transport.removeChannelBehavior = async () => {}
 })
 
 afterEach(() => {
@@ -181,6 +190,108 @@ describe('useCastChannel', () => {
     expect(transport.addChannelCalls).toEqual([NS, NS_B])
     expect(latest!.namespace).toBe(NS_B)
     act(() => renderer.unmount())
+  })
+
+  it('recovers when a remount races the predecessor’s in-flight registration', async () => {
+    // The narrow PR #610 window: the predecessor's addChannel has dispatched
+    // its initial channelStatus (slice entry present → register-once trips)
+    // but its native promise hasn't resolved, so the predecessor's cleanup
+    // couldn't remove yet (its `created` was still null). The successor must
+    // wait for the deferred removal and then register — never issuing its
+    // native add BEFORE the predecessor's native remove.
+    const order: string[] = []
+    let resolveFirstAdd!: () => void
+    let firstAdd = true
+    transport.addChannelBehavior = async (namespace) => {
+      order.push('add')
+      transport.emitChannelStatus(namespace, true, true)
+      if (firstAdd) {
+        firstAdd = false
+        await new Promise<void>((resolve) => {
+          resolveFirstAdd = resolve
+        })
+      }
+    }
+    transport.removeChannelBehavior = async () => {
+      order.push('remove')
+    }
+
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const first = createProbe(<Probe namespace={NS} />)
+    await flush()
+    expect(latest).toBeNull() // native add still in flight
+    act(() => first.unmount())
+    const second = createProbe(<Probe namespace={NS} />)
+    await flush()
+    // Successor rejected `alreadyRegistered` (never reached the transport)
+    // and is now waiting on the slice.
+    expect(transport.addChannelCalls).toEqual([NS])
+    expect(latest).toBeNull()
+
+    // Native resolves the predecessor's add → its deferred cleanup removes →
+    // the waiting successor re-registers.
+    await act(async () => {
+      resolveFirstAdd()
+    })
+    await flush()
+    expect(latest).not.toBeNull()
+    expect(latest!.namespace).toBe(NS)
+    expect(latest!.connected).toBe(true)
+    expect(transport.addChannelCalls).toEqual([NS, NS])
+    expect(transport.removeChannelCalls).toEqual([NS])
+    // Native queue ordering preserved: remove precedes the successor's add.
+    expect(order).toEqual(['add', 'remove', 'add'])
+    act(() => second.unmount())
+  })
+
+  it('waits while the namespace is held elsewhere and registers once freed', async () => {
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const castSession = CastContext.getSessionManager().getCurrentCastSession()!
+    let held!: CastChannel
+    await act(async () => {
+      held = await castSession.addChannel(NS)
+    })
+
+    const renderer = createProbe(<Probe namespace={NS} />)
+    await flush()
+    expect(latest).toBeNull() // register-once: the holder keeps it
+    expect(transport.addChannelCalls).toEqual([NS])
+
+    await act(async () => {
+      await held.remove()
+    })
+    await flush()
+    expect(latest).not.toBeNull()
+    expect(transport.addChannelCalls).toEqual([NS, NS])
+    act(() => renderer.unmount())
+  })
+
+  it('stops waiting on unmount — a later free must not re-register', async () => {
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const castSession = CastContext.getSessionManager().getCurrentCastSession()!
+    let held!: CastChannel
+    await act(async () => {
+      held = await castSession.addChannel(NS)
+    })
+
+    const renderer = createProbe(<Probe namespace={NS} />)
+    await flush()
+    expect(latest).toBeNull()
+    act(() => renderer.unmount())
+
+    await act(async () => {
+      await held.remove()
+    })
+    await flush()
+    // The unmounted waiter unsubscribed: no stray registration.
+    expect(transport.addChannelCalls).toEqual([NS])
+    expect(transport.removeChannelCalls).toEqual([NS])
   })
 
   it('drops to null when the session ends', async () => {

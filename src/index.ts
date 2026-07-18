@@ -15,6 +15,7 @@ export { useRemoteMediaClient } from './api/useRemoteMediaClient'
 export { useMediaStatus } from './api/useMediaStatus'
 export { useStreamPosition } from './api/useStreamPosition'
 export { useCastChannel } from './api/useCastChannel'
+export { useChannelStatus } from './api/useChannelStatus'
 export { useCastState } from './api/useCastState'
 export { useDevices } from './api/useDevices'
 export { useCastSession } from './api/useCastSession'
@@ -38,6 +39,7 @@ export type {
   SessionEventType,
 } from './transport/types'
 export type { CastError, CastErrorCode } from './types/CastError'
+export type { ChannelStatus } from './state/channel.slice'
 
 // RemoteMediaClient public types (method signatures, returns, status inspection).
 export type { MediaStatus } from './types/MediaStatus'

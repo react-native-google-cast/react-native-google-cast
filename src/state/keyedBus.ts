@@ -8,6 +8,12 @@
  * lifecycle bus (`CastStore.on`) and the Phase 5 per-namespace channel message
  * bus (`CastStore.onChannelMessage`). State replay is `getSnapshot`'s job —
  * nothing emitted through a bus is ever replayed to a late subscriber.
+ *
+ * Handlers are stored in a per-key `Set`, so subscribing the **same function
+ * reference** to the same key twice collapses to a single entry — and a single
+ * unsubscribe then drops it entirely. No current caller does this (each
+ * subscriber passes a fresh closure); if you need duplicate handlers on one
+ * key, wrap each in its own closure.
  */
 export class KeyedBus<K, V> {
   private readonly handlers = new Map<K, Set<(value: V) => void>>()
@@ -22,6 +28,13 @@ export class KeyedBus<K, V> {
     set.add(handler)
     return () => {
       set.delete(handler)
+      // Prune the key's entry once its last handler is gone, so long-lived
+      // buses keyed by unbounded values (channel namespaces) don't accumulate
+      // empty Sets. Guard on identity: a stale double-unsubscribe must not
+      // drop a successor Set created for the same key in the meantime.
+      if (set.size === 0 && this.handlers.get(key) === set) {
+        this.handlers.delete(key)
+      }
     }
   }
 
