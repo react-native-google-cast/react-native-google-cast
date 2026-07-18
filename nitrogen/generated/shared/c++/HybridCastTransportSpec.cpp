@@ -41,6 +41,7 @@ namespace margelo::nitro::googlecast {
       prototype.registerHybridMethod("setStreamMuted", &HybridCastTransportSpec::setStreamMuted);
       prototype.registerHybridMethod("queueLoad", &HybridCastTransportSpec::queueLoad);
       prototype.registerHybridMethod("queueInsertItems", &HybridCastTransportSpec::queueInsertItems);
+      prototype.registerHybridMethod("queueInsertAndPlayItem", &HybridCastTransportSpec::queueInsertAndPlayItem);
       prototype.registerHybridMethod("queueReorderItems", &HybridCastTransportSpec::queueReorderItems);
       prototype.registerHybridMethod("queueRemoveItems", &HybridCastTransportSpec::queueRemoveItems);
       prototype.registerHybridMethod("queueNext", &HybridCastTransportSpec::queueNext);

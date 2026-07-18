@@ -24,6 +24,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.PendingResult
 import com.google.android.gms.common.api.Status
 import com.margelo.nitro.NitroModules
+import com.margelo.nitro.core.AnyMap
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.googlecast.converters.CastRejection
 import com.margelo.nitro.googlecast.converters.castErrorCodeFromGckStatusCode
@@ -35,6 +36,7 @@ import com.margelo.nitro.googlecast.converters.toGckMediaLoadRequestData
 import com.margelo.nitro.googlecast.converters.toGckMediaQueueItem
 import com.margelo.nitro.googlecast.converters.toGckMediaSeekOptions
 import com.margelo.nitro.googlecast.converters.toGckTextTrackStyle
+import com.margelo.nitro.googlecast.converters.toJsonObject
 import com.margelo.nitro.googlecast.converters.toMediaStatus
 import com.margelo.nitro.googlecast.converters.toSessionInfo
 
@@ -636,17 +638,24 @@ class HybridCastTransport : HybridCastTransportSpec() {
   override fun loadMedia(request: MediaLoadRequest): Promise<Unit> =
     mediaCall { it.load(request.toGckMediaLoadRequestData()) }
 
-  override fun play(): Promise<Unit> = mediaCall { it.play() }
+  // `customData` (v5-aug.5): forwarded as the GCK `JSONObject` parameter where
+  // the SDK accepts one (verified against the 22.0.0 AAR); `null` matches the
+  // previous behaviour exactly.
 
-  override fun pause(): Promise<Unit> = mediaCall { it.pause() }
+  override fun play(customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.play(customData?.toJsonObject()) }
 
-  override fun stop(): Promise<Unit> = mediaCall { it.stop() }
+  override fun pause(customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.pause(customData?.toJsonObject()) }
+
+  override fun stop(customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.stop(customData?.toJsonObject()) }
 
   override fun seek(options: MediaSeekOptions): Promise<Unit> =
     mediaCall { it.seek(options.toGckMediaSeekOptions()) }
 
-  override fun setPlaybackRate(playbackRate: Double): Promise<Unit> =
-    mediaCall { it.setPlaybackRate(playbackRate) }
+  override fun setPlaybackRate(playbackRate: Double, customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.setPlaybackRate(playbackRate, customData?.toJsonObject()) }
 
   override fun setActiveTrackIds(trackIds: DoubleArray): Promise<Unit> =
     mediaCall {
@@ -656,58 +665,91 @@ class HybridCastTransport : HybridCastTransportSpec() {
   override fun setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<Unit> =
     mediaCall { it.setTextTrackStyle(textTrackStyle.toGckTextTrackStyle()) }
 
-  override fun setStreamVolume(volume: Double): Promise<Unit> =
-    mediaCall { it.setStreamVolume(volume) }
+  override fun setStreamVolume(volume: Double, customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.setStreamVolume(volume, customData?.toJsonObject()) }
 
-  override fun setStreamMuted(muted: Boolean): Promise<Unit> =
-    mediaCall { it.setStreamMute(muted) }
+  override fun setStreamMuted(muted: Boolean, customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.setStreamMute(muted, customData?.toJsonObject()) }
 
   override fun queueLoad(
     items: Array<MediaQueueItem>,
     startIndex: Double,
-    repeatMode: MediaRepeatMode
+    repeatMode: MediaRepeatMode,
+    customData: AnyMap?
   ): Promise<Unit> =
     mediaCall {
       it.queueLoad(
         Array(items.size) { i -> items[i].toGckMediaQueueItem() },
         startIndex.toIdInt("startIndex"),
         gckRepeatMode(repeatMode),
-        null
+        customData?.toJsonObject()
       )
     }
 
-  override fun queueInsertItems(items: Array<MediaQueueItem>, beforeItemId: Double): Promise<Unit> =
+  override fun queueInsertItems(
+    items: Array<MediaQueueItem>,
+    beforeItemId: Double,
+    customData: AnyMap?
+  ): Promise<Unit> =
     mediaCall {
       it.queueInsertItems(
         Array(items.size) { i -> items[i].toGckMediaQueueItem() },
         beforeItemId.toIdInt("beforeItemId"),
-        null
+        customData?.toJsonObject()
       )
     }
 
-  override fun queueReorderItems(itemIds: DoubleArray, beforeItemId: Double): Promise<Unit> =
+  override fun queueInsertAndPlayItem(
+    item: MediaQueueItem,
+    beforeItemId: Double,
+    playPosition: Double?,
+    customData: AnyMap?
+  ): Promise<Unit> =
+    mediaCall {
+      val gckItem = item.toGckMediaQueueItem()
+      val before = beforeItemId.toIdInt("beforeItemId")
+      val json = customData?.toJsonObject()
+      if (playPosition != null) {
+        // Seconds (TS) → milliseconds (GCK Android), same as the seek converter.
+        it.queueInsertAndPlayItem(gckItem, before, (playPosition * 1000).toLong(), json)
+      } else {
+        // No explicit position — the item's startTime governs its first play.
+        it.queueInsertAndPlayItem(gckItem, before, json)
+      }
+    }
+
+  override fun queueReorderItems(
+    itemIds: DoubleArray,
+    beforeItemId: Double,
+    customData: AnyMap?
+  ): Promise<Unit> =
     mediaCall {
       it.queueReorderItems(
         IntArray(itemIds.size) { i -> itemIds[i].toIdInt("itemId") },
         beforeItemId.toIdInt("beforeItemId"),
-        null
+        customData?.toJsonObject()
       )
     }
 
-  override fun queueRemoveItems(itemIds: DoubleArray): Promise<Unit> =
+  override fun queueRemoveItems(itemIds: DoubleArray, customData: AnyMap?): Promise<Unit> =
     mediaCall {
-      it.queueRemoveItems(IntArray(itemIds.size) { i -> itemIds[i].toIdInt("itemId") }, null)
+      it.queueRemoveItems(
+        IntArray(itemIds.size) { i -> itemIds[i].toIdInt("itemId") },
+        customData?.toJsonObject()
+      )
     }
 
-  override fun queueNext(): Promise<Unit> = mediaCall { it.queueNext(null) }
+  override fun queueNext(customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.queueNext(customData?.toJsonObject()) }
 
-  override fun queuePrev(): Promise<Unit> = mediaCall { it.queuePrev(null) }
+  override fun queuePrev(customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.queuePrev(customData?.toJsonObject()) }
 
-  override fun queueJumpToItem(itemId: Double): Promise<Unit> =
-    mediaCall { it.queueJumpToItem(itemId.toIdInt("itemId"), null) }
+  override fun queueJumpToItem(itemId: Double, customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.queueJumpToItem(itemId.toIdInt("itemId"), customData?.toJsonObject()) }
 
-  override fun queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<Unit> =
-    mediaCall { it.queueSetRepeatMode(gckRepeatMode(repeatMode), null) }
+  override fun queueSetRepeatMode(repeatMode: MediaRepeatMode, customData: AnyMap?): Promise<Unit> =
+    mediaCall { it.queueSetRepeatMode(gckRepeatMode(repeatMode), customData?.toJsonObject()) }
 
   override fun requestMediaStatus(): Promise<Unit> = mediaCall { it.requestStatus() }
 

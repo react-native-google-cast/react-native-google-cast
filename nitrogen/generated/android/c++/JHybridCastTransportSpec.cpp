@@ -444,9 +444,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::play() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("play");
-    auto __result = method(_javaPart);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::play(const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JAnyMap::javaobject> /* customData */)>("play");
+    auto __result = method(_javaPart, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -459,9 +459,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::pause() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("pause");
-    auto __result = method(_javaPart);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::pause(const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JAnyMap::javaobject> /* customData */)>("pause");
+    auto __result = method(_javaPart, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -474,9 +474,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::stop() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("stop");
-    auto __result = method(_javaPart);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::stop(const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JAnyMap::javaobject> /* customData */)>("stop");
+    auto __result = method(_javaPart, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -504,9 +504,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setPlaybackRate(double playbackRate) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* playbackRate */)>("setPlaybackRate");
-    auto __result = method(_javaPart, playbackRate);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setPlaybackRate(double playbackRate, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* playbackRate */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("setPlaybackRate");
+    auto __result = method(_javaPart, playbackRate, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -554,9 +554,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setStreamVolume(double volume) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* volume */)>("setStreamVolume");
-    auto __result = method(_javaPart, volume);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setStreamVolume(double volume, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* volume */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("setStreamVolume");
+    auto __result = method(_javaPart, volume, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -569,9 +569,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setStreamMuted(bool muted) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* muted */)>("setStreamMuted");
-    auto __result = method(_javaPart, muted);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::setStreamMuted(bool muted, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jboolean /* muted */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("setStreamMuted");
+    auto __result = method(_javaPart, muted, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -584,8 +584,8 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JMediaQueueItem>> /* items */, double /* startIndex */, jni::alias_ref<JMediaRepeatMode> /* repeatMode */)>("queueLoad");
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JMediaQueueItem>> /* items */, double /* startIndex */, jni::alias_ref<JMediaRepeatMode> /* repeatMode */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueLoad");
     auto __result = method(_javaPart, [&](auto&& __input) {
       size_t __size = __input.size();
       jni::local_ref<jni::JArrayClass<JMediaQueueItem>> __array = jni::JArrayClass<JMediaQueueItem>::newArray(__size);
@@ -595,7 +595,7 @@ namespace margelo::nitro::googlecast {
         __array->setElement(__i, *__elementJni);
       }
       return __array;
-    }(items), startIndex, JMediaRepeatMode::fromCpp(repeatMode));
+    }(items), startIndex, JMediaRepeatMode::fromCpp(repeatMode), customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -608,8 +608,8 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JMediaQueueItem>> /* items */, double /* beforeItemId */)>("queueInsertItems");
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<JMediaQueueItem>> /* items */, double /* beforeItemId */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueInsertItems");
     auto __result = method(_javaPart, [&](auto&& __input) {
       size_t __size = __input.size();
       jni::local_ref<jni::JArrayClass<JMediaQueueItem>> __array = jni::JArrayClass<JMediaQueueItem>::newArray(__size);
@@ -619,7 +619,7 @@ namespace margelo::nitro::googlecast {
         __array->setElement(__i, *__elementJni);
       }
       return __array;
-    }(items), beforeItemId);
+    }(items), beforeItemId, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -632,14 +632,29 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* itemIds */, double /* beforeItemId */)>("queueReorderItems");
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueInsertAndPlayItem(const MediaQueueItem& item, double beforeItemId, std::optional<double> playPosition, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaQueueItem> /* item */, double /* beforeItemId */, jni::alias_ref<jni::JDouble> /* playPosition */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueInsertAndPlayItem");
+    auto __result = method(_javaPart, JMediaQueueItem::fromCpp(item), beforeItemId, playPosition.has_value() ? jni::JDouble::valueOf(playPosition.value()) : nullptr, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueReorderItems(const std::vector<double>& itemIds, double beforeItemId, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* itemIds */, double /* beforeItemId */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueReorderItems");
     auto __result = method(_javaPart, [&]() {
       size_t __size = itemIds.size();
       jni::local_ref<jni::JArrayDouble> __array = jni::JArrayDouble::newArray(__size);
       __array->setRegion(0, __size, itemIds.data());
       return __array;
-    }(), beforeItemId);
+    }(), beforeItemId, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -652,14 +667,14 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueRemoveItems(const std::vector<double>& itemIds) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* itemIds */)>("queueRemoveItems");
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueRemoveItems(const std::vector<double>& itemIds, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayDouble> /* itemIds */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueRemoveItems");
     auto __result = method(_javaPart, [&]() {
       size_t __size = itemIds.size();
       jni::local_ref<jni::JArrayDouble> __array = jni::JArrayDouble::newArray(__size);
       __array->setRegion(0, __size, itemIds.data());
       return __array;
-    }());
+    }(), customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -672,9 +687,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueNext() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("queueNext");
-    auto __result = method(_javaPart);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueNext(const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueNext");
+    auto __result = method(_javaPart, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -687,9 +702,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queuePrev() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>()>("queuePrev");
-    auto __result = method(_javaPart);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queuePrev(const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queuePrev");
+    auto __result = method(_javaPart, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -702,9 +717,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueJumpToItem(double itemId) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* itemId */)>("queueJumpToItem");
-    auto __result = method(_javaPart, itemId);
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueJumpToItem(double itemId, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(double /* itemId */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueJumpToItem");
+    auto __result = method(_javaPart, itemId, customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
@@ -717,9 +732,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueSetRepeatMode(MediaRepeatMode repeatMode) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaRepeatMode> /* repeatMode */)>("queueSetRepeatMode");
-    auto __result = method(_javaPart, JMediaRepeatMode::fromCpp(repeatMode));
+  std::shared_ptr<Promise<void>> JHybridCastTransportSpec::queueSetRepeatMode(MediaRepeatMode repeatMode, const std::optional<std::shared_ptr<AnyMap>>& customData) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaRepeatMode> /* repeatMode */, jni::alias_ref<JAnyMap::javaobject> /* customData */)>("queueSetRepeatMode");
+    auto __result = method(_javaPart, JMediaRepeatMode::fromCpp(repeatMode), customData.has_value() ? JAnyMap::create(customData.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<void>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {

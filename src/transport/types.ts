@@ -1,3 +1,4 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import type { CastState } from '../types/CastState'
 import type { PlayServicesState } from '../types/PlayServicesState'
 import type { Device } from '../types/Device'
@@ -300,18 +301,23 @@ export interface CastTransportApi {
   // mutations stream back through the `onMediaStatus` callback, never the
   // return value (reads are served from the store cache).
 
+  // `customData` (v5-aug.5): optional application-specific payload forwarded
+  // with the GCK request wherever GCK accepts one (see the spec's comment for
+  // the per-platform matrix). Android-only slots (`queueNext` / `queuePrev` /
+  // `queueSetRepeatMode`) silently ignore it on iOS, matching v4.
+
   /** Load (and, per the request, autoplay) media on the active session. */
   loadMedia(request: MediaLoadRequest): Promise<void>
   /** Resume playback of the current item. */
-  play(): Promise<void>
+  play(customData?: AnyMap): Promise<void>
   /** Pause playback of the current item. */
-  pause(): Promise<void>
+  pause(customData?: AnyMap): Promise<void>
   /** Stop playback and unload the current item. */
-  stop(): Promise<void>
+  stop(customData?: AnyMap): Promise<void>
   /** Seek within the current item (absolute/relative + resume state). */
   seek(options: MediaSeekOptions): Promise<void>
   /** Set the playback rate (1 = normal; GCK clamps the supported range). */
-  setPlaybackRate(playbackRate: number): Promise<void>
+  setPlaybackRate(playbackRate: number, customData?: AnyMap): Promise<void>
 
   /** Set the active media track ids (audio/text); empty array clears them. */
   setActiveTrackIds(trackIds: number[]): Promise<void>
@@ -319,35 +325,61 @@ export interface CastTransportApi {
   setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void>
 
   /** Set the stream volume of the active session (0…1). */
-  setStreamVolume(volume: number): Promise<void>
+  setStreamVolume(volume: number, customData?: AnyMap): Promise<void>
   /** Mute/unmute the active session's stream. */
-  setStreamMuted(muted: boolean): Promise<void>
+  setStreamMuted(muted: boolean, customData?: AnyMap): Promise<void>
 
   /** Replace the queue with `items`, starting at `startIndex`, in `repeatMode`. */
   queueLoad(
     items: MediaQueueItem[],
     startIndex: number,
-    repeatMode: MediaRepeatMode
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
   ): Promise<void>
   /**
    * Insert `items` before `beforeItemId`. A `beforeItemId` that is not a current
    * item id (use `0`, GCK's invalid-item sentinel) appends to the end.
    */
-  queueInsertItems(items: MediaQueueItem[], beforeItemId: number): Promise<void>
+  queueInsertItems(
+    items: MediaQueueItem[],
+    beforeItemId: number,
+    customData?: AnyMap
+  ): Promise<void>
+  /**
+   * Insert `item` before `beforeItemId` (`0` = append) and make it the current
+   * item in one atomic GCK request — the receiver assigns the new item's id, so
+   * this cannot be composed from `queueInsertItems` + `queueJumpToItem` without
+   * a racy status round-trip. `playPosition` (seconds) sets the initial
+   * playback position for the item's *first* play; omitted, the item's
+   * `startTime` governs.
+   */
+  queueInsertAndPlayItem(
+    item: MediaQueueItem,
+    beforeItemId: number,
+    playPosition?: number,
+    customData?: AnyMap
+  ): Promise<void>
   /**
    * Move `itemIds` to before `beforeItemId` (same `0` = move-to-end sentinel).
    */
-  queueReorderItems(itemIds: number[], beforeItemId: number): Promise<void>
+  queueReorderItems(
+    itemIds: number[],
+    beforeItemId: number,
+    customData?: AnyMap
+  ): Promise<void>
   /** Remove `itemIds` from the queue. */
-  queueRemoveItems(itemIds: number[]): Promise<void>
-  /** Advance to the next queue item. */
-  queueNext(): Promise<void>
-  /** Go back to the previous queue item. */
-  queuePrev(): Promise<void>
+  queueRemoveItems(itemIds: number[], customData?: AnyMap): Promise<void>
+  /** Advance to the next queue item. (`customData` is Android-only.) */
+  queueNext(customData?: AnyMap): Promise<void>
+  /** Go back to the previous queue item. (`customData` is Android-only.) */
+  queuePrev(customData?: AnyMap): Promise<void>
   /** Jump to a specific queue item by id. */
-  queueJumpToItem(itemId: number): Promise<void>
-  /** Set the queue repeat mode. */
-  queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void>
+  queueJumpToItem(itemId: number, customData?: AnyMap): Promise<void>
+  /** Set the queue repeat mode. (`customData` is Android-only.) */
+  queueSetRepeatMode(
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
+  ): Promise<void>
 
   /**
    * Request a fresh media status from the receiver. The result arrives via the

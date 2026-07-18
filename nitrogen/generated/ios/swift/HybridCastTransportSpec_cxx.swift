@@ -427,9 +427,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func play() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func play(customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.play()
+      let __result = try self.__implementation.play(customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -446,9 +453,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func pause() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func pause(customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.pause()
+      let __result = try self.__implementation.pause(customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -465,9 +479,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func stop() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func stop(customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.stop()
+      let __result = try self.__implementation.stop(customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -503,9 +524,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func setPlaybackRate(playbackRate: Double) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func setPlaybackRate(playbackRate: Double, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.setPlaybackRate(playbackRate: playbackRate)
+      let __result = try self.__implementation.setPlaybackRate(playbackRate: playbackRate, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -560,9 +588,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func setStreamVolume(volume: Double) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func setStreamVolume(volume: Double, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.setStreamVolume(volume: volume)
+      let __result = try self.__implementation.setStreamVolume(volume: volume, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -579,9 +614,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func setStreamMuted(muted: Bool) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func setStreamMuted(muted: Bool, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.setStreamMuted(muted: muted)
+      let __result = try self.__implementation.setStreamMuted(muted: muted, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -598,9 +640,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueLoad(items: bridge.std__vector_MediaQueueItem_, startIndex: Double, repeatMode: Int32) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueLoad(items: bridge.std__vector_MediaQueueItem_, startIndex: Double, repeatMode: Int32, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueLoad(items: items.map({ __item in __item }), startIndex: startIndex, repeatMode: margelo.nitro.googlecast.MediaRepeatMode(rawValue: repeatMode)!)
+      let __result = try self.__implementation.queueLoad(items: items.map({ __item in __item }), startIndex: startIndex, repeatMode: margelo.nitro.googlecast.MediaRepeatMode(rawValue: repeatMode)!, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -617,9 +666,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueInsertItems(items: bridge.std__vector_MediaQueueItem_, beforeItemId: Double) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueInsertItems(items: bridge.std__vector_MediaQueueItem_, beforeItemId: Double, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueInsertItems(items: items.map({ __item in __item }), beforeItemId: beforeItemId)
+      let __result = try self.__implementation.queueInsertItems(items: items.map({ __item in __item }), beforeItemId: beforeItemId, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -636,9 +692,23 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueReorderItems(itemIds: bridge.std__vector_double_, beforeItemId: Double) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueInsertAndPlayItem(item: MediaQueueItem, beforeItemId: Double, playPosition: bridge.std__optional_double_, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueReorderItems(itemIds: itemIds.map({ __item in __item }), beforeItemId: beforeItemId)
+      let __result = try self.__implementation.queueInsertAndPlayItem(item: item, beforeItemId: beforeItemId, playPosition: { () -> Double? in
+        if bridge.has_value_std__optional_double_(playPosition) {
+          let __unwrapped = bridge.get_std__optional_double_(playPosition)
+          return __unwrapped
+        } else {
+          return nil
+        }
+      }(), customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -655,9 +725,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueRemoveItems(itemIds: bridge.std__vector_double_) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueReorderItems(itemIds: bridge.std__vector_double_, beforeItemId: Double, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueRemoveItems(itemIds: itemIds.map({ __item in __item }))
+      let __result = try self.__implementation.queueReorderItems(itemIds: itemIds.map({ __item in __item }), beforeItemId: beforeItemId, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -674,9 +751,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueNext() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueRemoveItems(itemIds: bridge.std__vector_double_, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueNext()
+      let __result = try self.__implementation.queueRemoveItems(itemIds: itemIds.map({ __item in __item }), customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -693,9 +777,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queuePrev() -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueNext(customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queuePrev()
+      let __result = try self.__implementation.queueNext(customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -712,9 +803,16 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueJumpToItem(itemId: Double) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queuePrev(customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueJumpToItem(itemId: itemId)
+      let __result = try self.__implementation.queuePrev(customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
@@ -731,9 +829,42 @@ open class HybridCastTransportSpec_cxx {
   }
   
   @inline(__always)
-  public final func queueSetRepeatMode(repeatMode: Int32) -> bridge.Result_std__shared_ptr_Promise_void___ {
+  public final func queueJumpToItem(itemId: Double, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
     do {
-      let __result = try self.__implementation.queueSetRepeatMode(repeatMode: margelo.nitro.googlecast.MediaRepeatMode(rawValue: repeatMode)!)
+      let __result = try self.__implementation.queueJumpToItem(itemId: itemId, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
+        let __promise = bridge.create_std__shared_ptr_Promise_void__()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve() })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_void___(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func queueSetRepeatMode(repeatMode: Int32, customData: bridge.std__optional_std__shared_ptr_AnyMap__) -> bridge.Result_std__shared_ptr_Promise_void___ {
+    do {
+      let __result = try self.__implementation.queueSetRepeatMode(repeatMode: margelo.nitro.googlecast.MediaRepeatMode(rawValue: repeatMode)!, customData: { () -> AnyMap? in
+        if bridge.has_value_std__optional_std__shared_ptr_AnyMap__(customData) {
+          let __unwrapped = bridge.get_std__optional_std__shared_ptr_AnyMap__(customData)
+          return AnyMap(withCppPart: __unwrapped)
+        } else {
+          return nil
+        }
+      }())
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_void__ in
         let __promise = bridge.create_std__shared_ptr_Promise_void__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_void__(__promise)
