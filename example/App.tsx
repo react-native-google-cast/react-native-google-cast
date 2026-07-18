@@ -216,6 +216,18 @@ function App() {
           >
             <Text style={styles.buttonText}>Overlay∞</Text>
           </Pressable>
+          <Pressable
+            style={styles.button}
+            onPress={() =>
+              probeShow('showPlayServicesErrorDialog', () =>
+                GoogleCast.showPlayServicesErrorDialog(
+                  GoogleCast.getPlayServicesState(),
+                ),
+              )
+            }
+          >
+            <Text style={styles.buttonText}>PlayServices dialog</Text>
+          </Pressable>
         </View>
 
         {devices.map(d => (
