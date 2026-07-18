@@ -113,8 +113,15 @@ export class ProgressTicker {
     // One-shot per idle→active transition (never per subscriber): the FIRST
     // subscriber asks the receiver for a fresh status so the anchor re-times
     // off a live push instead of a possibly stale event-driven one (see class
-    // doc). Best-effort — a rejection (e.g. no active session) is swallowed.
-    if (isFirst) void this.requestFreshStatus?.().catch(() => {})
+    // doc). Best-effort — a rejection (e.g. no active session) is swallowed,
+    // and so is a synchronous throw from the injected callback.
+    if (isFirst && this.requestFreshStatus) {
+      try {
+        void this.requestFreshStatus().catch(() => {})
+      } catch {
+        // Best-effort refresh must never break subscription.
+      }
+    }
     return () => {
       if (!this.subs.delete(key)) return
       // The store subscription and anchor are lifetime-bound; only the shared

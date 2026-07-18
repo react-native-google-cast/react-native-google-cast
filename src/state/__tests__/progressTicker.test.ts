@@ -310,6 +310,35 @@ describe('ProgressTicker — fresh status on first subscriber', () => {
     }
   })
 
+  it('swallows a SYNCHRONOUS throw from the injected callback', async () => {
+    const clock = makeClock()
+    const transport = new FakeCastTransport()
+    const store = new CastStore(transport)
+    await store.ready
+    // A callback that throws before ever producing a promise: subscribe()
+    // must not throw, and the ticker must keep working normally.
+    const ticker = new ProgressTicker(store, clock.now, () => {
+      throw new Error('sync boom')
+    })
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+
+    let off: () => void
+    expect(() => {
+      off = ticker.subscribe(() => {})
+    }).not.toThrow()
+
+    // Ticking still works off the last pushed status.
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(12)
+    off!()
+
+    // A later idle→active transition tries (and safely swallows) again.
+    expect(() => ticker.subscribe(() => {})()).not.toThrow()
+  })
+
   it('works without a fresh-status dependency (none injected)', async () => {
     const clock = makeClock()
     const transport = new FakeCastTransport()
