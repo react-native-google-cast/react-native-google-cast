@@ -26,7 +26,9 @@ This is by far the most common problem with this library. Before creating an iss
 
 - Check the Debug log in Xcode or Android Studio for any warnings and errors.
 
-- (Android) Make sure the device has Google Play Services available and that you initialize `RNGCCastContext.getSharedInstance(this)` in your `MainActivity`'s `onCreate`.
+- (Android) Make sure the device has Google Play Services available (you can check with `CastContext.getPlayServicesState()`).
+
+- (Android) Check the `OPTIONS_PROVIDER_CLASS_NAME` meta-data (see below): if the Cast SDK can't instantiate the options provider, v5 degrades to `noDevicesAvailable` instead of crashing — the Cast button simply never activates.
 
 - (Android) **emulators** are [not supported](https://github.com/googlecast/CastVideos-android/issues/104#issuecomment-816290407). Please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
 
@@ -39,6 +41,18 @@ This is by far the most common problem with this library. Before creating an iss
 - (iOS) You may want to set `options.startDiscoveryAfterFirstTapOnCastButton = false` if you're not explicitly requiring the user to tap the Cast Button first and instead want to start discovery immediately after launching the app.
 
 ## Other Issues
+
+- ```
+  java.lang.IllegalStateException
+      at com.google.android.gms.cast.framework.CastContext.getSharedInstance(...)
+  ```
+
+  This logcat signature means the Cast SDK **failed to initialize its options provider**. v5 guards all first-touch paths, so the app doesn't crash — casting just reports `noDevicesAvailable`. Checklist:
+
+  - The `com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME` meta-data exists in the **merged** manifest, inside `<application>` (see [Setup](./setup#android)).
+  - Its value is the exact fully-qualified class name — `com.margelo.nitro.googlecast.NitroCastOptionsProvider`, or your own provider class (watch for typos and package renames).
+  - A custom/subclassed provider is **kept by R8/ProGuard** in release builds — the class is instantiated reflectively, so it needs a keep rule (`-keep class com.example.MyOptionsProvider { <init>(); }`). The library ships the rule for its own provider only.
+  - Your provider's `getCastOptions` doesn't throw — and doesn't call `CastContext.getSharedInstance()` (it is called *from inside* that initialization).
 
 - ```
   com.google.android.gms.dynamite.DynamiteModule$zza: No acceptable module found. Local version is 0 and remote version is 0.
