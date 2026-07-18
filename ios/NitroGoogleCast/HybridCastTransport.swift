@@ -102,6 +102,11 @@ final class HybridCastTransport: HybridCastTransportSpec {
         return
       }
       let context = GCKCastContext.sharedInstance()
+      // Default image picker (contract i): one owner, one assignment point,
+      // never clobbering a consumer-set picker (AppDelegate runs before us).
+      if let picker = NitroImagePicker.installIfAbsent(current: context.imagePicker) {
+        context.imagePicker = picker
+      }
       self.attachObservers(context)
       // If a session was already current before we subscribed, bind the media
       // and device-status listeners now so updates flow without waiting for the
@@ -680,6 +685,16 @@ final class HybridCastTransport: HybridCastTransportSpec {
       promise.resolve(
         withResult: context.presentCastInstructionsViewControllerOnce(with: button))
     }
+    return promise
+  }
+
+  // MARK: - Cast setup / diagnostics UI (Phase 6.2)
+
+  /// Android-only diagnostic (8A): the Play Services error dialog has no iOS
+  /// counterpart, so this always resolves `false` ("not shown"), never rejects.
+  func showPlayServicesErrorDialog(errorCode: Double) throws -> Promise<Bool> {
+    let promise = Promise<Bool>()
+    promise.resolve(withResult: false)
     return promise
   }
 
