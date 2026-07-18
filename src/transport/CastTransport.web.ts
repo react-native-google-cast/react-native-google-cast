@@ -62,6 +62,7 @@ export const castTransport: CastTransportApi = {
   setStreamMuted: unsupported,
   queueLoad: unsupported,
   queueInsertItems: unsupported,
+  queueInsertAndPlayItem: unsupported,
   queueReorderItems: unsupported,
   queueRemoveItems: unsupported,
   queueNext: unsupported,

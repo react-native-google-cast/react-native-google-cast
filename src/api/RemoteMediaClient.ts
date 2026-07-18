@@ -1,3 +1,4 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import type { CastError, CastTransportApi } from '../transport/types'
 import type { CastStore } from '../state/CastStore'
 import type { EventSubscription } from './subscribeSelector'
@@ -167,22 +168,34 @@ export class RemoteMediaClient {
     return this.transport.loadMedia(request)
   }
 
-  /** Begin (or resume) playback of the current item. */
-  async play(): Promise<void> {
+  /**
+   * Begin (or resume) playback of the current item.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async play(customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.play()
+    return this.transport.play(customData)
   }
 
-  /** Pause playback of the current item. */
-  async pause(): Promise<void> {
+  /**
+   * Pause playback of the current item.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async pause(customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.pause()
+    return this.transport.pause(customData)
   }
 
-  /** Stop playback and unload the current item (a loaded queue is removed). */
-  async stop(): Promise<void> {
+  /**
+   * Stop playback and unload the current item (a loaded queue is removed).
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async stop(customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.stop()
+    return this.transport.stop(customData)
   }
 
   /** Seek within the current item (absolute/relative + resume state). */
@@ -191,10 +204,17 @@ export class RemoteMediaClient {
     return this.transport.seek(options)
   }
 
-  /** Set the playback rate (1 = normal; GCK clamps the supported range). */
-  async setPlaybackRate(playbackRate: number): Promise<void> {
+  /**
+   * Set the playback rate (1 = normal; GCK clamps the supported range).
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async setPlaybackRate(
+    playbackRate: number,
+    customData?: AnyMap
+  ): Promise<void> {
     this.assertActive()
-    return this.transport.setPlaybackRate(playbackRate)
+    return this.transport.setPlaybackRate(playbackRate, customData)
   }
 
   /**
@@ -206,80 +226,192 @@ export class RemoteMediaClient {
     return this.transport.setActiveTrackIds(trackIds)
   }
 
+  /**
+   * Set the active media tracks.
+   *
+   * @deprecated v4-compat alias of {@link setActiveTrackIds} (kept because v4
+   * shipped it, already deprecated, until the end of the 4.x line). GCK accepts
+   * no `customData` for this request on either platform.
+   */
+  async setActiveMediaTracks(trackIds: number[] = []): Promise<void> {
+    return this.setActiveTrackIds(trackIds)
+  }
+
   /** Set the text-track (caption) style. */
   async setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void> {
     this.assertActive()
     return this.transport.setTextTrackStyle(textTrackStyle)
   }
 
-  /** Set the stream volume of the active session (0…1). */
-  async setStreamVolume(volume: number): Promise<void> {
+  /**
+   * Set the stream volume of the active session (0…1).
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async setStreamVolume(volume: number, customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.setStreamVolume(volume)
+    return this.transport.setStreamVolume(volume, customData)
   }
 
-  /** Mute/unmute the active session's stream. */
-  async setStreamMuted(muted: boolean): Promise<void> {
+  /**
+   * Mute/unmute the active session's stream.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async setStreamMuted(muted: boolean, customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.setStreamMuted(muted)
+    return this.transport.setStreamMuted(muted, customData)
   }
 
-  /** Replace the queue with `items`, starting at `startIndex`, in `repeatMode`. */
+  /**
+   * Replace the queue with `items`, starting at `startIndex`, in `repeatMode`.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
   async queueLoad(
     items: MediaQueueItem[],
     startIndex = 0,
-    repeatMode: MediaRepeatMode = 'off'
+    repeatMode: MediaRepeatMode = 'off',
+    customData?: AnyMap
   ): Promise<void> {
     this.assertActive()
-    return this.transport.queueLoad(items, startIndex, repeatMode)
+    return this.transport.queueLoad(items, startIndex, repeatMode, customData)
   }
 
   /**
    * Insert `items` before `beforeItemId`. A `beforeItemId` of `0` (GCK's
-   * invalid-item sentinel, the default) appends to the end of the queue.
+   * invalid-item sentinel, the default) or `null` (the v4 shape) appends to
+   * the end of the queue.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
    */
   async queueInsertItems(
     items: MediaQueueItem[],
-    beforeItemId = 0
+    beforeItemId: number | null = 0,
+    customData?: AnyMap
   ): Promise<void> {
     this.assertActive()
-    return this.transport.queueInsertItems(items, beforeItemId)
+    return this.transport.queueInsertItems(
+      items,
+      beforeItemId ?? 0, // v4 compat: `null` = append (GCK's `0` sentinel)
+      customData
+    )
   }
 
-  /** Move `itemIds` to before `beforeItemId` (`0` = move-to-end, the default). */
-  async queueReorderItems(itemIds: number[], beforeItemId = 0): Promise<void> {
-    this.assertActive()
-    return this.transport.queueReorderItems(itemIds, beforeItemId)
+  /**
+   * Insert a single `item` before `beforeItemId` (`0` or `null`, the default,
+   * appends). A v4-compat convenience over {@link queueInsertItems}.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async queueInsertItem(
+    item: MediaQueueItem,
+    beforeItemId: number | null = 0,
+    customData?: AnyMap
+  ): Promise<void> {
+    return this.queueInsertItems([item], beforeItemId, customData)
   }
 
-  /** Remove `itemIds` from the queue. */
-  async queueRemoveItems(itemIds: number[]): Promise<void> {
+  /**
+   * Insert a single `item` before `beforeItemId` (`0` or `null`, the default,
+   * appends) and make it the current item — one atomic GCK request (the
+   * receiver assigns the new item's id, so this is *not* expressible as
+   * `queueInsertItems` + `queueJumpToItem` without a racy status round-trip).
+   *
+   * @param playPosition Initial playback position in seconds for the item's
+   * *first* play. Ignored on repeats/re-jumps (the item's `startTime` governs).
+   * Omit to start from the item's `startTime`.
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async queueInsertAndPlayItem(
+    item: MediaQueueItem,
+    beforeItemId: number | null = 0,
+    playPosition?: number,
+    customData?: AnyMap
+  ): Promise<void> {
     this.assertActive()
-    return this.transport.queueRemoveItems(itemIds)
+    return this.transport.queueInsertAndPlayItem(
+      item,
+      beforeItemId ?? 0, // v4 compat: `null` = append (GCK's `0` sentinel)
+      playPosition,
+      customData
+    )
   }
 
-  /** Advance to the next queue item. */
-  async queueNext(): Promise<void> {
+  /**
+   * Move `itemIds` to before `beforeItemId` (`0` = move-to-end, the default).
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async queueReorderItems(
+    itemIds: number[],
+    beforeItemId = 0,
+    customData?: AnyMap
+  ): Promise<void> {
     this.assertActive()
-    return this.transport.queueNext()
+    return this.transport.queueReorderItems(itemIds, beforeItemId, customData)
   }
 
-  /** Go back to the previous queue item. */
-  async queuePrev(): Promise<void> {
+  /**
+   * Remove `itemIds` from the queue.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async queueRemoveItems(
+    itemIds: number[],
+    customData?: AnyMap
+  ): Promise<void> {
     this.assertActive()
-    return this.transport.queuePrev()
+    return this.transport.queueRemoveItems(itemIds, customData)
   }
 
-  /** Jump to a specific queue item by id. */
-  async queueJumpToItem(itemId: number): Promise<void> {
+  /**
+   * Advance to the next queue item.
+   *
+   * @param customData Custom application-specific data to pass along with the
+   * request. Android only — GCK iOS has no `customData` variant, so iOS
+   * ignores it (same asymmetry v4 documented).
+   */
+  async queueNext(customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.queueJumpToItem(itemId)
+    return this.transport.queueNext(customData)
   }
 
-  /** Set the queue repeat mode. */
-  async queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void> {
+  /**
+   * Go back to the previous queue item.
+   *
+   * @param customData Custom application-specific data to pass along with the
+   * request. Android only — GCK iOS has no `customData` variant, so iOS
+   * ignores it (same asymmetry v4 documented).
+   */
+  async queuePrev(customData?: AnyMap): Promise<void> {
     this.assertActive()
-    return this.transport.queueSetRepeatMode(repeatMode)
+    return this.transport.queuePrev(customData)
+  }
+
+  /**
+   * Jump to a specific queue item by id.
+   *
+   * @param customData Custom application-specific data to pass along with the request.
+   */
+  async queueJumpToItem(itemId: number, customData?: AnyMap): Promise<void> {
+    this.assertActive()
+    return this.transport.queueJumpToItem(itemId, customData)
+  }
+
+  /**
+   * Set the queue repeat mode.
+   *
+   * @param customData Custom application-specific data to pass along with the
+   * request. Android only — GCK iOS has no `customData` variant, so iOS
+   * ignores it.
+   */
+  async queueSetRepeatMode(
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
+  ): Promise<void> {
+    this.assertActive()
+    return this.transport.queueSetRepeatMode(repeatMode, customData)
   }
 
   /**

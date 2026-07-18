@@ -77,28 +77,42 @@ export const castTransport: CastTransportApi = {
 
   // RemoteMediaClient mutations — same error-translation wrapper as sessions.
   loadMedia: (request) => mutate(() => hybrid.loadMedia(request)),
-  play: () => mutate(() => hybrid.play()),
-  pause: () => mutate(() => hybrid.pause()),
-  stop: () => mutate(() => hybrid.stop()),
+  play: (customData) => mutate(() => hybrid.play(customData)),
+  pause: (customData) => mutate(() => hybrid.pause(customData)),
+  stop: (customData) => mutate(() => hybrid.stop(customData)),
   seek: (options) => mutate(() => hybrid.seek(options)),
-  setPlaybackRate: (rate) => mutate(() => hybrid.setPlaybackRate(rate)),
+  setPlaybackRate: (rate, customData) =>
+    mutate(() => hybrid.setPlaybackRate(rate, customData)),
   setActiveTrackIds: (trackIds) =>
     mutate(() => hybrid.setActiveTrackIds(trackIds)),
   setTextTrackStyle: (style) => mutate(() => hybrid.setTextTrackStyle(style)),
-  setStreamVolume: (volume) => mutate(() => hybrid.setStreamVolume(volume)),
-  setStreamMuted: (muted) => mutate(() => hybrid.setStreamMuted(muted)),
-  queueLoad: (items, startIndex, repeatMode) =>
-    mutate(() => hybrid.queueLoad(items, startIndex, repeatMode)),
-  queueInsertItems: (items, beforeItemId) =>
-    mutate(() => hybrid.queueInsertItems(items, beforeItemId)),
-  queueReorderItems: (itemIds, beforeItemId) =>
-    mutate(() => hybrid.queueReorderItems(itemIds, beforeItemId)),
-  queueRemoveItems: (itemIds) => mutate(() => hybrid.queueRemoveItems(itemIds)),
-  queueNext: () => mutate(() => hybrid.queueNext()),
-  queuePrev: () => mutate(() => hybrid.queuePrev()),
-  queueJumpToItem: (itemId) => mutate(() => hybrid.queueJumpToItem(itemId)),
-  queueSetRepeatMode: (repeatMode) =>
-    mutate(() => hybrid.queueSetRepeatMode(repeatMode)),
+  setStreamVolume: (volume, customData) =>
+    mutate(() => hybrid.setStreamVolume(volume, customData)),
+  setStreamMuted: (muted, customData) =>
+    mutate(() => hybrid.setStreamMuted(muted, customData)),
+  queueLoad: (items, startIndex, repeatMode, customData) =>
+    mutate(() => hybrid.queueLoad(items, startIndex, repeatMode, customData)),
+  queueInsertItems: (items, beforeItemId, customData) =>
+    mutate(() => hybrid.queueInsertItems(items, beforeItemId, customData)),
+  queueInsertAndPlayItem: (item, beforeItemId, playPosition, customData) =>
+    mutate(() =>
+      hybrid.queueInsertAndPlayItem(
+        item,
+        beforeItemId,
+        playPosition,
+        customData
+      )
+    ),
+  queueReorderItems: (itemIds, beforeItemId, customData) =>
+    mutate(() => hybrid.queueReorderItems(itemIds, beforeItemId, customData)),
+  queueRemoveItems: (itemIds, customData) =>
+    mutate(() => hybrid.queueRemoveItems(itemIds, customData)),
+  queueNext: (customData) => mutate(() => hybrid.queueNext(customData)),
+  queuePrev: (customData) => mutate(() => hybrid.queuePrev(customData)),
+  queueJumpToItem: (itemId, customData) =>
+    mutate(() => hybrid.queueJumpToItem(itemId, customData)),
+  queueSetRepeatMode: (repeatMode, customData) =>
+    mutate(() => hybrid.queueSetRepeatMode(repeatMode, customData)),
   requestMediaStatus: () => mutate(() => hybrid.requestMediaStatus()),
 
   startDiscovery: () => hybrid.startDiscovery(),

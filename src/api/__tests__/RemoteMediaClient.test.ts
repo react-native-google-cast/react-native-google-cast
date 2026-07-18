@@ -1,3 +1,4 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import { FakeCastTransport } from '../../transport/__fakes__/FakeCastTransport'
 import type { CastError, Device, SessionInfo } from '../../transport/types'
 import type { MediaStatus } from '../../types/MediaStatus'
@@ -144,6 +145,12 @@ describe('RemoteMediaClient — mutation routing', () => {
       expected: { method: 'setActiveTrackIds', args: [[1, 2]] },
     },
     {
+      // v4-compat deprecated alias: routes through setActiveTrackIds.
+      name: 'setActiveMediaTracks',
+      call: (c) => c.setActiveMediaTracks([1, 2]),
+      expected: { method: 'setActiveTrackIds', args: [[1, 2]] },
+    },
+    {
       name: 'setTextTrackStyle',
       call: (c) => c.setTextTrackStyle(textTrackStyle),
       expected: { method: 'setTextTrackStyle', args: [textTrackStyle] },
@@ -167,6 +174,20 @@ describe('RemoteMediaClient — mutation routing', () => {
       name: 'queueInsertItems',
       call: (c) => c.queueInsertItems(queueItems, 7),
       expected: { method: 'queueInsertItems', args: [queueItems, 7] },
+    },
+    {
+      // v4-compat sugar: routes through queueInsertItems with a 1-item array.
+      name: 'queueInsertItem',
+      call: (c) => c.queueInsertItem(queueItems[0]!, 7),
+      expected: { method: 'queueInsertItems', args: [[queueItems[0]], 7] },
+    },
+    {
+      name: 'queueInsertAndPlayItem',
+      call: (c) => c.queueInsertAndPlayItem(queueItems[0]!, 7, 30),
+      expected: {
+        method: 'queueInsertAndPlayItem',
+        args: [queueItems[0], 7, 30],
+      },
     },
     {
       name: 'queueReorderItems',
@@ -206,8 +227,10 @@ describe('RemoteMediaClient — mutation routing', () => {
   ]
 
   it('covers every transport mutation (drift guard)', () => {
-    // If T4a grows the surface, this list must grow too.
-    expect(cases).toHaveLength(19)
+    // If T4a grows the surface, this list must grow too. 20 transport
+    // mutations + 2 v4-compat façade sugars (queueInsertItem,
+    // setActiveMediaTracks) = 22.
+    expect(cases).toHaveLength(22)
   })
 
   it.each(cases)(
@@ -218,6 +241,124 @@ describe('RemoteMediaClient — mutation routing', () => {
       expect(transport.mediaCalls).toEqual([expected])
     }
   )
+})
+
+describe('RemoteMediaClient — customData threading (v5-aug.5, v4 parity)', () => {
+  const customData: AnyMap = { requestTag: 'cd-1' }
+  const cases: Array<{
+    name: string
+    call: (c: RemoteMediaClient) => Promise<void>
+    expected: { method: string; args: unknown[] }
+  }> = [
+    {
+      name: 'play',
+      call: (c) => c.play(customData),
+      expected: { method: 'play', args: [customData] },
+    },
+    {
+      name: 'pause',
+      call: (c) => c.pause(customData),
+      expected: { method: 'pause', args: [customData] },
+    },
+    {
+      name: 'stop',
+      call: (c) => c.stop(customData),
+      expected: { method: 'stop', args: [customData] },
+    },
+    {
+      name: 'setPlaybackRate',
+      call: (c) => c.setPlaybackRate(1.5, customData),
+      expected: { method: 'setPlaybackRate', args: [1.5, customData] },
+    },
+    {
+      name: 'setStreamVolume',
+      call: (c) => c.setStreamVolume(0.4, customData),
+      expected: { method: 'setStreamVolume', args: [0.4, customData] },
+    },
+    {
+      name: 'setStreamMuted',
+      call: (c) => c.setStreamMuted(true, customData),
+      expected: { method: 'setStreamMuted', args: [true, customData] },
+    },
+    {
+      name: 'queueLoad',
+      call: (c) => c.queueLoad(queueItems, 1, 'all', customData),
+      expected: {
+        method: 'queueLoad',
+        args: [queueItems, 1, 'all', customData],
+      },
+    },
+    {
+      name: 'queueInsertItems',
+      call: (c) => c.queueInsertItems(queueItems, 7, customData),
+      expected: {
+        method: 'queueInsertItems',
+        args: [queueItems, 7, customData],
+      },
+    },
+    {
+      name: 'queueInsertItem',
+      call: (c) => c.queueInsertItem(queueItems[0]!, 7, customData),
+      expected: {
+        method: 'queueInsertItems',
+        args: [[queueItems[0]], 7, customData],
+      },
+    },
+    {
+      name: 'queueInsertAndPlayItem',
+      call: (c) => c.queueInsertAndPlayItem(queueItems[0]!, 7, 30, customData),
+      expected: {
+        method: 'queueInsertAndPlayItem',
+        args: [queueItems[0], 7, 30, customData],
+      },
+    },
+    {
+      name: 'queueReorderItems',
+      call: (c) => c.queueReorderItems([3, 4], 7, customData),
+      expected: { method: 'queueReorderItems', args: [[3, 4], 7, customData] },
+    },
+    {
+      name: 'queueRemoveItems',
+      call: (c) => c.queueRemoveItems([3, 4], customData),
+      expected: { method: 'queueRemoveItems', args: [[3, 4], customData] },
+    },
+    {
+      name: 'queueNext',
+      call: (c) => c.queueNext(customData),
+      expected: { method: 'queueNext', args: [customData] },
+    },
+    {
+      name: 'queuePrev',
+      call: (c) => c.queuePrev(customData),
+      expected: { method: 'queuePrev', args: [customData] },
+    },
+    {
+      name: 'queueJumpToItem',
+      call: (c) => c.queueJumpToItem(9, customData),
+      expected: { method: 'queueJumpToItem', args: [9, customData] },
+    },
+    {
+      name: 'queueSetRepeatMode',
+      call: (c) => c.queueSetRepeatMode('single', customData),
+      expected: { method: 'queueSetRepeatMode', args: ['single', customData] },
+    },
+  ]
+
+  it.each(cases)(
+    'threads customData through $name',
+    async ({ call, expected }) => {
+      const { client, transport } = await withSession()
+      await call(client)
+      expect(transport.mediaCalls).toEqual([expected])
+    }
+  )
+
+  it('seek carries customData inside its options object', async () => {
+    const { client, transport } = await withSession()
+    const options: MediaSeekOptions = { ...seekOptions, customData }
+    await client.seek(options)
+    expect(transport.mediaCalls).toEqual([{ method: 'seek', args: [options] }])
+  })
 })
 
 describe('RemoteMediaClient — ergonomic defaults', () => {
@@ -244,6 +385,41 @@ describe('RemoteMediaClient — ergonomic defaults', () => {
     await client.queueLoad(queueItems)
     expect(transport.mediaCalls).toEqual([
       { method: 'queueLoad', args: [queueItems, 0, 'off'] },
+    ])
+  })
+
+  it('queueInsertItem / queueInsertAndPlayItem default beforeItemId to 0 (append)', async () => {
+    const { client, transport } = await withSession()
+    await client.queueInsertItem(queueItems[0]!)
+    await client.queueInsertAndPlayItem(queueItems[0]!)
+    expect(transport.mediaCalls).toEqual([
+      { method: 'queueInsertItems', args: [[queueItems[0]], 0] },
+      // playPosition omitted → not recorded → the item's startTime governs.
+      { method: 'queueInsertAndPlayItem', args: [queueItems[0], 0] },
+    ])
+  })
+
+  it('normalizes a v4-style null beforeItemId to the 0 append sentinel', async () => {
+    // v4 typed beforeItemId as `number | null` and did `beforeItemId || 0`;
+    // drop-in callers like queueInsertItem(item, null, customData) must not
+    // leak `null` into the (strictly numeric) bridge argument.
+    const { client, transport } = await withSession()
+    const customData: AnyMap = { via: 'v4' }
+    await client.queueInsertItem(queueItems[0]!, null, customData)
+    await client.queueInsertItems(queueItems, null)
+    await client.queueInsertAndPlayItem(queueItems[0]!, null)
+    expect(transport.mediaCalls).toEqual([
+      { method: 'queueInsertItems', args: [[queueItems[0]], 0, customData] },
+      { method: 'queueInsertItems', args: [queueItems, 0] },
+      { method: 'queueInsertAndPlayItem', args: [queueItems[0], 0] },
+    ])
+  })
+
+  it('setActiveMediaTracks (deprecated alias) defaults to clear, like setActiveTrackIds', async () => {
+    const { client, transport } = await withSession()
+    await client.setActiveMediaTracks()
+    expect(transport.mediaCalls).toEqual([
+      { method: 'setActiveTrackIds', args: [[]] },
     ])
   })
 })

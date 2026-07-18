@@ -1,4 +1,4 @@
-import type { HybridObject } from 'react-native-nitro-modules'
+import type { AnyMap, HybridObject } from 'react-native-nitro-modules'
 import type { CastState } from '../types/CastState'
 import type { Device } from '../types/Device'
 import type { MediaStatus } from '../types/MediaStatus'
@@ -79,28 +79,54 @@ export interface CastTransport
   // the drift guard in `__fakes__/FakeCastTransport.ts` fails the build if these
   // diverge from the API. Native impls route to GCKRemoteMediaClient (iOS) /
   // RemoteMediaClient (Android) and push status via `onMediaStatus`.
+  //
+  // `customData` (v5-aug.5, v4 parity): threaded on every mutation whose GCK
+  // call accepts it on at least one platform (verified against the iOS 4.8.4
+  // header + Android 22.0.0 AAR). Android-only slots — GCK iOS has no
+  // customData variant — are `queueNext` / `queuePrev` / `queueSetRepeatMode`;
+  // iOS silently ignores the param there (v4 documented the same asymmetry).
+  // `seek` carries customData inside `MediaSeekOptions`; `setActiveTrackIds`,
+  // `setTextTrackStyle` and `requestMediaStatus` take none on either platform.
   loadMedia(request: MediaLoadRequest): Promise<void>
-  play(): Promise<void>
-  pause(): Promise<void>
-  stop(): Promise<void>
+  play(customData?: AnyMap): Promise<void>
+  pause(customData?: AnyMap): Promise<void>
+  stop(customData?: AnyMap): Promise<void>
   seek(options: MediaSeekOptions): Promise<void>
-  setPlaybackRate(playbackRate: number): Promise<void>
+  setPlaybackRate(playbackRate: number, customData?: AnyMap): Promise<void>
   setActiveTrackIds(trackIds: number[]): Promise<void>
   setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void>
-  setStreamVolume(volume: number): Promise<void>
-  setStreamMuted(muted: boolean): Promise<void>
+  setStreamVolume(volume: number, customData?: AnyMap): Promise<void>
+  setStreamMuted(muted: boolean, customData?: AnyMap): Promise<void>
   queueLoad(
     items: MediaQueueItem[],
     startIndex: number,
-    repeatMode: MediaRepeatMode
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
   ): Promise<void>
-  queueInsertItems(items: MediaQueueItem[], beforeItemId: number): Promise<void>
-  queueReorderItems(itemIds: number[], beforeItemId: number): Promise<void>
-  queueRemoveItems(itemIds: number[]): Promise<void>
-  queueNext(): Promise<void>
-  queuePrev(): Promise<void>
-  queueJumpToItem(itemId: number): Promise<void>
-  queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void>
+  queueInsertItems(
+    items: MediaQueueItem[],
+    beforeItemId: number,
+    customData?: AnyMap
+  ): Promise<void>
+  queueInsertAndPlayItem(
+    item: MediaQueueItem,
+    beforeItemId: number,
+    playPosition?: number,
+    customData?: AnyMap
+  ): Promise<void>
+  queueReorderItems(
+    itemIds: number[],
+    beforeItemId: number,
+    customData?: AnyMap
+  ): Promise<void>
+  queueRemoveItems(itemIds: number[], customData?: AnyMap): Promise<void>
+  queueNext(customData?: AnyMap): Promise<void>
+  queuePrev(customData?: AnyMap): Promise<void>
+  queueJumpToItem(itemId: number, customData?: AnyMap): Promise<void>
+  queueSetRepeatMode(
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
+  ): Promise<void>
   requestMediaStatus(): Promise<void>
 
   startDiscovery(): void

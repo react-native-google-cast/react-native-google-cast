@@ -1,3 +1,4 @@
+import type { AnyMap } from 'react-native-nitro-modules'
 import type { CastTransport } from '../../specs/CastTransport.nitro'
 import type {
   CastState,
@@ -130,9 +131,18 @@ export class FakeCastTransport implements CastTransportApi {
     writable: boolean
   ) => void
 
-  /** Record a media mutation and run its scripted behaviour (resolve default). */
+  /**
+   * Record a media mutation and run its scripted behaviour (resolve default).
+   * Trailing `undefined`s (an omitted optional `customData` / `playPosition`)
+   * are trimmed from the recorded tuple, so assertions on calls that omit the
+   * optionals stay positional: `{ method: 'play', args: [] }`.
+   */
   private media(method: string, ...args: unknown[]): Promise<void> {
-    this.mediaCalls.push({ method, args })
+    const recorded = [...args]
+    while (recorded.length > 0 && recorded[recorded.length - 1] === undefined) {
+      recorded.pop()
+    }
+    this.mediaCalls.push({ method, args: recorded })
     const behavior = this.mediaBehavior[method]
     return behavior
       ? (behavior as (...a: unknown[]) => Promise<void>)(...args)
@@ -234,20 +244,20 @@ export class FakeCastTransport implements CastTransportApi {
   loadMedia(request: MediaLoadRequest): Promise<void> {
     return this.media('loadMedia', request)
   }
-  play(): Promise<void> {
-    return this.media('play')
+  play(customData?: AnyMap): Promise<void> {
+    return this.media('play', customData)
   }
-  pause(): Promise<void> {
-    return this.media('pause')
+  pause(customData?: AnyMap): Promise<void> {
+    return this.media('pause', customData)
   }
-  stop(): Promise<void> {
-    return this.media('stop')
+  stop(customData?: AnyMap): Promise<void> {
+    return this.media('stop', customData)
   }
   seek(options: MediaSeekOptions): Promise<void> {
     return this.media('seek', options)
   }
-  setPlaybackRate(playbackRate: number): Promise<void> {
-    return this.media('setPlaybackRate', playbackRate)
+  setPlaybackRate(playbackRate: number, customData?: AnyMap): Promise<void> {
+    return this.media('setPlaybackRate', playbackRate, customData)
   }
   setActiveTrackIds(trackIds: number[]): Promise<void> {
     return this.media('setActiveTrackIds', trackIds)
@@ -255,42 +265,65 @@ export class FakeCastTransport implements CastTransportApi {
   setTextTrackStyle(textTrackStyle: TextTrackStyle): Promise<void> {
     return this.media('setTextTrackStyle', textTrackStyle)
   }
-  setStreamVolume(volume: number): Promise<void> {
-    return this.media('setStreamVolume', volume)
+  setStreamVolume(volume: number, customData?: AnyMap): Promise<void> {
+    return this.media('setStreamVolume', volume, customData)
   }
-  setStreamMuted(muted: boolean): Promise<void> {
-    return this.media('setStreamMuted', muted)
+  setStreamMuted(muted: boolean, customData?: AnyMap): Promise<void> {
+    return this.media('setStreamMuted', muted, customData)
   }
   queueLoad(
     items: MediaQueueItem[],
     startIndex: number,
-    repeatMode: MediaRepeatMode
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
   ): Promise<void> {
-    return this.media('queueLoad', items, startIndex, repeatMode)
+    return this.media('queueLoad', items, startIndex, repeatMode, customData)
   }
   queueInsertItems(
     items: MediaQueueItem[],
-    beforeItemId: number
+    beforeItemId: number,
+    customData?: AnyMap
   ): Promise<void> {
-    return this.media('queueInsertItems', items, beforeItemId)
+    return this.media('queueInsertItems', items, beforeItemId, customData)
   }
-  queueReorderItems(itemIds: number[], beforeItemId: number): Promise<void> {
-    return this.media('queueReorderItems', itemIds, beforeItemId)
+  queueInsertAndPlayItem(
+    item: MediaQueueItem,
+    beforeItemId: number,
+    playPosition?: number,
+    customData?: AnyMap
+  ): Promise<void> {
+    return this.media(
+      'queueInsertAndPlayItem',
+      item,
+      beforeItemId,
+      playPosition,
+      customData
+    )
   }
-  queueRemoveItems(itemIds: number[]): Promise<void> {
-    return this.media('queueRemoveItems', itemIds)
+  queueReorderItems(
+    itemIds: number[],
+    beforeItemId: number,
+    customData?: AnyMap
+  ): Promise<void> {
+    return this.media('queueReorderItems', itemIds, beforeItemId, customData)
   }
-  queueNext(): Promise<void> {
-    return this.media('queueNext')
+  queueRemoveItems(itemIds: number[], customData?: AnyMap): Promise<void> {
+    return this.media('queueRemoveItems', itemIds, customData)
   }
-  queuePrev(): Promise<void> {
-    return this.media('queuePrev')
+  queueNext(customData?: AnyMap): Promise<void> {
+    return this.media('queueNext', customData)
   }
-  queueJumpToItem(itemId: number): Promise<void> {
-    return this.media('queueJumpToItem', itemId)
+  queuePrev(customData?: AnyMap): Promise<void> {
+    return this.media('queuePrev', customData)
   }
-  queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<void> {
-    return this.media('queueSetRepeatMode', repeatMode)
+  queueJumpToItem(itemId: number, customData?: AnyMap): Promise<void> {
+    return this.media('queueJumpToItem', itemId, customData)
+  }
+  queueSetRepeatMode(
+    repeatMode: MediaRepeatMode,
+    customData?: AnyMap
+  ): Promise<void> {
+    return this.media('queueSetRepeatMode', repeatMode, customData)
   }
   requestMediaStatus(): Promise<void> {
     return this.media('requestMediaStatus')

@@ -379,18 +379,32 @@ final class HybridCastTransport: HybridCastTransportSpec {
     withClient { $0.loadMedia(with: request.toGckMediaLoadRequestData()) }
   }
 
-  func play() throws -> Promise<Void> { withClient { $0.play() } }
+  // `customData` (v5-aug.5): forwarded via the GCK `…customData:` variants where
+  // they exist. `nil` and the plain variants are equivalent (GCK sends no
+  // customData field either way). `queueNext` / `queuePrev` /
+  // `queueSetRepeatMode` have NO customData variant in the iOS SDK (verified
+  // against the 4.8.4 header) — those params are Android-only and ignored here.
 
-  func pause() throws -> Promise<Void> { withClient { $0.pause() } }
+  func play(customData: AnyMap?) throws -> Promise<Void> {
+    withClient { $0.play(withCustomData: customData?.toGckCustomData()) }
+  }
 
-  func stop() throws -> Promise<Void> { withClient { $0.stop() } }
+  func pause(customData: AnyMap?) throws -> Promise<Void> {
+    withClient { $0.pause(withCustomData: customData?.toGckCustomData()) }
+  }
+
+  func stop(customData: AnyMap?) throws -> Promise<Void> {
+    withClient { $0.stop(withCustomData: customData?.toGckCustomData()) }
+  }
 
   func seek(options: MediaSeekOptions) throws -> Promise<Void> {
     withClient { $0.seek(with: options.toGckMediaSeekOptions()) }
   }
 
-  func setPlaybackRate(playbackRate: Double) throws -> Promise<Void> {
-    withClient { $0.setPlaybackRate(Float(playbackRate)) }
+  func setPlaybackRate(playbackRate: Double, customData: AnyMap?) throws -> Promise<Void> {
+    withClient {
+      $0.setPlaybackRate(Float(playbackRate), customData: customData?.toGckCustomData())
+    }
   }
 
   func setActiveTrackIds(trackIds: [Double]) throws -> Promise<Void> {
@@ -402,16 +416,19 @@ final class HybridCastTransport: HybridCastTransportSpec {
     withClient { $0.setTextTrackStyle(textTrackStyle.toGckTextTrackStyle()) }
   }
 
-  func setStreamVolume(volume: Double) throws -> Promise<Void> {
-    withClient { $0.setStreamVolume(Float(volume)) }
+  func setStreamVolume(volume: Double, customData: AnyMap?) throws -> Promise<Void> {
+    withClient {
+      $0.setStreamVolume(Float(volume), customData: customData?.toGckCustomData())
+    }
   }
 
-  func setStreamMuted(muted: Bool) throws -> Promise<Void> {
-    withClient { $0.setStreamMuted(muted) }
+  func setStreamMuted(muted: Bool, customData: AnyMap?) throws -> Promise<Void> {
+    withClient { $0.setStreamMuted(muted, customData: customData?.toGckCustomData()) }
   }
 
   func queueLoad(
-    items: [MediaQueueItem], startIndex: Double, repeatMode: MediaRepeatMode
+    items: [MediaQueueItem], startIndex: Double, repeatMode: MediaRepeatMode,
+    customData: AnyMap?
   ) throws -> Promise<Void> {
     guard let start = Self.queueIndex(startIndex) else {
       return Self.rejectedIndex("startIndex", startIndex)
@@ -420,44 +437,91 @@ final class HybridCastTransport: HybridCastTransportSpec {
     let options = GCKMediaQueueLoadOptions()
     options.startIndex = start
     options.repeatMode = repeatMode.toGckRepeatMode()
+    if let customData { options.customData = customData.toGckCustomData() }
     return withClient { $0.queueLoad(gckItems, with: options) }
   }
 
-  func queueInsertItems(items: [MediaQueueItem], beforeItemId: Double) throws -> Promise<Void> {
+  func queueInsertItems(
+    items: [MediaQueueItem], beforeItemId: Double, customData: AnyMap?
+  ) throws -> Promise<Void> {
     guard let before = Self.queueIndex(beforeItemId) else {
       return Self.rejectedIndex("beforeItemId", beforeItemId)
     }
     let gckItems = items.map { $0.toGckMediaQueueItem() }
-    return withClient { $0.queueInsert(gckItems, beforeItemWithID: before) }
+    return withClient {
+      $0.queueInsert(
+        gckItems, beforeItemWithID: before, customData: customData?.toGckCustomData())
+    }
   }
 
-  func queueReorderItems(itemIds: [Double], beforeItemId: Double) throws -> Promise<Void> {
+  func queueInsertAndPlayItem(
+    item: MediaQueueItem, beforeItemId: Double, playPosition: Double?, customData: AnyMap?
+  ) throws -> Promise<Void> {
+    guard let before = Self.queueIndex(beforeItemId) else {
+      return Self.rejectedIndex("beforeItemId", beforeItemId)
+    }
+    // Mirror the Android `toPlayPositionMs` guard: a NaN/±Inf/negative
+    // playPosition would flow into GCK as a "real" TimeInterval (and NaN can't
+    // even be JSON-serialized) — reject it before issuing the request.
+    if let playPosition, !(playPosition.isFinite && playPosition >= 0) {
+      return Self.rejectedIndex("playPosition", playPosition)
+    }
+    // GCK's only customData-capable variant also takes playPosition; an absent
+    // playPosition maps to kGCKInvalidTimeInterval ("unset" — the item's
+    // startTime governs), which is what the playPosition-less variant sends.
+    let gckItem = item.toGckMediaQueueItem()
+    return withClient {
+      $0.queueInsertAndPlay(
+        gckItem,
+        beforeItemWithID: before,
+        playPosition: playPosition ?? kGCKInvalidTimeInterval,
+        customData: customData?.toGckCustomData())
+    }
+  }
+
+  func queueReorderItems(
+    itemIds: [Double], beforeItemId: Double, customData: AnyMap?
+  ) throws -> Promise<Void> {
     guard let before = Self.queueIndex(beforeItemId) else {
       return Self.rejectedIndex("beforeItemId", beforeItemId)
     }
     let ids = itemIds.map { NSNumber(value: $0) }
     return withClient {
-      $0.queueReorderItems(withIDs: ids, insertBeforeItemWithID: before)
+      $0.queueReorderItems(
+        withIDs: ids, insertBeforeItemWithID: before,
+        customData: customData?.toGckCustomData())
     }
   }
 
-  func queueRemoveItems(itemIds: [Double]) throws -> Promise<Void> {
+  func queueRemoveItems(itemIds: [Double], customData: AnyMap?) throws -> Promise<Void> {
     let ids = itemIds.map { NSNumber(value: $0) }
-    return withClient { $0.queueRemoveItems(withIDs: ids) }
+    return withClient {
+      $0.queueRemoveItems(withIDs: ids, customData: customData?.toGckCustomData())
+    }
   }
 
-  func queueNext() throws -> Promise<Void> { withClient { $0.queueNextItem() } }
+  // NOTE: no GCK iOS customData variant for next/prev/setRepeatMode — the
+  // param is Android-only there (documented on the TS façade) and ignored.
+  func queueNext(customData: AnyMap?) throws -> Promise<Void> {
+    withClient { $0.queueNextItem() }
+  }
 
-  func queuePrev() throws -> Promise<Void> { withClient { $0.queuePreviousItem() } }
+  func queuePrev(customData: AnyMap?) throws -> Promise<Void> {
+    withClient { $0.queuePreviousItem() }
+  }
 
-  func queueJumpToItem(itemId: Double) throws -> Promise<Void> {
+  func queueJumpToItem(itemId: Double, customData: AnyMap?) throws -> Promise<Void> {
     guard let id = Self.queueIndex(itemId) else {
       return Self.rejectedIndex("itemId", itemId)
     }
-    return withClient { $0.queueJumpToItem(withID: id) }
+    return withClient {
+      $0.queueJumpToItem(withID: id, customData: customData?.toGckCustomData())
+    }
   }
 
-  func queueSetRepeatMode(repeatMode: MediaRepeatMode) throws -> Promise<Void> {
+  func queueSetRepeatMode(repeatMode: MediaRepeatMode, customData: AnyMap?) throws -> Promise<
+    Void
+  > {
     let mode = repeatMode.toGckRepeatMode()
     return withClient { $0.queueSetRepeatMode(mode) }
   }

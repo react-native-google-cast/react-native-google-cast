@@ -311,24 +311,24 @@ namespace margelo::nitro::googlecast {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> play() override {
-      auto __result = _swiftPart.play();
+    inline std::shared_ptr<Promise<void>> play(const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.play(customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> pause() override {
-      auto __result = _swiftPart.pause();
+    inline std::shared_ptr<Promise<void>> pause(const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.pause(customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> stop() override {
-      auto __result = _swiftPart.stop();
+    inline std::shared_ptr<Promise<void>> stop(const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.stop(customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
@@ -343,8 +343,8 @@ namespace margelo::nitro::googlecast {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate) override {
-      auto __result = _swiftPart.setPlaybackRate(std::forward<decltype(playbackRate)>(playbackRate));
+    inline std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.setPlaybackRate(std::forward<decltype(playbackRate)>(playbackRate), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
@@ -367,80 +367,88 @@ namespace margelo::nitro::googlecast {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> setStreamVolume(double volume) override {
-      auto __result = _swiftPart.setStreamVolume(std::forward<decltype(volume)>(volume));
+    inline std::shared_ptr<Promise<void>> setStreamVolume(double volume, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.setStreamVolume(std::forward<decltype(volume)>(volume), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> setStreamMuted(bool muted) override {
-      auto __result = _swiftPart.setStreamMuted(std::forward<decltype(muted)>(muted));
+    inline std::shared_ptr<Promise<void>> setStreamMuted(bool muted, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.setStreamMuted(std::forward<decltype(muted)>(muted), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) override {
-      auto __result = _swiftPart.queueLoad(items, std::forward<decltype(startIndex)>(startIndex), static_cast<int>(repeatMode));
+    inline std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueLoad(items, std::forward<decltype(startIndex)>(startIndex), static_cast<int>(repeatMode), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) override {
-      auto __result = _swiftPart.queueInsertItems(items, std::forward<decltype(beforeItemId)>(beforeItemId));
+    inline std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueInsertItems(items, std::forward<decltype(beforeItemId)>(beforeItemId), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) override {
-      auto __result = _swiftPart.queueReorderItems(itemIds, std::forward<decltype(beforeItemId)>(beforeItemId));
+    inline std::shared_ptr<Promise<void>> queueInsertAndPlayItem(const MediaQueueItem& item, double beforeItemId, std::optional<double> playPosition, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueInsertAndPlayItem(std::forward<decltype(item)>(item), std::forward<decltype(beforeItemId)>(beforeItemId), playPosition, customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds) override {
-      auto __result = _swiftPart.queueRemoveItems(itemIds);
+    inline std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueReorderItems(itemIds, std::forward<decltype(beforeItemId)>(beforeItemId), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueNext() override {
-      auto __result = _swiftPart.queueNext();
+    inline std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueRemoveItems(itemIds, customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queuePrev() override {
-      auto __result = _swiftPart.queuePrev();
+    inline std::shared_ptr<Promise<void>> queueNext(const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueNext(customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueJumpToItem(double itemId) override {
-      auto __result = _swiftPart.queueJumpToItem(std::forward<decltype(itemId)>(itemId));
+    inline std::shared_ptr<Promise<void>> queuePrev(const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queuePrev(customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode) override {
-      auto __result = _swiftPart.queueSetRepeatMode(static_cast<int>(repeatMode));
+    inline std::shared_ptr<Promise<void>> queueJumpToItem(double itemId, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueJumpToItem(std::forward<decltype(itemId)>(itemId), customData);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode, const std::optional<std::shared_ptr<AnyMap>>& customData) override {
+      auto __result = _swiftPart.queueSetRepeatMode(static_cast<int>(repeatMode), customData);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

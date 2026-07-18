@@ -44,6 +44,8 @@ namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
 #include "MediaStatus.hpp"
 #include <string>
 #include "MediaLoadRequest.hpp"
+#include <NitroModules/AnyMap.hpp>
+#include <optional>
 #include "MediaSeekOptions.hpp"
 #include "TextTrackStyle.hpp"
 #include "MediaQueueItem.hpp"
@@ -95,23 +97,24 @@ namespace margelo::nitro::googlecast {
       virtual std::shared_ptr<Promise<bool>> showIntroductoryOverlay(bool once) = 0;
       virtual std::shared_ptr<Promise<bool>> showPlayServicesErrorDialog(double errorCode) = 0;
       virtual std::shared_ptr<Promise<void>> loadMedia(const MediaLoadRequest& request) = 0;
-      virtual std::shared_ptr<Promise<void>> play() = 0;
-      virtual std::shared_ptr<Promise<void>> pause() = 0;
-      virtual std::shared_ptr<Promise<void>> stop() = 0;
+      virtual std::shared_ptr<Promise<void>> play(const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> pause(const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> stop(const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
       virtual std::shared_ptr<Promise<void>> seek(const MediaSeekOptions& options) = 0;
-      virtual std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate) = 0;
+      virtual std::shared_ptr<Promise<void>> setPlaybackRate(double playbackRate, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
       virtual std::shared_ptr<Promise<void>> setActiveTrackIds(const std::vector<double>& trackIds) = 0;
       virtual std::shared_ptr<Promise<void>> setTextTrackStyle(const TextTrackStyle& textTrackStyle) = 0;
-      virtual std::shared_ptr<Promise<void>> setStreamVolume(double volume) = 0;
-      virtual std::shared_ptr<Promise<void>> setStreamMuted(bool muted) = 0;
-      virtual std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode) = 0;
-      virtual std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId) = 0;
-      virtual std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId) = 0;
-      virtual std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds) = 0;
-      virtual std::shared_ptr<Promise<void>> queueNext() = 0;
-      virtual std::shared_ptr<Promise<void>> queuePrev() = 0;
-      virtual std::shared_ptr<Promise<void>> queueJumpToItem(double itemId) = 0;
-      virtual std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode) = 0;
+      virtual std::shared_ptr<Promise<void>> setStreamVolume(double volume, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> setStreamMuted(bool muted, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueLoad(const std::vector<MediaQueueItem>& items, double startIndex, MediaRepeatMode repeatMode, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueInsertItems(const std::vector<MediaQueueItem>& items, double beforeItemId, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueInsertAndPlayItem(const MediaQueueItem& item, double beforeItemId, std::optional<double> playPosition, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueReorderItems(const std::vector<double>& itemIds, double beforeItemId, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueRemoveItems(const std::vector<double>& itemIds, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueNext(const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queuePrev(const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueJumpToItem(double itemId, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
+      virtual std::shared_ptr<Promise<void>> queueSetRepeatMode(MediaRepeatMode repeatMode, const std::optional<std::shared_ptr<AnyMap>>& customData) = 0;
       virtual std::shared_ptr<Promise<void>> requestMediaStatus() = 0;
       virtual void startDiscovery() = 0;
       virtual void stopDiscovery() = 0;

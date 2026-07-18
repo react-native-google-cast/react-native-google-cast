@@ -91,6 +91,40 @@ media stream use `castSession.getClient()` →
 `null` when there is no live session (consistent with `useRemoteMediaClient`),
 so guard the result (`getClient()?.play()`).
 
+## `RemoteMediaClient`: `customData` and the v4 conveniences
+
+Every v4 `customData` parameter is back, and v5 adds it to the queue mutations
+v4 never exposed, wherever the Google Cast SDK accepts one:
+
+- **Both platforms**: `play`, `pause`, `stop`, `setPlaybackRate`,
+  `setStreamVolume`, `setStreamMuted`, `queueLoad`, `queueInsertItems`,
+  `queueInsertItem`, `queueInsertAndPlayItem`, `queueRemoveItems`,
+  `queueReorderItems`, `queueJumpToItem`, and `seek` /
+  `loadMedia` (via `MediaSeekOptions.customData` / `MediaLoadRequest.customData`,
+  as in v4).
+- **Android only** (the iOS SDK has no `customData` variant; the parameter is
+  accepted and ignored there, matching v4's documented behavior for
+  `queueNext` / `queuePrev`): `queueNext`, `queuePrev`, `queueSetRepeatMode`.
+- **No `customData` anywhere** (the SDKs accept none): `setActiveTrackIds`,
+  `setTextTrackStyle` (the style object itself still carries a `customData`
+  field), `requestStatus`.
+
+`customData` is a plain JSON-serializable object of scalar values, exactly as
+in v4.
+
+The v4 convenience methods survive:
+
+- **`queueInsertAndPlayItem(item, beforeItemId?, playPosition?, customData?)`**
+  keeps its v4 signature, with one fix: in v4, omitting `playPosition` forced
+  position `0`; in v5 an omitted `playPosition` leaves the start position to
+  the item's `startTime` (GCK's native default). Pass `0` explicitly for the
+  old behavior.
+- **`queueInsertItem(item, beforeItemId?, customData?)`** is still sugar for
+  `queueInsertItems([item], …)`.
+- **`setActiveMediaTracks(trackIds?)`** remains a **deprecated** alias of
+  `setActiveTrackIds` (it was already deprecated in v4) — migrate to
+  `setActiveTrackIds`.
+
 ## Custom channels
 
 `CastSession.addChannel` / `CastChannel` / `useCastChannel` keep their v4 shape,
@@ -108,7 +142,7 @@ with these changes:
   see the [Custom Channels guide](../custom-channels).
 - **Single message listener (unchanged, now documented).** `channel.onMessage`
   replaces any previous listener, and `useCastChannel`'s `onMessage` parameter
-  owns that one listener — passing `onMessage` to the hook *and* calling
+  owns that one listener — passing `onMessage` to the hook _and_ calling
   `channel.onMessage` elsewhere clobbers whichever came first.
 - **`connected` / `writable` reflect the platform.** iOS reports live values —
   often `connected: false` immediately after `addChannel` (the channel connects
@@ -150,7 +184,7 @@ with these changes:
 - **`showIntroductoryOverlay` resolves `false` instead of hanging.** v4's
   Android promise never settled when no `CastButton` was on screen, and — via
   the SDK's `setSingleTime()` — when the overlay had already been shown once.
-  v5 resolves `false` in both cases (every path settles). A mounted, *visible*
+  v5 resolves `false` in both cases (every path settles). A mounted, _visible_
   `CastButton` is still required as the overlay's anchor on both platforms.
 - **The overlay's "shown once" flags are platform-local.** iOS uses the Cast
   SDK's flag (cleared when you pass `{ once: false }`); Android uses this

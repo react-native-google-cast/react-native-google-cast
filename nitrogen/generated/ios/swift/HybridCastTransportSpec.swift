@@ -28,23 +28,24 @@ public protocol HybridCastTransportSpec_protocol: HybridObject {
   func showIntroductoryOverlay(once: Bool) throws -> Promise<Bool>
   func showPlayServicesErrorDialog(errorCode: Double) throws -> Promise<Bool>
   func loadMedia(request: MediaLoadRequest) throws -> Promise<Void>
-  func play() throws -> Promise<Void>
-  func pause() throws -> Promise<Void>
-  func stop() throws -> Promise<Void>
+  func play(customData: AnyMap?) throws -> Promise<Void>
+  func pause(customData: AnyMap?) throws -> Promise<Void>
+  func stop(customData: AnyMap?) throws -> Promise<Void>
   func seek(options: MediaSeekOptions) throws -> Promise<Void>
-  func setPlaybackRate(playbackRate: Double) throws -> Promise<Void>
+  func setPlaybackRate(playbackRate: Double, customData: AnyMap?) throws -> Promise<Void>
   func setActiveTrackIds(trackIds: [Double]) throws -> Promise<Void>
   func setTextTrackStyle(textTrackStyle: TextTrackStyle) throws -> Promise<Void>
-  func setStreamVolume(volume: Double) throws -> Promise<Void>
-  func setStreamMuted(muted: Bool) throws -> Promise<Void>
-  func queueLoad(items: [MediaQueueItem], startIndex: Double, repeatMode: MediaRepeatMode) throws -> Promise<Void>
-  func queueInsertItems(items: [MediaQueueItem], beforeItemId: Double) throws -> Promise<Void>
-  func queueReorderItems(itemIds: [Double], beforeItemId: Double) throws -> Promise<Void>
-  func queueRemoveItems(itemIds: [Double]) throws -> Promise<Void>
-  func queueNext() throws -> Promise<Void>
-  func queuePrev() throws -> Promise<Void>
-  func queueJumpToItem(itemId: Double) throws -> Promise<Void>
-  func queueSetRepeatMode(repeatMode: MediaRepeatMode) throws -> Promise<Void>
+  func setStreamVolume(volume: Double, customData: AnyMap?) throws -> Promise<Void>
+  func setStreamMuted(muted: Bool, customData: AnyMap?) throws -> Promise<Void>
+  func queueLoad(items: [MediaQueueItem], startIndex: Double, repeatMode: MediaRepeatMode, customData: AnyMap?) throws -> Promise<Void>
+  func queueInsertItems(items: [MediaQueueItem], beforeItemId: Double, customData: AnyMap?) throws -> Promise<Void>
+  func queueInsertAndPlayItem(item: MediaQueueItem, beforeItemId: Double, playPosition: Double?, customData: AnyMap?) throws -> Promise<Void>
+  func queueReorderItems(itemIds: [Double], beforeItemId: Double, customData: AnyMap?) throws -> Promise<Void>
+  func queueRemoveItems(itemIds: [Double], customData: AnyMap?) throws -> Promise<Void>
+  func queueNext(customData: AnyMap?) throws -> Promise<Void>
+  func queuePrev(customData: AnyMap?) throws -> Promise<Void>
+  func queueJumpToItem(itemId: Double, customData: AnyMap?) throws -> Promise<Void>
+  func queueSetRepeatMode(repeatMode: MediaRepeatMode, customData: AnyMap?) throws -> Promise<Void>
   func requestMediaStatus() throws -> Promise<Void>
   func startDiscovery() throws -> Void
   func stopDiscovery() throws -> Void

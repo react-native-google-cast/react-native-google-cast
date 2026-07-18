@@ -11,6 +11,7 @@ import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
 import com.margelo.nitro.core.Promise
+import com.margelo.nitro.core.AnyMap
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -98,15 +99,15 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun play(): Promise<Unit>
+  abstract fun play(customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun pause(): Promise<Unit>
+  abstract fun pause(customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun stop(): Promise<Unit>
+  abstract fun stop(customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
@@ -114,7 +115,7 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun setPlaybackRate(playbackRate: Double): Promise<Unit>
+  abstract fun setPlaybackRate(playbackRate: Double, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
@@ -126,43 +127,47 @@ abstract class HybridCastTransportSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun setStreamVolume(volume: Double): Promise<Unit>
+  abstract fun setStreamVolume(volume: Double, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun setStreamMuted(muted: Boolean): Promise<Unit>
+  abstract fun setStreamMuted(muted: Boolean, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueLoad(items: Array<MediaQueueItem>, startIndex: Double, repeatMode: MediaRepeatMode): Promise<Unit>
+  abstract fun queueLoad(items: Array<MediaQueueItem>, startIndex: Double, repeatMode: MediaRepeatMode, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueInsertItems(items: Array<MediaQueueItem>, beforeItemId: Double): Promise<Unit>
+  abstract fun queueInsertItems(items: Array<MediaQueueItem>, beforeItemId: Double, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueReorderItems(itemIds: DoubleArray, beforeItemId: Double): Promise<Unit>
+  abstract fun queueInsertAndPlayItem(item: MediaQueueItem, beforeItemId: Double, playPosition: Double?, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueRemoveItems(itemIds: DoubleArray): Promise<Unit>
+  abstract fun queueReorderItems(itemIds: DoubleArray, beforeItemId: Double, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueNext(): Promise<Unit>
+  abstract fun queueRemoveItems(itemIds: DoubleArray, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queuePrev(): Promise<Unit>
+  abstract fun queueNext(customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueJumpToItem(itemId: Double): Promise<Unit>
+  abstract fun queuePrev(customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
-  abstract fun queueSetRepeatMode(repeatMode: MediaRepeatMode): Promise<Unit>
+  abstract fun queueJumpToItem(itemId: Double, customData: AnyMap?): Promise<Unit>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun queueSetRepeatMode(repeatMode: MediaRepeatMode, customData: AnyMap?): Promise<Unit>
   
   @DoNotStrip
   @Keep
