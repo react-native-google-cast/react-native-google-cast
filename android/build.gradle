@@ -154,8 +154,12 @@ dependencies {
   // Nitro core
   implementation project(":react-native-nitro-modules")
 
-  // Google Cast SDK
-  implementation "com.google.android.gms:play-services-cast-framework:${castFrameworkVersion}"
+  // Google Cast SDK. `api`, not `implementation`: GCK types are part of the
+  // library's public ABI since 6.2 — `NitroCastOptionsProvider` and its
+  // protected seams (`NotificationOptions`, `ImagePicker`, `CastOptions`)
+  // are the documented subclassing surface, so consumers writing a custom
+  // provider need the Cast SDK on their compile classpath.
+  api "com.google.android.gms:play-services-cast-framework:${castFrameworkVersion}"
 
   // Converter parity suite (Robolectric, JVM unit tests).
   testImplementation "junit:junit:4.13.2"
