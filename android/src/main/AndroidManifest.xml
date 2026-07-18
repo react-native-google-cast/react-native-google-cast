@@ -1,1 +1,14 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- NitroExpandedControllerActivity ships auto-registered via the manifest
+       merge (Decision 1) — consumers must NOT declare it themselves (a stale
+       manual declaration from 6.1 causes an android:theme merger conflict;
+       see the v4→v5 migration guide). The theme is library-defined and
+       consumer-overridable by redefining @style/NitroCastExpandedController.
+       No <uses-permission> is added here (design criterion vi). -->
+  <application>
+    <activity
+      android:name="com.margelo.nitro.googlecast.NitroExpandedControllerActivity"
+      android:exported="false"
+      android:theme="@style/NitroCastExpandedController" />
+  </application>
+</manifest>
