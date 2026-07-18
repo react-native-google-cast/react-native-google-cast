@@ -845,6 +845,9 @@ class HybridCastTransport : HybridCastTransportSpec() {
       object : Cast.Listener() {
         override fun onVolumeChanged() = emitDetail(SessionEventType.DEVICESTATUSCHANGED)
         override fun onApplicationStatusChanged() = emitDetail(SessionEventType.DEVICESTATUSCHANGED)
+        // Receiver rename: refresh `SessionInfo.device.friendlyName` (emitDetail re-reads a
+        // fresh SessionInfo, which rebuilds `device` from the current CastDevice).
+        override fun onDeviceNameChanged() = emitDetail(SessionEventType.DEVICESTATUSCHANGED)
         // Fully-qualified param type: a bare `ApplicationMetadata` binds to the same-package Nitro
         // struct and would silently fail to override the GCK callback.
         override fun onApplicationMetadataChanged(

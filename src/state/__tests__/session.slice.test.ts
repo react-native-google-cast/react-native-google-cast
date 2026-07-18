@@ -90,6 +90,44 @@ describe('sessionSlice — detail lifecycle', () => {
     expect(racing.detail).toBeNull()
   })
 
+  it('propagates a device rename through a detail-change event', () => {
+    const started = sessionSlice.reduce(
+      EMPTY,
+      lifecycle('started', session('s1'))
+    )
+    const renamed: SessionInfo = {
+      ...session('s1'),
+      device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+    }
+    const changed = sessionSlice.reduce(
+      started,
+      lifecycle('deviceStatusChanged', renamed)
+    )
+    // The rename reaches the exposed session (CastSession.device /
+    // useCastDevice), without touching façade validity.
+    expect(changed.current?.device.friendlyName).toBe('Bedroom TV')
+    expect(changed.current?.sessionId).toBe(started.current?.sessionId)
+    expect(changed.current?.generation).toBe(started.current?.generation)
+    expect(changed.generation).toBe(started.generation)
+    // A real device change is a real snapshot change — new ref by design.
+    expect(changed.current).not.toBe(started.current)
+  })
+
+  it('keeps the same device ref across an unrelated detail change', () => {
+    const started = sessionSlice.reduce(
+      EMPTY,
+      lifecycle('started', session('s1'))
+    )
+    const changed = sessionSlice.reduce(
+      started,
+      lifecycle('deviceStatusChanged', session('s1', { deviceVolume: 0.6 }))
+    )
+    // Same device payload → same frozen current AND device refs (Invariant 2).
+    expect(changed.current).toBe(started.current)
+    expect(changed.current?.device).toBe(started.current?.device)
+    expect(changed.detail?.deviceVolume).toBe(0.6)
+  })
+
   it('returns the same state ref for unrelated events (Invariant 2)', () => {
     const started = sessionSlice.reduce(
       EMPTY,

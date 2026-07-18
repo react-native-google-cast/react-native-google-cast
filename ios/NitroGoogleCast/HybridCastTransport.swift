@@ -738,8 +738,10 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
   /// Build the generated `SessionInfo` from a GCK session. `internal` (not
   /// `fileprivate`) so the separate-file `CastDeviceStatusListener` can reuse it.
-  /// The six detail fields are cast-only, so they populate only when the session
-  /// is a `GCKCastSession`; a plain `GCKSession` leaves them `nil`. Reads the
+  /// Five detail fields are cast-only, so they populate only when the session
+  /// is a `GCKCastSession`; a plain `GCKSession` leaves them `nil`.
+  /// (`applicationStatus` is the exception: it reads the base
+  /// `GCKSession.deviceStatusText`, so it populates for any session.) Reads the
   /// current values off the handle GCK hands us — never a cached one (Invariant 1).
   internal static func sessionInfo(_ session: GCKSession?) -> SessionInfo? {
     guard let session else { return nil }
@@ -788,9 +790,12 @@ private final class CastDiscoveryListener: NSObject, GCKDiscoveryManagerListener
 }
 
 /// Forwards `GCKSessionManager` lifecycle callbacks to a single closure as
-/// `SessionLifecycleEvent`s. These are *optional* protocol methods — the exact
-/// bridged Swift selectors are a Phase 3 spike verification item.
-private final class CastSessionListener: NSObject, GCKSessionManagerListener {
+/// `SessionLifecycleEvent`s. These are *optional* protocol methods — a wrong
+/// Swift signature compiles clean but bridges to a selector GCK never calls
+/// (silently dead). The bridged selectors are pinned by
+/// `SessionListenerSelectorTests`; `internal` (not `private`) so the test
+/// target can reach the type via `@testable import`.
+final class CastSessionListener: NSObject, GCKSessionManagerListener {
   private let onEvent: (SessionLifecycleEvent) -> Void
   /// Fired when a session becomes current (started/resumed) and when it leaves —
   /// the transport uses these to (re)bind/tear down its media-status listener and
@@ -850,9 +855,14 @@ private final class CastSessionListener: NSObject, GCKSessionManagerListener {
     onSessionActive()
     emit(.resumed, session: HybridCastTransport.sessionInfo(session))
   }
+  // NOTE: the argument label must be `with` (not `withReason`) — GCK's optional
+  // requirement is `sessionManager:didSuspendSession:withReason:`, which imports
+  // into Swift as `sessionManager(_:didSuspend:with:)`. A `withReason` label
+  // bridges to a *different* selector that GCK never calls, so the suspended
+  // event silently never fires (pinned by `SessionListenerSelectorTests`).
   func sessionManager(
     _ sessionManager: GCKSessionManager, didSuspend session: GCKSession,
-    withReason reason: GCKConnectionSuspendReason
+    with reason: GCKConnectionSuspendReason
   ) {
     // TS treats `suspended` as a teardown (see `session.slice`), so detach the
     // media listener and flush pending requests here too — otherwise a late

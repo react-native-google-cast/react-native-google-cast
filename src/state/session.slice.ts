@@ -99,6 +99,32 @@ function freezeSession(info: SessionInfo, generation: number): StoreSession {
   })
 }
 
+/**
+ * Structural equality over {@link Device}. Detail-change events must keep
+ * `current` ref-stable (Invariant 2) *except* when the device payload really
+ * changed (e.g. a receiver rename via `didUpdateDevice:` / `onDeviceNameChanged`)
+ * — comparing by value is what lets the reducer tell the two apart.
+ */
+function sameDevice(a: Device, b: Device): boolean {
+  return (
+    a.deviceId === b.deviceId &&
+    a.friendlyName === b.friendlyName &&
+    a.modelName === b.modelName &&
+    a.deviceVersion === b.deviceVersion &&
+    a.ipAddress === b.ipAddress &&
+    a.isOnLocalNetwork === b.isOnLocalNetwork &&
+    a.capabilities.length === b.capabilities.length &&
+    a.capabilities.every((c, i) => c === b.capabilities[i]) &&
+    a.icons.length === b.icons.length &&
+    a.icons.every(
+      (icon, i) =>
+        icon.url === b.icons[i].url &&
+        icon.width === b.icons[i].width &&
+        icon.height === b.icons[i].height
+    )
+  )
+}
+
 /** Resolve the optional {@link SessionInfo} detail fields, applying defaults. */
 function freezeDetail(info: SessionInfo): SessionDetail {
   return Object.freeze({
@@ -159,12 +185,24 @@ export const sessionSlice: Slice<SessionState> = {
       // Detail update for the live session. Dropped when no session is live —
       // a detail change racing a teardown must not resurrect dead detail (the
       // same live-gating the media slice applies). `current` / `generation` are
-      // preserved (same refs) so the snapshot's `currentSession` never churns.
+      // preserved (same refs) so the snapshot's `currentSession` never churns —
+      // *unless* the device payload itself changed (receiver rename / device
+      // update): then `current` is rebuilt with the fresh device (same
+      // `sessionId` / `generation`, so façade validity is untouched) so
+      // `CastSession.device` / `useCastDevice` see the new value instead of the
+      // frozen-at-establish one.
       if (state.current === null || !event.event.session) return state
+      const info = event.event.session
+      const current = sameDevice(state.current.device, info.device)
+        ? state.current
+        : Object.freeze({
+            ...state.current,
+            device: Object.freeze({ ...info.device }),
+          })
       return {
-        current: state.current,
+        current,
         generation: state.generation,
-        detail: freezeDetail(event.event.session),
+        detail: freezeDetail(info),
       }
     }
 

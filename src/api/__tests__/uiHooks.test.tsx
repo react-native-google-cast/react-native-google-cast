@@ -334,6 +334,46 @@ describe('useCastDevice', () => {
     act(() => renderer.unmount())
   })
 
+  it('re-renders with the fresh device on a mid-session device update', () => {
+    const renderer = createProbe(<DeviceProbe />)
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const before = latestDevice
+    expect(before!.friendlyName).toBe('Device s1')
+
+    // Receiver rename mid-session: the memoized façade ref does not change,
+    // so only the direct slice subscription can surface this.
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: {
+          ...session('s1'),
+          device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+        },
+      })
+    })
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+    expect(latestDevice).not.toBe(before)
+    act(() => renderer.unmount())
+  })
+
+  it('stays ref-stable across an unrelated detail change', () => {
+    const renderer = createProbe(<DeviceProbe />)
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const before = latestDevice
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: { ...session('s1'), deviceVolume: 0.5 },
+      })
+    })
+    expect(latestDevice).toBe(before)
+    act(() => renderer.unmount())
+  })
+
   it('honors ignoreSessionUpdatesInBackground across suspension (E6)', async () => {
     const renderer = createProbe(
       <DeviceProbe options={{ ignoreSessionUpdatesInBackground: true }} />
@@ -349,6 +389,72 @@ describe('useCastDevice', () => {
       transport.emitLifecycle({ type: 'suspended' })
     })
     expect(latestDevice).toBe(before)
+    act(() => renderer.unmount())
+  })
+
+  it('keeps a renamed device across suspension (ignoreSessionUpdatesInBackground)', async () => {
+    const renderer = createProbe(
+      <DeviceProbe options={{ ignoreSessionUpdatesInBackground: true }} />
+    )
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    await flush()
+
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: {
+          ...session('s1'),
+          device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+        },
+      })
+    })
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+
+    // Suspension clears the slice's `current`; the retained façade must keep
+    // the renamed device, not regress to its constructor-time snapshot.
+    act(() => {
+      transport.emitLifecycle({ type: 'suspended' })
+    })
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+    act(() => renderer.unmount())
+  })
+
+  it('pairs the device with the façade it returns across a session replacement', async () => {
+    const renderer = createProbe(
+      <DeviceProbe options={{ ignoreSessionUpdatesInBackground: true }} />
+    )
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    await flush()
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: {
+          ...session('s1'),
+          device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+        },
+      })
+    })
+    act(() => {
+      transport.emitLifecycle({ type: 'suspended' })
+    })
+    // Retained old façade: its OWN (renamed) device — the read is scoped
+    // through `castSession.device`, never an unscoped slice read (the
+    // façade-level scoping guarantee is pinned in facades.test.ts: a stale
+    // façade keeps its own device even while a NEW session is live).
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+
+    // A NEW session replaces the suspended one: the hook hands out the new
+    // façade and must pair it with the NEW session's device — never a mix.
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s2') })
+    })
+    await flush()
+    expect(latestDevice!.deviceId).toBe('s2')
+    expect(latestDevice!.friendlyName).toBe('Device s2')
     act(() => renderer.unmount())
   })
 })

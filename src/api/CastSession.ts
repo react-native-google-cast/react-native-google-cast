@@ -62,12 +62,12 @@ const DEFAULT_DETAIL: SessionDetail = {
 export class CastSession {
   /** Unique session id (may be reused across sessions — do not use as identity). */
   readonly id: string
-  /** The connected receiver device (a snapshot; valid even once stale). */
-  readonly device: Device
 
   private readonly store: CastStore
   private readonly transport: CastTransportApi
   private readonly generation: number
+  /** Latest device observed for this façade's generation (see {@link device}). */
+  private lastKnownDevice: Device
 
   constructor(
     store: CastStore,
@@ -78,7 +78,41 @@ export class CastSession {
     this.transport = transport
     this.generation = session.generation
     this.id = session.sessionId
-    this.device = session.device
+    this.lastKnownDevice = session.device
+  }
+
+  /**
+   * The connected receiver device. A **live read** from the session slice while
+   * this façade is the live generation — the façade is memoized per generation
+   * (never recreated mid-session), so a mid-session device update (e.g. a
+   * receiver rename arriving via `deviceStatusChanged`) must be read through
+   * the store, not from a constructor-time copy. Once stale, keeps returning
+   * the last-known device (a snapshot; valid even once stale).
+   */
+  get device(): Device {
+    this.refreshDeviceFromStore()
+    return this.lastKnownDevice
+  }
+
+  /**
+   * Refresh {@link lastKnownDevice} from the session slice while this façade is
+   * the live generation. Called by the {@link device} getter on read, and by
+   * `SessionManager` on every store change — the latter is what keeps a
+   * *retained* façade's snapshot current: a device update never changes the
+   * generation (so no new façade is created), and if nothing happened to read
+   * `device` between the update and a suspension, the slice's `current` is
+   * gone by the time it *is* read — a read-time refresh alone would regress to
+   * the constructor-time device.
+   *
+   * @internal — not part of the public façade surface.
+   */
+  refreshDeviceFromStore(): void {
+    const current = this.store.getSliceState<SessionState>(
+      SESSION_SLICE_KEY
+    ).current
+    if (current && current.generation === this.generation) {
+      this.lastKnownDevice = current.device
+    }
   }
 
   /** Whether this façade still refers to the current live session. */
