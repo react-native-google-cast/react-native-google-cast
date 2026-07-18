@@ -12,10 +12,36 @@ const withGoogleCast: ConfigPlugin<
      */
     androidPlayServicesCastFrameworkVersion?: string
 
+    /**
+     * Whether the library's `NitroCastOptionsProvider` shows media
+     * notifications (and lock-screen controls) during a session. `false`
+     * writes the `com.margelo.nitro.googlecast.NOTIFICATIONS_ENABLED`
+     * meta-data; when `true` (default) nothing is written.
+     *
+     * This is meta-data consumed by `NitroCastOptionsProvider` (or subclasses
+     * that call `super`) — a from-scratch `androidOptionsProvider` ignores it.
+     *
+     * @default true
+     */
+    androidNotificationsEnabled?: boolean
+
+    /**
+     * Fully-qualified class name of a custom Android `OptionsProvider`,
+     * written to the `OPTIONS_PROVIDER_CLASS_NAME` meta-data. When set, the
+     * `receiverAppId`/`androidReceiverAppId` and `androidNotificationsEnabled`
+     * props only take effect if your provider extends
+     * `NitroCastOptionsProvider` (or reads the same meta-data).
+     *
+     * @default 'com.margelo.nitro.googlecast.NitroCastOptionsProvider'
+     */
+    androidOptionsProvider?: string
+
     androidReceiverAppId?: string
 
     /**
-     * Whether to use the default expanded controller.
+     * Whether to use the default expanded controller. iOS-only effect
+     * (`useDefaultExpandedMediaControls`) — on Android the expanded controller
+     * is automatic in v5 (registered by the library manifest).
      *
      * @default true
      * @see https://react-native-google-cast.github.io/docs/components/ExpandedController
@@ -67,7 +93,8 @@ const withGoogleCast: ConfigPlugin<
 
   config = withAndroidGoogleCast(config, {
     receiverAppId: props.androidReceiverAppId ?? props.receiverAppId,
-    expandedController: props.expandedController,
+    notificationsEnabled: props.androidNotificationsEnabled,
+    optionsProvider: props.androidOptionsProvider,
     androidPlayServicesCastFrameworkVersion:
       props.androidPlayServicesCastFrameworkVersion,
   })
