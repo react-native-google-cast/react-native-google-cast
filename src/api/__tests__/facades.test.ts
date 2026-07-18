@@ -178,6 +178,52 @@ describe('CastSession — generation guard (Invariant 3)', () => {
   })
 })
 
+describe('CastSession — device (live read)', () => {
+  it('a façade obtained BEFORE a device update sees the fresh device', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const castSession = sessionManager.getCurrentCastSession()!
+    expect(castSession.device.friendlyName).toBe('Device s1')
+
+    // Receiver rename mid-session: no lifecycle transition, no new façade —
+    // the SAME memoized object must expose the fresh device via the store.
+    transport.emitLifecycle({
+      type: 'deviceStatusChanged',
+      session: {
+        ...session('s1'),
+        device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+      },
+    })
+    expect(castSession.device.friendlyName).toBe('Bedroom TV')
+
+    // Session identity / generation semantics are untouched by the rename:
+    // still the same memoized façade, still active.
+    expect(sessionManager.getCurrentCastSession()).toBe(castSession)
+    expect(castSession.isActive).toBe(true)
+  })
+
+  it('keeps the last-known device once stale (snapshot semantics)', async () => {
+    const { sessionManager, transport } = await setup()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    const castSession = sessionManager.getCurrentCastSession()!
+    transport.emitLifecycle({
+      type: 'deviceStatusChanged',
+      session: {
+        ...session('s1'),
+        device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+      },
+    })
+    expect(castSession.device.friendlyName).toBe('Bedroom TV')
+
+    // Teardown, then a NEW session on a different device: the stale façade
+    // keeps reporting its own last-known device, not the new session's.
+    transport.emitLifecycle({ type: 'ended' })
+    transport.emitLifecycle({ type: 'started', session: session('s2') })
+    expect(castSession.isActive).toBe(false)
+    expect(castSession.device.friendlyName).toBe('Bedroom TV')
+  })
+})
+
 describe('CastSession — device detail (Phase 5)', () => {
   const richSession = () =>
     session('s1', {

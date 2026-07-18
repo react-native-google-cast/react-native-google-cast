@@ -334,6 +334,46 @@ describe('useCastDevice', () => {
     act(() => renderer.unmount())
   })
 
+  it('re-renders with the fresh device on a mid-session device update', () => {
+    const renderer = createProbe(<DeviceProbe />)
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const before = latestDevice
+    expect(before!.friendlyName).toBe('Device s1')
+
+    // Receiver rename mid-session: the memoized façade ref does not change,
+    // so only the direct slice subscription can surface this.
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: {
+          ...session('s1'),
+          device: { ...device('s1'), friendlyName: 'Bedroom TV' },
+        },
+      })
+    })
+    expect(latestDevice!.friendlyName).toBe('Bedroom TV')
+    expect(latestDevice).not.toBe(before)
+    act(() => renderer.unmount())
+  })
+
+  it('stays ref-stable across an unrelated detail change', () => {
+    const renderer = createProbe(<DeviceProbe />)
+    act(() => {
+      transport.emitLifecycle({ type: 'started', session: session('s1') })
+    })
+    const before = latestDevice
+    act(() => {
+      transport.emitLifecycle({
+        type: 'deviceStatusChanged',
+        session: { ...session('s1'), deviceVolume: 0.5 },
+      })
+    })
+    expect(latestDevice).toBe(before)
+    act(() => renderer.unmount())
+  })
+
   it('honors ignoreSessionUpdatesInBackground across suspension (E6)', async () => {
     const renderer = createProbe(
       <DeviceProbe options={{ ignoreSessionUpdatesInBackground: true }} />
