@@ -727,6 +727,148 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::shared_ptr<Promise<bool>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<bool>>`.
+   */
+  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
+  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
+    return Promise<bool>::create();
+  }
+  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
+    return PromiseHolder<bool>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(bool /* result */)>
+  /**
+   * Specialized version of `std::function<void(bool)>`.
+   */
+  using Func_void_bool = std::function<void(bool /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_bool_Wrapper final {
+  public:
+    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
+    inline void call(bool result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(bool /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
+    return Func_void_bool_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::vector<Device>
+  /**
+   * Specialized version of `std::vector<Device>`.
+   */
+  using std__vector_Device_ = std::vector<Device>;
+  inline std::vector<Device> create_std__vector_Device_(size_t size) noexcept {
+    std::vector<Device> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<ApplicationMetadata>
+  /**
+   * Specialized version of `std::optional<ApplicationMetadata>`.
+   */
+  using std__optional_ApplicationMetadata_ = std::optional<ApplicationMetadata>;
+  inline std::optional<ApplicationMetadata> create_std__optional_ApplicationMetadata_(const ApplicationMetadata& value) noexcept {
+    return std::optional<ApplicationMetadata>(value);
+  }
+  inline bool has_value_std__optional_ApplicationMetadata_(const std::optional<ApplicationMetadata>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline ApplicationMetadata get_std__optional_ApplicationMetadata_(const std::optional<ApplicationMetadata>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<StandbyState>
+  /**
+   * Specialized version of `std::optional<StandbyState>`.
+   */
+  using std__optional_StandbyState_ = std::optional<StandbyState>;
+  inline std::optional<StandbyState> create_std__optional_StandbyState_(const StandbyState& value) noexcept {
+    return std::optional<StandbyState>(value);
+  }
+  inline bool has_value_std__optional_StandbyState_(const std::optional<StandbyState>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline StandbyState get_std__optional_StandbyState_(const std::optional<StandbyState>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<ActiveInputState>
+  /**
+   * Specialized version of `std::optional<ActiveInputState>`.
+   */
+  using std__optional_ActiveInputState_ = std::optional<ActiveInputState>;
+  inline std::optional<ActiveInputState> create_std__optional_ActiveInputState_(const ActiveInputState& value) noexcept {
+    return std::optional<ActiveInputState>(value);
+  }
+  inline bool has_value_std__optional_ActiveInputState_(const std::optional<ActiveInputState>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline ActiveInputState get_std__optional_ActiveInputState_(const std::optional<ActiveInputState>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<SessionInfo>
+  /**
+   * Specialized version of `std::optional<SessionInfo>`.
+   */
+  using std__optional_SessionInfo_ = std::optional<SessionInfo>;
+  inline std::optional<SessionInfo> create_std__optional_SessionInfo_(const SessionInfo& value) noexcept {
+    return std::optional<SessionInfo>(value);
+  }
+  inline bool has_value_std__optional_SessionInfo_(const std::optional<SessionInfo>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline SessionInfo get_std__optional_SessionInfo_(const std::optional<SessionInfo>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<CastError>
+  /**
+   * Specialized version of `std::optional<CastError>`.
+   */
+  using std__optional_CastError_ = std::optional<CastError>;
+  inline std::optional<CastError> create_std__optional_CastError_(const CastError& value) noexcept {
+    return std::optional<CastError>(value);
+  }
+  inline bool has_value_std__optional_CastError_(const std::optional<CastError>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline CastError get_std__optional_CastError_(const std::optional<CastError>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::shared_ptr<HybridCastDebugSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridCastDebugSpec>`.
@@ -901,75 +1043,13 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Result<PlayServicesState>::withError(error);
   }
   
-  // pragma MARK: std::vector<Device>
-  /**
-   * Specialized version of `std::vector<Device>`.
-   */
-  using std__vector_Device_ = std::vector<Device>;
-  inline std::vector<Device> create_std__vector_Device_(size_t size) noexcept {
-    std::vector<Device> vector;
-    vector.reserve(size);
-    return vector;
+  // pragma MARK: Result<std::shared_ptr<Promise<bool>>>
+  using Result_std__shared_ptr_Promise_bool___ = Result<std::shared_ptr<Promise<bool>>>;
+  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::shared_ptr<Promise<bool>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<bool>>>::withValue(value);
   }
-  
-  // pragma MARK: std::optional<ApplicationMetadata>
-  /**
-   * Specialized version of `std::optional<ApplicationMetadata>`.
-   */
-  using std__optional_ApplicationMetadata_ = std::optional<ApplicationMetadata>;
-  inline std::optional<ApplicationMetadata> create_std__optional_ApplicationMetadata_(const ApplicationMetadata& value) noexcept {
-    return std::optional<ApplicationMetadata>(value);
-  }
-  inline bool has_value_std__optional_ApplicationMetadata_(const std::optional<ApplicationMetadata>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline ApplicationMetadata get_std__optional_ApplicationMetadata_(const std::optional<ApplicationMetadata>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<StandbyState>
-  /**
-   * Specialized version of `std::optional<StandbyState>`.
-   */
-  using std__optional_StandbyState_ = std::optional<StandbyState>;
-  inline std::optional<StandbyState> create_std__optional_StandbyState_(const StandbyState& value) noexcept {
-    return std::optional<StandbyState>(value);
-  }
-  inline bool has_value_std__optional_StandbyState_(const std::optional<StandbyState>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline StandbyState get_std__optional_StandbyState_(const std::optional<StandbyState>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<ActiveInputState>
-  /**
-   * Specialized version of `std::optional<ActiveInputState>`.
-   */
-  using std__optional_ActiveInputState_ = std::optional<ActiveInputState>;
-  inline std::optional<ActiveInputState> create_std__optional_ActiveInputState_(const ActiveInputState& value) noexcept {
-    return std::optional<ActiveInputState>(value);
-  }
-  inline bool has_value_std__optional_ActiveInputState_(const std::optional<ActiveInputState>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline ActiveInputState get_std__optional_ActiveInputState_(const std::optional<ActiveInputState>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<SessionInfo>
-  /**
-   * Specialized version of `std::optional<SessionInfo>`.
-   */
-  using std__optional_SessionInfo_ = std::optional<SessionInfo>;
-  inline std::optional<SessionInfo> create_std__optional_SessionInfo_(const SessionInfo& value) noexcept {
-    return std::optional<SessionInfo>(value);
-  }
-  inline bool has_value_std__optional_SessionInfo_(const std::optional<SessionInfo>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline SessionInfo get_std__optional_SessionInfo_(const std::optional<SessionInfo>& optional) noexcept {
-    return optional.value();
+  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
   // pragma MARK: std::shared_ptr<Promise<InitialSnapshot>>
@@ -1004,28 +1084,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
   Func_void_InitialSnapshot create_Func_void_InitialSnapshot(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_InitialSnapshot_Wrapper wrap_Func_void_InitialSnapshot(Func_void_InitialSnapshot value) noexcept {
     return Func_void_InitialSnapshot_Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::function<void(CastState /* castState */)>
@@ -1070,21 +1128,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
   Func_void_std__vector_Device_ create_Func_void_std__vector_Device_(void* NON_NULL swiftClosureWrapper) noexcept;
   inline Func_void_std__vector_Device__Wrapper wrap_Func_void_std__vector_Device_(Func_void_std__vector_Device_ value) noexcept {
     return Func_void_std__vector_Device__Wrapper(std::move(value));
-  }
-  
-  // pragma MARK: std::optional<CastError>
-  /**
-   * Specialized version of `std::optional<CastError>`.
-   */
-  using std__optional_CastError_ = std::optional<CastError>;
-  inline std::optional<CastError> create_std__optional_CastError_(const CastError& value) noexcept {
-    return std::optional<CastError>(value);
-  }
-  inline bool has_value_std__optional_CastError_(const std::optional<CastError>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline CastError get_std__optional_CastError_(const std::optional<CastError>& optional) noexcept {
-    return optional.value();
   }
   
   // pragma MARK: std::function<void(const SessionLifecycleEvent& /* event */)>
@@ -1209,40 +1252,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Func_void_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::shared_ptr<Promise<bool>>
-  /**
-   * Specialized version of `std::shared_ptr<Promise<bool>>`.
-   */
-  using std__shared_ptr_Promise_bool__ = std::shared_ptr<Promise<bool>>;
-  inline std::shared_ptr<Promise<bool>> create_std__shared_ptr_Promise_bool__() noexcept {
-    return Promise<bool>::create();
-  }
-  inline PromiseHolder<bool> wrap_std__shared_ptr_Promise_bool__(std::shared_ptr<Promise<bool>> promise) noexcept {
-    return PromiseHolder<bool>(std::move(promise));
-  }
-  
-  // pragma MARK: std::function<void(bool /* result */)>
-  /**
-   * Specialized version of `std::function<void(bool)>`.
-   */
-  using Func_void_bool = std::function<void(bool /* result */)>;
-  /**
-   * Wrapper class for a `std::function<void(bool / * result * /)>`, this can be used from Swift.
-   */
-  class Func_void_bool_Wrapper final {
-  public:
-    explicit Func_void_bool_Wrapper(std::function<void(bool /* result */)>&& func): _function(std::make_unique<std::function<void(bool /* result */)>>(std::move(func))) {}
-    inline void call(bool result) const noexcept {
-      _function->operator()(result);
-    }
-  private:
-    std::unique_ptr<std::function<void(bool /* result */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_bool_Wrapper wrap_Func_void_bool(Func_void_bool value) noexcept {
-    return Func_void_bool_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<HybridCastTransportSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridCastTransportSpec>`.
@@ -1271,15 +1280,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_void___ create_Result_std__shared_ptr_Promise_void___(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<void>>>::withError(error);
-  }
-  
-  // pragma MARK: Result<std::shared_ptr<Promise<bool>>>
-  using Result_std__shared_ptr_Promise_bool___ = Result<std::shared_ptr<Promise<bool>>>;
-  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::shared_ptr<Promise<bool>>& value) noexcept {
-    return Result<std::shared_ptr<Promise<bool>>>::withValue(value);
-  }
-  inline Result_std__shared_ptr_Promise_bool___ create_Result_std__shared_ptr_Promise_bool___(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
   // pragma MARK: Result<void>

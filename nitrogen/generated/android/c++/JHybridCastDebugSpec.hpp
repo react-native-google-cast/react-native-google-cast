@@ -72,6 +72,10 @@ namespace margelo::nitro::googlecast {
     ActiveInputState roundTripActiveInputState(ActiveInputState value) override;
     StandbyState roundTripStandbyState(StandbyState value) override;
     PlayServicesState roundTripPlayServicesState(PlayServicesState value) override;
+    std::shared_ptr<Promise<bool>> injectCastState(CastState castState) override;
+    std::shared_ptr<Promise<bool>> injectDevices(const std::vector<Device>& devices) override;
+    std::shared_ptr<Promise<bool>> injectLifecycleEvent(const SessionLifecycleEvent& event) override;
+    std::shared_ptr<Promise<bool>> injectMediaStatus(const MediaStatus& status) override;
 
   private:
     jni::global_ref<JHybridCastDebugSpec::JavaPart> _javaPart;

@@ -18,6 +18,13 @@ react {
     //   skip the bundling of the JS bundle and the assets. Default is "debug", "debugOptimized".
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
     // debuggableVariants = ["liteDebug", "liteDebugOptimized", "prodDebug", "prodDebugOptimized"]
+    //
+    //   Tier-1 Maestro E2E (T3): `-PbundleInDebug=true` bundles the JS into the
+    //   *debug* APK so CI can run the app without a Metro server, while the APK
+    //   stays android:debuggable (the native fake seam is gated on that flag).
+    if (project.hasProperty("bundleInDebug") && project.property("bundleInDebug") == "true") {
+        debuggableVariants = []
+    }
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -42,6 +49,12 @@ react {
     /* Hermes Commands */
     //   The hermes compiler command to run. By default it is 'hermesc'
     // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
+    //
+    //   RN 0.86 ships hermesc in the `hermes-compiler` npm package; in this
+    //   monorepo it is hoisted to the repo-root node_modules, which the
+    //   plugin's default lookup (reactNativeDir/sdks/hermesc) misses. Only
+    //   exercised when a variant bundles JS (release, or -PbundleInDebug=true).
+    hermesCommand = "$rootDir/../../node_modules/hermes-compiler/hermesc/%OS-BIN%/hermesc"
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]

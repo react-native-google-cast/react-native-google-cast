@@ -26,6 +26,11 @@ import GoogleCast, {
   type CastState,
   type Device,
 } from 'react-native-google-cast';
+// Debug-only native fake seam (T3) — deliberately not on the package barrel.
+import {
+  injectFakeSessionEnded,
+  injectFakeSessionStarted,
+} from 'react-native-google-cast/src/debug/fakeSession';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -40,6 +45,9 @@ function App() {
     discoveryManager.getDevices(),
   );
   const [log, setLog] = useState<string[]>([]);
+  // Live session id, driven purely by the session-lifecycle stream — the
+  // tier-1 Maestro flow asserts on this line after injecting fake events.
+  const [sessionId, setSessionId] = useState<string | null>(null);
   // Device-pass toggle: unmounting the CastButton exercises the overlay's
   // no-anchor → false path (and, on Android, stops the ACTIVE scan trigger).
   const [showCastButton, setShowCastButton] = useState(true);
@@ -64,20 +72,30 @@ function App() {
       sessionManager.onSessionStarting(s =>
         append(`starting (${s?.id ?? '—'})`),
       ),
-      sessionManager.onSessionStarted(s => append(`started (${s?.id ?? '—'})`)),
+      sessionManager.onSessionStarted(s => {
+        setSessionId(s?.id ?? null);
+        append(`started (${s?.id ?? '—'})`);
+      }),
       sessionManager.onSessionStartFailed((_s, e) =>
         append(`startFailed: ${e?.code} / native ${e?.nativeCode}`),
       ),
       sessionManager.onSessionEnding(s => append(`ending (${s?.id ?? '—'})`)),
-      sessionManager.onSessionEnded((_s, e) =>
-        append(`ended${e ? `: ${e.code} / native ${e.nativeCode}` : ''}`),
-      ),
+      sessionManager.onSessionEnded((_s, e) => {
+        setSessionId(null);
+        append(`ended${e ? `: ${e.code} / native ${e.nativeCode}` : ''}`);
+      }),
       sessionManager.onSessionResuming(() => append('resuming')),
-      sessionManager.onSessionResumed(s => append(`resumed (${s?.id ?? '—'})`)),
+      sessionManager.onSessionResumed(s => {
+        setSessionId(s?.id ?? null);
+        append(`resumed (${s?.id ?? '—'})`);
+      }),
       sessionManager.onSessionResumeFailed((_s, e) =>
         append(`resumeFailed: ${e?.code} / native ${e?.nativeCode}`),
       ),
-      sessionManager.onSessionSuspended(() => append('suspended')),
+      sessionManager.onSessionSuspended(() => {
+        setSessionId(null);
+        append('suspended');
+      }),
     ];
     return () => subs.forEach(s => s.remove());
   }, [sessionManager, discoveryManager]);
@@ -126,6 +144,22 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // T3 — native-boundary fake seam: injects synthetic events through the real
+  // Nitro callbacks (debug builds only). `delivered=false` means the seam is
+  // inactive (release build or transport not initialized).
+  const fakeSeam = async (
+    name: string,
+    call: () => Promise<boolean>,
+  ) => {
+    try {
+      const delivered = await call();
+      append(`fake ${name} delivered=${delivered}`);
+    } catch (e) {
+      const err = e as Error;
+      append(`fake ${name} threw: ${err.message}`);
+    }
+  };
+
   // Phase 6.1 — Cast UI one-shots; each logs its boolean resolution (or the
   // typed CastError) into the event log for the device pass.
   const probeShow = async (
@@ -164,9 +198,14 @@ function App() {
             )}
           </Pressable>
         </View>
-        <Text style={text}>Cast state: {state}</Text>
+        <Text testID="castStateText" style={text}>
+          Cast state: {state}
+        </Text>
         <Text style={text}>Play Services: {playServices}</Text>
         <Text style={text}>Devices: {devices.length}</Text>
+        <Text testID="sessionStateText" style={text}>
+          Session: {sessionId ?? 'none'}
+        </Text>
 
         <View style={styles.buttons}>
           <Pressable style={styles.button} onPress={probeError}>
@@ -230,6 +269,29 @@ function App() {
           </Pressable>
         </View>
 
+        {/* T3 fake seam — no `__DEV__` gate: the CI tier-1 build bundles JS
+            with dev=false (debuggableVariants=[]) while staying
+            android:debuggable. The native seam is the real gate: in a release
+            (non-debuggable) build these buttons just log `delivered=false`. */}
+        <View style={styles.buttons}>
+          <Pressable
+            testID="injectFakeSessionStarted"
+            style={[styles.button, styles.fakeButton]}
+            onPress={() =>
+              fakeSeam('session started', injectFakeSessionStarted)
+            }
+          >
+            <Text style={styles.buttonText}>Fake start</Text>
+          </Pressable>
+          <Pressable
+            testID="injectFakeSessionEnded"
+            style={[styles.button, styles.fakeButton]}
+            onPress={() => fakeSeam('session ended', injectFakeSessionEnded)}
+          >
+            <Text style={styles.buttonText}>Fake end</Text>
+          </Pressable>
+        </View>
+
         {devices.map(d => (
           <Pressable
             key={d.deviceId}
@@ -276,6 +338,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   deviceButton: { backgroundColor: '#188038', marginTop: 6 },
+  fakeButton: { backgroundColor: '#9334e6' },
   buttonText: { color: '#fff', fontWeight: '600' },
   logTitle: { fontSize: 15, fontWeight: '600', marginTop: 12, color: '#000' },
   logBox: { flex: 1, backgroundColor: '#1112', borderRadius: 8, padding: 8 },

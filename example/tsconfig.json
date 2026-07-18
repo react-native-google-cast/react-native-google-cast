@@ -1,7 +1,15 @@
 {
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
-    "types": ["jest"]
+    "types": ["jest"],
+    // Deep (non-barrel) imports of the workspace library, e.g. the debug-only
+    // fake seam `react-native-google-cast/src/debug/fakeSession`. Metro
+    // resolves these via react-native-builder-bob's monorepo config; this
+    // mirrors that mapping for TypeScript (Yarn does not self-symlink the
+    // root workspace into node_modules).
+    "paths": {
+      "react-native-google-cast/src/*": ["../src/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["**/node_modules", "**/Pods"]

@@ -32,6 +32,22 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::function<void(bool /* result */)>
+  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_bool::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroGoogleCast::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
+      swiftClosure.call(error);
+    };
+  }
+  
   // pragma MARK: std::shared_ptr<HybridCastDebugSpec>
   std::shared_ptr<HybridCastDebugSpec> create_std__shared_ptr_HybridCastDebugSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
     NitroGoogleCast::HybridCastDebugSpec_cxx swiftPart = NitroGoogleCast::HybridCastDebugSpec_cxx::fromUnsafe(swiftUnsafePointer);
@@ -53,14 +69,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
     auto swiftClosure = NitroGoogleCast::Func_void_InitialSnapshot::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const InitialSnapshot& result) mutable -> void {
       swiftClosure.call(result);
-    };
-  }
-  
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroGoogleCast::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
-      swiftClosure.call(error);
     };
   }
   
@@ -117,14 +125,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
     auto swiftClosure = NitroGoogleCast::Func_void::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)]() mutable -> void {
       swiftClosure.call();
-    };
-  }
-  
-  // pragma MARK: std::function<void(bool /* result */)>
-  Func_void_bool create_Func_void_bool(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroGoogleCast::Func_void_bool::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](bool result) mutable -> void {
-      swiftClosure.call(result);
     };
   }
   

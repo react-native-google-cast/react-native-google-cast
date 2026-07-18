@@ -8,6 +8,11 @@ import NitroModules
 /// round-trip identity and cross-platform (iOS == Android) equality. Converters live in
 /// one-per-type files under `Converters/`; this object only wires them together.
 ///
+/// The `inject*` methods are the native-boundary fake seam (T3): they deliver a
+/// synthetic event through the live transport's stored `initAndSubscribe` callbacks
+/// (via `CastDebugEventSink`), on the main thread, mirroring real GCK delivery.
+/// Compiled to a `false` no-op outside `DEBUG`.
+///
 /// `PlayServicesState` has no iOS GCK counterpart (Android-only), so its round-trip is an
 /// identity pass-through; every other type runs through its real struct↔GCK converters.
 final class HybridCastDebug: HybridCastDebugSpec {
@@ -107,6 +112,45 @@ final class HybridCastDebug: HybridCastDebugSpec {
     value: PlayServicesState
   ) throws -> PlayServicesState {
     value
+  }
+
+  // MARK: - Native-boundary fake seam (T3) — debug builds only
+
+  func injectCastState(castState: CastState) throws -> Promise<Bool> {
+    inject { $0.emitState(castState) }
+  }
+
+  func injectDevices(devices: [Device]) throws -> Promise<Bool> {
+    inject { $0.emitDevices(devices) }
+  }
+
+  func injectLifecycleEvent(event: SessionLifecycleEvent) throws -> Promise<Bool> {
+    inject { $0.emitLifecycle(event) }
+  }
+
+  func injectMediaStatus(status: MediaStatus) throws -> Promise<Bool> {
+    inject { $0.emitMediaStatus(status) }
+  }
+
+  /// Resolves `true` after delivering on the main thread; `false` when the seam is
+  /// inactive (release build, or `CastTransport.initAndSubscribe` has not run).
+  private func inject(
+    _ deliver: @escaping (CastDebugEventSink.Emitters) -> Void
+  ) -> Promise<Bool> {
+    let promise = Promise<Bool>()
+    #if DEBUG
+      DispatchQueue.main.async {
+        guard let emitters = CastDebugEventSink.emitters else {
+          promise.resolve(withResult: false)
+          return
+        }
+        deliver(emitters)
+        promise.resolve(withResult: true)
+      }
+    #else
+      promise.resolve(withResult: false)
+    #endif
+    return promise
   }
 
   /// Signals a receive-only GCK type whose iOS class cannot be constructed (so the synthetic

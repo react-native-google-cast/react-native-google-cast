@@ -1,0 +1,119 @@
+name: E2E Android (tier-1 Maestro)
+
+# Tier-1 E2E for the v5 (Nitro) rewrite (T3, issue #604): boots the example app
+# on an emulator — no Chromecast (Cast discovery cannot work on emulators) and
+# no Metro (JS is bundled into the debug APK) — and drives the debug-only
+# native fake seam (`CastDebug.inject*`) through a Maestro flow. The flow
+# asserts that injected session-lifecycle events cross the REAL Nitro boundary
+# (JS→native struct in, the transport's stored native→JS callbacks out) and
+# land in the app UI. Android only for now: Maestro on the iOS simulator needs
+# a macOS runner + a bundled-JS debug scheme; tracked as a follow-up in #604.
+#
+# Gated on relevant paths (emulator boots are slow), mirroring android.yml.
+
+on:
+  push:
+    branches: [v5]
+  pull_request:
+    branches: [v5]
+  workflow_dispatch:
+
+# Newer pushes to the same ref cancel in-flight runs.
+concurrency:
+  group: e2e-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect e2e-relevant changes
+    runs-on: ubuntu-latest
+    outputs:
+      e2e: ${{ steps.filter.outputs.e2e }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            e2e:
+              - 'android/**'
+              - 'src/**'
+              - 'example/**'
+              - 'nitrogen/generated/**'
+              - '.maestro/**'
+              - '.github/workflows/e2e-android.yml'
+
+  maestro:
+    name: Tier-1 Maestro (emulator, fake seam)
+    needs: changes
+    if: needs.changes.outputs.e2e == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [34]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # KVM hardware acceleration is available on GitHub-hosted Linux runners.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Enable Corepack (Yarn 4)
+        run: corepack enable
+      - name: Install JS dependencies
+        run: yarn install --immutable
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - name: Install pinned NDK + CMake (builds the .so)
+        run: sdkmanager "ndk;27.1.12297006" "cmake;3.22.1"
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install Maestro
+        run: |
+          curl -fsSL https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      # Build before booting the emulator (keeps emulator uptime minimal).
+      # `-PbundleInDebug=true` bakes the JS bundle into the *debug* APK: no
+      # Metro in CI, and the APK stays android:debuggable — the flag the native
+      # fake seam is gated on (a release APK would be a delivered=false no-op).
+      - name: Build example debug APK (bundled JS, x86_64)
+        working-directory: example/android
+        run: ./gradlew :app:assembleDebug -PbundleInDebug=true -PreactNativeArchitectures=x86_64
+
+      - name: Run tier-1 Maestro flow
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            adb install -r example/android/app/build/outputs/apk/debug/app-debug.apk
+            maestro test .maestro/tier1-fake-session.yml
+
+      # Maestro writes screenshots + logs for failed flows under ~/.maestro/tests.
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-artifacts
+          path: ~/.maestro/tests/
+          if-no-files-found: ignore

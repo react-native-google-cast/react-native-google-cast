@@ -49,6 +49,10 @@ namespace margelo::nitro::googlecast { enum class ActiveInputState; }
 namespace margelo::nitro::googlecast { enum class StandbyState; }
 // Forward declaration of `PlayServicesState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class PlayServicesState; }
+// Forward declaration of `CastState` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastState; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 
 #include "WebImage.hpp"
 #include "Device.hpp"
@@ -68,6 +72,10 @@ namespace margelo::nitro::googlecast { enum class PlayServicesState; }
 #include "ActiveInputState.hpp"
 #include "StandbyState.hpp"
 #include "PlayServicesState.hpp"
+#include <NitroModules/Promise.hpp>
+#include "CastState.hpp"
+#include <vector>
+#include "SessionLifecycleEvent.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -118,6 +126,10 @@ namespace margelo::nitro::googlecast {
       virtual ActiveInputState roundTripActiveInputState(ActiveInputState value) = 0;
       virtual StandbyState roundTripStandbyState(StandbyState value) = 0;
       virtual PlayServicesState roundTripPlayServicesState(PlayServicesState value) = 0;
+      virtual std::shared_ptr<Promise<bool>> injectCastState(CastState castState) = 0;
+      virtual std::shared_ptr<Promise<bool>> injectDevices(const std::vector<Device>& devices) = 0;
+      virtual std::shared_ptr<Promise<bool>> injectLifecycleEvent(const SessionLifecycleEvent& event) = 0;
+      virtual std::shared_ptr<Promise<bool>> injectMediaStatus(const MediaStatus& status) = 0;
 
     protected:
       // Hybrid Setup

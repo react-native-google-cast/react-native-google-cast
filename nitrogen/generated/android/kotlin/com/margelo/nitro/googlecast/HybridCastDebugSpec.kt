@@ -10,6 +10,7 @@ package com.margelo.nitro.googlecast
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -99,6 +100,22 @@ abstract class HybridCastDebugSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun roundTripPlayServicesState(value: PlayServicesState): PlayServicesState
+  
+  @DoNotStrip
+  @Keep
+  abstract fun injectCastState(castState: CastState): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun injectDevices(devices: Array<Device>): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun injectLifecycleEvent(event: SessionLifecycleEvent): Promise<Boolean>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun injectMediaStatus(status: MediaStatus): Promise<Boolean>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
