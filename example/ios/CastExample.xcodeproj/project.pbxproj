@@ -30,6 +30,7 @@
 		8EED9A3542CD6051A93B3F20 /* videoInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 09C61447F6A35CD6496D7D33 /* videoInfo.json */; };
 		8F17AB62FE01E357F435B5C1 /* mediaLoadRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 2636BABBD6C616B444D45799 /* mediaLoadRequest.json */; };
 		A7C21E5D4B3F60918D2A4C72 /* CastMessageChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C21E5D4B3F60918D2A4C71 /* CastMessageChannelTests.swift */; };
+		B5E2C4A19D7F30618E2A4C82 /* NitroImagePickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E2C4A19D7F30618E2A4C81 /* NitroImagePickerTests.swift */; };
 		A9E74E88AE270C87563785E9 /* ConverterAssertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AE1FB39451C5BD98524B0E /* ConverterAssertions.swift */; };
 		AA90DB0478E72CE1E85F6BA5 /* mediaSeekOptions.json in Resources */ = {isa = PBXBuildFile; fileRef = 9DA9A7DE70569F6FEDC83EE4 /* mediaSeekOptions.json */; };
 		AD6C41D2A84F59D396DD1ADE /* libPods-NitroGoogleCastTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 734165D8F6B0CBDB199B2153 /* libPods-NitroGoogleCastTests.a */; };
@@ -97,6 +98,7 @@
 		A49AEB84FBE0B676E396FA8E /* MediaSeekOptionsConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaSeekOptionsConverterTests.swift; sourceTree = "<group>"; };
 		A78BC92FD79D4698F93D9438 /* TextTrackStyleConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextTrackStyleConverterTests.swift; sourceTree = "<group>"; };
 		A7C21E5D4B3F60918D2A4C71 /* CastMessageChannelTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CastMessageChannelTests.swift; sourceTree = "<group>"; };
+		B5E2C4A19D7F30618E2A4C81 /* NitroImagePickerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NitroImagePickerTests.swift; sourceTree = "<group>"; };
 		AEE5126EC00A1CF0854FEC2C /* MediaInfoConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaInfoConverterTests.swift; sourceTree = "<group>"; };
 		AF59CECC66765DA0E4BBEAE4 /* NitroGoogleCastTests-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NitroGoogleCastTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		B26E6F8FA09FA976940564B8 /* mediaLiveSeekableRange.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaLiveSeekableRange.json; path = ../../fixtures/converters/mediaLiveSeekableRange.json; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				2ECD13393927F54CD7574E81 /* StateEnumConverterTests.swift */,
 				C66E907FAE7BB1E54C860CA8 /* DeviceStatusListenerSelectorTests.swift */,
 				A7C21E5D4B3F60918D2A4C71 /* CastMessageChannelTests.swift */,
+				B5E2C4A19D7F30618E2A4C81 /* NitroImagePickerTests.swift */,
 			);
 			name = NitroGoogleCastTests;
 			path = NitroGoogleCastTests;
@@ -491,6 +494,7 @@
 				22EFC52CA9BDBE7206B9BBBB /* StateEnumConverterTests.swift in Sources */,
 				3644FCF70720785683137ADB /* DeviceStatusListenerSelectorTests.swift in Sources */,
 				A7C21E5D4B3F60918D2A4C72 /* CastMessageChannelTests.swift in Sources */,
+				B5E2C4A19D7F30618E2A4C82 /* NitroImagePickerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
