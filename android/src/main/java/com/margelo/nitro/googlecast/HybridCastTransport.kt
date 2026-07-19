@@ -1043,7 +1043,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
         detachMediaCallback()
         detachCastListener()
         clearChannels(session)
-        flushPendingRequests("interrupted", "The Cast session ended.")
+        flushPendingRequests("interrupted", "The Cast session was suspended.")
         emit(SessionEventType.SUSPENDED, reason = suspendReason(reason))
       }
     }
