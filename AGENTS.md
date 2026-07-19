@@ -35,6 +35,42 @@ yarn bootstrap       # set up example + playground apps (incl. pods)
 - Run `yarn typescript`, `yarn lint`, and `yarn test` before opening a PR.
 - Follow existing patterns in `src/`; match surrounding style.
 
+## Native threading & async-request policy (v5)
+
+Binding rules for all native code in `ios/NitroGoogleCast/` and
+`android/src/main/java/com/margelo/nitro/googlecast/`. The two transports
+(`HybridCastTransport.swift` / `HybridCastTransport.kt`) are the reference implementations.
+
+1. **All GCK/MediaRouter access on the main thread.** Every SDK call, every listener
+   add/remove, and every session/client resolution happens inside a main-thread hop
+   (`DispatchQueue.main.async` / `runOnMain`) — Nitro methods are entered on the JS thread and
+   must hop before touching the SDK. Enforced mechanically where cheap:
+   `dispatchPrecondition(.onQueue(.main))` (iOS) and `MainThread.assertMainThread` (Android,
+   debuggable hosts only) guard the listener registries and attach/detach/flush helpers.
+2. **Never cache a session handle for later use (Invariant 1).** Re-resolve
+   `currentCastSession` / `remoteMediaClient` from the GCK singletons inside the hop on every
+   call. The only stored handles are the _listener-attachment_ trackers
+   (`attachedMediaClient` / `observedClient`, etc.), which exist solely so detach targets the
+   exact instance attach used — never for issuing operations.
+3. **Async requests settle exactly once and never outlive their session.** Copy the canonical
+   pattern — `CastRequestDelegate` + `track()` (iOS), `TrackedCastRequest` + `track()`
+   (Android): every `GCKRequest` / `PendingResult` is retained in the transport's
+   `pendingRequests` registry until settled; the first of {result, failure, abort, external
+   cancel} wins and later callbacks are no-ops; the transport flushes stragglers (reject
+   `interrupted` + GCK-cancel) on session end, session suspend, and `dispose()` (RN reload),
+   so a JS promise can never hang on a dead session. Never fire-and-forget a request.
+4. **JS callbacks: main thread, no locks, no dead contexts.** The stored `initAndSubscribe`
+   callbacks are invoked from the main thread only and never while any lock is held;
+   `dispose()` nulls them (and detaches the debug seam) so nothing fires into a torn-down JS
+   runtime. Any state read synchronously from the JS thread but written on main must be
+   `@Volatile` (Android) / lock-boxed (iOS `AtomicFlag`); everything else stays
+   single-thread-affine.
+
+Teardown invariants — all must hold after session end/suspend AND after `dispose()`: every
+listener detached from the exact instance it attached to (attach/detach symmetric), channel
+registries cleared, pending requests flushed, and (dispose only, with a strong self-capture so
+cleanup cannot be skipped) callbacks nulled.
+
 ## Task tracking (maintainers — optional)
 
 Maintainers coordinate v5 work with **beads** (`bd`), a local dependency-aware task graph. This is

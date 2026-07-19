@@ -22,12 +22,10 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.PendingResult
-import com.google.android.gms.common.api.Status
 import com.margelo.nitro.NitroModules
 import com.margelo.nitro.core.AnyMap
 import com.margelo.nitro.core.Promise
 import com.margelo.nitro.googlecast.converters.CastRejection
-import com.margelo.nitro.googlecast.converters.castErrorCodeFromGckStatusCode
 import com.margelo.nitro.googlecast.converters.castErrorFromStatusCode
 import com.margelo.nitro.googlecast.converters.castRejectionJson
 import com.margelo.nitro.googlecast.converters.fromGckConnectionResult
@@ -75,11 +73,6 @@ class HybridCastTransport : HybridCastTransportSpec() {
   // session before starting its replacement). Main thread only.
   private val channels = mutableMapOf<String, Cast.MessageReceivedCallback>()
 
-  // In-flight sendMessage results, so dispose can cancel them (mirrors
-  // `pendingResults`; sendMessage returns PendingResult<Status>, not
-  // MediaChannelResult, hence the separate set).
-  private val pendingChannelResults = mutableSetOf<PendingResult<Status>>()
-
   private var castStateListener: CastStateListener? = null
   private var sessionListener: SessionManagerListener<CastSession>? = null
   private var routerCallback: MediaRouter.Callback? = null
@@ -98,9 +91,11 @@ class HybridCastTransport : HybridCastTransportSpec() {
   private var castListener: Cast.Listener? = null
   private var observedCastSession: CastSession? = null
 
-  // In-flight media `PendingResult`s, so teardown can cancel them (and drop our settlement
-  // closures). Main-thread only — no extra synchronization needed.
-  private val pendingResults = mutableSetOf<PendingResult<RemoteMediaClient.MediaChannelResult>>()
+  // Every in-flight GCK request (media calls AND channel sendMessage), retained as a
+  // [TrackedCastRequest] until it settles, so session end/suspend/dispose can flush the
+  // stragglers with an `interrupted` rejection (T6 — mirrors the iOS `pendingRequests`
+  // set of `CastRequestDelegate`s). Main-thread only — no extra synchronization needed.
+  private val pendingRequests = mutableSetOf<TrackedCastRequest>()
 
   @Volatile private var cachedCastState: CastState = CastState.NOTCONNECTED
   @Volatile private var cachedDiscovering = false
@@ -247,11 +242,10 @@ class HybridCastTransport : HybridCastTransportSpec() {
       detachMediaCallback()
       detachCastListener()
       clearChannels(sharedCastContextOrNull()?.sessionManager?.currentCastSession)
-      // Cancel any in-flight media requests; JS is going away so the promises need not settle.
-      pendingResults.forEach { it.cancel() }
-      pendingResults.clear()
-      pendingChannelResults.forEach { it.cancel() }
-      pendingChannelResults.clear()
+      // Reject + cancel any in-flight requests so no promise outlives the transport
+      // (same `interrupted` contract as iOS; the JS side of a reload is going away,
+      // but settling is free and keeps the exactly-once invariant unconditional).
+      flushPendingRequests("interrupted", "The Cast transport was disposed.")
       onState = null
       onDevices = null
       onLifecycle = null
@@ -436,24 +430,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
           return@runOnMain
         }
       // A2-minor: await the PendingResult — never fire-and-forget a send.
-      pendingChannelResults.add(pending)
-      pending.setResultCallback { result ->
-        pendingChannelResults.remove(pending)
-        val status = result.status
-        if (status.isSuccess) {
-          promise.resolve(Unit)
-        } else {
-          promise.reject(
-            CastRejection(
-              castRejectionJson(
-                castErrorCodeFromGckStatusCode(status.statusCode),
-                status.statusMessage,
-                status.statusCode
-              )
-            )
-          )
-        }
-      }
+      track(pending, promise)
     }
     return promise
   }
@@ -791,26 +768,42 @@ class HybridCastTransport : HybridCastTransportSpec() {
           promise.reject(CastRejection(castRejectionJson("failed", e.message, null)))
           return@runOnMain
         }
-      pendingResults.add(pending)
-      pending.setResultCallback { result ->
-        pendingResults.remove(pending)
-        val status = result.status
-        if (status.isSuccess) {
-          promise.resolve(Unit)
-        } else {
-          promise.reject(
-            CastRejection(
-              castRejectionJson(
-                castErrorCodeFromGckStatusCode(status.statusCode),
-                status.statusMessage,
-                status.statusCode
-              )
-            )
-          )
-        }
-      }
+      track(pending, promise)
     }
     return promise
+  }
+
+  /**
+   * Retain [pending] in the [pendingRequests] registry (via a [TrackedCastRequest]) until its
+   * single result callback settles [promise] exactly once — or until [flushPendingRequests]
+   * rejects it on session end/suspend/dispose. Main thread.
+   */
+  private fun <R : com.google.android.gms.common.api.Result> track(
+    pending: PendingResult<R>,
+    promise: Promise<Unit>
+  ) {
+    MainThread.assertMainThread("track")
+    val tracked =
+      TrackedCastRequest(
+        resolve = { promise.resolve(Unit) },
+        reject = promise::reject,
+        onSettled = { pendingRequests.remove(it) },
+      )
+    pendingRequests.add(tracked)
+    tracked.track(pending)
+  }
+
+  /**
+   * Reject (and GCK-cancel) every still-pending request. Called on session end/suspend and on
+   * dispose so a caller's promise never hangs after the session/client it targeted is gone
+   * (T6 — mirrors the iOS `flushPendingRequests`). Main thread.
+   */
+  private fun flushPendingRequests(code: String, message: String) {
+    MainThread.assertMainThread("flushPendingRequests")
+    if (pendingRequests.isEmpty()) return
+    val flushed = pendingRequests.toList()
+    pendingRequests.clear()
+    flushed.forEach { it.cancel(code, message) }
   }
 
   private fun remoteMediaClientOrNull(): RemoteMediaClient? =
@@ -818,6 +811,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
 
   /** Register the media-status listener on [client], replacing any previous registration. */
   private fun attachMediaCallback(client: RemoteMediaClient?) {
+    MainThread.assertMainThread("attachMediaCallback")
     if (client == null || observedClient === client) return
     detachMediaCallback()
     val callback =
@@ -877,6 +871,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
   }
 
   private fun detachMediaCallback() {
+    MainThread.assertMainThread("detachMediaCallback")
     val callback = mediaCallback ?: return
     observedClient?.unregisterCallback(callback)
     mediaCallback = null
@@ -893,6 +888,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
    * Mirrors [attachMediaCallback]: nullable session + `observedCastSession` idempotency guard.
    */
   private fun attachCastListener(session: CastSession?) {
+    MainThread.assertMainThread("attachCastListener")
     if (session == null || observedCastSession === session) return
     detachCastListener()
     val listener =
@@ -918,6 +914,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
   }
 
   private fun detachCastListener() {
+    MainThread.assertMainThread("detachCastListener")
     val listener = castListener ?: return
     observedCastSession?.removeCastListener(listener)
     castListener = null
@@ -931,6 +928,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
    * next session, per the guide.
    */
   private fun clearChannels(session: CastSession?) {
+    MainThread.assertMainThread("clearChannels")
     if (channels.isEmpty()) return
     channels.keys.forEach { namespace ->
       try {
@@ -1023,6 +1021,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
         detachMediaCallback()
         detachCastListener()
         clearChannels(session)
+        flushPendingRequests("interrupted", "The Cast session ended.")
         emit(
           SessionEventType.ENDED,
           error = if (error != 0) castErrorFromStatusCode(error, null) else null
@@ -1038,9 +1037,13 @@ class HybridCastTransport : HybridCastTransportSpec() {
       override fun onSessionResumeFailed(session: CastSession, error: Int) =
         emit(SessionEventType.RESUMEFAILED, error = castErrorFromStatusCode(error, null))
       override fun onSessionSuspended(session: CastSession, reason: Int) {
+        // TS treats `suspended` as a teardown (see `session.slice`), so flush pending
+        // requests here too — a suspended session's requests would otherwise hang until
+        // (if ever) GCK settles them. Listeners re-attach on `onSessionResumed`.
         detachMediaCallback()
         detachCastListener()
         clearChannels(session)
+        flushPendingRequests("interrupted", "The Cast session ended.")
         emit(SessionEventType.SUSPENDED, reason = suspendReason(reason))
       }
     }
