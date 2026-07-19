@@ -32,14 +32,6 @@ namespace margelo::nitro::googlecast { struct ApplicationMetadata; }
 namespace margelo::nitro::googlecast { enum class StandbyState; }
 // Forward declaration of `ActiveInputState` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class ActiveInputState; }
-// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
-namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
-// Forward declaration of `SessionEventType` to properly resolve imports.
-namespace margelo::nitro::googlecast { enum class SessionEventType; }
-// Forward declaration of `CastError` to properly resolve imports.
-namespace margelo::nitro::googlecast { struct CastError; }
-// Forward declaration of `CastErrorCode` to properly resolve imports.
-namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 // Forward declaration of `MediaStatus` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct MediaStatus; }
 // Forward declaration of `MediaInfo` to properly resolve imports.
@@ -84,6 +76,14 @@ namespace margelo::nitro::googlecast { struct MediaLiveSeekableRange; }
 namespace margelo::nitro::googlecast { struct MediaQueueItem; }
 // Forward declaration of `MediaRepeatMode` to properly resolve imports.
 namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
+// Forward declaration of `SessionLifecycleEvent` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
+// Forward declaration of `SessionEventType` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class SessionEventType; }
+// Forward declaration of `CastError` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct CastError; }
+// Forward declaration of `CastErrorCode` to properly resolve imports.
+namespace margelo::nitro::googlecast { enum class CastErrorCode; }
 // Forward declaration of `MediaLoadRequest` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct MediaLoadRequest; }
 // Forward declaration of `MediaQueueData` to properly resolve imports.
@@ -113,11 +113,6 @@ namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 #include "ApplicationMetadata.hpp"
 #include "StandbyState.hpp"
 #include "ActiveInputState.hpp"
-#include <functional>
-#include "SessionLifecycleEvent.hpp"
-#include "SessionEventType.hpp"
-#include "CastError.hpp"
-#include "CastErrorCode.hpp"
 #include "MediaStatus.hpp"
 #include "MediaInfo.hpp"
 #include "MediaStreamType.hpp"
@@ -141,6 +136,11 @@ namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 #include "MediaLiveSeekableRange.hpp"
 #include "MediaQueueItem.hpp"
 #include "MediaRepeatMode.hpp"
+#include <functional>
+#include "SessionLifecycleEvent.hpp"
+#include "SessionEventType.hpp"
+#include "CastError.hpp"
+#include "CastErrorCode.hpp"
 #include "MediaLoadRequest.hpp"
 #include "MediaQueueData.hpp"
 #include "MediaQueueType.hpp"

@@ -82,6 +82,109 @@ describe('media slice', () => {
     expect(mediaState(store).currentStatus).toMatchObject({ streamPosition: 5 })
   })
 
+  it('seeds the status from a cold-start snapshot carrying mediaStatus (v5-az2)', async () => {
+    // App relaunch into active playback (or GCK auto-resume before JS init):
+    // the snapshot carries both the live session and its media status, so
+    // useMediaStatus consumers see playback state immediately on mount.
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status(42),
+      },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    expect(mediaState(store)).toMatchObject({
+      currentStatus: { streamPosition: 42 },
+      live: true,
+    })
+  })
+
+  it('seeds an empty live slice when the cold-start snapshot has no mediaStatus', async () => {
+    // Session live at init but native had no GCKMediaStatus yet (the field is
+    // omitted, never null): the slice stays empty until the first push.
+    const transport = new FakeCastTransport({
+      initialSnapshot: { currentSession: session('s1') },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    expect(mediaState(store)).toMatchObject({ currentStatus: null, live: true })
+  })
+
+  it('keeps a seeded status across the delayed resumed for the SAME session', async () => {
+    // GCK delivers the auto-resume `resumed` callback after initAndSubscribe
+    // already seeded the session + status (both platforms). Native does not
+    // re-push (the media client was already observed at init), so the slice
+    // must not clear on this re-announcement — that would re-break v5-az2.
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status(42),
+      },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+    const before = mediaState(store)
+
+    transport.emitLifecycle({ type: 'resumed', session: session('s1') })
+    // Retained — and ref-stable (no spurious churn for the media slice).
+    expect(mediaState(store)).toBe(before)
+    expect(mediaState(store).currentStatus).toMatchObject({
+      streamPosition: 42,
+    })
+  })
+
+  it('clears a seeded status when a DIFFERENT session establishes', async () => {
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status(42),
+      },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    // A real replacement: s1's status must not bleed into s2.
+    transport.emitLifecycle({ type: 'resumed', session: session('s2') })
+    expect(mediaState(store)).toMatchObject({ currentStatus: null, live: true })
+  })
+
+  it('clears a seeded status on an establish without a usable sessionId', async () => {
+    // Safe default: if the establish payload has no id to compare, treat it
+    // as a replacement rather than risk retaining another session's status.
+    const transport = new FakeCastTransport({
+      initialSnapshot: {
+        currentSession: session('s1'),
+        mediaStatus: status(42),
+      },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    transport.emitLifecycle({
+      type: 'resumed',
+      session: { sessionId: '', device: device('s1') },
+    })
+    expect(mediaState(store)).toMatchObject({ currentStatus: null, live: true })
+  })
+
+  it('drops a seeded mediaStatus that arrives without a session', async () => {
+    // Defensive: media exists only with a live session — same rule the reducer
+    // applies to pushes. A snapshot status without a session is dropped.
+    const transport = new FakeCastTransport({
+      initialSnapshot: { mediaStatus: status(42) },
+    })
+    const store = new CastStore(transport)
+    await store.ready
+
+    expect(mediaState(store)).toMatchObject({
+      currentStatus: null,
+      live: false,
+    })
+  })
+
   it('notifies subscribers when media status changes', async () => {
     const { store, transport } = await makeStore()
     transport.emitLifecycle({ type: 'started', session: session('s1') })

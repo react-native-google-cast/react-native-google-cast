@@ -141,6 +141,13 @@ export interface InitialSnapshot {
   devices: Device[]
   /** A session already live at cold start (already-casting); omitted otherwise. */
   currentSession?: SessionInfo
+  /**
+   * The media status of {@link currentSession}'s RemoteMediaClient at cold
+   * start (app relaunch into active playback, or GCK auto-resume completing
+   * before JS init). Mirrors the push convention: a nil native status is
+   * omitted, never delivered as null. Only meaningful with `currentSession`.
+   */
+  mediaStatus?: MediaStatus
 }
 
 /**

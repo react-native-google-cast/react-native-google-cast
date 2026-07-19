@@ -29,7 +29,10 @@ data class InitialSnapshot(
   val devices: Array<Device>,
   @DoNotStrip
   @Keep
-  val currentSession: SessionInfo?
+  val currentSession: SessionInfo?,
+  @DoNotStrip
+  @Keep
+  val mediaStatus: MediaStatus?
 ) {
   /* primary constructor */
 
@@ -40,6 +43,7 @@ data class InitialSnapshot(
       && Objects.deepEquals(this.playServicesState, other.playServicesState)
       && Objects.deepEquals(this.devices, other.devices)
       && Objects.deepEquals(this.currentSession, other.currentSession)
+      && Objects.deepEquals(this.mediaStatus, other.mediaStatus)
   }
 
   override fun hashCode(): Int {
@@ -47,7 +51,8 @@ data class InitialSnapshot(
       castState,
       playServicesState,
       devices,
-      currentSession
+      currentSession,
+      mediaStatus
     ).contentDeepHashCode()
   }
 
@@ -59,8 +64,8 @@ data class InitialSnapshot(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(castState: CastState, playServicesState: PlayServicesState, devices: Array<Device>, currentSession: SessionInfo?): InitialSnapshot {
-      return InitialSnapshot(castState, playServicesState, devices, currentSession)
+    private fun fromCpp(castState: CastState, playServicesState: PlayServicesState, devices: Array<Device>, currentSession: SessionInfo?, mediaStatus: MediaStatus?): InitialSnapshot {
+      return InitialSnapshot(castState, playServicesState, devices, currentSession, mediaStatus)
     }
   }
 }

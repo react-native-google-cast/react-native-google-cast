@@ -36,6 +36,8 @@ namespace margelo::nitro::googlecast { enum class PlayServicesState; }
 namespace margelo::nitro::googlecast { struct Device; }
 // Forward declaration of `SessionInfo` to properly resolve imports.
 namespace margelo::nitro::googlecast { struct SessionInfo; }
+// Forward declaration of `MediaStatus` to properly resolve imports.
+namespace margelo::nitro::googlecast { struct MediaStatus; }
 
 #include "CastState.hpp"
 #include "PlayServicesState.hpp"
@@ -43,6 +45,7 @@ namespace margelo::nitro::googlecast { struct SessionInfo; }
 #include <vector>
 #include "SessionInfo.hpp"
 #include <optional>
+#include "MediaStatus.hpp"
 
 namespace margelo::nitro::googlecast {
 
@@ -55,10 +58,11 @@ namespace margelo::nitro::googlecast {
     PlayServicesState playServicesState     SWIFT_PRIVATE;
     std::vector<Device> devices     SWIFT_PRIVATE;
     std::optional<SessionInfo> currentSession     SWIFT_PRIVATE;
+    std::optional<MediaStatus> mediaStatus     SWIFT_PRIVATE;
 
   public:
     InitialSnapshot() = default;
-    explicit InitialSnapshot(CastState castState, PlayServicesState playServicesState, std::vector<Device> devices, std::optional<SessionInfo> currentSession): castState(castState), playServicesState(playServicesState), devices(devices), currentSession(currentSession) {}
+    explicit InitialSnapshot(CastState castState, PlayServicesState playServicesState, std::vector<Device> devices, std::optional<SessionInfo> currentSession, std::optional<MediaStatus> mediaStatus): castState(castState), playServicesState(playServicesState), devices(devices), currentSession(currentSession), mediaStatus(mediaStatus) {}
 
   public:
     friend bool operator==(const InitialSnapshot& lhs, const InitialSnapshot& rhs) = default;
@@ -77,7 +81,8 @@ namespace margelo::nitro {
         JSIConverter<margelo::nitro::googlecast::CastState>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "castState"))),
         JSIConverter<margelo::nitro::googlecast::PlayServicesState>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "playServicesState"))),
         JSIConverter<std::vector<margelo::nitro::googlecast::Device>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "devices"))),
-        JSIConverter<std::optional<margelo::nitro::googlecast::SessionInfo>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "currentSession")))
+        JSIConverter<std::optional<margelo::nitro::googlecast::SessionInfo>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "currentSession"))),
+        JSIConverter<std::optional<margelo::nitro::googlecast::MediaStatus>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "mediaStatus")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::googlecast::InitialSnapshot& arg) {
@@ -86,6 +91,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "playServicesState"), JSIConverter<margelo::nitro::googlecast::PlayServicesState>::toJSI(runtime, arg.playServicesState));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "devices"), JSIConverter<std::vector<margelo::nitro::googlecast::Device>>::toJSI(runtime, arg.devices));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "currentSession"), JSIConverter<std::optional<margelo::nitro::googlecast::SessionInfo>>::toJSI(runtime, arg.currentSession));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "mediaStatus"), JSIConverter<std::optional<margelo::nitro::googlecast::MediaStatus>>::toJSI(runtime, arg.mediaStatus));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -100,6 +106,7 @@ namespace margelo::nitro {
       if (!JSIConverter<margelo::nitro::googlecast::PlayServicesState>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "playServicesState")))) return false;
       if (!JSIConverter<std::vector<margelo::nitro::googlecast::Device>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "devices")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::googlecast::SessionInfo>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "currentSession")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::googlecast::MediaStatus>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "mediaStatus")))) return false;
       return true;
     }
   };
