@@ -15,7 +15,7 @@
         ],
         "hlsSegmentFormat": "AAC",
         "hlsVideoSegmentFormat": "FMP4",
-        "customData": { "drm": "widevine" }
+        "customData": { "drm": "widevine", "isLive": false, "requiresAuth": true }
       },
       "expectedRoundTrip": {
         "contentUrl": "https://example.com/video.m3u8",
@@ -30,7 +30,7 @@
         ],
         "hlsSegmentFormat": "AAC",
         "hlsVideoSegmentFormat": "FMP4",
-        "customData": { "drm": "widevine" }
+        "customData": { "drm": "widevine", "isLive": false, "requiresAuth": true }
       }
     },
     {

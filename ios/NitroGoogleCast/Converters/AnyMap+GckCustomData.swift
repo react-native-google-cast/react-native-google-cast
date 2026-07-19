@@ -42,7 +42,14 @@ extension AnyMap {
       if let string = raw as? String {
         map.setString(key: key, value: string)
       } else if let number = raw as? NSNumber {
-        map.setDouble(key: key, value: number.doubleValue)
+        // JSON booleans arrive as CFBoolean, which IS an NSNumber — check its CFTypeID
+        // before the generic number branch, or `true`/`false` would collapse to 1.0/0.0
+        // (Android's converter preserves Boolean, so this keeps the platforms symmetric).
+        if CFGetTypeID(number) == CFBooleanGetTypeID() {
+          map.setBoolean(key: key, value: number.boolValue)
+        } else {
+          map.setDouble(key: key, value: number.doubleValue)
+        }
       }
     }
     return map.getAllKeys().isEmpty ? nil : map
