@@ -62,17 +62,21 @@ final class HybridCastTransport: HybridCastTransportSpec {
   private var deviceStatusListener: CastDeviceStatusListener?
   private weak var attachedStatusSession: GCKCastSession?
 
+  // Main-thread-only cache (written and read exclusively inside main-queue hops).
   private var cachedCastState: CastState = .notconnected
-  private var cachedDiscovering = false
-  private var cachedPassiveScan = false
+  // Cross-thread cached flags: written on the main thread inside the GCK hops,
+  // read synchronously from the JS thread by the `is*` accessors below — so they
+  // are lock-boxed (the Swift analogue of the Android transport's `@Volatile`).
+  private let cachedDiscovering = AtomicFlag(false)
+  private let cachedPassiveScan = AtomicFlag(false)
 
   override init() { super.init() }
 
   // iOS has no Play-Services gating; casting is available once GCKCastContext is
   // configured at launch (the v5 SDK-init step).
   var isAvailable: Bool { true }
-  var isDiscovering: Bool { cachedDiscovering }
-  var isPassiveScan: Bool { cachedPassiveScan }
+  var isDiscovering: Bool { cachedDiscovering.load() }
+  var isPassiveScan: Bool { cachedPassiveScan.load() }
 
   // MARK: - init + subscribe (atomic, main thread)
 
@@ -124,7 +128,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
       self.attachDeviceStatusListener()
 
       self.cachedCastState = Self.mapState(context.castState)
-      self.cachedPassiveScan = context.discoveryManager.passiveScan
+      self.cachedPassiveScan.store(context.discoveryManager.passiveScan)
       let devices = self.readDevices(context.discoveryManager)
       let currentCastSession = context.sessionManager.currentCastSession
       let current = Self.sessionInfo(currentCastSession)
@@ -147,6 +151,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   }
 
   private func attachObservers(_ context: GCKCastContext) {
+    dispatchPrecondition(condition: .onQueue(.main))
     guard !listenersAttached else { return }
     listenersAttached = true
 
@@ -180,6 +185,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   }
 
   private func detachObservers() {
+    dispatchPrecondition(condition: .onQueue(.main))
     guard listenersAttached else { return }
     listenersAttached = false
     let context = GCKCastContext.sharedInstance()
@@ -198,10 +204,16 @@ final class HybridCastTransport: HybridCastTransportSpec {
   }
 
   /// Override of `HybridObject.dispose()` — detach every GCK observer.
+  ///
+  /// Deliberate STRONG capture: `dispose()` is Nitro's final call before it
+  /// releases this object, so a `[weak self]` hop could find the transport
+  /// already deallocated and silently skip teardown — leaking the
+  /// NotificationCenter observer and stranding selfRetained
+  /// `CastRequestDelegate`s whose promises then never settle. The block keeps
+  /// `self` alive exactly until cleanup completes on the main thread.
   func dispose() {
     CastDebugEventSink.detach()
-    DispatchQueue.main.async { [weak self] in
-      guard let self else { return }
+    DispatchQueue.main.async {
       self.detachObservers()
       self.detachMediaListener()
       self.detachDeviceStatusListener()
@@ -598,6 +610,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   }
 
   private func track(_ request: GCKRequest, _ promise: Promise<Void>) {
+    dispatchPrecondition(condition: .onQueue(.main))
     let delegate = CastRequestDelegate(promise: promise) { [weak self] settled in
       self?.pendingRequests.remove(settled)
     }
@@ -623,6 +636,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   /// Bind the media-status listener to the current session's media client. Idempotent
   /// for a given client; re-resolves the client per call. Main thread.
   private func attachMediaListener() {
+    dispatchPrecondition(condition: .onQueue(.main))
     guard
       let client = GCKCastContext.sharedInstance().sessionManager.currentCastSession?
         .remoteMediaClient
@@ -644,6 +658,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   }
 
   private func detachMediaListener() {
+    dispatchPrecondition(condition: .onQueue(.main))
     if let client = attachedMediaClient, let listener = mediaStatusListener {
       client.remove(listener)
     }
@@ -654,6 +669,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   /// a given session; re-resolves the session per call (Invariant 1). Main thread.
   /// Mirrors `attachMediaListener`.
   private func attachDeviceStatusListener() {
+    dispatchPrecondition(condition: .onQueue(.main))
     guard let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession
     else { return }
     guard attachedStatusSession !== session else { return }
@@ -669,6 +685,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   }
 
   private func detachDeviceStatusListener() {
+    dispatchPrecondition(condition: .onQueue(.main))
     if let session = attachedStatusSession, let listener = deviceStatusListener {
       session.remove(listener)
     }
@@ -680,6 +697,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   /// (`willEnd` fires while it does); otherwise GCK already dropped the channel
   /// with the session and we only release our strong refs.
   private func clearChannels() {
+    dispatchPrecondition(condition: .onQueue(.main))
     guard !channels.isEmpty else { return }
     let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession
     for channel in channels.values { session?.remove(channel) }
@@ -689,6 +707,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   /// Reject every still-pending media request. Used on session end / teardown so a
   /// caller's promise never hangs after the client it targeted is gone (T6). Main thread.
   private func flushPendingRequests(code: String, message: String) {
+    dispatchPrecondition(condition: .onQueue(.main))
     let pending = pendingRequests
     pendingRequests.removeAll()
     for delegate in pending { delegate.cancel(code: code, message: message) }
@@ -699,21 +718,21 @@ final class HybridCastTransport: HybridCastTransportSpec {
   func startDiscovery() throws {
     DispatchQueue.main.async { [weak self] in
       GCKCastContext.sharedInstance().discoveryManager.startDiscovery()
-      self?.cachedDiscovering = true
+      self?.cachedDiscovering.store(true)
     }
   }
 
   func stopDiscovery() throws {
     DispatchQueue.main.async { [weak self] in
       GCKCastContext.sharedInstance().discoveryManager.stopDiscovery()
-      self?.cachedDiscovering = false
+      self?.cachedDiscovering.store(false)
     }
   }
 
   func setPassiveScan(passive: Bool) throws {
     DispatchQueue.main.async { [weak self] in
       GCKCastContext.sharedInstance().discoveryManager.passiveScan = passive
-      self?.cachedPassiveScan = passive
+      self?.cachedPassiveScan.store(passive)
     }
   }
 
@@ -845,6 +864,32 @@ final class HybridCastTransport: HybridCastTransportSpec {
     case .networkError: return "networkError"
     default: return "other"
     }
+  }
+}
+
+// MARK: - cross-thread flag box
+
+/// Lock-boxed `Bool` — the Swift analogue of the Android transport's `@Volatile`
+/// cached flags. Written on the main thread inside the GCK hops; read
+/// synchronously from the JS thread by the Nitro property accessors. Never hold
+/// the lock while calling out (the box only stores/loads the raw value), so no
+/// JS callback can ever run with a lock held.
+private final class AtomicFlag {
+  private let lock = NSLock()
+  private var value: Bool
+
+  init(_ value: Bool) { self.value = value }
+
+  func load() -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return value
+  }
+
+  func store(_ newValue: Bool) {
+    lock.lock()
+    defer { lock.unlock() }
+    value = newValue
   }
 }
 

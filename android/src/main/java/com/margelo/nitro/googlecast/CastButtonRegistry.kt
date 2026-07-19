@@ -21,18 +21,21 @@ internal object CastButtonRegistry {
 
   /** Called on attach-to-window. Re-registering moves [button] to the end (last-attached wins). */
   fun register(button: MediaRouteButton) {
+    MainThread.assertMainThread("CastButtonRegistry.register")
     remove(button)
     buttons.add(WeakReference(button))
   }
 
   /** Called on detach-from-window and `onDropView`. Idempotent. */
   fun unregister(button: MediaRouteButton) {
+    MainThread.assertMainThread("CastButtonRegistry.unregister")
     remove(button)
   }
 
   /** The overlay anchor: the last-attached button still attached and visible, else `null`. */
   val current: MediaRouteButton?
     get() {
+      MainThread.assertMainThread("CastButtonRegistry.current")
       val anchor =
         buttons.lastOrNull { ref ->
           val button = ref.get()
