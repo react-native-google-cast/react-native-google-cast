@@ -20,12 +20,15 @@ import org.robolectric.annotation.Config
 /**
  * JS-responder interception fix (#616, port of v4 PR #582): ACTION_DOWN on the
  * button must notify the React [RootView] via `NativeGestureUtil` so Fabric
- * cancels the JS responder instead of stealing the touch stream, and the
- * notification must be safe outside a React view hierarchy.
+ * cancels the JS responder instead of stealing the touch stream, the terminal
+ * ACTION_UP/ACTION_CANCEL must send the paired gesture-ended notification
+ * (otherwise `JSPointerDispatcher` stays locked and drops every `onPointer*`
+ * event for the surface), and both notifications must be safe outside a React
+ * view hierarchy.
  *
  * Runs on the JVM with a fake [RootView] parent — no Fabric runtime needed:
- * `NativeGestureUtil.notifyNativeGestureStarted` only walks up the view tree
- * to the first [RootView] and calls `onChildStartedNativeGesture` on it.
+ * `NativeGestureUtil` only walks up the view tree to the first [RootView] and
+ * calls `onChildStartedNativeGesture`/`onChildEndedNativeGesture` on it.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -34,14 +37,19 @@ class TintableMediaRouteButtonTouchTest {
   /** Fake React root that records native-gesture notifications. */
   private class RecordingRootView(context: Context) : FrameLayout(context), RootView {
     var startedCount = 0
-    var lastChild: View? = null
+    var endedCount = 0
+    var lastStartedChild: View? = null
+    var lastEndedChild: View? = null
 
     override fun onChildStartedNativeGesture(childView: View?, ev: MotionEvent) {
       startedCount++
-      lastChild = childView
+      lastStartedChild = childView
     }
 
-    override fun onChildEndedNativeGesture(childView: View, ev: MotionEvent) = Unit
+    override fun onChildEndedNativeGesture(childView: View, ev: MotionEvent) {
+      endedCount++
+      lastEndedChild = childView
+    }
 
     override fun handleException(t: Throwable) = throw t
   }
@@ -61,28 +69,66 @@ class TintableMediaRouteButtonTouchTest {
     return MotionEvent.obtain(now, now, action, 10f, 10f, 0)
   }
 
-  @Test
-  fun actionDownNotifiesReactRootOfNativeGesture() {
+  private fun buttonInRoot(): Pair<TintableMediaRouteButton, RecordingRootView> {
     val root = RecordingRootView(context)
     val button = TintableMediaRouteButton(context)
     root.addView(button)
+    return button to root
+  }
+
+  @Test
+  fun actionDownNotifiesGestureStartedOnly() {
+    val (button, root) = buttonInRoot()
 
     button.onTouchEvent(motionEvent(MotionEvent.ACTION_DOWN))
 
     assertEquals(1, root.startedCount)
-    assertSame(button, root.lastChild)
+    assertSame(button, root.lastStartedChild)
+    assertEquals(0, root.endedCount)
   }
 
   @Test
-  fun onlyActionDownNotifies() {
-    val root = RecordingRootView(context)
-    val button = TintableMediaRouteButton(context)
-    root.addView(button)
+  fun actionUpNotifiesGestureEndedOnly() {
+    val (button, root) = buttonInRoot()
 
-    button.onTouchEvent(motionEvent(MotionEvent.ACTION_MOVE))
     button.onTouchEvent(motionEvent(MotionEvent.ACTION_UP))
 
     assertEquals(0, root.startedCount)
+    assertEquals(1, root.endedCount)
+    assertSame(button, root.lastEndedChild)
+  }
+
+  @Test
+  fun actionCancelNotifiesGestureEndedOnly() {
+    val (button, root) = buttonInRoot()
+
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_CANCEL))
+
+    assertEquals(0, root.startedCount)
+    assertEquals(1, root.endedCount)
+    assertSame(button, root.lastEndedChild)
+  }
+
+  @Test
+  fun actionMoveNotifiesNothing() {
+    val (button, root) = buttonInRoot()
+
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_MOVE))
+
+    assertEquals(0, root.startedCount)
+    assertEquals(0, root.endedCount)
+  }
+
+  @Test
+  fun fullTapPairsStartedWithEnded() {
+    val (button, root) = buttonInRoot()
+
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_DOWN))
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_MOVE))
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_UP))
+
+    assertEquals(1, root.startedCount)
+    assertEquals(1, root.endedCount)
   }
 
   @Test
@@ -93,6 +139,8 @@ class TintableMediaRouteButtonTouchTest {
     plainParent.addView(button)
 
     button.onTouchEvent(motionEvent(MotionEvent.ACTION_DOWN))
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_UP))
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_CANCEL))
   }
 
   @Test
@@ -105,5 +153,6 @@ class TintableMediaRouteButtonTouchTest {
     activity.setContentView(button)
 
     button.onTouchEvent(motionEvent(MotionEvent.ACTION_DOWN))
+    button.onTouchEvent(motionEvent(MotionEvent.ACTION_UP))
   }
 }

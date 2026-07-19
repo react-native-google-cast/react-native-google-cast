@@ -29,19 +29,32 @@ internal class TintableMediaRouteButton(context: Context) : MediaRouteButton(con
    * own ScrollView/DrawerLayout under Fabric) notifies the React root view,
    * which cancels the JS responder for this gesture and leaves the stream with
    * the button.
+   *
+   * The started call MUST be paired with `notifyNativeGestureEnded` on the
+   * terminal event (UP/CANCEL — the ScrollView pattern): `JSPointerDispatcher`
+   * drops every pointer event while a child holds the native gesture and only
+   * `onChildEndedNativeGesture` releases it, so without the ended call one tap
+   * would silence `onPointer*` for the whole surface.
    */
   override fun onTouchEvent(event: MotionEvent): Boolean {
-    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-      try {
-        NativeGestureUtil.notifyNativeGestureStarted(this, event)
-      } catch (_: AssertionError) {
-        // Outside a React hierarchy (plain Android window, Robolectric host
-        // activity) RootViewUtil's parent walk can reach a non-View parent
-        // (ViewRootImpl) before any RootView and trip RN's assertion. There is
-        // no JS responder to cancel there — swallow and let the button work.
-      }
+    when (event.actionMasked) {
+      MotionEvent.ACTION_DOWN ->
+        notifyReactRoot { NativeGestureUtil.notifyNativeGestureStarted(this, event) }
+      MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
+        notifyReactRoot { NativeGestureUtil.notifyNativeGestureEnded(this, event) }
     }
     return super.onTouchEvent(event)
+  }
+
+  private inline fun notifyReactRoot(notify: () -> Unit) {
+    try {
+      notify()
+    } catch (_: AssertionError) {
+      // Outside a React hierarchy (plain Android window, Robolectric host
+      // activity) RootViewUtil's parent walk can reach a non-View parent
+      // (ViewRootImpl) before any RootView and trip RN's assertion. There is
+      // no JS responder to cancel there — swallow and let the button work.
+    }
   }
 
   override fun setRemoteIndicatorDrawable(d: Drawable?) {
