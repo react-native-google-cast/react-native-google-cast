@@ -272,7 +272,7 @@ enum ConverterFixtures {
     return (value as? NSNumber)?.doubleValue
   }
 
-  /// Builds an `AnyMap` from a JSON object (string → string, number → double).
+  /// Builds an `AnyMap` from a JSON object (string → string, bool → bool, number → double).
   static func anyMap(_ value: Any?) -> AnyMap? {
     guard let dict = value as? [String: Any] else {
       return nil
@@ -282,7 +282,12 @@ enum ConverterFixtures {
       if let string = raw as? String {
         map.setString(key: key, value: string)
       } else if let n = raw as? NSNumber {
-        map.setDouble(key: key, value: n.doubleValue)
+        // CFBoolean IS an NSNumber; detect it first so fixture booleans stay booleans.
+        if CFGetTypeID(n) == CFBooleanGetTypeID() {
+          map.setBoolean(key: key, value: n.boolValue)
+        } else {
+          map.setDouble(key: key, value: n.doubleValue)
+        }
       }
     }
     return map

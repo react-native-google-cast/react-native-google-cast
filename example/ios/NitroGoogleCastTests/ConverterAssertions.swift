@@ -27,9 +27,16 @@ enum ConverterAssertions {
           actual.getString(key: key), expected.getString(key: key),
           "\(ctx) customData[\(key)]", file: file, line: line)
       } else if expected.isBool(key: key) {
-        XCTAssertEqual(
-          actual.getBoolean(key: key), expected.getBoolean(key: key),
-          "\(ctx) customData[\(key)]", file: file, line: line)
+        // Assert the type tag first: a bool that collapsed to 1.0/0.0 (#617) must fail
+        // with a clear message instead of trapping inside getBoolean on a double value.
+        XCTAssertTrue(
+          actual.isBool(key: key),
+          "\(ctx) customData[\(key)] should be Bool", file: file, line: line)
+        if actual.isBool(key: key) {
+          XCTAssertEqual(
+            actual.getBoolean(key: key), expected.getBoolean(key: key),
+            "\(ctx) customData[\(key)]", file: file, line: line)
+        }
       } else if expected.isDouble(key: key) {
         XCTAssertEqual(
           actual.getDouble(key: key), expected.getDouble(key: key), accuracy: 1e-9,
