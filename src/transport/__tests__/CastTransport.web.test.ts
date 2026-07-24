@@ -377,6 +377,50 @@ describe('CastTransport.web — media status stream', () => {
     ])
   })
 
+  it('forwards Media.videoInfo into MediaStatus.videoInfo (and omits it when absent)', async () => {
+    const sdk = installFakeWebSdk()
+    const { events } = await init()
+    const session = installWithSession(sdk)
+    const media = new FakeMedia()
+    session.mediaSession = media
+    sdk.context.emitSessionState(session, 'SESSION_STARTED')
+    events.media.length = 0
+
+    media.emitUpdate(true)
+    expect(events.media[0]?.videoInfo).toBeUndefined()
+
+    // The shipped SDK's chrome.cast.media.HdrType wire values are lowercase
+    // ({SDR: 'sdr', HDR: 'hdr', DV: 'dv'}).
+    media.videoInfo = { width: 3840, height: 2160, hdrType: 'hdr' }
+    media.emitUpdate(true)
+    expect(events.media[1]?.videoInfo).toEqual({
+      width: 3840,
+      height: 2160,
+      hdrType: 'HDR',
+    })
+  })
+
+  it('maps incoming HLS segment formats from the lowercase wire values', async () => {
+    const sdk = installFakeWebSdk()
+    const { events } = await init()
+    const session = installWithSession(sdk)
+    const media = new FakeMedia()
+    session.mediaSession = media
+    sdk.context.emitSessionState(session, 'SESSION_STARTED')
+    events.media.length = 0
+
+    media.media = {
+      contentId: 'https://x/live.m3u8',
+      contentType: 'application/x-mpegurl',
+      hlsSegmentFormat: 'ts_aac',
+      hlsVideoSegmentFormat: 'fmp4',
+    }
+    media.emitUpdate(true)
+
+    expect(events.media[0]?.mediaInfo?.hlsSegmentFormat).toBe('TS_AAC')
+    expect(events.media[0]?.mediaInfo?.hlsVideoSegmentFormat).toBe('FMP4')
+  })
+
   it('collects application-defined metadata keys into customData for any metadata type', async () => {
     const sdk = installFakeWebSdk()
     const { events } = await init()
@@ -681,6 +725,25 @@ describe('CastTransport.web — media mutations', () => {
     })
     expect(request.media.metadata.images[0].url).toBe('https://x/poster.jpg')
     expect(request.media.metadata.images[0].width).toBe(100)
+  })
+
+  it('loadMedia writes the SDK HLS enum wire values (lowercase)', async () => {
+    const { transport, session } = await initWithMedia()
+    await transport.loadMedia({
+      mediaInfo: {
+        contentUrl: 'https://x/live.m3u8',
+        contentType: 'application/x-mpegurl',
+        streamType: 'live',
+        hlsSegmentFormat: 'E-AC3',
+        hlsVideoSegmentFormat: 'MPEG2-TS',
+      },
+    })
+    const request = session.loadMedia.mock.calls[0][0]
+    // The shipped SDK defines chrome.cast.media.HlsSegmentFormat /
+    // HlsVideoSegmentFormat with lowercase VALUES under uppercase member
+    // names ({E_AC3: 'e_ac3'}, {MPEG2_TS: 'mpeg2_ts'}).
+    expect(request.media.hlsSegmentFormat).toBe('e_ac3')
+    expect(request.media.hlsVideoSegmentFormat).toBe('mpeg2_ts')
   })
 
   it('loadMedia with queueData forwards the FULL queue on LoadRequest.queueData', async () => {

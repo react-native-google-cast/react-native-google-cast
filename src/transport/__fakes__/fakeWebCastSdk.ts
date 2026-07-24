@@ -57,6 +57,7 @@ export class FakeMedia {
   preloadedItemId: number | null = null
   repeatMode = 'REPEAT_OFF'
   customData: any = null
+  videoInfo: any = undefined
   /** Value returned by `getEstimatedTime()`. */
   estimatedTime = 42
 

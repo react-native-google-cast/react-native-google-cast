@@ -41,6 +41,7 @@ import type {
 import type { MediaQueueItem } from '../types/MediaQueueItem'
 import type { MediaLiveSeekableRange } from '../types/MediaLiveSeekableRange'
 import type { MediaLoadRequest } from '../types/MediaLoadRequest'
+import type { VideoInfo, VideoHdrType } from '../types/VideoInfo'
 import type { MediaQueueData } from '../types/MediaQueueData'
 import type { MediaQueueType } from '../types/MediaQueueType'
 import type { MediaQueueContainerMetadata } from '../types/MediaQueueContainerMetadata'
@@ -245,7 +246,18 @@ const FONT_STYLE_TO_WEB: Record<TextTrackFontStyle, string> = {
   italic: 'ITALIC',
 }
 
-/** https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.HlsSegmentFormat */
+/**
+ * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.HlsSegmentFormat
+ *
+ * The wire values ARE these lowercase strings. The sender reference lists
+ * only the uppercase enum *member names*; the shipped SDK defines
+ * `chrome.cast.media.HlsSegmentFormat = {AAC: "aac", AC3: "ac3", MP3: "mp3",
+ * TS: "ts", TS_AAC: "ts_aac", E_AC3: "e_ac3", FMP4: "fmp4"}` (verify with
+ * `Object.entries(chrome.cast.media.HlsSegmentFormat)` in a Cast-enabled
+ * browser), matching the Web Receiver's documented
+ * `cast.framework.messages.HlsSegmentFormat` values
+ * (https://developers.google.com/cast/docs/reference/web_receiver/cast.framework.messages#.HlsSegmentFormat).
+ */
 const HLS_SEGMENT_TO_WEB: Record<MediaHlsSegmentFormat, string> = {
   'AAC': 'aac',
   'AC3': 'ac3',
@@ -263,10 +275,25 @@ const HLS_SEGMENT_FROM_WEB: Record<string, MediaHlsSegmentFormat> =
     ])
   )
 
-/** https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.HlsVideoSegmentFormat */
+/**
+ * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.HlsVideoSegmentFormat
+ * Same member-name-vs-value convention as {@link HLS_SEGMENT_TO_WEB}: the
+ * shipped SDK defines `{MPEG2_TS: "mpeg2_ts", FMP4: "fmp4"}`.
+ */
 const HLS_VIDEO_TO_WEB: Record<MediaHlsVideoSegmentFormat, string> = {
   'FMP4': 'fmp4',
   'MPEG2-TS': 'mpeg2_ts',
+}
+
+/**
+ * `chrome.cast.media.HdrType` wire values (the shipped SDK defines
+ * `{SDR: "sdr", HDR: "hdr", DV: "dv"}`) → the shared {@link VideoHdrType}.
+ * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.HdrType
+ */
+const HDR_TYPE_FROM_WEB: Record<string, VideoHdrType> = {
+  sdr: 'SDR',
+  hdr: 'HDR',
+  dv: 'DV',
 }
 const HLS_VIDEO_FROM_WEB: Record<string, MediaHlsVideoSegmentFormat> =
   Object.fromEntries(
@@ -338,6 +365,25 @@ interface ExtendedWebLoadRequest extends chrome.cast.media.LoadRequest {
 /** Runtime `QueueItem` fields the ambient types omit. */
 interface ExtendedWebQueueItem extends chrome.cast.media.QueueItem {
   playbackDuration?: number | null
+}
+
+/**
+ * `chrome.cast.media.VideoInformation` shape
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.VideoInformation)
+ * — the ambient types don't declare it.
+ */
+interface WebVideoInformation {
+  width?: number
+  height?: number
+  hdrType?: string
+}
+
+/**
+ * Runtime `Media` fields the ambient types omit: `videoInfo`
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.Media#videoInfo).
+ */
+interface ExtendedWebMedia extends chrome.cast.media.Media {
+  videoInfo?: WebVideoInformation
 }
 
 /** Flat metadata field bag as it crosses the wire (both directions). */
@@ -674,7 +720,9 @@ function toLiveSeekableRange(
  * position uses `getEstimatedTime()` (the SDK's locally-extrapolated
  * position — the raw `currentTime` field is deprecated:
  * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.Media#getEstimatedTime).
- * `videoInfo` has no web sender source and is always omitted.
+ * `videoInfo` comes from `Media.videoInfo`
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.Media#videoInfo)
+ * when the receiver reports it.
  */
 export function toMediaStatus(media: chrome.cast.media.Media): MediaStatus {
   const status: MediaStatus = {
@@ -710,8 +758,28 @@ export function toMediaStatus(media: chrome.cast.media.Media): MediaStatus {
   if (media.repeatMode && REPEAT_MODE_FROM_WEB[media.repeatMode]) {
     status.queueRepeatMode = REPEAT_MODE_FROM_WEB[media.repeatMode]
   }
+  const videoInfo = toVideoInfo((media as ExtendedWebMedia).videoInfo)
+  if (videoInfo) status.videoInfo = videoInfo
   if (media.customData) status.customData = media.customData as AnyMap
   return status
+}
+
+/**
+ * `chrome.cast.media.VideoInformation` (`{width, height, hdrType}`, see
+ * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.VideoInformation)
+ * → the shared {@link VideoInfo}.
+ */
+function toVideoInfo(
+  info: WebVideoInformation | undefined
+): VideoInfo | undefined {
+  if (!info) return undefined
+  const result: VideoInfo = {}
+  if (typeof info.width === 'number') result.width = info.width
+  if (typeof info.height === 'number') result.height = info.height
+  if (info.hdrType && HDR_TYPE_FROM_WEB[info.hdrType]) {
+    result.hdrType = HDR_TYPE_FROM_WEB[info.hdrType]
+  }
+  return Object.keys(result).length > 0 ? result : undefined
 }
 
 // ---------------------------------------------------------------------------

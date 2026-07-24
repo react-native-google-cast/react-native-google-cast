@@ -72,8 +72,9 @@ import {
  *   `LoadRequest.playbackRate`) → rejects `notSupported`.
  * - **No atomic insert-and-play**: `QueueInsertItemsRequest` has no
  *   current-item slot → `queueInsertAndPlayItem` rejects `notSupported`.
- * - **No standby state / videoInfo**: not surfaced by the web sender —
- *   `standbyState` is always `unknown`, `MediaStatus.videoInfo` is omitted.
+ * - **No standby state**: not surfaced by the web sender — `standbyState`
+ *   is always `unknown`. (`MediaStatus.videoInfo` IS forwarded, from
+ *   `Media.videoInfo`.)
  * - **Native-only UI**: `showExpandedControls`, `showIntroductoryOverlay`,
  *   and `showPlayServicesErrorDialog` resolve `false` (graceful can't-show).
  *
