@@ -11,9 +11,9 @@ import { CastButton as CastButtonWeb } from '../CastButton.web'
 // jest cannot provide — stub it with a recording host component.
 jest.mock('react-native-nitro-modules', () => ({
   getHostComponent: jest.fn(() => {
-    const React = require('react')
+    const ReactLocal = require('react')
     return (props: Record<string, unknown>) =>
-      React.createElement('NativeCastButton', props)
+      ReactLocal.createElement('NativeCastButton', props)
   }),
 }))
 

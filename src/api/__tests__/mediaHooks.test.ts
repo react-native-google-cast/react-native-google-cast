@@ -29,8 +29,8 @@ jest.mock('../../state/castStore.singleton', () => {
 let mockNow = 0
 jest.mock('../../state/progressTicker.singleton', () => {
   const { ProgressTicker } = require('../../state/progressTicker')
-  const { castStore } = require('../../state/castStore.singleton')
-  return { progressTicker: new ProgressTicker(castStore, () => mockNow) }
+  const { castStore: store } = require('../../state/castStore.singleton')
+  return { progressTicker: new ProgressTicker(store, () => mockNow) }
 })
 
 const transport = castTransport as unknown as FakeCastTransport
@@ -177,14 +177,14 @@ describe('useStreamPosition — ticking', () => {
     })
 
     const observed: (number | null)[] = []
-    function Probe(): null {
+    function PositionProbe(): null {
       observed.push(useStreamPosition(1))
       return null
     }
 
     let root!: TestRenderer.ReactTestRenderer
     await act(async () => {
-      root = TestRenderer.create(React.createElement(Probe))
+      root = TestRenderer.create(React.createElement(PositionProbe))
     })
 
     expect(observed[observed.length - 1]).toBeNull()
@@ -199,14 +199,16 @@ describe('useStreamPosition — ticking', () => {
     jest.useFakeTimers()
     mockNow = 0
     const observed: (number | null)[] = []
-    function Probe({ interval }: { interval: number }): null {
+    function IntervalProbe({ interval }: { interval: number }): null {
       observed.push(useStreamPosition(interval))
       return null
     }
 
     let root!: TestRenderer.ReactTestRenderer
     await act(async () => {
-      root = TestRenderer.create(React.createElement(Probe, { interval: 1 }))
+      root = TestRenderer.create(
+        React.createElement(IntervalProbe, { interval: 1 })
+      )
     })
     act(() => {
       transport.emitLifecycle({ type: 'started', session: session('ivl') })
@@ -216,7 +218,7 @@ describe('useStreamPosition — ticking', () => {
     // Re-render with a new interval → the effect deps change, so it must tear
     // down the old subscription and re-subscribe (not stay torn down).
     await act(async () => {
-      root.update(React.createElement(Probe, { interval: 2 }))
+      root.update(React.createElement(IntervalProbe, { interval: 2 }))
     })
 
     // Advance the ticker's clock + fire the timer; the position must still be a

@@ -5,7 +5,7 @@
   "main": "lib/commonjs/index",
   "react-native": "src/index",
   "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
+  "types": "lib/typescript/src/index.d.ts",
   "source": "src/index",
   "workspaces": [
     "example"
@@ -144,7 +144,24 @@
       "@react-native",
       "prettier"
     ],
+    "plugins": [
+      "prettier"
+    ],
     "rules": {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "destructuredArrayIgnorePattern": "^_",
+          "ignoreRestSiblings": true
+        }
+      ],
+      "no-void": [
+        "warn",
+        {
+          "allowAsStatement": true
+        }
+      ],
       "prettier/prettier": [
         "error",
         {
