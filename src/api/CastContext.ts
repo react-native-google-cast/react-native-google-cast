@@ -75,8 +75,9 @@ export class CastContext {
    * controller dialog when a session exists. Unlike v4, no mounted
    * {@link CastButton} is required. Resolves `false` when Android cannot
    * present it (no current Activity, Cast framework unavailable, no route
-   * selector, or saved FragmentManager state); on web it always resolves
-   * `false`.
+   * selector, or saved FragmentManager state). On web this opens the
+   * browser's Cast picker (resolving `false` when the Web Sender SDK is not
+   * loaded or no receivers are available).
    */
   static showCastDialog(): Promise<boolean> {
     return castTransport.showCastDialog()

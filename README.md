@@ -2,7 +2,7 @@
 
 # react-native-google-cast
 
-This library wraps the native Google Cast SDK for Android and iOS (and maybe web/Chrome in the future), providing a unified JavaScript interface.
+This library wraps the Google Cast SDK for Android and iOS (and, since v5, the Cast Web Sender SDK for react-native-web in Chromium browsers), providing a unified JavaScript interface.
 
 It is written in TypeScript so types will always be up-to-date.
 
