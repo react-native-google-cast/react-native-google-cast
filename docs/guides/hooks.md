@@ -45,6 +45,8 @@ function MyComponent() {
 }
 ```
 
+The list only populates while the Cast SDK is discovering — which is gated on user interaction by design (a `CastButton` tap / on-screen Cast UI). If you present devices without a `CastButton`, see [Custom Cast Button and Cast Dialog](../components/castbutton#custom-cast-button-and-cast-dialog) for the per-platform requirements.
+
 ## Session Hook
 
 Receive the current [CastSession](../api/classes/castsession).

@@ -37,6 +37,17 @@ the example spike harness (`example/App.tsx`):
    after an explicit `DiscoveryManager.startDiscovery()` call. Decide whether the
    transport should auto-start discovery on iOS (GCK `disableDiscoveryAutostart`)
    or whether apps/the CastButton (Phase 6) own that. Document either way.
+   **RESOLVED (v5-xr6 / #625):** this is intended GCK behavior, not a wrapper
+   bug — the default `GCKCastOptions.startDiscoveryAfterFirstTapOnCastButton`
+   (iOS 14+ LNA design) gates discovery on the first `GCKUICastButton` tap, and
+   the Phase 3 harness had no CastButton yet. Decision: the transport does NOT
+   force-start discovery (it would fire the LNA prompt at cold launch and defeat
+   GCK's battery/privacy design; Android's `CastContext`-managed discovery is
+   equally interaction-gated). The CastButton owns the out-of-the-box path;
+   custom pickers call `DiscoveryManager.startDiscovery()` (Google's own
+   guidance). `isDiscovering` is now seeded from `GCKDiscoveryManager
+.discoveryActive` at init. Documented in troubleshooting / CastButton /
+   hooks docs.
 2. **Android emulator did not surface the device list.** `castState` moved to
    `notConnected` (GCK saw the Cast device) but our `MediaRouter` route enumeration
    returned `devices=0` — whereas the physical device surfaced it at init. Likely
