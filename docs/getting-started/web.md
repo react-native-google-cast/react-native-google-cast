@@ -77,9 +77,14 @@ The user picks a device there;
 is what runs underneath. Session lifecycle events, media status, volume, and
 custom channels then stream through the same hooks and listeners as on native.
 
-The built-in `<CastButton>` renders `null` on web for now — call
-`showCastDialog()` from your own button, or render the SDK's
-`<google-cast-launcher>` element yourself.
+Or just render the built-in [`<CastButton>`](../components/CastButton#web):
+on web it renders the SDK's
+[`<google-cast-launcher>` element](https://developers.google.com/cast/docs/web_sender/integrate#add_a_cast_button)
+(appearance, visibility, and clicks are handled by the CAF framework), maps
+`tintColor` to the launcher's `--connected-color`/`--disconnected-color` CSS
+custom properties, and renders nothing until the SDK loads (or forever, in
+browsers without Cast support). Give it an explicit size — the element has
+no intrinsic one.
 
 ## What works on web
 
@@ -91,6 +96,7 @@ The built-in `<CastButton>` renders `null` on web for now — call
 | `useDevices` / `DiscoveryManager`                                                 | ⚠️ device list is always empty; discovery controls are no-ops                                                                                      |
 | `SessionManager.startSession(deviceId)`                                           | ⚠️ web ignores `deviceId` — the browser owns the picker, which opens instead (dev-only `console.warn` flags it)                                    |
 | `showCastDialog()`                                                                | ✅ browser Cast picker                                                                                                                             |
+| `<CastButton>`                                                                    | ✅ renders the SDK's `<google-cast-launcher>`; `tintColor` → `--connected-color`/`--disconnected-color`; renders nothing until the SDK is loaded   |
 | `showExpandedControls()` / `showIntroductoryOverlay()`                            | ❌ resolves `false` (no such UI in the web SDK)                                                                                                    |
 | `showPlayServicesErrorDialog()`                                                   | ❌ resolves `false` (Android-only)                                                                                                                 |
 | `CastSession` volume / mute / app metadata / status / active input                | ✅                                                                                                                                                 |
