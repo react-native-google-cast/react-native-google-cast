@@ -838,7 +838,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
     // unloaded (`stop()`, or the last queue item removed) — forward it as a
     // clear (v5-82w) so JS never serves the last non-null status indefinitely.
     val status = client.mediaStatus
-    status?.let { refreshNotificationActionsIfNeeded(it) }
+    refreshNotificationActionsIfNeeded(status)
     onMediaStatus?.invoke(status?.toMediaStatus())
   }
 
@@ -854,8 +854,17 @@ class HybridCastTransport : HybridCastTransportSpec() {
   private var lastNotificationActionsKey: Pair<Boolean, Boolean>? = null
 
   private fun refreshNotificationActionsIfNeeded(
-    status: com.google.android.gms.cast.MediaStatus
+    status: com.google.android.gms.cast.MediaStatus?
   ) {
+    // Media unloaded mid-session (null status, v5-82w): GCK dismisses the media
+    // notification, so the cached key belongs to a notification that no longer
+    // exists. Re-baseline (mirrors detachMediaCallback) so the next load's
+    // first status establishes the fresh notification's baseline instead of
+    // diffing against the unloaded media's key.
+    if (status == null) {
+      lastNotificationActionsKey = null
+      return
+    }
     val key =
       Pair(
         status.queueItemCount > 1,
