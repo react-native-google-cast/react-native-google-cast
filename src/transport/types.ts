@@ -394,13 +394,20 @@ export interface CastTransportApi {
    */
   requestMediaStatus(): Promise<void>
 
-  /** iOS: begin active device discovery. No-op where unsupported. */
+  /**
+   * iOS: begin active device discovery (needed for custom device pickers —
+   * GCK's default gates discovery on the first Cast-button tap; the transport
+   * never force-starts it at init, see v5-xr6). No-op where unsupported.
+   */
   startDiscovery(): void
   /** iOS: end active device discovery. No-op where unsupported. */
   stopDiscovery(): void
   /** iOS: toggle passive (background) scan. No-op where unsupported. */
   setPassiveScan(passive: boolean): void
-  /** iOS: whether discovery is currently running (cached read). */
+  /**
+   * iOS: whether discovery is currently running (cached read, seeded from
+   * GCK's `discoveryActive` at init and refreshed on start/stopDiscovery).
+   */
   readonly isDiscovering: boolean
   /** iOS: whether passive scan is enabled (cached read). */
   readonly isPassiveScan: boolean

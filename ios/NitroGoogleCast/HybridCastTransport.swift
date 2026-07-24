@@ -129,6 +129,11 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
       self.cachedCastState = Self.mapState(context.castState)
       self.cachedPassiveScan.store(context.discoveryManager.passiveScan)
+      // Seed from GCK's own flag (v5-xr6): with the default first-tap gate the
+      // manager is idle here (false), but a host app that opted into launch-time
+      // autostart already has discovery running — `isDiscovering` must not
+      // report a stale `false` for it. Symmetric with the passiveScan seed.
+      self.cachedDiscovering.store(context.discoveryManager.discoveryActive)
       let devices = self.readDevices(context.discoveryManager)
       let currentCastSession = context.sessionManager.currentCastSession
       let current = Self.sessionInfo(currentCastSession)
@@ -715,17 +720,33 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
   // MARK: - discovery controls (iOS)
 
+  // DECISION (v5-xr6 / #625): the transport deliberately does NOT force
+  // `startDiscovery()` at init. GCK's default contract
+  // (`GCKCastOptions.startDiscoveryAfterFirstTapOnCastButton = YES`, SDK 4.5.3+)
+  // gates discovery on the user's first `GCKUICastButton` tap so the iOS 14+
+  // local-network permission prompt appears in context, and auto-manages it
+  // with the foreground lifecycle afterwards — mirroring Android, where
+  // "device discovery is completely managed by the CastContext". Force-starting
+  // here would fire the LNA prompt at cold launch and defeat GCK's
+  // battery/privacy design. Custom device pickers (no CastButton) call
+  // `DiscoveryManager.startDiscovery()` from JS, per Google's own guidance.
+  // https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery
+
   func startDiscovery() throws {
     DispatchQueue.main.async { [weak self] in
-      GCKCastContext.sharedInstance().discoveryManager.startDiscovery()
-      self?.cachedDiscovering.store(true)
+      let manager = GCKCastContext.sharedInstance().discoveryManager
+      manager.startDiscovery()
+      // Read GCK's flag back instead of assuming: `discoveryActive` is the
+      // SDK's authoritative state (it also flips on lifecycle suspends).
+      self?.cachedDiscovering.store(manager.discoveryActive)
     }
   }
 
   func stopDiscovery() throws {
     DispatchQueue.main.async { [weak self] in
-      GCKCastContext.sharedInstance().discoveryManager.stopDiscovery()
-      self?.cachedDiscovering.store(false)
+      let manager = GCKCastContext.sharedInstance().discoveryManager
+      manager.stopDiscovery()
+      self?.cachedDiscovering.store(manager.discoveryActive)
     }
   }
 

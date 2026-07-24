@@ -31,7 +31,8 @@ Besides the standard React Native `View` props:
 Besides being the standard way to start casting, a mounted, visible `CastButton` also:
 
 - **anchors the introductory overlay** — [`showIntroductoryOverlay`](../api/classes/castcontext) attaches to the most recently attached visible button and resolves `false` when there is none;
-- **(Android) triggers active device discovery** — the Cast framework only performs an ACTIVE scan while a Cast button (or dialog) is on screen, so devices are discovered reliably while one is mounted.
+- **(Android) triggers active device discovery** — the Cast framework only performs an ACTIVE scan while a Cast button (or dialog) is on screen, so devices are discovered reliably while one is mounted;
+- **(iOS) starts discovery in the first place** — with the default `GCKCastOptions`, the Cast SDK doesn't discover anything until the user taps the Cast button for the first time (this tap also triggers the [iOS 14+ local network permission flow](https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery)); on later launches the SDK manages discovery automatically.
 
 Note that unlike v4, [`showCastDialog`](../api/classes/castcontext) no longer requires a mounted `CastButton` — it presents the dialog directly.
 
@@ -69,4 +70,7 @@ function MyComponent() {
 }
 ```
 
-Note that on Android, active device discovery only runs while native Cast UI (a `CastButton` or Cast dialog) is on screen — a fully custom UI may see an empty or stale device list. Keep a (possibly invisible) `CastButton` mounted, or present the native dialog, to keep the list fresh.
+Note that discovery is user-interaction-gated by the Cast SDK on both platforms, so a fully custom UI may see an empty or stale device list:
+
+- **Android** — active device discovery only runs while native Cast UI (a `CastButton` or Cast dialog) is on screen. Keep a (possibly invisible) `CastButton` mounted, or present the native dialog, to keep the list fresh.
+- **iOS** — with the default `GCKCastOptions`, discovery doesn't start at all until the first-ever Cast button tap. For a custom picker, call [`DiscoveryManager.startDiscovery()`](../api/classes/discoverymanager#startdiscovery) ([Google's documented requirement for custom pickers](https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery)); note the first start triggers the local network permission prompt.
