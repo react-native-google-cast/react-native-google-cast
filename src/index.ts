@@ -22,7 +22,8 @@ export { useCastSession } from './api/useCastSession'
 export { useCastDevice } from './api/useCastDevice'
 export type { UseCastSessionOptions } from './api/useCastSession'
 
-// Components (CastButton resolves to CastButton.web on web — renders null).
+// Components (CastButton resolves to CastButton.web on web — renders the
+// Cast Web Sender's <google-cast-launcher> once the SDK loads).
 export { CastButton } from './components/CastButton'
 export type { CastButtonProps } from './components/CastButton'
 export type { SessionEventHandler } from './api/SessionManager'

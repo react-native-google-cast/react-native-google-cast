@@ -101,6 +101,34 @@ export function onSdkAvailable(callback: (available: boolean) => void): void {
   }
 }
 
+const availabilityListeners = new Set<() => void>()
+let availabilityHookInstalled = false
+
+/**
+ * Subscribe to SDK-availability changes (a `useSyncExternalStore`-shaped
+ * seam for UI like `CastButton.web`). Returns an unsubscribe function, so —
+ * unlike raw {@link onSdkAvailable}, whose handler chain only ever grows —
+ * mounting/unmounting components does not accumulate handlers: one shared
+ * hook fans out to a Set. If the global hook slot was cleared after install
+ * (tests), the next subscribe reinstalls it; a duplicate chained hook only
+ * causes redundant notifications, which snapshot reads make harmless.
+ */
+export function subscribeSdkAvailability(listener: () => void): () => void {
+  if (
+    !availabilityHookInstalled ||
+    castGlobal().__onGCastApiAvailable === undefined
+  ) {
+    availabilityHookInstalled = true
+    onSdkAvailable(() => {
+      for (const l of [...availabilityListeners]) l()
+    })
+  }
+  availabilityListeners.add(listener)
+  return () => {
+    availabilityListeners.delete(listener)
+  }
+}
+
 /** The app-provided {@link WebCastOptions}, if any. */
 export function getWebCastOptions(): WebCastOptions {
   return castGlobal().__RNGoogleCastOptions ?? {}
