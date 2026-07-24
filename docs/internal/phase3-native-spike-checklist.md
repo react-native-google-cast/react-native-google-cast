@@ -46,7 +46,7 @@ the example spike harness (`example/App.tsx`):
    equally interaction-gated). The CastButton owns the out-of-the-box path;
    custom pickers call `DiscoveryManager.startDiscovery()` (Google's own
    guidance). `isDiscovering` is now seeded from `GCKDiscoveryManager
-   .discoveryActive` at init. Documented in troubleshooting / CastButton /
+.discoveryActive` at init. Documented in troubleshooting / CastButton /
    hooks docs.
 2. **Android emulator did not surface the device list.** `castState` moved to
    `notConnected` (GCK saw the Cast device) but our `MediaRouter` route enumeration

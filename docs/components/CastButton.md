@@ -42,15 +42,23 @@ On web, `CastButton` renders nothing (web sender support comes in a later phase)
 
 Instead of using the `CastButton` component and the default Cast dialog, you may build custom UI for choosing a device to cast to.
 
-First, you need to retrieve a list of nearby Cast devices using [DiscoveryManager](../api/classes/discoverymanager) or the `useDevices` hook. You may then use [startSession](../api/classes/sessionmanager#startsession) to connect to a device, and [endCurrentSession](../api/classes/sessionmanager#endcurrentsession) to stop casting.
+First, you need to retrieve a list of nearby Cast devices using [DiscoveryManager](../api/classes/discoverymanager) or the `useDevices` hook. Because there is no `CastButton` on screen to trigger discovery, you must start it yourself on iOS (see the platform notes below) — otherwise the list stays empty. You may then use [startSession](../api/classes/sessionmanager#startsession) to connect to a device, and [endCurrentSession](../api/classes/sessionmanager#endcurrentsession) to stop casting.
 
 ```js
+import { useEffect } from 'react'
 import GoogleCast, { useCastDevice, useDevices } from 'react-native-google-cast'
 
 function MyComponent() {
   const castDevice = useCastDevice()
   const devices = useDevices()
   const sessionManager = GoogleCast.getSessionManager()
+
+  useEffect(() => {
+    // Required for custom pickers on iOS: without a CastButton tap, the Cast
+    // SDK never starts discovery on its own. The first start triggers the
+    // local network permission prompt. No-op on Android.
+    GoogleCast.getDiscoveryManager().startDiscovery()
+  }, [])
 
   return devices.map((device) => {
     const active = device.deviceId === castDevice?.deviceId
