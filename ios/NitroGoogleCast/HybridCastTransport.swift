@@ -42,6 +42,11 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
   private var castStateObserver: NSObjectProtocol?
   private var discoveryListener: CastDiscoveryListener?
+  // KVO observation of GCK's `discoveryActive` (v5-xr6): GCK starts/suspends
+  // discovery on its own (first Cast-button tap, foreground/background
+  // lifecycle), so keeping `isDiscovering` coherent needs the SDK's own signal
+  // — refreshes on our start/stopDiscovery calls alone would go stale.
+  private var discoveryActiveObservation: NSKeyValueObservation?
   private var sessionListener: CastSessionListener?
   private var listenersAttached = false
 
@@ -129,11 +134,9 @@ final class HybridCastTransport: HybridCastTransportSpec {
 
       self.cachedCastState = Self.mapState(context.castState)
       self.cachedPassiveScan.store(context.discoveryManager.passiveScan)
-      // Seed from GCK's own flag (v5-xr6): with the default first-tap gate the
-      // manager is idle here (false), but a host app that opted into launch-time
-      // autostart already has discovery running — `isDiscovering` must not
-      // report a stale `false` for it. Symmetric with the passiveScan seed.
-      self.cachedDiscovering.store(context.discoveryManager.discoveryActive)
+      // `cachedDiscovering` needs no separate seed here: the `discoveryActive`
+      // KVO observation registered in `attachObservers` above uses `.initial`,
+      // which already stored GCK's current value (v5-xr6).
       let devices = self.readDevices(context.discoveryManager)
       let currentCastSession = context.sessionManager.currentCastSession
       let current = Self.sessionInfo(currentCastSession)
@@ -173,6 +176,28 @@ final class HybridCastTransport: HybridCastTransportSpec {
     context.discoveryManager.add(discovery)
     discoveryListener = discovery
 
+    // Mirror GCK's authoritative `discoveryActive` flag into the lock-boxed
+    // cache (v5-xr6). `.initial` seeds the current value at attach time (so
+    // `initAndSubscribe` needs no separate seed) and `.new` tracks every later
+    // flip — including the ones GCK makes on its own (first Cast-button tap,
+    // background suspend / foreground resume), which no JS-initiated
+    // start/stopDiscovery call would ever see. The handler reads only
+    // `change.newValue` — never the GCK object — so the `AtomicFlag` store is
+    // thread-safe wherever KVO delivers it (T6: no GCK access off-main, no
+    // locks held while calling out, and no JS callback fires from here — the
+    // transport surface has no "discovering" event; JS reads `isDiscovering`
+    // synchronously on demand).
+    // NOTE: GCK does not formally document KVO-compliance for
+    // `discoveryActive`; the read-backs in start/stopDiscovery keep the cache
+    // correct for JS-driven transitions even if this observation were silent.
+    // SDK-driven transitions are device-gated (real Chromecast) to verify.
+    discoveryActiveObservation = context.discoveryManager.observe(
+      \.discoveryActive, options: [.initial, .new]
+    ) { [weak self] _, change in
+      guard let self, let active = change.newValue else { return }
+      self.cachedDiscovering.store(active)
+    }
+
     let session = CastSessionListener(
       onEvent: { [weak self] event in self?.onLifecycle?(event) },
       onSessionActive: { [weak self] in
@@ -202,6 +227,8 @@ final class HybridCastTransport: HybridCastTransportSpec {
       context.discoveryManager.remove(discovery)
       discoveryListener = nil
     }
+    discoveryActiveObservation?.invalidate()
+    discoveryActiveObservation = nil
     if let session = sessionListener {
       context.sessionManager.remove(session)
       sessionListener = nil
@@ -736,8 +763,10 @@ final class HybridCastTransport: HybridCastTransportSpec {
     DispatchQueue.main.async { [weak self] in
       let manager = GCKCastContext.sharedInstance().discoveryManager
       manager.startDiscovery()
-      // Read GCK's flag back instead of assuming: `discoveryActive` is the
-      // SDK's authoritative state (it also flips on lifecycle suspends).
+      // Read GCK's authoritative flag back instead of assuming success.
+      // Ongoing coherence (SDK-initiated flips) is owned by the
+      // `discoveryActive` KVO observation in `attachObservers`; this read-back
+      // is the belt-and-braces for JS-driven transitions (see NOTE there).
       self?.cachedDiscovering.store(manager.discoveryActive)
     }
   }

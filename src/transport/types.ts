@@ -405,8 +405,10 @@ export interface CastTransportApi {
   /** iOS: toggle passive (background) scan. No-op where unsupported. */
   setPassiveScan(passive: boolean): void
   /**
-   * iOS: whether discovery is currently running (cached read, seeded from
-   * GCK's `discoveryActive` at init and refreshed on start/stopDiscovery).
+   * iOS: whether discovery is currently running. Cached read that mirrors
+   * GCK's `discoveryActive` via KVO, so SDK-initiated transitions (first
+   * Cast-button tap, background suspend / foreground resume) are reflected,
+   * not just JS-driven start/stopDiscovery calls.
    */
   readonly isDiscovering: boolean
   /** iOS: whether passive scan is enabled (cached read). */
