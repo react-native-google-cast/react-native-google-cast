@@ -144,7 +144,24 @@
       "@react-native",
       "prettier"
     ],
+    "plugins": [
+      "prettier"
+    ],
     "rules": {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "destructuredArrayIgnorePattern": "^_",
+          "ignoreRestSiblings": true
+        }
+      ],
+      "no-void": [
+        "warn",
+        {
+          "allowAsStatement": true
+        }
+      ],
       "prettier/prettier": [
         "error",
         {
