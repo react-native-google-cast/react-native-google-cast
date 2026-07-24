@@ -39,13 +39,15 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          # 'every' = a changed file is android-relevant only if it matches ALL
+          # patterns: inside a runtime tree AND not a Markdown file. Docs-only
+          # changes never boot the emulator. 'every' allows only one positive
+          # pattern per filter, hence the brace-alternation glob.
+          predicate-quantifier: 'every'
           filters: |
             android:
-              - 'android/**'
-              - 'fixtures/converters/**'
-              - 'nitrogen/generated/android/**'
-              - 'example/android/**'
-              - '.github/workflows/android.yml'
+              - '{android/**,fixtures/converters/**,nitrogen/generated/android/**,example/android/**,.github/workflows/android.yml}'
+              - '!**/*.md'
 
   unit-tests:
     name: Robolectric parity (no emulator)
@@ -128,13 +130,36 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       # Build a single ABI matching the x86_64 emulator to keep the native build fast.
+      # Emulator boot on GitHub-hosted runners is flaky ("Timeout waiting for
+      # emulator to boot"), so: a longer boot timeout (900s vs the 600s default)
+      # plus one full retry with a freshly created AVD. Trade-off (accepted): a
+      # genuine test failure also runs twice — one extra emulator cycle on an
+      # already-red PR beats manual re-runs of boot flakes.
       - name: Run instrumented parity suite
+        id: instrumented-run
+        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
           target: google_apis
           arch: x86_64
           force-avd-creation: false
+          emulator-boot-timeout: 900
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: example/android
+          script: ./gradlew :react-native-google-cast:connectedDebugAndroidTest -PreactNativeArchitectures=x86_64
+
+      - name: Run instrumented parity suite (retry after flaky boot)
+        if: steps.instrumented-run.outcome == 'failure'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          # Recreate the AVD from scratch — the first attempt may have left it wedged.
+          force-avd-creation: true
+          emulator-boot-timeout: 900
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: example/android
