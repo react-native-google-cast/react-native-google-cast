@@ -60,12 +60,14 @@ client.loadMedia({
 
 ## Receive media queue status update
 
-When the receiver loads a media queue item, it assigns a unique ID to the item which persists for the duration of the session (and the life of the queue). You can learn the status of the queue indicating which item is currently loaded (it might not be playing), loading, or preloaded. You can also get an ordered list of all the items in the queue. The [MediaStatus](../api/interfaces/mediastatus) class provides this status information:
+When the receiver loads a media queue item, it assigns a unique ID to the item which persists for the duration of the session (and the life of the queue). You can learn the status of the queue indicating which item is currently loaded (it might not be playing), loading, or preloaded. The [MediaStatus](../api/interfaces/mediastatus) class provides this status information:
 
 - [preloadedItemId](../api/interfaces/mediastatus#optional-preloadeditemid) - The ID of the item that is currently preloaded, if any.
 - [loadingItemId](../api/interfaces/mediastatus#optional-loadingitemid) - The ID of the item that is currently loading.
 - [currentItemId](../api/interfaces/mediastatus#optional-currentitemid) - The ID of the current queue item, if any.
-- [queueItems](../api/interfaces/mediastatus#queueitems) - Returns the items in the playback queue.
+- [queueItems](../api/interfaces/mediastatus#queueitems) - The items the receiver reported in this status update. Note that this is only a limited window around the current item (typically the previous, current, and next items) — not the full queue.
+
+> Note: **Full queue access.** `queueItems` does not contain the entire queue — the receiver only reports a small window of it in each media status update. A paged `MediaQueue` API for accessing the full queue is planned for v5.x; follow [#618](https://github.com/react-native-google-cast/react-native-google-cast/issues/618) for progress.
 
 <!-- Use these members together with the other media status members to inform your app about the status of the queue and the items in the queue. In addition to media status updates from the receiver, you can listen for changes to the queue by implementing GCKRemoteMediaClientListener.remoteMediaClientDidUpdateQueue. -->
 

@@ -51,7 +51,14 @@ export interface MediaStatus {
   /** The seekable range of a live media stream. Absent if the current media is not a seekable live stream. */
   liveSeekableRange?: MediaLiveSeekableRange
 
-  /** The list of items in the queue. */
+  /**
+   * The queue items the receiver reported in this status update.
+   *
+   * Note that this is only a limited window of the queue around the current item (typically the
+   * previous, current, and next items) — not the full queue. Full-queue access via a paged
+   * `MediaQueue` API is planned for v5.x; see
+   * [#618](https://github.com/react-native-google-cast/react-native-google-cast/issues/618).
+   */
   queueItems: MediaQueueItem[]
 
   /** The `itemId` of the {@linkcode MediaQueueItem} currently active in the queue (it may not be playing). */
