@@ -121,6 +121,19 @@ const NO_MEDIA_SESSION: CastError = {
   message: 'The current session has no media session.',
 }
 
+/**
+ * Dev-build detection for developer warnings: RN(-web) bundlers define
+ * `__DEV__`; plain web bundlers define `process.env.NODE_ENV`. Unknown
+ * environments stay silent (never warn in production by accident).
+ */
+function isDevEnvironment(): boolean {
+  if (typeof __DEV__ !== 'undefined') return __DEV__
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env.NODE_ENV !== 'production'
+  }
+  return false
+}
+
 interface TransportCallbacks {
   onState: (castState: CastState) => void
   onDevices: (devices: Device[]) => void
@@ -629,10 +642,17 @@ class WebCastTransport implements CastTransportApi {
    * Web: opens the **browser's** Cast picker (`CastContext.requestSession()`)
    * — the web sender cannot target a device, so `deviceId` cannot be honored
    * (the device list is always empty on web, so no web caller can obtain one
-   * anyway). Resolves when the session has started; rejects `cancelled` when
-   * the user dismisses the picker.
+   * anyway; a dev-only warning flags the loud degradation). Resolves when
+   * the session has started; rejects `cancelled` when the user dismisses
+   * the picker.
    */
-  startSession(_deviceId: string): Promise<void> {
+  startSession(deviceId: string): Promise<void> {
+    if (deviceId && isDevEnvironment()) {
+      console.warn(
+        `startSession: the Cast Web Sender ignores deviceId ("${deviceId}") — ` +
+          'the browser owns the device picker. Opening the picker instead.'
+      )
+    }
     return this.requestSessionTracked()
   }
 

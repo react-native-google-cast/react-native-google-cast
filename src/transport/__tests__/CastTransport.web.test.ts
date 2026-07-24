@@ -377,6 +377,36 @@ describe('CastTransport.web — media status stream', () => {
     ])
   })
 
+  it('collects application-defined metadata keys into customData for any metadata type', async () => {
+    const sdk = installFakeWebSdk()
+    const { events } = await init()
+    const session = installWithSession(sdk)
+    const media = new FakeMedia()
+    session.mediaSession = media
+    sdk.context.emitSessionState(session, 'SESSION_STARTED')
+    events.media.length = 0
+
+    media.media = {
+      contentId: 'https://x/movie.mp4',
+      contentType: 'video/mp4',
+      metadata: {
+        metadataType: 1, // MOVIE — customData is not a `user`-only feature
+        title: 'Big Buck Bunny',
+        myKey: 'custom-value',
+        rating: 5,
+        type: 1, // deprecated SDK alias — neither standard nor custom
+        releaseYear: 2008, // deprecated SDK alias — dropped
+      },
+    }
+    media.emitUpdate(true)
+
+    expect(events.media[0]?.mediaInfo?.metadata).toEqual({
+      type: 'movie',
+      title: 'Big Buck Bunny',
+      customData: { myKey: 'custom-value', rating: 5 },
+    })
+  })
+
   it('attaches to a new media session announced via MEDIA_SESSION', async () => {
     const sdk = installFakeWebSdk()
     const { events } = await init()
@@ -424,13 +454,30 @@ describe('CastTransport.web — media status stream', () => {
 })
 
 describe('CastTransport.web — requestSession flows', () => {
-  it('startSession opens the browser picker and resolves on success', async () => {
+  let warnSpy: jest.SpyInstance
+
+  beforeEach(() => {
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+  afterEach(() => {
+    warnSpy.mockRestore()
+  })
+
+  it('startSession opens the browser picker, warning (dev-only) that deviceId is ignored', async () => {
     const sdk = installFakeWebSdk()
     const { transport } = await init()
     await expect(transport.startSession('ignored-device-id')).resolves.toBe(
       undefined
     )
     expect(sdk.context.requestSessionCalls).toBe(1)
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy.mock.calls[0][0]).toContain('ignores deviceId')
+    expect(warnSpy.mock.calls[0][0]).toContain('ignored-device-id')
+
+    // No deviceId → nothing to flag.
+    warnSpy.mockClear()
+    await transport.startSession('')
+    expect(warnSpy).not.toHaveBeenCalled()
   })
 
   it('startSession maps user cancellation to cancelled', async () => {
@@ -597,6 +644,9 @@ describe('CastTransport.web — media mutations', () => {
           title: 'Big Buck Bunny',
           studio: 'Blender',
           images: [{ url: 'https://x/poster.jpg', width: 100 }],
+          // customData crosses for EVERY metadata type (native parity), not
+          // just `user`.
+          customData: { myKey: 'custom-value', rating: 5 },
         },
         customData: { source: 'test' },
       },
@@ -623,9 +673,11 @@ describe('CastTransport.web — media mutations', () => {
     expect(request.media.duration).toBe(120)
     expect(request.media.customData).toEqual({ source: 'test' })
     expect(request.media.metadata).toMatchObject({
-      metadataType: 1, // MOVIE
+      metadataType: 1, // MOVIE — custom keys never clobber the discriminant
       title: 'Big Buck Bunny',
       studio: 'Blender',
+      myKey: 'custom-value',
+      rating: 5,
     })
     expect(request.media.metadata.images[0].url).toBe('https://x/poster.jpg')
     expect(request.media.metadata.images[0].width).toBe(100)

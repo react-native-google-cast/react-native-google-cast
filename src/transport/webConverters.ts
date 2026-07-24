@@ -304,6 +304,52 @@ interface WebMetadataBag {
   [key: string]: unknown
 }
 
+/**
+ * The wire keys consumed by {@link MediaMetadata} struct fields. Anything
+ * else on an incoming metadata bag is application-defined and collected into
+ * `customData` — same standard-vs-custom partition the native converters use
+ * (`GCKMediaMetadata+toMediaMetadata.swift`).
+ */
+const WEB_METADATA_STANDARD_KEYS = new Set([
+  'metadataType',
+  'images',
+  'title',
+  'subtitle',
+  'artist',
+  'releaseDate',
+  'studio',
+  'albumName',
+  'albumArtist',
+  'composer',
+  'discNumber',
+  'trackNumber',
+  'creationDateTime',
+  'location',
+  'latitude',
+  'longitude',
+  'width',
+  'height',
+  'originalAirdate',
+  'episode',
+  'season',
+  'seriesTitle',
+])
+
+/**
+ * Deprecated aliases the web SDK's metadata classes still declare (e.g.
+ * `type`, `releaseYear`, `episodeTitle`) — neither standard fields nor
+ * application custom data.
+ */
+const WEB_METADATA_DEPRECATED_KEYS = new Set([
+  'type',
+  'releaseYear',
+  'episodeTitle',
+  'seasonNumber',
+  'episodeNumber',
+  'artistName',
+  'songName',
+])
+
 // ---------------------------------------------------------------------------
 // incoming (web SDK → TS types)
 // ---------------------------------------------------------------------------
@@ -418,6 +464,24 @@ function toMediaMetadata(raw: unknown): MediaMetadata | undefined {
   if (bag.episode !== undefined) metadata.episodeNumber = bag.episode
   if (bag.season !== undefined) metadata.seasonNumber = bag.season
   if (bag.seriesTitle !== undefined) metadata.seriesTitle = bag.seriesTitle
+  // Application-defined keys → customData, for EVERY metadata type (native
+  // parity: the GCK converters partition standard vs custom keys the same
+  // way). Deprecated SDK aliases are neither standard nor custom.
+  const customData: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(bag)) {
+    if (value === undefined || value === null) continue
+    if (typeof value === 'function') continue
+    if (
+      WEB_METADATA_STANDARD_KEYS.has(key) ||
+      WEB_METADATA_DEPRECATED_KEYS.has(key)
+    ) {
+      continue
+    }
+    customData[key] = value
+  }
+  if (Object.keys(customData).length > 0) {
+    metadata.customData = customData as AnyMap
+  }
   return metadata
 }
 
@@ -604,8 +668,10 @@ function fromWebImage(
 /**
  * Flat {@link MediaMetadata} → the web metadata field bag. Sent as a plain
  * object: the SDK's per-type metadata classes are bare field containers that
- * serialize to exactly this JSON. `user` metadata travels as GENERIC with
- * `customData`'s keys spread onto the object.
+ * serialize to exactly this JSON. `customData` keys are written under their
+ * own names for **every** metadata type (native parity — the GCK converters
+ * do the same); `user` maps to GENERIC (no web equivalent) so its custom
+ * fields simply ride along.
  */
 function fromMediaMetadata(
   metadata: MediaMetadata,
@@ -613,10 +679,6 @@ function fromMediaMetadata(
 ): WebMetadataBag {
   const bag: WebMetadataBag = {
     metadataType: METADATA_TYPE_TO_WEB[metadata.type] ?? 0,
-  }
-  if (metadata.type === 'user' && metadata.customData) {
-    Object.assign(bag, metadata.customData)
-    bag.metadataType = METADATA_TYPE_TO_WEB.user
   }
   if (metadata.images) {
     bag.images = metadata.images.map((image) => fromWebImage(image, chromeCast))
@@ -645,6 +707,13 @@ function fromMediaMetadata(
   if (metadata.episodeNumber !== undefined) bag.episode = metadata.episodeNumber
   if (metadata.seasonNumber !== undefined) bag.season = metadata.seasonNumber
   if (metadata.seriesTitle !== undefined) bag.seriesTitle = metadata.seriesTitle
+  // Application-defined keys ride along for every type (written last, like
+  // the native converter — apps must not collide with standard keys). The
+  // `metadataType` discriminant is re-asserted so it can never be clobbered.
+  if (metadata.customData) {
+    Object.assign(bag, metadata.customData)
+    bag.metadataType = METADATA_TYPE_TO_WEB[metadata.type] ?? 0
+  }
   return bag
 }
 
