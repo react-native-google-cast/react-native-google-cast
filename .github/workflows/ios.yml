@@ -23,6 +23,10 @@ concurrency:
   group: ios-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege: checkout + caches + artifact upload only read the repo.
+permissions:
+  contents: read
+
 jobs:
   xctest:
     name: XCTest converter parity
