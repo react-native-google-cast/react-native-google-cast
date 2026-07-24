@@ -3510,12 +3510,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chrome@npm:*":
+  version: 0.2.2
+  resolution: "@types/chrome@npm:0.2.2"
+  dependencies:
+    "@types/filesystem": "npm:*"
+    "@types/har-format": "npm:*"
+  checksum: 10c0/919756301cac66d076be794f8ca9b9813bdc8f5101b7c5954d9f6aa96048793408d95d80cce0a1c0c33fa23a4e695f76b2155eeadd755dd211fd6f10fc4da743
+  languageName: node
+  linkType: hard
+
+"@types/chromecast-caf-sender@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "@types/chromecast-caf-sender@npm:1.0.11"
+  dependencies:
+    "@types/chrome": "npm:*"
+  checksum: 10c0/a7daf2d97e0aef78b04598d1e0f1da3316cbe826e9a0f3a0e7fcfbcf2924b335b077980a86fbce14a82a435662889f0ad70e9dbc7a2ba066e9cddd5821201f18
+  languageName: node
+  linkType: hard
+
+"@types/filesystem@npm:*":
+  version: 0.0.36
+  resolution: "@types/filesystem@npm:0.0.36"
+  dependencies:
+    "@types/filewriter": "npm:*"
+  checksum: 10c0/3ebec32f0494b0a2612187d148e9f253ff55672c53f566d9a1e6d891eb6e2372df93c252b594b2775bc53e6660c4c37fdb05dc1b26e72b60a31010da8e1f7317
+  languageName: node
+  linkType: hard
+
+"@types/filewriter@npm:*":
+  version: 0.0.33
+  resolution: "@types/filewriter@npm:0.0.33"
+  checksum: 10c0/363ef9a658a961ceae04f52934562e4ebdcdc3a2564dd8544f593d77113c16574938b6ba4fea0bee418c37bda0668c1e03dfedb6adf00d55853f51fb3a59247b
+  languageName: node
+  linkType: hard
+
 "@types/graceful-fs@npm:^4.1.3":
   version: 4.1.9
   resolution: "@types/graceful-fs@npm:4.1.9"
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/235d2fc69741448e853333b7c3d1180a966dd2b8972c8cbcd6b2a0c6cd7f8d582ab2b8e58219dbc62cce8f1b40aa317ff78ea2201cdd8249da5025adebed6f0b
+  languageName: node
+  linkType: hard
+
+"@types/har-format@npm:*":
+  version: 1.2.16
+  resolution: "@types/har-format@npm:1.2.16"
+  checksum: 10c0/77e952bc219db0c1f0588cab3b95865bc343b922e8423a76fbbd6a757c40709a256933fa415eb8fefda6ea5897c8e3dd3191bb8a82b37c13d9232467d31ae485
   languageName: node
   linkType: hard
 
@@ -11639,6 +11681,7 @@ __metadata:
     "@react-native/eslint-config": "npm:^0.86.0"
     "@react-native/jest-preset": "npm:^0.86.0"
     "@release-it/conventional-changelog": "npm:^3.0.1"
+    "@types/chromecast-caf-sender": "npm:^1.0.11"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^19.2.0"
     auto-changelog: "npm:^2.2.1"

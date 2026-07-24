@@ -161,7 +161,9 @@ export interface InitialSnapshot {
  *   of this; see the drift guard in `__fakes__/FakeCastTransport.ts`), wrapped
  *   by a thin adapter (`CastTransport.ts`) that translates rejected mutations
  *   into {@link CastError}.
- * - **web:** a Chrome Cast SDK stub (`CastTransport.web.ts`), real impl Phase 8.
+ * - **web:** the Cast Web Sender SDK transport (`CastTransport.web.ts`),
+ *   driving `chrome.cast` + `cast.framework` (see the "Web support" guide for
+ *   the platform-gap table).
  * - **fake:** an in-memory, scriptable mirror of the proven native contract
  *   (`__fakes__/FakeCastTransport.ts`) for jest + Tier-1 E2E.
  *
