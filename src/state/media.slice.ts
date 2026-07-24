@@ -56,7 +56,12 @@ const usableId = (sessionId: string | undefined): string | null =>
  *
  * Status exists only while a session is live, so the slice:
  * - **accepts** a `mediaStatus` push only when `live` — a push arriving after
- *   teardown is dropped, never relying on a later lifecycle event to clean up;
+ *   teardown is dropped, never relying on a later lifecycle event to clean up.
+ *   A `null` push is a *clear* (v5-82w): the receiver reports no media while
+ *   the session stays alive (media unloaded via `stop()`, or the last queue
+ *   item removed), so the cached status — and everything derived from it,
+ *   like the ticking stream position — resets to the empty default instead of
+ *   serving the last non-null status indefinitely;
  * - **clears** on session *establishment* (`started` / `resumed`) of a
  *   **different** session so a prior session's status can't bleed into the new
  *   generation — but **keeps** it when the establish re-announces the same
@@ -92,6 +97,9 @@ export const mediaSlice: Slice<MediaState> = {
       // Drop a status that arrives while no session is live — it would
       // otherwise resurrect media the session slice has already let go.
       if (!state.live) return state
+      // Ref-stable no-op: a `null` clear (or attach-time re-emit of nothing)
+      // on an already-empty slice must not allocate (Invariant 2).
+      if (state.currentStatus === event.status) return state
       return {
         currentStatus: event.status,
         live: true,

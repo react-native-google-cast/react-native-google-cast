@@ -82,6 +82,10 @@ export interface CastDebug
   injectDevices(devices: Device[]): Promise<boolean>
   /** Deliver a synthetic session-lifecycle event through the transport's `onLifecycle`. */
   injectLifecycleEvent(event: SessionLifecycleEvent): Promise<boolean>
-  /** Deliver a synthetic media-status push through the transport's `onMediaStatus`. */
-  injectMediaStatus(status: MediaStatus): Promise<boolean>
+  /**
+   * Deliver a synthetic media-status push through the transport's
+   * `onMediaStatus`. Omit `status` to deliver the nil/null *clear* push —
+   * media unloaded while the session stays alive (v5-82w).
+   */
+  injectMediaStatus(status?: MediaStatus): Promise<boolean>
 }

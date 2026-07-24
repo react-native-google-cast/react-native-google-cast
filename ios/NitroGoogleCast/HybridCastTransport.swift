@@ -30,7 +30,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
   private var onState: ((CastState) -> Void)?
   private var onDevices: (([Device]) -> Void)?
   private var onLifecycle: ((SessionLifecycleEvent) -> Void)?
-  private var onMediaStatus: ((MediaStatus) -> Void)?
+  private var onMediaStatus: ((MediaStatus?) -> Void)?
   private var onChannelMessage: ((String, String) -> Void)?
   private var onChannelStatus: ((String, Bool, Bool) -> Void)?
   // Registered custom channels by namespace (Phase 5.2). The transport owns the
@@ -84,7 +84,7 @@ final class HybridCastTransport: HybridCastTransportSpec {
     onState: @escaping (_ castState: CastState) -> Void,
     onDevices: @escaping (_ devices: [Device]) -> Void,
     onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void,
-    onMediaStatus: @escaping (_ status: MediaStatus) -> Void,
+    onMediaStatus: @escaping (_ status: MediaStatus?) -> Void,
     onChannelMessage: @escaping (_ channelNamespace: String, _ message: String) -> Void,
     onChannelStatus: @escaping (_ channelNamespace: String, _ connected: Bool, _ writable: Bool) ->
       Void
@@ -134,8 +134,9 @@ final class HybridCastTransport: HybridCastTransportSpec {
       let current = Self.sessionInfo(currentCastSession)
       // Cold-start media status (v5-az2): a session live before JS init (app
       // relaunch during playback / auto-resume) already has a MediaStatus that
-      // would otherwise only arrive on the next push. Same convention as the
-      // push path: a nil GCKMediaStatus is omitted, never delivered as nil.
+      // would otherwise only arrive on the next push. A nil GCKMediaStatus is
+      // omitted here — the seed starts empty either way (the push path, by
+      // contrast, forwards nil as an explicit clear, v5-82w).
       let mediaStatus = currentCastSession?.remoteMediaClient?.mediaStatus?.toMediaStatus()
       promise.resolve(
         withResult: InitialSnapshot(
@@ -653,8 +654,10 @@ final class HybridCastTransport: HybridCastTransportSpec {
     attachedMediaClient = client
 
     // Emit the current status immediately so subscribers don't wait for the next
-    // change to learn what is already playing.
-    if let status = client.mediaStatus?.toMediaStatus() { onMediaStatus?(status) }
+    // change to learn what is already playing. nil is forwarded too (v5-82w):
+    // the store treats it as "no media" — a ref-stable no-op on the
+    // just-established (empty) slice, so this can never clobber a seeded status.
+    onMediaStatus?(client.mediaStatus?.toMediaStatus())
   }
 
   private func detachMediaListener() {

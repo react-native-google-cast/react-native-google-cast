@@ -207,7 +207,7 @@ namespace margelo::nitro::googlecast {
 
   public:
     // Methods
-    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) override {
+    inline std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const std::optional<MediaStatus>& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) override {
       auto __result = _swiftPart.initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus, onChannelMessage, onChannelStatus);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

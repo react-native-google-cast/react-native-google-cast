@@ -128,7 +128,7 @@ final class HybridCastDebug: HybridCastDebugSpec {
     inject { $0.emitLifecycle(event) }
   }
 
-  func injectMediaStatus(status: MediaStatus) throws -> Promise<Bool> {
+  func injectMediaStatus(status: MediaStatus?) throws -> Promise<Bool> {
     inject { $0.emitMediaStatus(status) }
   }
 

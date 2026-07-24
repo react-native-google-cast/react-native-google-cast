@@ -63,7 +63,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
   private var onState: ((CastState) -> Unit)? = null
   private var onDevices: ((Array<Device>) -> Unit)? = null
   private var onLifecycle: ((SessionLifecycleEvent) -> Unit)? = null
-  private var onMediaStatus: ((MediaStatus) -> Unit)? = null
+  private var onMediaStatus: ((MediaStatus?) -> Unit)? = null
   private var onChannelMessage: ((String, String) -> Unit)? = null
   private var onChannelStatus: ((String, Boolean, Boolean) -> Unit)? = null
 
@@ -120,7 +120,7 @@ class HybridCastTransport : HybridCastTransportSpec() {
     onState: (castState: CastState) -> Unit,
     onDevices: (devices: Array<Device>) -> Unit,
     onLifecycle: (event: SessionLifecycleEvent) -> Unit,
-    onMediaStatus: (status: MediaStatus) -> Unit,
+    onMediaStatus: (status: MediaStatus?) -> Unit,
     onChannelMessage: (namespace: String, message: String) -> Unit,
     onChannelStatus: (namespace: String, connected: Boolean, writable: Boolean) -> Unit
   ): Promise<InitialSnapshot> {
@@ -170,8 +170,9 @@ class HybridCastTransport : HybridCastTransportSpec() {
       attachCastListener(currentSession)
       // Cold-start media status (v5-az2): a session live before JS init (app
       // relaunch during playback / auto-resume) already has a MediaStatus that
-      // would otherwise only arrive on the next push. Same convention as the
-      // push path: a null GCK MediaStatus is omitted, never delivered as null.
+      // would otherwise only arrive on the next push. A null GCK MediaStatus is
+      // omitted here — the seed starts empty either way (the push path, by
+      // contrast, forwards null as an explicit clear, v5-82w).
       val coldStartMediaStatus = currentSession?.remoteMediaClient?.mediaStatus?.toMediaStatus()
       promise.resolve(
         InitialSnapshot(
@@ -827,14 +828,18 @@ class HybridCastTransport : HybridCastTransportSpec() {
     mediaCallback = callback
     observedClient = client
     // Surface the current status immediately so the store reflects an already-playing session.
+    // null is forwarded too (v5-82w): the store treats it as "no media" — a ref-stable no-op
+    // on the just-established (empty) slice, so this can never clobber a seeded status.
     emitMediaStatus(client)
   }
 
   private fun emitMediaStatus(client: RemoteMediaClient) {
-    client.mediaStatus?.let { status ->
-      refreshNotificationActionsIfNeeded(status)
-      onMediaStatus?.invoke(status.toMediaStatus())
-    }
+    // A null GCK MediaStatus while the session stays alive means the media was
+    // unloaded (`stop()`, or the last queue item removed) — forward it as a
+    // clear (v5-82w) so JS never serves the last non-null status indefinitely.
+    val status = client.mediaStatus
+    status?.let { refreshNotificationActionsIfNeeded(it) }
+    onMediaStatus?.invoke(status?.toMediaStatus())
   }
 
   /**

@@ -364,9 +364,9 @@ namespace margelo::nitro::googlecast {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<bool>> JHybridCastDebugSpec::injectMediaStatus(const MediaStatus& status) {
+  std::shared_ptr<Promise<bool>> JHybridCastDebugSpec::injectMediaStatus(const std::optional<MediaStatus>& status) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JMediaStatus> /* status */)>("injectMediaStatus");
-    auto __result = method(_javaPart, JMediaStatus::fromCpp(status));
+    auto __result = method(_javaPart, status.has_value() ? JMediaStatus::fromCpp(status.value()) : nullptr);
     return [&]() {
       auto __promise = Promise<bool>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {

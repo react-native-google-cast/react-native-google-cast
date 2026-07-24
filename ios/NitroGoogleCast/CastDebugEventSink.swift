@@ -21,7 +21,8 @@ enum CastDebugEventSink {
     let emitState: (CastState) -> Void
     let emitDevices: ([Device]) -> Void
     let emitLifecycle: (SessionLifecycleEvent) -> Void
-    let emitMediaStatus: (MediaStatus) -> Void
+    /// `nil` is the media-unloaded *clear* push (v5-82w).
+    let emitMediaStatus: (MediaStatus?) -> Void
   }
 
   #if DEBUG
@@ -36,7 +37,7 @@ enum CastDebugEventSink {
     emitState: @escaping (CastState) -> Void,
     emitDevices: @escaping ([Device]) -> Void,
     emitLifecycle: @escaping (SessionLifecycleEvent) -> Void,
-    emitMediaStatus: @escaping (MediaStatus) -> Void
+    emitMediaStatus: @escaping (MediaStatus?) -> Void
   ) {
     #if DEBUG
       emitters = Emitters(

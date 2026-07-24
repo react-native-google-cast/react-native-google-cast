@@ -26,7 +26,8 @@ internal object CastDebugEventSink {
     val emitState: (CastState) -> Unit,
     val emitDevices: (Array<Device>) -> Unit,
     val emitLifecycle: (SessionLifecycleEvent) -> Unit,
-    val emitMediaStatus: (MediaStatus) -> Unit,
+    /** null is the media-unloaded *clear* push (v5-82w). */
+    val emitMediaStatus: (MediaStatus?) -> Unit,
   )
 
   @Volatile private var emitters: Emitters? = null

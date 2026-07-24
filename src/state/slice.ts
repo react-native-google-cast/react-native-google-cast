@@ -10,16 +10,18 @@ import type { MediaStatus } from '../types/MediaStatus'
  *
  * `mediaStatus` (P4) is the streamed `GCKMediaStatus` / `MediaStatus` of the
  * active session's RemoteMediaClient, pushed through the `onMediaStatus`
- * callback. There is no media status when no session is live, so the media
- * slice tracks session liveness (off the same lifecycle events the session
- * slice uses): it accepts a push only while a session is live, and clears on
- * both session establishment and teardown.
+ * callback. A `null` status is a *clear*: the receiver reports no media (media
+ * unloaded mid-session — `stop()`, or the last queue item removed) while the
+ * session stays alive (v5-82w). There is no media status when no session is
+ * live, so the media slice tracks session liveness (off the same lifecycle
+ * events the session slice uses): it accepts a push only while a session is
+ * live, and clears on both session establishment and teardown.
  */
 export type StoreEvent =
   | { readonly kind: 'state'; readonly castState: CastState }
   | { readonly kind: 'devices'; readonly devices: Device[] }
   | { readonly kind: 'lifecycle'; readonly event: SessionLifecycleEvent }
-  | { readonly kind: 'mediaStatus'; readonly status: MediaStatus }
+  | { readonly kind: 'mediaStatus'; readonly status: MediaStatus | null }
   // P5.2 custom channels. Connection status is state (slice + snapshot-replay);
   // inbound channel *messages* are transient and deliberately NOT a StoreEvent —
   // they ride the store's namespace-keyed message bus and are never replayed.

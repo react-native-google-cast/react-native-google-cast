@@ -144,7 +144,7 @@ open class HybridCastTransportSpec_cxx {
 
   // Methods
   @inline(__always)
-  public final func initAndSubscribe(onState: bridge.Func_void_CastState, onDevices: bridge.Func_void_std__vector_Device_, onLifecycle: bridge.Func_void_SessionLifecycleEvent, onMediaStatus: bridge.Func_void_MediaStatus, onChannelMessage: bridge.Func_void_std__string_std__string, onChannelStatus: bridge.Func_void_std__string_bool_bool) -> bridge.Result_std__shared_ptr_Promise_InitialSnapshot___ {
+  public final func initAndSubscribe(onState: bridge.Func_void_CastState, onDevices: bridge.Func_void_std__vector_Device_, onLifecycle: bridge.Func_void_SessionLifecycleEvent, onMediaStatus: bridge.Func_void_std__optional_MediaStatus_, onChannelMessage: bridge.Func_void_std__string_std__string, onChannelStatus: bridge.Func_void_std__string_bool_bool) -> bridge.Result_std__shared_ptr_Promise_InitialSnapshot___ {
     do {
       let __result = try self.__implementation.initAndSubscribe(onState: { () -> (CastState) -> Void in
         let __wrappedFunction = bridge.wrap_Func_void_CastState(onState)
@@ -167,10 +167,16 @@ open class HybridCastTransportSpec_cxx {
         return { (__event: SessionLifecycleEvent) -> Void in
           __wrappedFunction.call(__event)
         }
-      }(), onMediaStatus: { () -> (MediaStatus) -> Void in
-        let __wrappedFunction = bridge.wrap_Func_void_MediaStatus(onMediaStatus)
-        return { (__status: MediaStatus) -> Void in
-          __wrappedFunction.call(__status)
+      }(), onMediaStatus: { () -> (MediaStatus?) -> Void in
+        let __wrappedFunction = bridge.wrap_Func_void_std__optional_MediaStatus_(onMediaStatus)
+        return { (__status: MediaStatus?) -> Void in
+          __wrappedFunction.call({ () -> bridge.std__optional_MediaStatus_ in
+            if let __unwrappedValue = __status {
+              return bridge.create_std__optional_MediaStatus_(__unwrappedValue)
+            } else {
+              return .init()
+            }
+          }())
         }
       }(), onChannelMessage: { () -> (String, String) -> Void in
         let __wrappedFunction = bridge.wrap_Func_void_std__string_std__string(onChannelMessage)

@@ -132,7 +132,7 @@ class HybridCastDebug : HybridCastDebugSpec() {
   override fun injectLifecycleEvent(event: SessionLifecycleEvent): Promise<Boolean> =
     inject { it.emitLifecycle(event) }
 
-  override fun injectMediaStatus(status: MediaStatus): Promise<Boolean> =
+  override fun injectMediaStatus(status: MediaStatus?): Promise<Boolean> =
     inject { it.emitMediaStatus(status) }
 
   /**
