@@ -786,43 +786,29 @@ class WebCastTransport implements CastTransportApi {
 
   // --- RemoteMediaClient mutation surface ---
 
+  /**
+   * Load a single item or a queue. A `queueData` payload crosses **in full**
+   * on `LoadRequest.queueData` (id/name/entity/queueType/repeatMode/
+   * containerMetadata/items/startIndex/startTime — see
+   * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.QueueData),
+   * matching the native converters. The web `LoadRequest` constructor
+   * requires a `MediaInfo`, so a queue-only request uses its first item's
+   * media as the request's `media` field (queueData governs on the receiver).
+   */
   loadMedia(request: MediaLoadRequest): Promise<void> {
     try {
       const chromeCast = this.requireChromeCast()
       const session = this.requireSession()
-      if (request.queueData) {
-        const { queueData } = request
-        const items = queueData.items ?? []
-        if (items.length === 0) {
-          throw {
-            code: 'invalidParameter',
-            message: 'queueData.items must contain at least one item.',
-          } satisfies CastError
-        }
-        const queueRequest = fromQueueLoadRequest(
-          items,
-          queueData.startIndex ?? 0,
-          queueData.repeatMode ?? 'off',
-          request.customData,
-          chromeCast
-        )
-        return this.track<void>(this.pendingSession, (resolve, reject) =>
-          session
-            .getSessionObj()
-            .queueLoad(queueRequest, () => resolve(), reject)
-        )
-      }
-      if (!request.mediaInfo) {
+      const mediaInfo =
+        request.mediaInfo ?? request.queueData?.items?.[0]?.mediaInfo
+      if (!mediaInfo) {
         throw {
           code: 'invalidParameter',
-          message: 'Either mediaInfo or queueData is required.',
+          message:
+            'Either mediaInfo or a queueData with at least one item is required.',
         } satisfies CastError
       }
-      const loadRequest = fromMediaLoadRequest(
-        request,
-        request.mediaInfo,
-        chromeCast
-      )
+      const loadRequest = fromMediaLoadRequest(request, mediaInfo, chromeCast)
       return this.track<void>(this.pendingSession, (resolve, reject) => {
         session.loadMedia(loadRequest).then((errorCode) => {
           if (errorCode) reject(errorCode)

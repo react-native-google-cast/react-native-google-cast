@@ -83,27 +83,27 @@ The built-in `<CastButton>` renders `null` on web for now — call
 
 ## What works on web
 
-| API surface                                                                       | Web                                                                                                             |
-| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `useCastState` / cast state stream                                                | ✅ (maps 1:1 to `cast.framework.CastState`)                                                                     |
-| Session lifecycle (`starting`/`started`/`startFailed`/`ending`/`ended`/`resumed`) | ✅                                                                                                              |
-| `suspended` / `resuming` / `resumeFailed` events                                  | ❌ never emitted (no equivalent in the web sender)                                                              |
-| `useDevices` / `DiscoveryManager`                                                 | ⚠️ device list is always empty; discovery controls are no-ops                                                   |
-| `SessionManager.startSession(deviceId)`                                           | ⚠️ web ignores `deviceId` — the browser owns the picker, which opens instead (dev-only `console.warn` flags it) |
-| `showCastDialog()`                                                                | ✅ browser Cast picker                                                                                          |
-| `showExpandedControls()` / `showIntroductoryOverlay()`                            | ❌ resolves `false` (no such UI in the web SDK)                                                                 |
-| `showPlayServicesErrorDialog()`                                                   | ❌ resolves `false` (Android-only)                                                                              |
-| `CastSession` volume / mute / app metadata / status / active input                | ✅                                                                                                              |
-| Standby state                                                                     | ❌ always `unknown` (no CEC surface on web)                                                                     |
-| `loadMedia` (single item + `queueData`), play/pause/stop/seek, stream volume/mute | ✅                                                                                                              |
-| Media status stream incl. null-clear on unload                                    | ✅ (`Media.addUpdateListener`)                                                                                  |
-| `MediaStatus.videoInfo`                                                           | ❌ not reported by the web sender                                                                               |
-| `setPlaybackRate()`                                                               | ❌ `notSupported` — set `MediaLoadRequest.playbackRate` at load                                                 |
-| Tracks (`setActiveTrackIds`, `setTextTrackStyle`)                                 | ✅                                                                                                              |
-| Queueing (load, insert, reorder, remove, jump, next/prev, repeat mode)            | ✅ (`queueRemoveItems` removes sequentially, not atomically)                                                    |
-| `queueInsertAndPlayItem()`                                                        | ❌ `notSupported` — no atomic insert-and-play request                                                           |
-| Custom channels (`useCastChannel`, `sendMessage`, inbound messages)               | ✅ (channel status reports `{connected: true}` once, like Android)                                              |
-| `customData` on `queueNext`/`queuePrev`/`queueJumpToItem`/`queueSetRepeatMode`    | ⚠️ ignored (the web SDK's queue commands take no custom data)                                                   |
+| API surface                                                                       | Web                                                                                                                                                |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useCastState` / cast state stream                                                | ✅ (maps 1:1 to `cast.framework.CastState`)                                                                                                        |
+| Session lifecycle (`starting`/`started`/`startFailed`/`ending`/`ended`/`resumed`) | ✅                                                                                                                                                 |
+| `suspended` / `resuming` / `resumeFailed` events                                  | ❌ never emitted (no equivalent in the web sender)                                                                                                 |
+| `useDevices` / `DiscoveryManager`                                                 | ⚠️ device list is always empty; discovery controls are no-ops                                                                                      |
+| `SessionManager.startSession(deviceId)`                                           | ⚠️ web ignores `deviceId` — the browser owns the picker, which opens instead (dev-only `console.warn` flags it)                                    |
+| `showCastDialog()`                                                                | ✅ browser Cast picker                                                                                                                             |
+| `showExpandedControls()` / `showIntroductoryOverlay()`                            | ❌ resolves `false` (no such UI in the web SDK)                                                                                                    |
+| `showPlayServicesErrorDialog()`                                                   | ❌ resolves `false` (Android-only)                                                                                                                 |
+| `CastSession` volume / mute / app metadata / status / active input                | ✅                                                                                                                                                 |
+| Standby state                                                                     | ❌ always `unknown` (no CEC surface on web)                                                                                                        |
+| `loadMedia` (single item + `queueData`), play/pause/stop/seek, stream volume/mute | ✅ — `queueData` crosses in full via `LoadRequest.queueData` (id, name, entity, type, repeatMode, containerMetadata, items, startIndex, startTime) |
+| Media status stream incl. null-clear on unload                                    | ✅ (`Media.addUpdateListener`)                                                                                                                     |
+| `MediaStatus.videoInfo`                                                           | ❌ not reported by the web sender                                                                                                                  |
+| `setPlaybackRate()`                                                               | ❌ `notSupported` — set `MediaLoadRequest.playbackRate` at load                                                                                    |
+| Tracks (`setActiveTrackIds`, `setTextTrackStyle`)                                 | ✅                                                                                                                                                 |
+| Queueing (load, insert, reorder, remove, jump, next/prev, repeat mode)            | ✅ (`queueRemoveItems` removes sequentially, not atomically)                                                                                       |
+| `queueInsertAndPlayItem()`                                                        | ❌ `notSupported` — no atomic insert-and-play request                                                                                              |
+| Custom channels (`useCastChannel`, `sendMessage`, inbound messages)               | ✅ (channel status reports `{connected: true}` once, like Android)                                                                                 |
+| `customData` on `queueNext`/`queuePrev`/`queueJumpToItem`/`queueSetRepeatMode`    | ⚠️ ignored (the web SDK's queue commands take no custom data)                                                                                      |
 
 ## SSR / Next.js
 

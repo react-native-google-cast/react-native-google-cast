@@ -683,30 +683,69 @@ describe('CastTransport.web — media mutations', () => {
     expect(request.media.metadata.images[0].width).toBe(100)
   })
 
-  it('loadMedia with queueData issues a queueLoad on the session object', async () => {
+  it('loadMedia with queueData forwards the FULL queue on LoadRequest.queueData', async () => {
     const { transport, session } = await initWithMedia()
     await transport.loadMedia({
       queueData: {
+        id: 'queue-1',
+        name: 'Road Trip Mix',
+        entity: 'entity://playlists/road-trip',
+        type: 'playlist',
+        repeatMode: 'all',
+        containerMetadata: {
+          containerType: 'audioBook',
+          title: 'Container Title',
+          containerDuration: 3600,
+          containerImages: [{ url: 'https://x/cover.jpg', width: 480 }],
+          sections: [{ type: 'generic', title: 'Chapter 1' }],
+        },
         items: [
           { mediaInfo: { contentUrl: 'https://x/1.mp4' } },
           { mediaInfo: { contentUrl: 'https://x/2.mp4' }, startTime: 9 },
         ],
         startIndex: 1,
-        repeatMode: 'all',
+        startTime: 42,
       },
     })
-    expect(session.queueLoadCalls).toHaveLength(1)
-    const request = session.queueLoadCalls[0].args[0]
-    expect(request.items).toHaveLength(2)
-    expect(request.items[1].media.contentId).toBe('https://x/2.mp4')
-    expect(request.items[1].startTime).toBe(9)
-    expect(request.startIndex).toBe(1)
-    expect(request.repeatMode).toBe('REPEAT_ALL')
+
+    expect(session.loadMedia).toHaveBeenCalledTimes(1)
+    const request = session.loadMedia.mock.calls[0][0]
+    // The web LoadRequest constructor requires a MediaInfo — the first queue
+    // item's media stands in; queueData governs on the receiver.
+    expect(request.media.contentId).toBe('https://x/1.mp4')
+    expect(request.queueData).toMatchObject({
+      id: 'queue-1',
+      name: 'Road Trip Mix',
+      entity: 'entity://playlists/road-trip',
+      queueType: 'PLAYLIST',
+      repeatMode: 'REPEAT_ALL',
+      startIndex: 1,
+      startTime: 42,
+    })
+    expect(request.queueData.items).toHaveLength(2)
+    expect(request.queueData.items[1].media.contentId).toBe('https://x/2.mp4')
+    expect(request.queueData.items[1].startTime).toBe(9)
+    expect(request.queueData.containerMetadata).toMatchObject({
+      containerType: 1, // AUDIOBOOK_CONTAINER
+      title: 'Container Title',
+      containerDuration: 3600,
+    })
+    expect(request.queueData.containerMetadata.containerImages[0].url).toBe(
+      'https://x/cover.jpg'
+    )
+    expect(request.queueData.containerMetadata.sections[0]).toMatchObject({
+      metadataType: 0, // GENERIC
+      title: 'Chapter 1',
+    })
   })
 
-  it('loadMedia rejects a request with neither mediaInfo nor queueData', async () => {
+  it('loadMedia rejects a request with neither mediaInfo nor a non-empty queueData', async () => {
     const { transport } = await initWithMedia()
     await expectCastError(transport.loadMedia({}), 'invalidParameter')
+    await expectCastError(
+      transport.loadMedia({ queueData: { items: [] } }),
+      'invalidParameter'
+    )
   })
 
   it('loadMedia maps a resolved ErrorCode to a typed rejection', async () => {

@@ -41,6 +41,10 @@ import type {
 import type { MediaQueueItem } from '../types/MediaQueueItem'
 import type { MediaLiveSeekableRange } from '../types/MediaLiveSeekableRange'
 import type { MediaLoadRequest } from '../types/MediaLoadRequest'
+import type { MediaQueueData } from '../types/MediaQueueData'
+import type { MediaQueueType } from '../types/MediaQueueType'
+import type { MediaQueueContainerMetadata } from '../types/MediaQueueContainerMetadata'
+import type { MediaQueueContainerType } from '../types/MediaQueueContainerType'
 import type { ChromeCastNamespace } from './webSdk'
 
 // ---------------------------------------------------------------------------
@@ -157,6 +161,28 @@ const TRACK_SUBTYPE_TO_WEB: Record<MediaTrackSubtype, string> = {
   metadata: 'METADATA',
 }
 
+/** https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.QueueType */
+const QUEUE_TYPE_TO_WEB: Record<MediaQueueType, string> = {
+  album: 'ALBUM',
+  audioBook: 'AUDIOBOOK',
+  liveTv: 'LIVE_TV',
+  movie: 'MOVIE',
+  playlist: 'PLAYLIST',
+  radioStation: 'RADIO_STATION',
+  podcastSeries: 'PODCAST_SERIES',
+  tvSeries: 'TV_SERIES',
+  videoPlaylist: 'VIDEO_PLAYLIST',
+}
+
+/**
+ * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.ContainerType
+ * Numeric wire values (0 = GENERIC_CONTAINER, 1 = AUDIOBOOK_CONTAINER).
+ */
+const CONTAINER_TYPE_TO_WEB: Record<MediaQueueContainerType, number> = {
+  generic: 0,
+  audioBook: 1,
+}
+
 /** https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media#.TextTrackEdgeType */
 const EDGE_TYPE_FROM_WEB: Record<string, TextTrackEdgeType> = {
   NONE: 'none',
@@ -266,10 +292,47 @@ interface ExtendedWebMediaInfo extends chrome.cast.media.MediaInfo {
   hlsVideoSegmentFormat?: string
 }
 
-/** Runtime `LoadRequest` fields the ambient types omit (credentials). */
+/**
+ * `chrome.cast.media.ContainerMetadata` shape
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.ContainerMetadata)
+ * — sent as a plain field bag, like metadata (the SDK class is a bare
+ * container; the ambient types don't declare it).
+ */
+interface WebContainerMetadata {
+  containerType?: number
+  title?: string
+  containerDuration?: number
+  containerImages?: chrome.cast.Image[]
+  sections?: WebMetadataBag[]
+}
+
+/**
+ * `chrome.cast.media.QueueData` shape
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.QueueData)
+ * — sent as a plain field bag on `LoadRequest.queueData` (the ambient types
+ * don't declare the class).
+ */
+interface WebQueueData {
+  id?: string
+  name?: string
+  entity?: string
+  queueType?: string
+  repeatMode?: string
+  containerMetadata?: WebContainerMetadata
+  items?: chrome.cast.media.QueueItem[]
+  startIndex?: number
+  startTime?: number
+}
+
+/**
+ * Runtime `LoadRequest` fields the ambient types omit: credentials and
+ * `queueData`
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.LoadRequest).
+ */
 interface ExtendedWebLoadRequest extends chrome.cast.media.LoadRequest {
   credentials?: string
   credentialsType?: string
+  queueData?: WebQueueData
 }
 
 /** Runtime `QueueItem` fields the ambient types omit. */
@@ -821,9 +884,81 @@ export function fromMediaInfo(
 }
 
 /**
- * {@link MediaLoadRequest} (single-item form) →
- * `chrome.cast.media.LoadRequest`. Queue loads go through
- * {@link fromQueueLoadRequest} instead.
+ * {@link MediaQueueContainerMetadata} → the web `ContainerMetadata` field bag
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.ContainerMetadata).
+ */
+function fromContainerMetadata(
+  metadata: MediaQueueContainerMetadata,
+  chromeCast: ChromeCastNamespace
+): WebContainerMetadata {
+  const result: WebContainerMetadata = {
+    containerType: CONTAINER_TYPE_TO_WEB[metadata.containerType ?? 'generic'],
+  }
+  if (metadata.title !== undefined) result.title = metadata.title
+  if (metadata.containerDuration !== undefined) {
+    result.containerDuration = metadata.containerDuration
+  }
+  if (metadata.containerImages !== undefined) {
+    result.containerImages = metadata.containerImages.map((image) =>
+      fromWebImage(image, chromeCast)
+    )
+  }
+  if (metadata.sections !== undefined) {
+    result.sections = metadata.sections.map((section) =>
+      fromMediaMetadata(section, chromeCast)
+    )
+  }
+  return result
+}
+
+/**
+ * {@link MediaQueueData} → the web `QueueData` field bag carried on
+ * `LoadRequest.queueData`
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.QueueData).
+ * Every shared field has a web slot: `id`/`name`/`entity`/`startIndex`/
+ * `startTime` map by name, `type` → `queueType`, `repeatMode` and
+ * `containerMetadata` through their value tables, `items` through
+ * {@link fromQueueItem}.
+ */
+export function fromMediaQueueData(
+  queueData: MediaQueueData,
+  chromeCast: ChromeCastNamespace
+): WebQueueData {
+  const result: WebQueueData = {}
+  if (queueData.id !== undefined) result.id = queueData.id
+  if (queueData.name !== undefined) result.name = queueData.name
+  if (queueData.entity !== undefined) result.entity = queueData.entity
+  if (queueData.type !== undefined) {
+    result.queueType = QUEUE_TYPE_TO_WEB[queueData.type]
+  }
+  if (queueData.repeatMode !== undefined) {
+    result.repeatMode = REPEAT_MODE_TO_WEB[queueData.repeatMode]
+  }
+  if (queueData.containerMetadata !== undefined) {
+    result.containerMetadata = fromContainerMetadata(
+      queueData.containerMetadata,
+      chromeCast
+    )
+  }
+  if (queueData.items !== undefined) {
+    result.items = queueData.items.map((item) =>
+      fromQueueItem(item, chromeCast)
+    )
+  }
+  if (queueData.startIndex !== undefined) {
+    result.startIndex = queueData.startIndex
+  }
+  if (queueData.startTime !== undefined) result.startTime = queueData.startTime
+  return result
+}
+
+/**
+ * {@link MediaLoadRequest} → `chrome.cast.media.LoadRequest`. A `queueData`
+ * payload rides on `LoadRequest.queueData` in full — the modern web queue
+ * load
+ * (https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.LoadRequest).
+ * (`CastTransportApi.queueLoad`'s narrower surface still goes through
+ * {@link fromQueueLoadRequest}.)
  */
 export function fromMediaLoadRequest(
   request: MediaLoadRequest,
@@ -833,6 +968,9 @@ export function fromMediaLoadRequest(
   const result = new chromeCast.media.LoadRequest(
     fromMediaInfo(mediaInfo, chromeCast)
   ) as ExtendedWebLoadRequest
+  if (request.queueData !== undefined) {
+    result.queueData = fromMediaQueueData(request.queueData, chromeCast)
+  }
   if (request.autoplay !== undefined) result.autoplay = request.autoplay
   if (request.startTime !== undefined) result.currentTime = request.startTime
   if (request.playbackRate !== undefined) {
