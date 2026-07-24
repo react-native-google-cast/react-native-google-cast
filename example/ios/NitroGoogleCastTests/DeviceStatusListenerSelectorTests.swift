@@ -88,3 +88,24 @@ final class SessionListenerSelectorTests: XCTestCase {
     }
   }
 }
+
+/// Guards the `GCKDiscoveryManagerListener` selector wiring in
+/// `CastDiscoveryListener` — same compiles-clean-but-silent hazard as above.
+///
+/// Selectors copied verbatim from the GoogleCast 4.8.4 `GCKDiscoveryManager.h`
+/// header. `didStartDiscoveryForDeviceCategory:` is the SDK's only public
+/// discovery-lifecycle signal (the protocol has no stop/suspend counterpart);
+/// `isDiscovering` coherence for SDK-initiated starts (first Cast-button tap,
+/// foreground auto-resume) depends on it firing (v5-xr6).
+final class DiscoveryListenerSelectorTests: XCTestCase {
+  func testRespondsToDiscoverySelectors() {
+    XCTAssertTrue(
+      CastDiscoveryListener.instancesRespond(
+        to: NSSelectorFromString("didStartDiscoveryForDeviceCategory:")),
+      "discovery-start callback is not wired to its GCK selector — isDiscovering would go stale")
+    XCTAssertTrue(
+      CastDiscoveryListener.instancesRespond(
+        to: NSSelectorFromString("didUpdateDeviceList")),
+      "device-list callback is not wired to its GCK selector — onDevices would silently never fire")
+  }
+}

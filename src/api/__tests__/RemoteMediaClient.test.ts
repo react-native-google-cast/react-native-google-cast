@@ -19,9 +19,9 @@ import { RemoteMediaClient } from '../RemoteMediaClient'
 jest.mock('../../state/castStore.singleton', () => {
   const { CastStore: Store } = require('../../state/CastStore')
   const {
-    FakeCastTransport,
+    FakeCastTransport: Transport,
   } = require('../../transport/__fakes__/FakeCastTransport')
-  const transport = new FakeCastTransport()
+  const transport = new Transport()
   const store = new Store(transport)
   return { castStore: store, castTransport: transport }
 })

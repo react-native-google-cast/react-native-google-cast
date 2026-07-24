@@ -107,9 +107,8 @@ export class CastSession {
    * @internal — not part of the public façade surface.
    */
   refreshDeviceFromStore(): void {
-    const current = this.store.getSliceState<SessionState>(
-      SESSION_SLICE_KEY
-    ).current
+    const current =
+      this.store.getSliceState<SessionState>(SESSION_SLICE_KEY).current
     if (current && current.generation === this.generation) {
       this.lastKnownDevice = current.device
     }

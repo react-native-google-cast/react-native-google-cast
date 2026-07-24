@@ -8,7 +8,7 @@ chokidar
   })
   .on(
     'change',
-    debounce((path, stats) => {
+    debounce((path) => {
       if (!path) return
 
       compileDocs('--disableOutputCheck')

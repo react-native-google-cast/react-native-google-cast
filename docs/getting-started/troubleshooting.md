@@ -32,11 +32,13 @@ This is by far the most common problem with this library. Before creating an iss
 
 - (Android) **emulators** are [not supported](https://github.com/googlecast/CastVideos-android/issues/104#issuecomment-816290407). Please test with a real Android device before reporting an issue. Alternatively, you may try using [Genymotion](https://www.genymotion.com/) but note it [doesn't support M1/ARM Macs yet](https://support.genymotion.com/hc/en-us/articles/360017897157-Does-Genymotion-Desktop-work-on-Mac-M1-).
 
+- (iOS) **Out of the box, the device list stays empty (and `castState` stays `noDevicesAvailable`) until the user taps the Cast button for the first time.** This is the Cast SDK's intended iOS 14+ behavior ([`startDiscoveryAfterFirstTapOnCastButton`](https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_cast_options), default `true`), and the first tap is only the **default** permission/discovery trigger — discovery is delayed until it so the [local network permission prompt](https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery) appears in context. In the default flow, render a `CastButton` and tap it; on subsequent launches the SDK manages discovery automatically. In a **custom device picker** flow (no `CastButton`), start discovery yourself by calling [startDiscovery](../api/classes/discoverymanager#startdiscovery), as Google recommends for custom pickers — the first call triggers the same permission prompt.
+
 - (iOS) If you disabled discovery autostart in [iOS Setup](./setup#ios), make sure you call [startDiscovery](../api/classes/discoverymanager#startdiscovery) somewhere in your JS code.
 
 - (iOS) Double check that you've configured Bonjour services in `Info.plist`.
 
-- (iOS) If calling `showCastDialog`, note that the user has to tap the Cast Button and grant permissions first before you can programmatically open the dialog.
+- (iOS) If calling `showCastDialog`, note that discovery must have been started and local network permission granted before the dialog can list any devices. In the default flow that means the user has tapped the Cast Button at least once; in a custom-picker flow, calling [startDiscovery](../api/classes/discoverymanager#startdiscovery) first serves the same purpose.
 
 - (iOS) You may want to set `options.startDiscoveryAfterFirstTapOnCastButton = false` if you're not explicitly requiring the user to tap the Cast Button first and instead want to start discovery immediately after launching the app.
 

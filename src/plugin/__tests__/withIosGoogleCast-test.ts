@@ -81,6 +81,23 @@ describe('applyGoogleCastAppDelegate (Swift, RN 0.86 template)', () => {
     ).toHaveLength(1)
   })
 
+  it('pins the out-of-the-box discovery contract (v5-xr6 / #625): autostart on, first-tap-gated', () => {
+    // GCK's defaults are kept deliberately: discovery autostarts with the
+    // context but is gated on the first Cast-button tap, so the iOS 14+ local
+    // network permission prompt fires in context (not at cold launch). The
+    // native transport never force-starts discovery — this injected init is
+    // the single place the contract is configured.
+    const contents = applyGoogleCastAppDelegate(
+      readFixture('AppDelegate.swift'),
+      'swift',
+      {}
+    )
+    expect(contents).toContain('options.disableDiscoveryAutostart = false')
+    expect(contents).toContain(
+      'options.startDiscoveryAfterFirstTapOnCastButton = true'
+    )
+  })
+
   it('throws a descriptive conflict error for a manual GCKCastContext init (contract v / E10)', () => {
     expect(() =>
       applyGoogleCastAppDelegate(

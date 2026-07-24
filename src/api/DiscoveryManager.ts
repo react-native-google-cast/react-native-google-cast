@@ -6,10 +6,26 @@ import type { EventSubscription } from './subscribeSelector'
 /**
  * Manages the device-discovery process over the central {@link CastStore}.
  *
- * The framework auto-starts discovery in the foreground and suspends it in the
- * background. On iOS, `startDiscovery`/`stopDiscovery` let an app reduce network
- * traffic / CPU in screens that don't use Cast. The device list is served
- * synchronously from the store snapshot (a frozen array).
+ * Discovery is **user-interaction-gated by Google's design** (battery +
+ * iOS 14+ local-network privacy), and this library keeps that contract:
+ *
+ * - **Android** — discovery is completely managed by the Cast framework: it
+ *   runs while a Cast button / Cast dialog is on screen and opportunistically
+ *   on app foreground; there is no public API to force it.
+ * - **iOS** — with the default `GCKCastOptions`
+ *   (`startDiscoveryAfterFirstTapOnCastButton = true`), discovery starts when
+ *   the user first taps a `CastButton` (which also triggers the local-network
+ *   permission flow); afterwards the framework starts/suspends it with the
+ *   app's foreground lifecycle. Until that first tap the device list is empty
+ *   and `castState` stays `noDevicesAvailable` — expected, not a bug.
+ *
+ * If you build a **custom device picker** (no `CastButton` on screen), call
+ * {@link startDiscovery} on iOS — Google's documented requirement
+ * (https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery);
+ * on Android keep a (possibly invisible) `CastButton` mounted.
+ *
+ * The device list is served synchronously from the store snapshot (a frozen
+ * array).
  */
 export class DiscoveryManager {
   private readonly store: CastStore
@@ -34,12 +50,22 @@ export class DiscoveryManager {
     }
   }
 
-  /** *(iOS only)* Start the device-discovery process. */
+  /**
+   * *(iOS only)* Start the device-discovery process. Required when you build a
+   * custom device picker (no `CastButton` on screen) — with the default
+   * `GCKCastOptions` the Cast SDK otherwise waits for the first Cast-button
+   * tap before discovering anything. Note: the first start on iOS 14+ triggers
+   * the local-network permission prompt. No-op on Android (the framework owns
+   * discovery there).
+   */
   startDiscovery(): void {
     this.transport.startDiscovery()
   }
 
-  /** *(iOS only)* Stop the device-discovery process. */
+  /**
+   * *(iOS only)* Stop the device-discovery process — an optimization to reduce
+   * network traffic / CPU in screens that don't use Cast.
+   */
   stopDiscovery(): void {
     this.transport.stopDiscovery()
   }

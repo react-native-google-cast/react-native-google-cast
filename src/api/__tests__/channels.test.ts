@@ -6,12 +6,12 @@ import { SessionManager } from '../SessionManager'
 // CastSession → RemoteMediaClient transitively pulls the native singleton;
 // swap it for a fake-backed one (same pattern as facades.test.ts).
 jest.mock('../../state/castStore.singleton', () => {
-  const { CastStore } = require('../../state/CastStore')
+  const { CastStore: Store } = require('../../state/CastStore')
   const {
-    FakeCastTransport,
+    FakeCastTransport: Transport,
   } = require('../../transport/__fakes__/FakeCastTransport')
-  const transport = new FakeCastTransport()
-  const store = new CastStore(transport)
+  const transport = new Transport()
+  const store = new Store(transport)
   return { castStore: store, castTransport: transport }
 })
 

@@ -11,12 +11,12 @@ import { RemoteMediaClient } from '../RemoteMediaClient'
 // these tests drive their own `setup()` store, not this singleton. Mirrors
 // `RemoteMediaClient.test.ts` / `mediaHooks.test.ts`.
 jest.mock('../../state/castStore.singleton', () => {
-  const { CastStore } = require('../../state/CastStore')
+  const { CastStore: Store } = require('../../state/CastStore')
   const {
-    FakeCastTransport,
+    FakeCastTransport: Transport,
   } = require('../../transport/__fakes__/FakeCastTransport')
-  const transport = new FakeCastTransport()
-  const store = new CastStore(transport)
+  const transport = new Transport()
+  const store = new Store(transport)
   return { castStore: store, castTransport: transport }
 })
 
