@@ -23,10 +23,20 @@ concurrency:
   group: e2e-android-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege: these jobs only read the repo. The `changes` job re-grants
+# pull-requests: read for itself (paths-filter lists PR files via the API).
+permissions:
+  contents: read
+
 jobs:
   changes:
     name: Detect e2e-relevant changes
     runs-on: ubuntu-latest
+    # Job-level permissions replace the top-level map entirely, so contents:
+    # read must be restated for the checkout.
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       e2e: ${{ steps.filter.outputs.e2e }}
     steps:
