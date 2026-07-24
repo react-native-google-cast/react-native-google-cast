@@ -802,13 +802,35 @@ describe('CastTransport.web — media mutations', () => {
     })
   })
 
-  it('loadMedia rejects a request with neither mediaInfo nor a non-empty queueData', async () => {
+  it('loadMedia rejects a request with neither mediaInfo nor queueData', async () => {
     const { transport } = await initWithMedia()
     await expectCastError(transport.loadMedia({}), 'invalidParameter')
-    await expectCastError(
-      transport.loadMedia({ queueData: { items: [] } }),
-      'invalidParameter'
-    )
+  })
+
+  it('loadMedia forwards an items-less cloud queue (queueData only, no media)', async () => {
+    const { transport, session } = await initWithMedia()
+    // Native parity: MediaQueueData.items is optional — a receiver/cloud
+    // queue is identified by entity/id and carries no inline items, and the
+    // load's media information is optional when queueData identifies the
+    // content (GCKMediaLoadRequestDataBuilder.mediaInformation is nullable).
+    await transport.loadMedia({
+      queueData: {
+        entity: 'entity://playlists/cloud-queue',
+        id: 'cloud-queue-1',
+        name: 'Cloud Queue',
+        type: 'playlist',
+      },
+    })
+    expect(session.loadMedia).toHaveBeenCalledTimes(1)
+    const request = session.loadMedia.mock.calls[0][0]
+    expect(request.media).toBeNull()
+    expect(request.queueData).toMatchObject({
+      entity: 'entity://playlists/cloud-queue',
+      id: 'cloud-queue-1',
+      name: 'Cloud Queue',
+      queueType: 'PLAYLIST',
+    })
+    expect(request.queueData.items).toBeUndefined()
   })
 
   it('loadMedia maps a resolved ErrorCode to a typed rejection', async () => {
@@ -963,6 +985,29 @@ describe('CastTransport.web — media mutations', () => {
     )
   })
 
+  it('stops the sequential queueRemoveItems loop once flushed (interrupted)', async () => {
+    const { transport, media, sdk, session } = await initWithMedia()
+    media.manual.add('queueRemoveItem')
+
+    const pending = transport.queueRemoveItems([1, 2, 3])
+    expect(
+      media.calls.filter((call) => call.method === 'queueRemoveItem')
+    ).toHaveLength(1)
+
+    // Session ends while the first removal is in flight — the promise is
+    // flushed with `interrupted`...
+    sdk.context.currentSession = null
+    sdk.context.emitSessionState(session, 'SESSION_ENDED')
+    await expectCastError(pending, 'interrupted')
+
+    // ...and the late success of the in-flight removal must NOT issue the
+    // next one against the torn-down media session.
+    media.pendingCommands[0].success()
+    expect(
+      media.calls.filter((call) => call.method === 'queueRemoveItem')
+    ).toHaveLength(1)
+  })
+
   it('a mid-sequence queueRemoveItems failure rejects and stops', async () => {
     const { transport, media } = await initWithMedia()
     media.errors.queueRemoveItem = { code: 'invalid_parameter' }
@@ -995,6 +1040,24 @@ describe('CastTransport.web — T6 request ownership', () => {
 
     sdk.context.currentSession = null
     sdk.context.emitSessionState(session, 'SESSION_ENDED')
+    await expectCastError(pending, 'interrupted')
+  })
+
+  it('flushes in-flight session requests when CAF replaces the session directly', async () => {
+    const sdk = installFakeWebSdk()
+    const { transport } = await init()
+    const sessionA = installWithSession(sdk)
+    sdk.context.emitSessionState(sessionA, 'SESSION_STARTED')
+
+    sessionA.setVolume.mockImplementationOnce(() => new Promise(() => {})) // never settles
+    const pending = transport.setDeviceVolume(0.5)
+
+    // A new session STARTED without an ENDED for the old one in between —
+    // the old session's request must not outlive it into the new generation.
+    const sessionB = new FakeCastSession()
+    sessionB.sessionId = 'web-session-2'
+    sdk.context.currentSession = sessionB
+    sdk.context.emitSessionState(sessionB, 'SESSION_STARTED')
     await expectCastError(pending, 'interrupted')
   })
 

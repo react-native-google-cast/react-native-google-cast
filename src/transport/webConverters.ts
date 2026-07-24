@@ -1030,11 +1030,18 @@ export function fromMediaQueueData(
  */
 export function fromMediaLoadRequest(
   request: MediaLoadRequest,
-  mediaInfo: MediaInfo,
+  mediaInfo: MediaInfo | undefined,
   chromeCast: ChromeCastNamespace
 ): chrome.cast.media.LoadRequest {
+  // The LoadRequest constructor formally takes a MediaInfo, but the load's
+  // media information is optional whenever `queueData` identifies the content
+  // (receiver `LoadRequestData.media` is optional; native
+  // `GCKMediaLoadRequestDataBuilder.mediaInformation` is nullable) — an
+  // items-less cloud queue passes `null` and the receiver resolves the queue.
   const result = new chromeCast.media.LoadRequest(
-    fromMediaInfo(mediaInfo, chromeCast)
+    (mediaInfo
+      ? fromMediaInfo(mediaInfo, chromeCast)
+      : null) as chrome.cast.media.MediaInfo
   ) as ExtendedWebLoadRequest
   if (request.queueData !== undefined) {
     result.queueData = fromMediaQueueData(request.queueData, chromeCast)

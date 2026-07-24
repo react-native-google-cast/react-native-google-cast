@@ -65,6 +65,16 @@ export class FakeMedia {
   readonly calls: RecordedCall[] = []
   /** Script a failure per method: `media.errors.play = {code: 'timeout'}`. */
   readonly errors: Record<string, any> = {}
+  /**
+   * Method names whose callbacks are held instead of auto-succeeding; the
+   * test completes them via `pendingCommands[i].success()` / `.error(e)`.
+   */
+  readonly manual = new Set<string>()
+  readonly pendingCommands: Array<{
+    method: string
+    success: () => void
+    error: (e: any) => void
+  }> = []
 
   private readonly updateListeners = new Set<(isAlive: boolean) => void>()
 
@@ -96,6 +106,10 @@ export class FakeMedia {
     error: (e: any) => void
   ): void {
     this.calls.push({ method, args })
+    if (this.manual.has(method)) {
+      this.pendingCommands.push({ method, success, error })
+      return
+    }
     const scripted = this.errors[method]
     if (scripted) error(scripted)
     else success()

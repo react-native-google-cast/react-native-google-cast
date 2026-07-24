@@ -390,6 +390,17 @@ class WebCastTransport implements CastTransportApi {
     this.detachSessionObservers()
     // A1: a direct session replacement clears the old session's channels too.
     this.clearChannels(previous ?? undefined)
+    if (previous) {
+      // T6: a request must never outlive its session. A direct replacement
+      // (SESSION_STARTED/RESUMED without an ENDED for the old session in
+      // between) tears the old session down just like an end — flush its
+      // in-flight requests instead of letting them settle into the new
+      // generation.
+      this.flushPending(
+        this.pendingSession,
+        'The Cast session was replaced before the request settled.'
+      )
+    }
 
     const detail =
       (type: 'deviceStatusChanged' | 'activeInputStateChanged') => () => {
@@ -525,10 +536,17 @@ class WebCastTransport implements CastTransportApi {
   /**
    * Run an SDK request with exactly-once settlement + flush registration.
    * The first of {success, failure, flush} wins; later callbacks are no-ops.
+   * `isSettled` lets a multi-step executor (e.g. the sequential
+   * `queueRemoveItems` loop) stop issuing further SDK calls once the request
+   * was settled externally (flushed on session end/replace/dispose).
    */
   private track<T>(
     registry: Set<PendingEntry>,
-    run: (resolve: (value: T) => void, reject: (error: unknown) => void) => void
+    run: (
+      resolve: (value: T) => void,
+      reject: (error: unknown) => void,
+      isSettled: () => boolean
+    ) => void
   ): Promise<T> {
     return new Promise<T>((outerResolve, outerReject) => {
       let settled = false
@@ -554,7 +572,8 @@ class WebCastTransport implements CastTransportApi {
           },
           (error) => {
             if (settle()) outerReject(toCastError(error))
-          }
+          },
+          () => settled
         )
       } catch (error) {
         if (settle()) outerReject(toCastError(error))
@@ -600,14 +619,15 @@ class WebCastTransport implements CastTransportApi {
       media: chrome.cast.media.Media,
       chromeCast: ChromeCastNamespace,
       done: () => void,
-      fail: (error: chrome.cast.Error) => void
+      fail: (error: chrome.cast.Error) => void,
+      isSettled: () => boolean
     ) => void
   ): Promise<void> {
     try {
       const chromeCast = this.requireChromeCast()
       const media = this.requireMedia()
-      return this.track(this.pendingSession, (resolve, reject) =>
-        run(media, chromeCast, () => resolve(), reject)
+      return this.track(this.pendingSession, (resolve, reject, isSettled) =>
+        run(media, chromeCast, () => resolve(), reject, isSettled)
       )
     } catch (error) {
       return Promise.reject(toCastError(error))
@@ -792,23 +812,26 @@ class WebCastTransport implements CastTransportApi {
    * on `LoadRequest.queueData` (id/name/entity/queueType/repeatMode/
    * containerMetadata/items/startIndex/startTime — see
    * https://developers.google.com/cast/docs/reference/web_sender/chrome.cast.media.QueueData),
-   * matching the native converters. The web `LoadRequest` constructor
-   * requires a `MediaInfo`, so a queue-only request uses its first item's
-   * media as the request's `media` field (queueData governs on the receiver).
+   * matching the native converters. When only a queue is given, the request's
+   * `media` field is the first item's media if there is one, and absent for
+   * an items-less queue (a cloud/receiver queue identified by
+   * `entity`/`id`) — the media information of a load is optional whenever
+   * `queueData` identifies the content, exactly as on native
+   * (`GCKMediaLoadRequestDataBuilder.mediaInformation` is nullable and our
+   * iOS/Android converters forward such requests unchanged).
    */
   loadMedia(request: MediaLoadRequest): Promise<void> {
     try {
       const chromeCast = this.requireChromeCast()
       const session = this.requireSession()
-      const mediaInfo =
-        request.mediaInfo ?? request.queueData?.items?.[0]?.mediaInfo
-      if (!mediaInfo) {
+      if (!request.mediaInfo && !request.queueData) {
         throw {
           code: 'invalidParameter',
-          message:
-            'Either mediaInfo or a queueData with at least one item is required.',
+          message: 'Either mediaInfo or queueData is required.',
         } satisfies CastError
       }
+      const mediaInfo =
+        request.mediaInfo ?? request.queueData?.items?.[0]?.mediaInfo
       const loadRequest = fromMediaLoadRequest(request, mediaInfo, chromeCast)
       return this.track<void>(this.pendingSession, (resolve, reject) => {
         session.loadMedia(loadRequest).then((errorCode) => {
@@ -1009,12 +1032,16 @@ class WebCastTransport implements CastTransportApi {
    * Web caveat: the web sender only exposes single-item removal
    * (`Media.queueRemoveItem`), so multiple ids are removed **sequentially**
    * (not atomically) — a mid-sequence failure rejects with the remaining
-   * items still queued.
+   * items still queued. The sequence is gated on `isSettled`, so a flush
+   * (session end/replace/dispose) mid-flight stops the loop instead of
+   * continuing to mutate a torn-down media session after the caller was
+   * told the request was interrupted.
    */
   queueRemoveItems(itemIds: number[], _customData?: AnyMap): Promise<void> {
-    return this.mediaRequest((media, _chromeCast, done, fail) => {
+    return this.mediaRequest((media, _chromeCast, done, fail, isSettled) => {
       const remaining = [...itemIds]
       const step = (): void => {
+        if (isSettled()) return // flushed mid-sequence — stop issuing removals
         const next = remaining.shift()
         if (next === undefined) {
           done()
