@@ -144,8 +144,10 @@ export interface InitialSnapshot {
   /**
    * The media status of {@link currentSession}'s RemoteMediaClient at cold
    * start (app relaunch into active playback, or GCK auto-resume completing
-   * before JS init). Mirrors the push convention: a nil native status is
-   * omitted, never delivered as null. Only meaningful with `currentSession`.
+   * before JS init). A nil native status is simply omitted here — the seed
+   * starts empty either way, so the snapshot never needs an explicit clear
+   * (unlike the `onMediaStatus` push path, where `undefined` means "media
+   * unloaded"). Only meaningful with `currentSession`.
    */
   mediaStatus?: MediaStatus
 }
@@ -178,12 +180,17 @@ export interface CastTransportApi {
    * persistent: cast-state changes, device-list changes, the ordered
    * session-lifecycle stream, media-status pushes, and the custom-channel
    * message/status streams. Resolves after observers are live.
+   *
+   * `onMediaStatus` carries `undefined` when the receiver reports no media
+   * (nil/null GCK status) while the session stays alive — media unloaded via
+   * `stop()` or the last queue item removed (v5-82w). Session-end teardown is
+   * signalled through `onLifecycle`, never through a status push.
    */
   initAndSubscribe(
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
-    onMediaStatus: (status: MediaStatus) => void,
+    onMediaStatus: (status: MediaStatus | undefined) => void,
     onChannelMessage: (namespace: string, message: string) => void,
     onChannelStatus: (
       namespace: string,

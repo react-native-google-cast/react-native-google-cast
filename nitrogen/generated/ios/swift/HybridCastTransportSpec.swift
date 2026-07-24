@@ -15,7 +15,7 @@ public protocol HybridCastTransportSpec_protocol: HybridObject {
   var isPassiveScan: Bool { get }
 
   // Methods
-  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void, onMediaStatus: @escaping (_ status: MediaStatus) -> Void, onChannelMessage: @escaping (_ channelNamespace: String, _ message: String) -> Void, onChannelStatus: @escaping (_ channelNamespace: String, _ connected: Bool, _ writable: Bool) -> Void) throws -> Promise<InitialSnapshot>
+  func initAndSubscribe(onState: @escaping (_ castState: CastState) -> Void, onDevices: @escaping (_ devices: [Device]) -> Void, onLifecycle: @escaping (_ event: SessionLifecycleEvent) -> Void, onMediaStatus: @escaping (_ status: MediaStatus?) -> Void, onChannelMessage: @escaping (_ channelNamespace: String, _ message: String) -> Void, onChannelStatus: @escaping (_ channelNamespace: String, _ connected: Bool, _ writable: Bool) -> Void) throws -> Promise<InitialSnapshot>
   func startSession(deviceId: String) throws -> Promise<Void>
   func endCurrentSession(stopCasting: Bool) throws -> Promise<Void>
   func setDeviceVolume(volume: Double) throws -> Promise<Void>

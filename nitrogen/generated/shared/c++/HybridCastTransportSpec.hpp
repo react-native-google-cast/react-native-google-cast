@@ -42,10 +42,10 @@ namespace margelo::nitro::googlecast { enum class MediaRepeatMode; }
 #include <vector>
 #include "SessionLifecycleEvent.hpp"
 #include "MediaStatus.hpp"
+#include <optional>
 #include <string>
 #include "MediaLoadRequest.hpp"
 #include <NitroModules/AnyMap.hpp>
-#include <optional>
 #include "MediaSeekOptions.hpp"
 #include "TextTrackStyle.hpp"
 #include "MediaQueueItem.hpp"
@@ -84,7 +84,7 @@ namespace margelo::nitro::googlecast {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) = 0;
+      virtual std::shared_ptr<Promise<InitialSnapshot>> initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const std::optional<MediaStatus>& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) = 0;
       virtual std::shared_ptr<Promise<void>> startSession(const std::string& deviceId) = 0;
       virtual std::shared_ptr<Promise<void>> endCurrentSession(bool stopCasting) = 0;
       virtual std::shared_ptr<Promise<void>> setDeviceVolume(double volume) = 0;

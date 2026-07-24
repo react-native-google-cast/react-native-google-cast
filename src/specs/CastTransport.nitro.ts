@@ -37,7 +37,10 @@ export interface CastTransport
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
-    onMediaStatus: (status: MediaStatus) => void,
+    // Nullable payload (v5-82w): native forwards a nil/null GCK media status as
+    // `undefined` — media unloaded while the session stays alive (e.g. `stop()`
+    // or the last queue item removed) — so the store can clear its cache.
+    onMediaStatus: (status: MediaStatus | undefined) => void,
     // `channelNamespace` (not `namespace`): nitrogen emits parameter names
     // verbatim into the generated C++, where `namespace` is a reserved keyword.
     onChannelMessage: (channelNamespace: string, message: string) => void,

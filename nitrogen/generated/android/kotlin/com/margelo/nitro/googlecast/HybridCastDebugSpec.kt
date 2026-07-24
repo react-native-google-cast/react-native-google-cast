@@ -115,7 +115,7 @@ abstract class HybridCastDebugSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun injectMediaStatus(status: MediaStatus): Promise<Boolean>
+  abstract fun injectMediaStatus(status: MediaStatus?): Promise<Boolean>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

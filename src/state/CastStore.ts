@@ -227,7 +227,10 @@ export class CastStore {
         (castState) => this.dispatch({ kind: 'state', castState }),
         (devices) => this.dispatch({ kind: 'devices', devices }),
         (event) => this.dispatchLifecycle(event),
-        (status) => this.dispatch({ kind: 'mediaStatus', status }),
+        // `undefined` from native (nil/null GCK status: media unloaded while
+        // the session stays alive) becomes an explicit `null` clear (v5-82w).
+        (status) =>
+          this.dispatch({ kind: 'mediaStatus', status: status ?? null }),
         (namespace, message) => this.channelMessageBus.emit(namespace, message),
         (namespace, connected, writable) =>
           this.dispatch({

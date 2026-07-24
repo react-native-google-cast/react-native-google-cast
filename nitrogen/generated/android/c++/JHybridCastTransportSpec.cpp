@@ -179,7 +179,7 @@ namespace margelo::nitro::googlecast { enum class MediaSeekResumeState; }
 #include "JCastError.hpp"
 #include "CastErrorCode.hpp"
 #include "JCastErrorCode.hpp"
-#include "JFunc_void_MediaStatus.hpp"
+#include "JFunc_void_std__optional_MediaStatus_.hpp"
 #include "JFunc_void_std__string_std__string.hpp"
 #include "JFunc_void_std__string_bool_bool.hpp"
 #include "MediaLoadRequest.hpp"
@@ -244,9 +244,9 @@ namespace margelo::nitro::googlecast {
   }
 
   // Methods
-  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const MediaStatus& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */, jni::alias_ref<JFunc_void_MediaStatus::javaobject> /* onMediaStatus */, jni::alias_ref<JFunc_void_std__string_std__string::javaobject> /* onChannelMessage */, jni::alias_ref<JFunc_void_std__string_bool_bool::javaobject> /* onChannelStatus */)>("initAndSubscribe_cxx");
-    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle), JFunc_void_MediaStatus_cxx::fromCpp(onMediaStatus), JFunc_void_std__string_std__string_cxx::fromCpp(onChannelMessage), JFunc_void_std__string_bool_bool_cxx::fromCpp(onChannelStatus));
+  std::shared_ptr<Promise<InitialSnapshot>> JHybridCastTransportSpec::initAndSubscribe(const std::function<void(CastState /* castState */)>& onState, const std::function<void(const std::vector<Device>& /* devices */)>& onDevices, const std::function<void(const SessionLifecycleEvent& /* event */)>& onLifecycle, const std::function<void(const std::optional<MediaStatus>& /* status */)>& onMediaStatus, const std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>& onChannelMessage, const std::function<void(const std::string& /* channelNamespace */, bool /* connected */, bool /* writable */)>& onChannelStatus) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JFunc_void_CastState::javaobject> /* onState */, jni::alias_ref<JFunc_void_std__vector_Device_::javaobject> /* onDevices */, jni::alias_ref<JFunc_void_SessionLifecycleEvent::javaobject> /* onLifecycle */, jni::alias_ref<JFunc_void_std__optional_MediaStatus_::javaobject> /* onMediaStatus */, jni::alias_ref<JFunc_void_std__string_std__string::javaobject> /* onChannelMessage */, jni::alias_ref<JFunc_void_std__string_bool_bool::javaobject> /* onChannelStatus */)>("initAndSubscribe_cxx");
+    auto __result = method(_javaPart, JFunc_void_CastState_cxx::fromCpp(onState), JFunc_void_std__vector_Device__cxx::fromCpp(onDevices), JFunc_void_SessionLifecycleEvent_cxx::fromCpp(onLifecycle), JFunc_void_std__optional_MediaStatus__cxx::fromCpp(onMediaStatus), JFunc_void_std__string_std__string_cxx::fromCpp(onChannelMessage), JFunc_void_std__string_bool_bool_cxx::fromCpp(onChannelStatus));
     return [&]() {
       auto __promise = Promise<InitialSnapshot>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {

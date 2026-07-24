@@ -93,6 +93,30 @@ describe('ProgressTicker — derivation', () => {
     off()
   })
 
+  it('resets to null on a mid-session clear push (v5-82w)', async () => {
+    // Media unloaded while the session stays alive (stop(), or the last queue
+    // item removed): the derived position must drop with the cleared status
+    // instead of ticking on from the stale one.
+    const clock = makeClock()
+    const { ticker, transport } = await makeTicker(clock.now)
+    const listener = jest.fn()
+    const off = ticker.subscribe(listener)
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(
+      status({ streamPosition: 10, playerState: 'playing' })
+    )
+    clock.advance(2000)
+    expect(ticker.getPosition()).toBe(12)
+
+    listener.mockClear()
+    transport.emitMediaStatus(undefined)
+    expect(ticker.getPosition()).toBeNull()
+    expect(ticker.getDuration()).toBe(0)
+    // Subscribers learn about the clear immediately (store-change notify).
+    expect(listener).toHaveBeenCalled()
+    off()
+  })
+
   it('clamps to duration for VOD but leaves live un-clamped', async () => {
     const clock = makeClock()
     const { ticker, transport } = await makeTicker(clock.now)

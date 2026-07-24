@@ -62,6 +62,58 @@ describe('media slice', () => {
     })
   })
 
+  it('clears the cached status on a null push while the session stays live (v5-82w)', async () => {
+    // Media unloaded mid-session (stop(), or the last queue item removed):
+    // GCK reports a nil/null status while the session is still alive. The
+    // slice must clear instead of serving the last non-null status forever.
+    const { store, transport } = await makeStore()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(status(42))
+    expect(mediaState(store).currentStatus).not.toBeNull()
+
+    transport.emitMediaStatus(undefined)
+    expect(mediaState(store)).toMatchObject({
+      currentStatus: null,
+      live: true,
+      sessionId: 's1',
+    })
+
+    // The session is still live: a later load streams a fresh status back in.
+    transport.emitMediaStatus(status(7))
+    expect(mediaState(store).currentStatus).toMatchObject({ streamPosition: 7 })
+  })
+
+  it('keeps a stable reference on a null push when already empty (Invariant 2)', async () => {
+    const { store, transport } = await makeStore()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+
+    const before = mediaState(store)
+    expect(before.currentStatus).toBeNull()
+    transport.emitMediaStatus(undefined)
+    expect(mediaState(store)).toBe(before)
+  })
+
+  it('notifies subscribers on a mid-session clear', async () => {
+    const { store, transport } = await makeStore()
+    transport.emitLifecycle({ type: 'started', session: session('s1') })
+    transport.emitMediaStatus(status(42))
+
+    const listener = jest.fn()
+    store.subscribe(listener)
+    transport.emitMediaStatus(undefined)
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(mediaState(store).currentStatus).toBeNull()
+  })
+
+  it('drops a null push when no session is live', async () => {
+    // Same rule as a non-null stray push: without a live session the slice is
+    // already empty and must not churn.
+    const { store, transport } = await makeStore()
+    const before = mediaState(store)
+    transport.emitMediaStatus(undefined)
+    expect(mediaState(store)).toBe(before)
+  })
+
   it('drops a status push when no session is live', async () => {
     const { store, transport } = await makeStore()
 

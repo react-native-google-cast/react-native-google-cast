@@ -123,7 +123,7 @@ export class FakeCastTransport implements CastTransportApi {
   private onState?: (castState: CastState) => void
   private onDevices?: (devices: Device[]) => void
   private onLifecycle?: (event: SessionLifecycleEvent) => void
-  private onMediaStatus?: (status: MediaStatus) => void
+  private onMediaStatus?: (status: MediaStatus | undefined) => void
   private onChannelMessage?: (namespace: string, message: string) => void
   private onChannelStatus?: (
     namespace: string,
@@ -158,7 +158,7 @@ export class FakeCastTransport implements CastTransportApi {
     onState: (castState: CastState) => void,
     onDevices: (devices: Device[]) => void,
     onLifecycle: (event: SessionLifecycleEvent) => void,
-    onMediaStatus: (status: MediaStatus) => void,
+    onMediaStatus: (status: MediaStatus | undefined) => void,
     onChannelMessage: (namespace: string, message: string) => void,
     onChannelStatus: (
       namespace: string,
@@ -366,8 +366,12 @@ export class FakeCastTransport implements CastTransportApi {
     this.onLifecycle?.(event)
   }
 
-  /** Emit a media-status update to the subscribed store. */
-  emitMediaStatus(status: MediaStatus): void {
+  /**
+   * Emit a media-status update to the subscribed store. `undefined` mirrors the
+   * native clear push — a nil/null GCK status while the session stays alive
+   * (media unloaded mid-session, v5-82w).
+   */
+  emitMediaStatus(status: MediaStatus | undefined): void {
     this.onMediaStatus?.(status)
   }
 

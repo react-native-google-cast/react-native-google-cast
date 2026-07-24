@@ -40,11 +40,11 @@ abstract class HybridCastTransportSpec: HybridObject() {
   abstract val isPassiveScan: Boolean
 
   // Methods
-  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus) -> Unit, onChannelMessage: (channelNamespace: String, message: String) -> Unit, onChannelStatus: (channelNamespace: String, connected: Boolean, writable: Boolean) -> Unit): Promise<InitialSnapshot>
+  abstract fun initAndSubscribe(onState: (castState: CastState) -> Unit, onDevices: (devices: Array<Device>) -> Unit, onLifecycle: (event: SessionLifecycleEvent) -> Unit, onMediaStatus: (status: MediaStatus?) -> Unit, onChannelMessage: (channelNamespace: String, message: String) -> Unit, onChannelStatus: (channelNamespace: String, connected: Boolean, writable: Boolean) -> Unit): Promise<InitialSnapshot>
   
   @DoNotStrip
   @Keep
-  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent, onMediaStatus: Func_void_MediaStatus, onChannelMessage: Func_void_std__string_std__string, onChannelStatus: Func_void_std__string_bool_bool): Promise<InitialSnapshot> {
+  private fun initAndSubscribe_cxx(onState: Func_void_CastState, onDevices: Func_void_std__vector_Device_, onLifecycle: Func_void_SessionLifecycleEvent, onMediaStatus: Func_void_std__optional_MediaStatus_, onChannelMessage: Func_void_std__string_std__string, onChannelStatus: Func_void_std__string_bool_bool): Promise<InitialSnapshot> {
     val __result = initAndSubscribe(onState, onDevices, onLifecycle, onMediaStatus, onChannelMessage, onChannelStatus)
     return __result
   }

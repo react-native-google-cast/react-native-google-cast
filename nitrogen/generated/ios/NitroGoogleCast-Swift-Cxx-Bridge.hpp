@@ -869,6 +869,21 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::optional<MediaStatus>
+  /**
+   * Specialized version of `std::optional<MediaStatus>`.
+   */
+  using std__optional_MediaStatus_ = std::optional<MediaStatus>;
+  inline std::optional<MediaStatus> create_std__optional_MediaStatus_(const MediaStatus& value) noexcept {
+    return std::optional<MediaStatus>(value);
+  }
+  inline bool has_value_std__optional_MediaStatus_(const std::optional<MediaStatus>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline MediaStatus get_std__optional_MediaStatus_(const std::optional<MediaStatus>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::shared_ptr<HybridCastDebugSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridCastDebugSpec>`.
@@ -1052,21 +1067,6 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Result<std::shared_ptr<Promise<bool>>>::withError(error);
   }
   
-  // pragma MARK: std::optional<MediaStatus>
-  /**
-   * Specialized version of `std::optional<MediaStatus>`.
-   */
-  using std__optional_MediaStatus_ = std::optional<MediaStatus>;
-  inline std::optional<MediaStatus> create_std__optional_MediaStatus_(const MediaStatus& value) noexcept {
-    return std::optional<MediaStatus>(value);
-  }
-  inline bool has_value_std__optional_MediaStatus_(const std::optional<MediaStatus>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline MediaStatus get_std__optional_MediaStatus_(const std::optional<MediaStatus>& optional) noexcept {
-    return optional.value();
-  }
-  
   // pragma MARK: std::shared_ptr<Promise<InitialSnapshot>>
   /**
    * Specialized version of `std::shared_ptr<Promise<InitialSnapshot>>`.
@@ -1167,26 +1167,26 @@ namespace margelo::nitro::googlecast::bridge::swift {
     return Func_void_SessionLifecycleEvent_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::function<void(const MediaStatus& /* status */)>
+  // pragma MARK: std::function<void(const std::optional<MediaStatus>& /* status */)>
   /**
-   * Specialized version of `std::function<void(const MediaStatus&)>`.
+   * Specialized version of `std::function<void(const std::optional<MediaStatus>&)>`.
    */
-  using Func_void_MediaStatus = std::function<void(const MediaStatus& /* status */)>;
+  using Func_void_std__optional_MediaStatus_ = std::function<void(const std::optional<MediaStatus>& /* status */)>;
   /**
-   * Wrapper class for a `std::function<void(const MediaStatus& / * status * /)>`, this can be used from Swift.
+   * Wrapper class for a `std::function<void(const std::optional<MediaStatus>& / * status * /)>`, this can be used from Swift.
    */
-  class Func_void_MediaStatus_Wrapper final {
+  class Func_void_std__optional_MediaStatus__Wrapper final {
   public:
-    explicit Func_void_MediaStatus_Wrapper(std::function<void(const MediaStatus& /* status */)>&& func): _function(std::make_unique<std::function<void(const MediaStatus& /* status */)>>(std::move(func))) {}
-    inline void call(MediaStatus status) const noexcept {
+    explicit Func_void_std__optional_MediaStatus__Wrapper(std::function<void(const std::optional<MediaStatus>& /* status */)>&& func): _function(std::make_unique<std::function<void(const std::optional<MediaStatus>& /* status */)>>(std::move(func))) {}
+    inline void call(std::optional<MediaStatus> status) const noexcept {
       _function->operator()(status);
     }
   private:
-    std::unique_ptr<std::function<void(const MediaStatus& /* status */)>> _function;
+    std::unique_ptr<std::function<void(const std::optional<MediaStatus>& /* status */)>> _function;
   } SWIFT_NONCOPYABLE;
-  Func_void_MediaStatus create_Func_void_MediaStatus(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_MediaStatus_Wrapper wrap_Func_void_MediaStatus(Func_void_MediaStatus value) noexcept {
-    return Func_void_MediaStatus_Wrapper(std::move(value));
+  Func_void_std__optional_MediaStatus_ create_Func_void_std__optional_MediaStatus_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__optional_MediaStatus__Wrapper wrap_Func_void_std__optional_MediaStatus_(Func_void_std__optional_MediaStatus_ value) noexcept {
+    return Func_void_std__optional_MediaStatus__Wrapper(std::move(value));
   }
   
   // pragma MARK: std::function<void(const std::string& /* channelNamespace */, const std::string& /* message */)>

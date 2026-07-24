@@ -363,8 +363,8 @@ namespace margelo::nitro::googlecast {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<bool>> injectMediaStatus(const MediaStatus& status) override {
-      auto __result = _swiftPart.injectMediaStatus(std::forward<decltype(status)>(status));
+    inline std::shared_ptr<Promise<bool>> injectMediaStatus(const std::optional<MediaStatus>& status) override {
+      auto __result = _swiftPart.injectMediaStatus(status);
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

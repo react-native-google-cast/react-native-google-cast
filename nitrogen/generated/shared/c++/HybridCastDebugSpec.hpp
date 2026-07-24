@@ -76,6 +76,7 @@ namespace margelo::nitro::googlecast { struct SessionLifecycleEvent; }
 #include "CastState.hpp"
 #include <vector>
 #include "SessionLifecycleEvent.hpp"
+#include <optional>
 
 namespace margelo::nitro::googlecast {
 
@@ -129,7 +130,7 @@ namespace margelo::nitro::googlecast {
       virtual std::shared_ptr<Promise<bool>> injectCastState(CastState castState) = 0;
       virtual std::shared_ptr<Promise<bool>> injectDevices(const std::vector<Device>& devices) = 0;
       virtual std::shared_ptr<Promise<bool>> injectLifecycleEvent(const SessionLifecycleEvent& event) = 0;
-      virtual std::shared_ptr<Promise<bool>> injectMediaStatus(const MediaStatus& status) = 0;
+      virtual std::shared_ptr<Promise<bool>> injectMediaStatus(const std::optional<MediaStatus>& status) = 0;
 
     protected:
       // Hybrid Setup
