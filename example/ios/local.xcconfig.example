@@ -1,0 +1,45 @@
+// Local, UNTRACKED iOS build overrides for the example app.
+//
+//   cp local.xcconfig.example local.xcconfig
+//   bundle exec pod install          # re-runs the post_install that links it
+//
+// `example/.gitignore` ignores `local.xcconfig`, and every setting below is
+// referenced from tracked files rather than written into them — so `git status`
+// stays clean no matter what you put here. That is the point: the Xcode GUI
+// writes signing changes straight into the tracked `project.pbxproj`, and
+// "remember not to commit it" is not a control.
+//
+// The Podfile's post_install appends `#include? "../../../local.xcconfig"` to
+// the generated `Pods-CastExample.*.xcconfig`. The `?` makes it optional: with
+// no local.xcconfig present the build is unchanged (that is build A, and it is
+// what CI and the Simulator gate compile).
+
+// ---------------------------------------------------------------------------
+// Build B — discovery autostart (Session 1.3 / S3 row 2)
+// ---------------------------------------------------------------------------
+// GCK's default `GCKCastOptions.startDiscoveryAfterFirstTapOnCastButton = YES`
+// gates discovery on the first Cast-button tap (the iOS 14+ Local Network
+// Access design). Setting this to NO is "build B": discovery starts at init,
+// so `GCKDiscoveryManager.isRunning()` is true immediately and — on a physical
+// device — the LNA prompt appears at launch instead of on first tap.
+//
+// Leave the setting UNDEFINED (or delete the line) for build A: the AppDelegate
+// then does not touch the property at all and GCK's own default applies.
+// Accepted values: YES / NO (also 1/0, true/false).
+RNGC_START_DISCOVERY_AFTER_FIRST_TAP = NO
+
+// ---------------------------------------------------------------------------
+// Session 3 — physical-device signing
+// ---------------------------------------------------------------------------
+// Only needed for `yarn example ios --device`. The Simulator needs none of it.
+// Find the team id in Xcode ▸ Settings ▸ Accounts, or:
+//   security find-identity -v -p codesigning
+//
+// DEVELOPMENT_TEAM = ABCDE12345
+//
+// A free personal team cannot reuse a bundle id someone else has provisioned.
+// This prefix is substituted into PRODUCT_BUNDLE_IDENTIFIER; the default when
+// unset is `org.reactjs.native.example`.
+// RNGC_BUNDLE_ID_PREFIX = com.yourcompany.castexample
+//
+// CODE_SIGN_STYLE = Automatic

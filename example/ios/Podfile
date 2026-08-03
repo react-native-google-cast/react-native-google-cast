@@ -37,5 +37,23 @@ target 'CastExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Layer an optional, untracked `ios/local.xcconfig` on top of the generated
+    # app xcconfigs. This is how the Phase 6 device pass selects build B
+    # (discovery autostart) and supplies device-signing settings without any
+    # source or `project.pbxproj` edit — see ios/local.xcconfig.example.
+    #
+    # `#include?` is the optional form: absent file → build unchanged (build A,
+    # what CI and the Simulator gate compile). Appended last so local values win
+    # over the CocoaPods defaults.
+    Dir.glob(File.join(__dir__, 'Pods', 'Target Support Files', 'Pods-CastExample', '*.xcconfig')).each do |xcconfig|
+      contents = File.read(xcconfig)
+      next if contents.include?('local.xcconfig')
+      File.write(xcconfig, contents + <<~INCLUDE)
+
+        // Optional local overrides (untracked) — see ios/local.xcconfig.example
+        #include? "../../../local.xcconfig"
+      INCLUDE
+    end
   end
 end

@@ -22,6 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       applicationID: kGCKDefaultMediaReceiverApplicationID
     )
     let options = GCKCastOptions(discoveryCriteria: criteria)
+    // Build B (Phase 6 device pass, S1.3): flip discovery autostart from an
+    // untracked ios/local.xcconfig rather than by editing this file — an
+    // uncommittable build setting is a control, "remember not to commit it"
+    // is not. Unset (build A) leaves GCK's own default in place, which is what
+    // CI and every Simulator build compile.
+    if let autostart = Self.startDiscoveryAfterFirstTapOverride {
+      options.startDiscoveryAfterFirstTapOnCastButton = autostart
+      NSLog("[SPIKE] build B: startDiscoveryAfterFirstTapOnCastButton=\(autostart)")
+    }
     GCKCastContext.setSharedInstanceWith(options)
 
     let delegate = ReactNativeDelegate()
@@ -40,6 +49,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     )
 
     return true
+  }
+
+  /// `RNGCStartDiscoveryAfterFirstTapOnCastButton` from Info.plist, which the
+  /// build substitutes from `$(RNGC_START_DISCOVERY_AFTER_FIRST_TAP)`.
+  /// `nil` when unset/blank — the caller then leaves `GCKCastOptions` alone.
+  private static var startDiscoveryAfterFirstTapOverride: Bool? {
+    guard
+      let raw = Bundle.main.object(
+        forInfoDictionaryKey: "RNGCStartDiscoveryAfterFirstTapOnCastButton"
+      ) as? String
+    else { return nil }
+    switch raw.trimmingCharacters(in: .whitespaces).lowercased() {
+    case "yes", "true", "1": return true
+    case "no", "false", "0": return false
+    default: return nil
+    }
   }
 }
 

@@ -21,6 +21,9 @@ DerivedData
 *.ipa
 *.xcuserstate
 **/.xcode.env.local
+# Local iOS build overrides (signing, build-B discovery flag). The mechanism is
+# committed as ios/local.xcconfig.example; the values never are.
+ios/local.xcconfig
 
 # Android/IntelliJ
 #
