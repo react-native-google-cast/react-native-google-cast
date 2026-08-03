@@ -15,10 +15,16 @@ extension MediaInfo {
     let url = URL(string: contentUrl) ?? URL(string: "about:blank")!
     let builder = GCKMediaInformationBuilder(contentURL: url)
 
-    if let contentId { builder.contentID = contentId }
+    // contentId falls back to contentUrl — the documented default on
+    // `MediaInfo.contentId`, and what v4 did. The Default Media Receiver keys
+    // off contentID; without it `loadMedia` is accepted and then fails on the
+    // receiver with `idleReason: error`, which reads as a codec problem.
+    builder.contentID = contentId ?? contentUrl
     if let contentType { builder.contentType = contentType }
     if let entity { builder.entity = entity }
-    if let streamType { builder.streamType = streamType.toGckStreamType() }
+    // Defaults to buffered — see the note in the Android converter; keeps the
+    // three platforms behaviourally identical for the same MediaLoadRequest.
+    builder.streamType = (streamType ?? .buffered).toGckStreamType()
     if let metadata { builder.metadata = metadata.toGckMediaMetadata() }
     if let streamDuration { builder.streamDuration = streamDuration }
     if let mediaTracks { builder.mediaTracks = mediaTracks.map { $0.toGckMediaTrack() } }

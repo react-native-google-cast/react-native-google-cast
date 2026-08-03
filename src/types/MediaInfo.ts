@@ -26,7 +26,12 @@ export interface MediaInfo {
   /** The deep link for the media as used by Google Assistant, if any. */
   entity?: string
 
-  /** The stream type. */
+  /**
+   * The stream type. Defaults to `buffered` on every platform when omitted —
+   * the native SDKs would otherwise leave it unset, which some receivers
+   * reject, while the Chrome sender SDK already defaults to buffered. Set it
+   * explicitly for live content.
+   */
   streamType?: MediaStreamType
 
   /** The media item metadata. */

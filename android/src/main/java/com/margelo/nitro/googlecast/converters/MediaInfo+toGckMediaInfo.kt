@@ -15,16 +15,23 @@ import com.google.android.gms.cast.MediaInfo as GckMediaInfo
  * cast-protocol `String`s in GCK Android.
  */
 internal fun MediaInfo.toGckMediaInfo(): GckMediaInfo {
-  // GCK's `MediaInfo.Builder` has no `setContentId`; contentId is a constructor argument.
-  val builder = if (contentId != null) {
-    GckMediaInfo.Builder(contentId)
-  } else {
-    GckMediaInfo.Builder()
-  }
+  // GCK's `MediaInfo.Builder` has no `setContentId`; contentId is a constructor
+  // argument — and it must always be supplied. `contentId` falls back to
+  // `contentUrl` (the documented default on `MediaInfo.contentId`, and what v4
+  // did: `RNGCMediaInfo.fromJson`). The Default Media Receiver keys off
+  // contentId, so a MediaInfo built without one is accepted by `loadMedia` and
+  // then fails on the receiver with `idleReason: error` — which looks like a
+  // playback/codec problem and is not one.
+  val builder = GckMediaInfo.Builder(contentId ?: contentUrl)
   builder.setContentUrl(contentUrl)
   contentType?.let { builder.setContentType(it) }
   entity?.let { builder.setEntity(it) }
-  streamType?.let { builder.setStreamType(it.toGckStreamType()) }
+  // Defaults to BUFFERED, matching the Chrome sender SDK (whose
+  // `chrome.cast.media.MediaInfo` constructor sets BUFFERED) so an identical
+  // MediaLoadRequest behaves the same on all three platforms. GCK's builder
+  // would otherwise leave STREAM_TYPE_NONE, which receivers may reject.
+  // Deliberate change from v4, which also left it NONE.
+  builder.setStreamType((streamType ?: MediaStreamType.BUFFERED).toGckStreamType())
   metadata?.let { builder.setMetadata(it.toGckMediaMetadata()) }
   streamDuration?.let { builder.setStreamDuration((it * 1000).toLong()) }
   mediaTracks?.let { tracks -> builder.setMediaTracks(tracks.map { it.toGckMediaTrack() }) }
