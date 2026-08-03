@@ -8,7 +8,8 @@
   "types": "lib/typescript/src/index.d.ts",
   "source": "src/index",
   "workspaces": [
-    "example"
+    "example",
+    "web-example"
   ],
   "files": [
     "src",
@@ -180,7 +181,9 @@
     "e2e",
     "lib/",
     "nitrogen/generated/",
-    "node_modules/"
+    "node_modules/",
+    "web-example/dist/",
+    "**/build/"
   ],
   "prettier": {
     "quoteProps": "consistent",

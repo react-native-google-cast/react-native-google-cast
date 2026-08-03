@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react-native-google-cast — web harness</title>
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background: #0f0f0f;
+        color: #eee;
+        font-family: ui-monospace, Menlo, monospace;
+      }
+    </style>
+
+    <!--
+      Optional custom receiver, exactly as docs/getting-started/web.md documents
+      it: set the options global BEFORE the loader script. Left commented so the
+      default run uses the Default Media Receiver.
+    -->
+    <!--
+    <script>
+      window.__RNGoogleCastOptions = { receiverAppId: 'ABCD1234' }
+    </script>
+    -->
+
+    <!--
+      The Cast Web Sender loader. The library completes the SDK's
+      `__onGCastApiAvailable` handshake itself — do not call
+      `cast.framework.CastContext.getInstance().setOptions()` here.
+    -->
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
