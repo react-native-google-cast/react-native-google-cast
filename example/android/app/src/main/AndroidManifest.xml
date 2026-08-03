@@ -1,6 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+ (API 33) suppresses notifications unless this is declared AND
+         granted at runtime. The library deliberately declares no permissions of
+         its own, and CAF >= 21.3.0 posts cast notifications via
+         NotificationManager (no foreground service), so this is the permission
+         that actually gates the Cast media notification. The example has no
+         runtime prompt — grant it with
+         `adb shell pm grant com.castexample android.permission.POST_NOTIFICATIONS`
+         before the Phase 6 notification rows. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"

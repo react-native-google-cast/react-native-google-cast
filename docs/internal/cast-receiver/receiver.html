@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  Minimal CAF custom receiver for the v5 device pass (bead v5-8hq.6, T1).
+
+  Two jobs, both of which the Default Media Receiver structurally cannot do:
+
+   1. Echo whatever arrives on the custom namespace, so `CastChannel.sendMessage`
+      / `useCastChannel` have a round trip to assert on.
+   2. Send ONE message the moment a sender connects. This is the row from #614:
+      `useCastChannel` installs its message forwarder at `addChannel` time —
+      before the channel object is even handed back — so a message that arrives
+      during registration must still reach the listener. A receiver that only
+      replies to what it is sent can never prove that.
+
+  It also keeps the media namespace working (the CAF PlayerManager is left
+  untouched), so the same receiver serves the media and queue rows.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>rn-google-cast v5 probe receiver</title>
+    <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #101010;
+        color: #eee;
+        font: 14px/1.5 ui-monospace, Menlo, monospace;
+      }
+      #log {
+        position: fixed;
+        inset: auto 0 0 0;
+        max-height: 45vh;
+        overflow: auto;
+        padding: 12px;
+        background: #000c;
+      }
+      #log div {
+        white-space: pre-wrap;
+      }
+      cast-media-player {
+        --background-color: #101010;
+      }
+    </style>
+  </head>
+  <body>
+    <cast-media-player></cast-media-player>
+    <div id="log"></div>
+
+    <script>
+      // MUST match PROBE_NAMESPACE in example/probeFixtures.ts.
+      var NAMESPACE = 'urn:x-cast:com.reactnative.googlecast.probe'
+
+      var logEl = document.getElementById('log')
+      function log(line) {
+        var el = document.createElement('div')
+        el.textContent = new Date().toISOString().slice(11, 23) + '  ' + line
+        logEl.insertBefore(el, logEl.firstChild)
+        console.log('[probe] ' + line)
+      }
+
+      var context = cast.framework.CastReceiverContext.getInstance()
+
+      // Job 1 — echo. Registered before start() so the namespace is advertised
+      // in the receiver's launch response.
+      context.addCustomMessageListener(NAMESPACE, function (event) {
+        log('← ' + event.senderId + ': ' + JSON.stringify(event.data))
+        context.sendCustomMessage(NAMESPACE, event.senderId, {
+          type: 'echo',
+          received: event.data,
+          at: Date.now(),
+        })
+      })
+
+      // Job 2 — the registration-time handshake (#614). Fired from
+      // SENDER_CONNECTED, which CAF raises as soon as the sender's virtual
+      // connection is up: on the sender side that lands while `addChannel` is
+      // still in flight, which is exactly the case under test.
+      context.addEventListener(
+        cast.framework.system.EventType.SENDER_CONNECTED,
+        function (event) {
+          log('sender connected: ' + event.senderId)
+          context.sendCustomMessage(NAMESPACE, event.senderId, {
+            type: 'hello',
+            note: 'sent on SENDER_CONNECTED, before the sender finished addChannel',
+            at: Date.now(),
+          })
+        },
+      )
+
+      context.addEventListener(
+        cast.framework.system.EventType.SENDER_DISCONNECTED,
+        function (event) {
+          log('sender disconnected: ' + event.senderId)
+        },
+      )
+
+      var options = new cast.framework.CastReceiverOptions()
+      // Keep the receiver up while the pass runs rather than shutting down the
+      // moment media idles — several rows (stop(), remove-last-queue-item)
+      // deliberately leave the receiver with no media but an active session.
+      options.maxInactivity = 3600
+      options.customNamespaces = {}
+      options.customNamespaces[NAMESPACE] =
+        cast.framework.system.MessageType.JSON
+
+      context.start(options)
+      log('receiver started, namespace ' + NAMESPACE)
+    </script>
+  </body>
+</html>

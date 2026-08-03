@@ -8,6 +8,10 @@
     // mirrors that mapping for TypeScript (Yarn does not self-symlink the
     // root workspace into node_modules).
     "paths": {
+      // The barrel itself, so `tsc --noEmit` in this directory actually
+      // typechecks the app instead of erroring out at the first import
+      // (Metro already resolves it through bob's monorepo config).
+      "react-native-google-cast": ["../src/index"],
       "react-native-google-cast/src/*": ["../src/*"]
     }
   },

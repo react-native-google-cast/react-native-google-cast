@@ -1,5 +1,13 @@
 # Phase 3 — Native spike & integration checklist (device/simulator)
 
+> **Carried forward.** The rows still open here — spike 0.3 teardown, the
+> `resumeFailed` path, and finding #2 (Android route population on real
+> hardware) — are now rows **1.4.9**, **2.2.13** and **1.1.3** of
+> [`phase6-device-pass-checklist.md`](./phase6-device-pass-checklist.md), which
+> is the live gate for the device pass (bead v5-8hq.6). Finding #1 was resolved
+> in v5-xr6 / #625 and needs no device time. This document stays as the record
+> of what Phase 3 proved.
+
 The Phase 3 TypeScript keystone (transport seam, `CastStore`, façades) is fully
 verified by `yarn typescript` + `yarn jest` (CI-runnable, device-independent).
 The **native** behaviours below are device-gated and must be confirmed on a
