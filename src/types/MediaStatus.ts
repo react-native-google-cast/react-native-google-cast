@@ -58,6 +58,12 @@ export interface MediaStatus {
    * previous, current, and next items) — not the full queue. Full-queue access via a paged
    * `MediaQueue` API is planned for v5.x; see
    * [#618](https://github.com/react-native-google-cast/react-native-google-cast/issues/618).
+   *
+   * The window can also be *narrower* than what the receiver reported: right after a queue
+   * mutation the receiver may name entries by `itemId` alone, before it has populated their
+   * media. Such entries cannot be represented (`mediaInfo` is required) and are omitted from
+   * this array on Android, so treat a shrinking `queueItems` between two status updates as a
+   * reporting artefact rather than evidence that items left the queue.
    */
   queueItems: MediaQueueItem[]
 

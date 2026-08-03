@@ -34,7 +34,7 @@ import com.margelo.nitro.googlecast.converters.toMediaLoadRequest
 import com.margelo.nitro.googlecast.converters.toMediaMetadata
 import com.margelo.nitro.googlecast.converters.toMediaQueueContainerMetadata
 import com.margelo.nitro.googlecast.converters.toMediaQueueData
-import com.margelo.nitro.googlecast.converters.toMediaQueueItem
+import com.margelo.nitro.googlecast.converters.toMediaQueueItemOrNull
 import com.margelo.nitro.googlecast.converters.toMediaSeekOptions
 import com.margelo.nitro.googlecast.converters.toMediaStatus
 import com.margelo.nitro.googlecast.converters.toMediaTrack
@@ -87,8 +87,12 @@ class HybridCastDebug : HybridCastDebugSpec() {
     value: MediaLiveSeekableRange
   ): MediaLiveSeekableRange = value.toGckMediaLiveSeekableRange().toMediaLiveSeekableRange()
 
+  // A round-trip always starts from a JS-built item, which always carries mediaInfo, so the
+  // GCK item can never be the id-only shape `toMediaQueueItemOrNull` guards against (v5-kbd).
   override fun roundTripMediaQueueItem(value: MediaQueueItem): MediaQueueItem =
-    value.toGckMediaQueueItem().toMediaQueueItem()
+    requireNotNull(value.toGckMediaQueueItem().toMediaQueueItemOrNull()) {
+      "round-trip lost mediaInfo"
+    }
 
   override fun roundTripMediaQueueContainerMetadata(
     value: MediaQueueContainerMetadata

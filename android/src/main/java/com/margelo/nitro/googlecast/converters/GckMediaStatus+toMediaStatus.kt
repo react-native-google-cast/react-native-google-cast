@@ -17,7 +17,10 @@ import com.google.android.gms.cast.MediaStatus as GckMediaStatus
  */
 internal fun GckMediaStatus.toMediaStatus(): MediaStatus {
   val trackIds = activeTrackIds
-  val items = queueItems?.map { it.toMediaQueueItem() } ?: emptyList<MediaQueueItem>()
+  // mapNotNull, not map: the receiver sends id-only queue entries after a queue mutation and
+  // converting one cannot produce a valid item (v5-kbd). Dropping them keeps this off the GCK
+  // main-thread callback's throw path.
+  val items = queueItems?.mapNotNull { it.toMediaQueueItemOrNull() } ?: emptyList<MediaQueueItem>()
   return MediaStatus(
     mediaInfo = mediaInfo?.toMediaInfo(),
     playerState = playerStateOrNull(playerState),

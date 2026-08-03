@@ -15,7 +15,8 @@ import com.google.android.gms.cast.MediaStatus as GckMediaStatus
  * milliseconds become seconds. Empty item lists normalize to `null`.
  */
 internal fun GckMediaQueueData.toMediaQueueData(): MediaQueueData {
-  val mappedItems = items?.map { it.toMediaQueueItem() }
+  // Same id-only-entry hazard as the media status (v5-kbd) — drop, never throw.
+  val mappedItems = items?.mapNotNull { it.toMediaQueueItemOrNull() }
   return MediaQueueData(
     id = queueId,
     name = name,

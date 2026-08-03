@@ -61,7 +61,10 @@ class MediaQueueItemConverterTest {
       val expected = mediaQueueItemFromJson(expectedJson)
 
       val gck = input.toGckMediaQueueItem()
-      val actual = gck.toMediaQueueItem()
+      // Non-null by construction: the fixtures are sender-built items, which always carry
+      // mediaInfo. Only receiver-sent id-only entries convert to null (v5-kbd), and
+      // GckMediaQueueItem.Builder cannot construct one.
+      val actual = requireNotNull(gck.toMediaQueueItemOrNull()) { "[$name] unexpected null" }
 
       // Android preserves itemId (MediaQueueItemBuilder.setItemId exists); assert it round-trips
       // the input value. iOS drops it — see the ANDROID DIVERGENCE note above.
