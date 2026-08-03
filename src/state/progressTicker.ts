@@ -37,9 +37,15 @@ const DEFAULT_INTERVAL = 1
  * (RN ≥0.72 / Hermes expose it), so deltas stay well-behaved; fall back to
  * `Date.now` only where it is somehow unavailable.
  */
+// Declared locally rather than leaned on ambiently: `performance` reaches the
+// root typecheck only via `@types/node`, which an RN library has no business
+// depending on — a consumer whose tsconfig narrows `types` (the example app
+// does, to `["jest"]`) would otherwise fail to compile this file.
+declare const performance: { now?: () => number } | undefined
+
 const monotonicNow: () => number =
-  typeof performance !== 'undefined' && typeof performance.now === 'function'
-    ? () => performance.now()
+  typeof performance !== 'undefined' && typeof performance?.now === 'function'
+    ? () => performance!.now!()
     : () => Date.now()
 
 /**

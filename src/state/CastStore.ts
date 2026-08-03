@@ -97,6 +97,7 @@ export class CastStore {
   private initialized = false
   private disposed = false
   private resolveReady!: () => void
+  private mediaPushes = 0
 
   constructor(transport: CastTransportApi, options: CastStoreOptions = {}) {
     this.transport = transport
@@ -143,6 +144,20 @@ export class CastStore {
   /** Read a registered slice's state by key (for P4/P5 domain façades). */
   getSliceState<TState>(key: string): TState {
     return this.states.get(key) as TState
+  }
+
+  /**
+   * How many `mediaStatus` pushes native has handed to JS, counted at the
+   * boundary — **before** the media slice's `live` gate can drop one.
+   *
+   * Diagnostic only (read by `src/debug/storeDiagnostics.ts`), and the one
+   * number that separates the two halves of a "status went stale" report: a
+   * frozen counter means native stopped calling, a climbing counter with a
+   * frozen status means the reducer is dropping. Without it both look
+   * identical from the app.
+   */
+  getMediaPushCount(): number {
+    return this.mediaPushes
   }
 
   // --- typed lifecycle event bus (never replayed) ---
@@ -229,8 +244,10 @@ export class CastStore {
         (event) => this.dispatchLifecycle(event),
         // `undefined` from native (nil/null GCK status: media unloaded while
         // the session stays alive) becomes an explicit `null` clear (v5-82w).
-        (status) =>
-          this.dispatch({ kind: 'mediaStatus', status: status ?? null }),
+        (status) => {
+          this.mediaPushes += 1
+          this.dispatch({ kind: 'mediaStatus', status: status ?? null })
+        },
         (namespace, message) => this.channelMessageBus.emit(namespace, message),
         (namespace, connected, writable) =>
           this.dispatch({

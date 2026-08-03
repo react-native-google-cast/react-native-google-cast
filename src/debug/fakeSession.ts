@@ -72,3 +72,27 @@ export async function injectFakeSessionEnded(): Promise<boolean> {
   const state = await debug.injectCastState('notConnected')
   return ended && state
 }
+
+/**
+ * Deliver a synthetic media status through the transport's `onMediaStatus`.
+ *
+ * Diagnostic for the "status goes stale" class of bug (v5-868): injecting while
+ * a REAL session is live splits the two possible faults. The injected push
+ * takes the *same* native→JS callback and the *same* store reducer as a real
+ * GCK status, so if the injected one lands while real ones do not, the fault is
+ * upstream in the native GCK callback registration; if neither lands, the store
+ * is dropping pushes (e.g. the media slice's `live` gate).
+ *
+ * The marker position (`9999`) is deliberately implausible so it cannot be
+ * mistaken for real playback in a readout.
+ */
+export async function injectFakeMediaStatus(): Promise<boolean> {
+  return getCastDebug().injectMediaStatus({
+    playerState: 'playing',
+    streamPosition: 9999,
+    playbackRate: 1,
+    volume: 0.42,
+    isMuted: false,
+    queueItems: [],
+  })
+}

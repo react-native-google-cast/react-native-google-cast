@@ -823,6 +823,12 @@ class HybridCastTransport : HybridCastTransportSpec() {
         // forward them through the same path so the cached status' queueItems never goes stale
         // until an unrelated player-status update happens to arrive.
         override fun onQueueStatusUpdated() = emitMediaStatus(client)
+        // Metadata-only changes (a receiver retitling the stream, swapping artwork
+        // mid-playback) report via onMetadataUpdated and through neither of the above,
+        // so MediaStatus.mediaInfo.metadata would otherwise serve a stale title/image
+        // until an unrelated status update happened along — visible in the Android
+        // media notification and the expanded controller.
+        override fun onMetadataUpdated() = emitMediaStatus(client)
       }
     client.registerCallback(callback)
     mediaCallback = callback
