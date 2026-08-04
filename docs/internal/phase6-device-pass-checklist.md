@@ -355,6 +355,38 @@ the two LNA rows genuinely need a physical iPhone.
 | **G3 media load / play**     | ✅ `loadMedia(LAN) resolved`, then `pushes=19 live=true player=playing pos=98.823955 queue=1`                                                  |
 | `storeDiagnostics`           | ✅ the same "Dump store" probe works unchanged on iOS                                                                                          |
 
+### iOS G4 and G5 (same session, run in that order)
+
+**G4 ✅ — identical to Android.** `stop resolved`, then
+`player=idle pos=0 queue=0` with `live=true session=true gen=3` unchanged, and
+the hooks readout showing `useMediaStatus: idle pos=0 items=0 idle=cancelled` /
+`mediaStatus is set`. So the amended G4 criterion holds on **both** platforms,
+and the v5-82w null-push path is exercised by neither — the Default Media
+Receiver simply never reports a null `mediaStatus`.
+
+**G5 ✅.**
+
+```
+24 · flush(tight): endCurrentSession accepted
+25 · flush(tight): settle #1 rejected code=interrupted native=undefined after 64ms
+26 · ending (3e3c5e51-99c0-461b-8227-2832e8983827)
+27 · castState → notConnected
+28 · ended
+30 · flush(tight): settle count 3000ms after teardown = 1 (expect 1)
+```
+
+64 ms against Android's 65 ms, and settle count 1 three seconds after teardown.
+Two cross-platform divergences worth knowing, neither a defect:
+
+- **Flush timing within teardown.** On iOS the rejection lands _before_
+  `ending`; on Android it lands _between_ `ending` and `ended`. Different
+  implementations of `flushPendingRequests` running at slightly different points
+  in the teardown — both settle exactly once with `interrupted`.
+- **`ended` payload.** iOS reports a bare `ended` for a deliberate
+  `endCurrentSession(false)`; Android reports `ended: failed / native 2161` for
+  the same operation. Consumers should not read Android's error here as a
+  failure of the disconnect.
+
 **Observation, not a bug: two senders on one Default Media Receiver.** The first
 iOS connect _joined_ the session the Android app already had (identical
 `sessionId`), and that session then self-terminated with `appNotFound / native
@@ -489,8 +521,8 @@ plays, the fault is in the Android `loadMedia` path.
 | G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator                |
 | G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator (single entry) |
 | G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03                                                      | ✅ 08-04 Simulator                |
-| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ⬜ open                           |
-| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ⬜ open                           |
+| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ✅ 08-04 Simulator, same result   |
+| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ✅ 08-04 @64 ms, settle count 1   |
 | G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                               |
 | G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ blocked on T1 (custom receiver)                            | ⬜ open                           |
 | G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                   |
