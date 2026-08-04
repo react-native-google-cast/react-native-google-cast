@@ -288,6 +288,53 @@ twice, so this proves settle-promptly-with-`interrupted`-and-no-crash, not that
 native fired exactly one callback. Native exactly-once remains covered by
 `TrackedCastRequestTest.kt`.
 
+### G6 ✅ — Android notifications (2026-08-04)
+
+Ran after `adb shell pm grant com.castexample android.permission.POST_NOTIFICATIONS`
+(the example has no runtime prompt).
+
+**The finding that matters, and it is consumer-facing:
+`MediaInfo.metadata` is required or no notification is posted at all.**
+Isolated with the same `loadMedia` call, same URL, same single-item queue, same
+session:
+
+| Payload                                           | Notification |
+| ------------------------------------------------- | ------------ |
+| `{contentUrl}`                                    | ✗ none       |
+| `{contentUrl, contentType, streamType}`           | ✗ none       |
+| `{contentUrl, contentType, streamType, metadata}` | ✓ posts      |
+
+Media casts and plays identically in all three, so this fails silently and
+reads as "notifications are broken". Now documented on `MediaInfo.metadata`.
+The harness gained a **"Load LAN bare"** button so the pair stays runnable.
+
+| Row                            | Result                                                                                                               |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| Notification posts             | ✅ `0\|com.castexample\|1\|castMediaNotification\|10243`                                                             |
+| Renders correctly              | ✅ title "LAN test pattern" from metadata, "Casting to Office TV", pause + skip-next, dismiss, seek bar              |
+| Actions come from our provider | ✅ skip-next present with a 3-item queue — `NitroNotificationActionsProvider`'s queue-aware set (Decision 4)         |
+| Tap → expanded controller      | ✅ focus = `com.castexample/com.margelo.nitro.googlecast.NitroExpandedControllerActivity`, live progress 01:16/10:00 |
+| Android 14+ FGS hazard         | ✅ **does not apply to GCK 22.0.0** — see below                                                                      |
+| Artwork on the widget          | ⬜ deferred — LAN fixture carries no image                                                                           |
+| Theme override                 | ⬜ deferred (may-defer list: "exotic notification permutations")                                                     |
+| Lock screen                    | ⬜ deferred — renders in the same MediaSession surface, which is confirmed                                           |
+
+**Prior learning corrected.** The note "targetSdk 34+ needs `FOREGROUND_SERVICE`
+
+- `FOREGROUND_SERVICE_MEDIA_PLAYBACK` or the app fatally crashes at cast start"
+  does **not** apply to `play-services-cast-framework 22.0.0`: its AAR manifest
+  declares only `ReconnectionService` and `FOREGROUND_SERVICE`, and the AAR
+  contains **no `MediaNotificationService` class at all** — the notification is
+  posted through `MediaNotificationManager` via `NotificationManager`, with no
+  foreground service involved. Verified by unzipping the AAR and by dumping the
+  built APK's manifest with `aapt2`. Cast start on targetSdk **36** never crashed.
+
+Useful probe for next time: `adb shell dumpsys notification | grep -A30
+com.castexample` shows GCK's `cast_media_notification` channel. The channel
+existing proves GCK accepted the `NotificationOptions` and initialised its
+notification path — so "channel present, nothing posted" points at the payload,
+not at configuration. That is what led to the metadata finding.
+
 ### Still to run on Android
 
 - **S1.4 one-shots** — overlay once/∞ persistence, no-anchor → false,
@@ -401,16 +448,16 @@ plays, the fault is in the Android `loadMedia` path.
 
 ### Non-deferrable — each backs a documented public API
 
-| #   | Row                                                         | Where                                  | Android                                       | iOS     |
-| --- | ----------------------------------------------------------- | -------------------------------------- | --------------------------------------------- | ------- |
-| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                      | ⬜ open |
-| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                      | ⬜ open |
-| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03                                      | ⬜ open |
-| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_     | ⬜ open |
-| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1 | ⬜ open |
-| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ⬜ open                                       | n/a     |
-| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ blocked on T1 (custom receiver)            | ⬜ open |
-| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                       |         |
+| #   | Row                                                         | Where                                  | Android                                                       | iOS     |
+| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | ------- |
+| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ⬜ open |
+| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ⬜ open |
+| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03                                                      | ⬜ open |
+| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ⬜ open |
+| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ⬜ open |
+| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a     |
+| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ blocked on T1 (custom receiver)                            | ⬜ open |
+| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |         |
 
 > **G4 — the row's acceptance criterion was wrong and has been amended.** It
 > asked for `useMediaStatus` to go **null** after `stop()` and after removing the

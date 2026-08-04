@@ -262,7 +262,10 @@ function MediaProbes({ append }: { append: Append }) {
             )
           }
         />
-        {/* Isolates TLS/CDN/DNS: plain HTTP from the dev machine. */}
+        {/* Isolates TLS/CDN/DNS: plain HTTP from the dev machine.
+            Carries metadata, and "Load LAN bare" below does not — the pair is
+            what isolates the metadata variable for the notification row (G6),
+            same loadMedia path and same single-item queue on both sides. */}
         <Btn
           label="Load LAN"
           onPress={() =>
@@ -272,7 +275,18 @@ function MediaProbes({ append }: { append: Append }) {
                   contentUrl: LAN_FIXTURE.contentUrl,
                   contentType: LAN_FIXTURE.contentType,
                   streamType: 'buffered',
+                  metadata: { type: 'movie', title: LAN_FIXTURE.title },
                 },
+              }),
+            )
+          }
+        />
+        <Btn
+          label="Load LAN bare"
+          onPress={() =>
+            run('loadMedia(LAN bare)', () =>
+              client!.loadMedia({
+                mediaInfo: { contentUrl: LAN_FIXTURE.contentUrl },
               }),
             )
           }

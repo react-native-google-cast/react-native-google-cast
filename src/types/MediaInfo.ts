@@ -34,7 +34,18 @@ export interface MediaInfo {
    */
   streamType?: MediaStreamType
 
-  /** The media item metadata. */
+  /**
+   * The media item metadata.
+   *
+   * Optional, but **set it if you want the Android media notification.** The
+   * Cast SDK builds that notification (and the lock-screen controls) from the
+   * metadata's title and images, and posts nothing at all when `metadata` is
+   * absent — verified on device 2026-08-04 by loading the same URL through the
+   * same `loadMedia` call with and without it: `{contentUrl}` and
+   * `{contentUrl, contentType, streamType}` both produce no notification, while
+   * adding `metadata` makes it appear. Media still casts and plays either way,
+   * so this fails silently and looks like broken notification support.
+   */
   metadata?: MediaMetadata
 
   /** The length of the stream, in seconds, or `undefined` if it is a live stream. */
