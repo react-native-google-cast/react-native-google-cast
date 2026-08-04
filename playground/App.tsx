@@ -549,8 +549,10 @@ function ChannelProbe({ append }: { append: Append }) {
           : 'null'}
       </Text>
       <Text style={styles.panelNote}>
-        Inert until a custom receiver app id is registered (T1) — see
-        docs/internal/cast-receiver/README.md.
+        #614 handshake: expand this panel BEFORE connecting. The hook can only
+        call addChannel once a session exists, and the receiver sends{' '}
+        {'"hello"'} once, on SENDER_CONNECTED — so that registration is the only
+        window to catch it. Expand after connecting and it is already gone.
       </Text>
       <View style={styles.probeRow}>
         <Btn

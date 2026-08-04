@@ -521,6 +521,71 @@ plays, the fault is in the Android `loadMedia` path.
 
 ---
 
+## Run log — 2026-08-04, iOS Simulator (G7 attempt) — 🔴 BLOCKED
+
+**G7 could not be run: the Chromecast will not launch `EA48D3FC`.**
+`startSession` reports `startFailed: cancelled / native 5`
+(`GCKErrorCodeCancelled`) every time, ~2 s after `starting (—)`.
+
+Setup: iPhone 17 Pro Simulator (iOS 26.5), commit `bd51f21` + the App.tsx panel
+note. Receiver **"Office TV"**, `192.168.1.137`, firmware `1.56.291998`, SSID
+`Zyxel_BB21`, same /24 as the Mac. Driven with `maestro test --platform ios`.
+
+Confirmed working on the way (all Simulator-observable, as
+`phase3-native-spike-checklist.md` predicted):
+
+| Row                             | Evidence                                                                                         |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Discovery on the Simulator      | `devices → [Office TV]`, `castState → notConnected`, `Devices: 1`                                |
+| GCK's own LNA explainer         | Shown on first CastButton tap; **not** the OS prompt (Simulators never present that — Apple)     |
+| 1.2.2 discovery gated until tap | `devices=0` at init, populates only after the first CastButton tap — GCK's own logic, not the OS |
+| Chooser                         | GCK "Cast to" sheet lists Office TV                                                              |
+| **Connect against `CC1AD845`**  | ✅ `starting (—)` → `connected` → `started (61765b24-2f4b-427d-830d-8584749779c0)`, first try    |
+| **Connect against `EA48D3FC`**  | 🔴 `starting (—)` → `startFailed: cancelled / native 5`, 3 attempts                              |
+
+### What has been ruled out
+
+The DMR row above is the controlled comparison: **same simulator, same network,
+same Chromecast, same code path, same taps — only the app id differs.** So it is
+not the Simulator, the network, the transport, or the session code.
+
+1. **The receiver page is not broken.** Loaded
+   `https://…github.io/react-native-google-cast/cast-receiver/` in Chrome: HTTP
+   200, no `TypeError`, `cast.framework.messages.MessageType` resolves,
+   no `skipping unknown MessageType` lines, and the page logs
+   `receiver started, namespace urn:x-cast:com.reactnative.googlecast.probe` —
+   so `context.start()` returned. The media-oracle interceptors registered
+   cleanly. (This was the first suspect, since the oracle was the last change to
+   the receiver.)
+2. **The device was not busy.** `GET /setup/eureka_info` reported no running app.
+3. **It is not a stale receiver-URL cache on the device.** Rebooted Office TV via
+   `POST https://192.168.1.137:8443/setup/reboot` (confirmed: uptime went
+   55 000 s → 31 s) and retried. **Identical failure.** So the remedy this
+   repo's own receiver README recommends for a URL change does not apply here.
+
+### What is left, and it needs the console
+
+The device is discovered and listed while the discovery criteria carry
+`EA48D3FC`, but the launch itself is cancelled — the shape of "the app id is
+known, the receiver behind it will not come up". Nothing further can be
+determined from this side; the Cast Developer Console entry for `EA48D3FC` is
+the only remaining variable. Check, in this order:
+
+- **Application type is Custom Receiver.** A Styled Media Receiver ignores a
+  Receiver Application URL entirely — and could never serve a custom namespace,
+  so the channel rows would be unrunnable regardless.
+- **Receiver Application URL** is exactly
+  `https://react-native-google-cast.github.io/react-native-google-cast/cast-receiver/`
+  and was actually saved. `EA48D3FC` was the **v4** playground's id, so it may
+  still carry that app's URL, which is long dead — that would produce exactly
+  this failure.
+- **Status is Published**, and the app still exists in the account.
+
+Until that is resolved, `EA48D3FC` blocks **G7 and the re-runs of G3/G4**, since
+all three now target it.
+
+---
+
 ## Evidence header — fill in before S1.1
 
 | Field                                   | Value                                                                  |
