@@ -38,14 +38,24 @@ The app id **`EA48D3FC`** already exists (it was the v4 playground's). Reuse it
 rather than registering a second one — one id, one receiver, one thing to keep
 in sync. In the [Cast SDK Developer Console](https://cast.google.com/publish):
 
-1. Edit `EA48D3FC` and set its **Receiver Application URL** to the Pages URL
-   above.
-2. Under **Cast Receiver Devices**, confirm the Chromecast used for the pass is
-   registered by serial number and reads _Ready for Testing_. An unregistered
-   device cannot launch an unpublished receiver.
+Edit `EA48D3FC` and set its **Receiver Application URL** to the Pages URL above.
 
-Registration propagates in ~15 minutes; reboot the Chromecast if it still
-refuses to launch after that.
+**`EA48D3FC` is published**, which removes the usual friction: no
+`Cast Receiver Devices` entry, no serial numbers, no _Ready for Testing_ state,
+no waiting for registration to propagate. Any Chromecast can launch it, so any
+contributor can run the channel rows without a Cast console account of their
+own. (Device registration is only needed for _unpublished_ receivers — if you
+ever fork this to a private app id, that step comes back.)
+
+Two consequences of being published, both already satisfied here:
+
+- The receiver URL **must** be HTTPS
+  ([registration docs](https://developers.google.com/cast/docs/registration) —
+  plain HTTP is only tolerated while unpublished). GitHub Pages provides it.
+- A URL change on a published app may take a while to reach devices. If the
+  Chromecast still loads the old receiver, give it a few minutes and reboot it
+  before suspecting the deploy — the Pages URL itself can be checked
+  independently in any browser.
 
 ### Sender details — leave them alone for now
 
@@ -77,14 +87,23 @@ The app id is per-platform config, not something the library reads at runtime.
 
 ### Which app gets which receiver
 
-| App                            | Receiver                 | Why                                                                                                                                                                                                                                       |
-| ------------------------------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **playground** (this harness)  | `EA48D3FC` custom        | Needs a custom namespace for the channel rows, and gets the media oracle below for free.                                                                                                                                                  |
-| **example** (CastVideos-style) | `CC1AD845` Default Media | **Must stay on the DMR.** A custom receiver only launches on Chromecasts registered _in the owning console account_, so an example pointed at `EA48D3FC` would fail for every reader who copies it. The DMR needs no registration at all. |
+| App                            | Receiver                 | Why                                                                                                                                    |
+| ------------------------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **playground** (this harness)  | `EA48D3FC` custom        | Needs a custom namespace for the channel rows, and gets the media oracle below for free.                                               |
+| **example** (CastVideos-style) | `CC1AD845` Default Media | Models the zero-config path a consumer actually starts from, and avoids baking a project-owned app id into code readers copy verbatim. |
 
-That split is the whole reason for having two apps, and it is worth stating in
-the Phase 7 docs too: "use the Default Media Receiver unless you need a custom
-namespace" is the advice for consumers, and the example should model it.
+Since `EA48D3FC` is **published**, the example _could_ technically use it — this
+is a choice, not a constraint. Two reasons not to:
+
+- A reader who copies the example inherits **our** app id. It would work, which
+  is the problem: nothing fails, and they can ship pointed at a receiver they do
+  not own. The Default Media Receiver has no such trap.
+- The example exists to demonstrate the default path. `docs/getting-started`
+  tells consumers to use the DMR unless they need a custom namespace; the
+  example should model exactly that.
+
+So the split stands, but for API-design reasons rather than because a custom
+receiver would fail to launch.
 
 ⚠️ **Switching the app id switches every row**, not just the channel ones —
 `EA48D3FC` replaces the Default Media Receiver, so the media and queue rows then
