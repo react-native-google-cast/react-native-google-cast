@@ -335,6 +335,42 @@ existing proves GCK accepted the `NotificationOptions` and initialised its
 notification path — so "channel present, nothing posted" points at the payload,
 not at configuration. That is what led to the metadata finding.
 
+---
+
+## Run log — 2026-08-04, iOS Simulator (S1.2, build A)
+
+**iPhone 17 / iOS 26.5 Simulator**, no signing, default `GCKCastOptions`, against
+the same real Chromecast ("Office TV") and the same LAN fixture. This confirms
+the Phase 3 precedent: a Simulator reaches a real Chromecast on the LAN, so only
+the two LNA rows genuinely need a physical iPhone.
+
+| Row                          | Evidence                                                                                                                                       |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cold-launch seed             | `init seed: castState=noDevicesAvailable playServices=success devices=0` → `castState → notConnected` → `devices → [Office TV]`                |
+| **G2 discovery**             | ✅ real Chromecast appears — and as **one** entry. The Android duplicate (`v5-6l1`) does **not** reproduce on iOS, so that bug is Android-only |
+| 1.4.2 `showCastDialog()`     | ✅ opens GCK's native "Cast to" sheet listing `Office TV / Default Media Receiver`                                                             |
+| **G1 lifecycle, ordered**    | ✅ `showCastDialog → true`, `connecting`, `starting (—)`, `connected`, `started (<id>)` — same order as Android, twice                         |
+| `ended` carries `nativeCode` | ✅ `ended: appNotFound / native 21`                                                                                                            |
+| Reconnect generation         | ✅ second connect produced a **new** id (`ea3f9c82…` → `3e3c5e51…`), `gen=3`                                                                   |
+| **G3 media load / play**     | ✅ `loadMedia(LAN) resolved`, then `pushes=19 live=true player=playing pos=98.823955 queue=1`                                                  |
+| `storeDiagnostics`           | ✅ the same "Dump store" probe works unchanged on iOS                                                                                          |
+
+**Observation, not a bug: two senders on one Default Media Receiver.** The first
+iOS connect _joined_ the session the Android app already had (identical
+`sessionId`), and that session then self-terminated with `appNotFound / native
+21`. Force-stopping the Android app and reconnecting gave a clean new session
+immediately. Worth remembering when a device pass drives both platforms at once
+— it looks like an iOS defect and is not one.
+
+**Tooling note that saves the next session an hour:** Maestro **does** drive the
+iOS Simulator (`maestro test --platform ios <flow>`), even though it cannot see
+the physically-attached Android phone on this machine. Two gotchas: the flow's
+`appId` must be the iOS bundle id (`org.reactjs.native.example.CastExample`, not
+`com.castexample`), and `tapOn:` by text was unreliable against this RN tree —
+`tapOn: { point: "27%,54%" }` worked every time. Read _values_ off
+`xcrun simctl io <udid> screenshot`, not off the view hierarchy. AppleScript /
+System Events is a dead end: it blocks on an accessibility-permission prompt.
+
 ### Still to run on Android
 
 - **S1.4 one-shots** — overlay once/∞ persistence, no-anchor → false,
@@ -448,16 +484,16 @@ plays, the fault is in the Android `loadMedia` path.
 
 ### Non-deferrable — each backs a documented public API
 
-| #   | Row                                                         | Where                                  | Android                                                       | iOS     |
-| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | ------- |
-| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ⬜ open |
-| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ⬜ open |
-| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03                                                      | ⬜ open |
-| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ⬜ open |
-| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ⬜ open |
-| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a     |
-| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ blocked on T1 (custom receiver)                            | ⬜ open |
-| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |         |
+| #   | Row                                                         | Where                                  | Android                                                       | iOS                               |
+| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | --------------------------------- |
+| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator                |
+| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator (single entry) |
+| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03                                                      | ✅ 08-04 Simulator                |
+| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ⬜ open                           |
+| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ⬜ open                           |
+| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                               |
+| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ blocked on T1 (custom receiver)                            | ⬜ open                           |
+| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                   |
 
 > **G4 — the row's acceptance criterion was wrong and has been amended.** It
 > asked for `useMediaStatus` to go **null** after `stop()` and after removing the
