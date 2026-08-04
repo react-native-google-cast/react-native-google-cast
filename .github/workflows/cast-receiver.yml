@@ -1,0 +1,82 @@
+name: Deploy cast receiver
+
+# Publishes the CAF probe receiver (docs/internal/cast-receiver/) to GitHub
+# Pages, so the Cast Developer Console has a stable HTTPS URL to point an
+# application id at.
+#
+#   https://react-native-google-cast.github.io/react-native-google-cast/cast-receiver/
+#
+# Why in-repo and not a gist or a personal host: the receiver's NAMESPACE must
+# stay identical to PROBE_NAMESPACE in the playground's probeFixtures.ts, and
+# the #614 registration-time handshake row depends on the receiver sending on
+# SENDER_CONNECTED. Both are things a future change can silently break, so the
+# receiver is versioned alongside the code that tests it and deploys from the
+# same commit.
+#
+# ONE-TIME MANUAL STEP: Settings → Pages → Build and deployment → Source:
+# "GitHub Actions". Until that is set, this workflow fails at the deploy step
+# with "Get Pages site failed". Nothing else about the repo changes — enabling
+# Pages here does not touch the docs site, which lives in the separate
+# react-native-google-cast.github.io repository and is served from the org root.
+
+on:
+  push:
+    branches: [v5]
+    paths:
+      - 'docs/internal/cast-receiver/**'
+      - '.github/workflows/cast-receiver.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Both are required by actions/deploy-pages: `pages` to publish, and
+      # `id-token` for the OIDC token it exchanges for the deployment.
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Serve the receiver from a directory rather than the Pages root, so the
+      # site has room for anything else later. receiver.html becomes index.html
+      # so the console URL can be a bare directory — a trailing-slash URL is
+      # less error-prone to paste than one ending in .html.
+      - name: Stage site
+        run: |
+          mkdir -p _site/cast-receiver
+          cp docs/internal/cast-receiver/receiver.html _site/cast-receiver/index.html
+          # Landing page: a bare Pages root 404s, which reads like a broken
+          # deploy when someone checks the URL without the subpath.
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>react-native-google-cast — test infrastructure</title>
+          <p>Test infrastructure for
+          <a href="https://github.com/react-native-google-cast/react-native-google-cast">react-native-google-cast</a>.
+          Documentation is at <a href="https://react-native-google-cast.github.io/">react-native-google-cast.github.io</a>.
+          <p><a href="./cast-receiver/">CAF probe receiver</a> — custom-channel
+          test receiver used by the device-pass harness.
+          HTML
+          # Pages runs Jekyll by default and would drop files it considers
+          # special; .nojekyll publishes the directory verbatim.
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
