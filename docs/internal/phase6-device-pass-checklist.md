@@ -521,6 +521,78 @@ plays, the fault is in the Android `loadMedia` path.
 
 ---
 
+## Run log — 2026-08-04, iOS Simulator — **G3/G4 re-run on the custom receiver**
+
+Session `34afb6e3-7c85-472b-bbb9-c3b4c8bf6e52`, `EA48D3FC`, `LAN_FIXTURE`
+(`test.mp4` re-measured with `ffprobe` at **600.0 s**, `test2` 15.0 s, `test3`
+20.0 s — the fixture file's `expectedDuration` values are correct). Line numbers
+in brackets are event-log entries.
+
+### G3 ✅ — load / play / pause / stop on the custom receiver
+
+| Row   | Evidence                                                                               |
+| ----- | -------------------------------------------------------------------------------------- |
+| load  | `[12] media: loadMedia(LAN) resolved`                                                  |
+| play  | `[14] façade getMediaStatus: playing pos=138.305844 vol=1` — real playback             |
+| pause | `[16] media: pause resolved`, `[17] … paused pos=187.856472` (position advanced ~50 s) |
+| stop  | `[19] media: stop resolved`                                                            |
+
+### ⭐ G4 — **both halves now have real-hardware evidence, and they differ**
+
+This is the row that had never been exercised. The two routes to "nothing is
+playing" do **not** behave the same:
+
+| Route                                | Result                                         |
+| ------------------------------------ | ---------------------------------------------- |
+| `stop()`                             | `[20] façade getMediaStatus: idle pos=0 vol=1` |
+| queue emptied via `queueRemoveItems` | `[35] façade getMediaStatus: **null**`         |
+
+**So G4's amended criterion holds, and G4b's original one is verified as
+written.** The amendment on 08-03 said "the DMR reports `idle`, never null" —
+that turns out to be a statement about `stop()`, not about the receiver: the
+**custom** receiver reports `idle` for `stop()` too, so it is CAF behaviour, not
+a Default-Media-Receiver quirk. Emptying the queue is a different matter, and it
+**is the first real-hardware exercise of the `v5-82w` / #626 null-clear path** —
+`useMediaStatus` genuinely goes null, and the session stays alive throughout
+(`castState: connected`, same session id, before and after).
+
+Queue rows also passed on the way: `queueLoad` (3 LAN items), and three
+`queueRemoveItems(last)` calls, `[29] [31] [33]` all resolved with no crash —
+the iOS side of the `v5-kbd` P0 shape, which cannot occur here because
+`GCKMediaQueueItem.mediaInformation` is nonnull.
+
+### 🔭 What the media oracle saw — first assertions on the actual wire payload
+
+The oracle (T1, `receiver.html` Job 3) relayed every media-namespace command
+back over the custom namespace. This is the first time a device row has checked
+what was **sent** rather than inferring it from what the TV did.
+
+1. **Both `61aecc6` fixes confirmed on the wire**, not just in unit tests. The
+   `LOAD` request carries
+   `"contentId":"http://192.168.1.40:8000/test.mp4"` — defaulted from
+   `contentUrl`, which was never set explicitly — and
+   `"streamType":"BUFFERED"`, also defaulted. These are exactly the two
+   converter bugs the 08-02 v4 side-by-side caught by hand; they would now show
+   up in the event log on the first load.
+2. **`queueLoad` is sent as a `LOAD` carrying `queueData`, not as
+   `QUEUE_LOAD`.** Worth knowing before writing an assertion against a message
+   type: `[25]` reads `"message":"LOAD"` with a nested
+   `"queueData":{"repeatMode":"REPEAT_OFF","shuffle":false,"items":[…]}`.
+3. **`QUEUE_REMOVE` carries `itemIds`**, one per call: `[3]`, `[4]`, `[2]` for
+   the three removals — so "remove last" really is removing the tail, and the
+   `MediaStatus.queueItems` window shifted `[2,3]` → `[2,4]` → empty exactly as
+   the windowing note on `MediaStatus.queueItems` describes.
+4. ⚠️ **Open question — iOS sends `"duration":0` for an unset
+   `streamDuration`.** Visible in every `LOAD` above. Android's converter uses
+   `streamDuration?.let { … }`, so it should omit the field entirely. If that is
+   right it is a cross-platform difference the golden corpus does not cover
+   (the corpus tests struct↔GCK, not the serialized cast-protocol JSON). It did
+   no harm here — playback and duration were correct, the receiver measures the
+   real duration itself — but **compare an Android `LOAD` against this before
+   assuming they match.** Not yet verified either way.
+
+---
+
 ## Run log — 2026-08-04, iOS Simulator — **G7 ✅ PASSED**
 
 **Cause of the block below: the Receiver Application URL had not been saved in
@@ -654,30 +726,44 @@ Two corrections this forces on our own docs:
 
 ### Non-deferrable — each backs a documented public API
 
-| #   | Row                                                         | Where                                  | Android                                                       | iOS                               |
-| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | --------------------------------- |
-| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator                |
-| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator (single entry) |
-| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03                                                      | ✅ 08-04 Simulator                |
-| G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ✅ 08-04 Simulator, same result   |
-| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ✅ 08-04 @64 ms, settle count 1   |
-| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                               |
-| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ open (iOS covers the row; Android parity re-run pending)   | ✅ 08-04 Simulator, all 4 rows    |
-| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                   |
+| #   | Row                                                         | Where                                  | Android                                                       | iOS                                                            |
+| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- |
+| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator                                             |
+| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator (single entry)                              |
+| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03 (DMR)                                                | ✅ 08-04 Simulator, **re-run on EA48D3FC**                     |
+| G4  | #626 clear-on-stop **and** clear-on-empty-queue (see note)  | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ✅ 08-04 on EA48D3FC — `stop()`→`idle`, **empty queue→`null`** |
+| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ✅ 08-04 @64 ms, settle count 1                                |
+| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                                                            |
+| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ open (iOS covers the row; Android parity re-run pending)   | ✅ 08-04 Simulator, all 4 rows                                 |
+| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                                                |
 
-> **G4 — the row's acceptance criterion was wrong and has been amended.** It
-> asked for `useMediaStatus` to go **null** after `stop()` and after removing the
-> last queue item. On the Default Media Receiver neither does: both leave a
-> non-null status reporting `playerState: 'idle'` (`idleReason` `'cancelled'` /
-> `'interrupted'`), verified 2026-08-03. `null` means "no session, or nothing
-> ever loaded"; `idle` means "loaded, now stopped". The amended row is: **the
-> cached status must be cleared of the finished media and the session must stay
-> alive** — both ✅. The v5-82w null-push path stays correct for a genuinely null
-> GCK `mediaStatus`; this receiver simply never produces one. Consumer guidance
-> is now on `useMediaStatus`'s doc comment. Amending a gate row is exactly what
-> the "no exceptions granted by the person who wants through the gate" rule is
-> about, so it is recorded here rather than quietly ticked: the change is to the
-> _criterion_, on receiver evidence, not to the _standard_.
+> **G4 — the criterion was amended on 08-03, and 08-04 shows the amendment was
+> only half right.** The row originally asked for `useMediaStatus` to go **null**
+> after `stop()` and after removing the last queue item. The 08-03 amendment
+> generalised from `stop()` to both, concluding "this receiver never produces a
+> null `mediaStatus`". The 08-04 re-run on the custom receiver splits them:
+>
+> - **`stop()` → `idle`, never null.** Confirmed on _both_ receivers, so it is
+>   CAF behaviour rather than a Default-Media-Receiver quirk. `null` means "no
+>   session, or nothing ever loaded"; `idle` means "loaded, now stopped". The
+>   amended criterion — the cached status is cleared of the finished media and
+>   the session stays alive — is the right one here, and it passes.
+> - **Queue emptied → genuinely `null`.** `[35] façade getMediaStatus: null`
+>   after three `queueRemoveItems(last)` calls, session still alive. So the
+>   v5-82w null-push path **is** reachable on real hardware, and G4b's original
+>   wording was correct as written.
+>
+> ⚠️ Not yet established _why_ 08-03 saw `idle` here: that run removed the last
+> item from a queue, today's emptied the queue completely (three removals). It
+> could be receiver behaviour, or it could be "queue emptied" vs "one item
+> removed" — those were not varied independently. Do not state it as a receiver
+> difference without testing that.
+>
+> Consumer guidance is on `useMediaStatus`'s doc comment. Amending a gate row is
+> exactly what the "no exceptions granted by the person who wants through the
+> gate" rule is about, so both the amendment and this correction to it are
+> recorded rather than quietly ticked: the change is to the _criterion_, on
+> receiver evidence, not to the _standard_.
 
 ### May defer, with a written reason recorded in the row
 
