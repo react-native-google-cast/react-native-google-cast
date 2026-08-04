@@ -22,7 +22,7 @@ https://react-native-google-cast.github.io/docs/getting-started/installation
 
 ## Cast Videos Demo App
 
-<strike>Refer to the [example](example/) folder to find a React Native version of the CastVideos reference app.</strike> Currently outdated.
+A React Native version of the CastVideos reference app. **Not yet ported to v5** — the v4 `example/` app was removed rather than left broken, and it returns before the 5.0.0 release. Unlike the playground, it will use the Default Media Receiver, which is what a consumer app should start from.
 
 ## Playground
 

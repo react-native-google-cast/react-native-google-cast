@@ -82,9 +82,6 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn typescript`: type-check files with TypeScript.
 - `yarn lint`: lint files with ESLint.
 - `yarn test`: run unit tests with Jest.
-- `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
-- `yarn example ios`: run the example app on iOS.
 - `yarn playground start`: start the Metro server for the playground app.
 - `yarn playground android`: run the playground app on Android.
 - `yarn playground ios`: run the playground app on iOS.

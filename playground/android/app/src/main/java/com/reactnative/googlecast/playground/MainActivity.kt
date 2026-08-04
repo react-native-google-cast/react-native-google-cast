@@ -1,4 +1,4 @@
-package com.castexample
+package com.reactnative.googlecast.playground
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

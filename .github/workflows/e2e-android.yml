@@ -1,6 +1,6 @@
 name: E2E Android (tier-1 Maestro)
 
-# Tier-1 E2E for the v5 (Nitro) rewrite (T3, issue #604): boots the example app
+# Tier-1 E2E for the v5 (Nitro) rewrite (T3, issue #604): boots the playground app
 # on an emulator — no Chromecast (Cast discovery cannot work on emulators) and
 # no Metro (JS is bundled into the debug APK) — and drives the debug-only
 # native fake seam (`CastDebug.inject*`) through a Maestro flow. The flow
@@ -54,7 +54,7 @@ jobs:
           predicate-quantifier: 'every'
           filters: |
             e2e:
-              - '{android/**,src/**,example/**,nitrogen/generated/**,.maestro/**,.github/workflows/e2e-android.yml}'
+              - '{android/**,src/**,playground/**,nitrogen/generated/**,.maestro/**,.github/workflows/e2e-android.yml}'
               - '!**/*.md'
 
   maestro:
@@ -104,8 +104,8 @@ jobs:
       # `-PbundleInDebug=true` bakes the JS bundle into the *debug* APK: no
       # Metro in CI, and the APK stays android:debuggable — the flag the native
       # fake seam is gated on (a release APK would be a delivered=false no-op).
-      - name: Build example debug APK (bundled JS, x86_64)
-        working-directory: example/android
+      - name: Build playground debug APK (bundled JS, x86_64)
+        working-directory: playground/android
         run: ./gradlew :app:assembleDebug -PbundleInDebug=true -PreactNativeArchitectures=x86_64
 
       # Emulator boot on GitHub-hosted runners is flaky ("Timeout waiting for
@@ -126,7 +126,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            adb install -r example/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install -r playground/android/app/build/outputs/apk/debug/app-debug.apk
             maestro test .maestro/tier1-fake-session.yml
 
       - name: Run tier-1 Maestro flow (retry after flaky boot)
@@ -142,7 +142,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            adb install -r example/android/app/build/outputs/apk/debug/app-debug.apk
+            adb install -r playground/android/app/build/outputs/apk/debug/app-debug.apk
             maestro test .maestro/tier1-fake-session.yml
 
       # Maestro writes screenshots + logs for failed flows under ~/.maestro/tests.

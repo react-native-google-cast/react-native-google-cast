@@ -8,7 +8,7 @@
   "types": "lib/typescript/src/index.d.ts",
   "source": "src/index",
   "workspaces": [
-    "example",
+    "playground",
     "web-example"
   ],
   "files": [
@@ -41,7 +41,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "example": "yarn --cwd example",
+    "playground": "yarn --cwd playground",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
@@ -99,12 +99,12 @@
   "jest": {
     "preset": "@react-native/jest-preset",
     "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
+      "<rootDir>/playground/node_modules",
       "<rootDir>/lib/"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "<rootDir>/example/"
+      "<rootDir>/playground/"
     ]
   },
   "husky": {

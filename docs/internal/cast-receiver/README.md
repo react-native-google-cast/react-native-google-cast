@@ -65,25 +65,27 @@ is gated on device registration, not on the sender's identity, so blank iOS and
 web entries will not block any row in this pass.
 
 The Android entry already reads `com.reactnative.googlecast.playground`. Rather
-than editing the console to match the current app id (`com.castexample`), the
-plan is the reverse: the `example/` → `playground/` rename (bead `v5-57x`) moves
-the app to `com.reactnative.googlecast.playground` on Android and the same
-string as the iOS bundle id, so the shipped app matches what is already
-registered. Do that rename first and the console needs no edit at all.
+than editing the console to match the old app id (`com.castexample`), the
+`example/` → `playground/` rename (bead `v5-57x`) went the other way: the app is
+now `com.reactnative.googlecast.playground` on Android **and** the same string as
+the iOS bundle id, so the shipped app matches what is already registered and the
+console needs no edit at all.
 
 Leave iOS blank until there is something to fill it with — the console wants an
 iTunes ID, and a debug playground that will never reach the App Store does not
 have one.
 
-## Pointing the example app at it
+## Where the app id lives
 
-The app id is per-platform config, not something the library reads at runtime.
+It is per-platform config, not something the library reads at runtime. The
+playground is **already pointed at `EA48D3FC`** on both native platforms; this
+table is where to look when that needs changing.
 
-| Platform | Where                                                                                                                                                                                            |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| iOS      | `example/ios/CastExample/AppDelegate.swift` — swap `kGCKDefaultMediaReceiverApplicationID` for `EA48D3FC` in the `GCKDiscoveryCriteria`                                                          |
-| Android  | `example/android/app/src/main/AndroidManifest.xml` — the `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID` meta-data read by `NitroCastOptionsProvider` (currently `CC1AD845` → `EA48D3FC`) |
-| Web      | `window.__RNGoogleCastOptions = { receiverAppId: 'EA48D3FC' }` before the sender loader (see `docs/getting-started/web.md`)                                                                      |
+| Platform | Where                                                                                                                                                           |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| iOS      | `playground/ios/CastExample/AppDelegate.swift` — the `GCKDiscoveryCriteria` application id                                                                      |
+| Android  | `playground/android/app/src/main/AndroidManifest.xml` — the `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID` meta-data read by `NitroCastOptionsProvider` |
+| Web      | `window.__RNGoogleCastOptions = { receiverAppId: 'EA48D3FC' }` before the sender loader (see `docs/getting-started/web.md`)                                     |
 
 ### Which app gets which receiver
 
@@ -105,20 +107,21 @@ is a choice, not a constraint. Two reasons not to:
 So the split stands, but for API-design reasons rather than because a custom
 receiver would fail to launch.
 
-⚠️ **Switching the app id switches every row**, not just the channel ones —
-`EA48D3FC` replaces the Default Media Receiver, so the media and queue rows then
+⚠️ **The app id switch switched every row**, not just the channel ones —
+`EA48D3FC` replaces the Default Media Receiver, so the media and queue rows now
 run against this receiver too. That is fine (it leaves the CAF `PlayerManager`
-untouched) and is arguably a better test, but re-run G3 after the switch rather
-than assuming the earlier DMR results carry over. In particular, G4's "the DMR
-reports `idle`, never a null `mediaStatus`" finding is a statement about the
-**DMR** — a custom receiver may behave differently, and if this one ever does
-report null, that is the first real-hardware exercise of the v5-82w null-clear
-path.
+untouched) and is arguably a better test, but **G3 and G4 must be re-run** —
+the earlier DMR results do not carry over. In particular, G4's "the DMR reports
+`idle`, never a null `mediaStatus`" finding is a statement about the **DMR**; a
+custom receiver may behave differently, and if this one ever does report null,
+that is the first real-hardware exercise of the v5-82w null-clear path.
 
-`PROBE_NAMESPACE` in `example/probeFixtures.ts` must match `NAMESPACE` in
+`PROBE_NAMESPACE` in `playground/probeFixtures.ts` must match `NAMESPACE` in
 `receiver.html`. Both are
 `urn:x-cast:com.reactnative.googlecast.probe` — change them together or not at
-all.
+all. `CHANNEL_PROBE_ENABLED` in the same file is coupled to the app id for the
+same reason: registering a namespace the receiver does not declare tears the
+session down (see the constant's own doc comment).
 
 ## What the rows check
 

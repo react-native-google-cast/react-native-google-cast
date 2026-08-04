@@ -530,7 +530,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(RNGC_BUNDLE_ID_PREFIX:default=org.reactjs.native.example).$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(RNGC_BUNDLE_ID_PREFIX:default=com.reactnative.googlecast).playground";
 				PRODUCT_NAME = CastExample;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -559,7 +559,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "$(RNGC_BUNDLE_ID_PREFIX:default=org.reactjs.native.example).$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(RNGC_BUNDLE_ID_PREFIX:default=com.reactnative.googlecast).playground";
 				PRODUCT_NAME = CastExample;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_VERSION = 5.0;

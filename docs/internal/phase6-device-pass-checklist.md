@@ -15,6 +15,29 @@ a screenshot, a `logcat` excerpt); "looked fine" is not evidence.
 > up front, while nothing was under pressure. An exception granted later by the
 > person who wants through the gate is not a gate.
 
+> **⚠️ The harness moved on 2026-08-04** (bead `v5-57x`): `example/` →
+> `playground/`, Android application id `com.castexample` →
+> `com.reactnative.googlecast.playground`, iOS bundle id
+> `org.reactjs.native.example.CastExample` →
+> `com.reactnative.googlecast.playground`, and the receiver from the Default
+> Media Receiver (`CC1AD845`) to the project's own published custom receiver
+> (`EA48D3FC`). The **instructions** below have been updated. The **run logs**
+> have not — they quote the ids that were live when they were recorded, and
+> rewriting evidence to match today's config would make it worthless. Read any
+> `com.castexample` / `example/` in a dated run log as "the harness as it stood
+> that day".
+>
+> Because the receiver changed, **G3 and G4 must be re-run**; their 08-02/08-03
+> results are statements about the Default Media Receiver, not about this build.
+>
+> One-time migration hazard, if you had built before the rename: RN's autolinking
+> caches the old application id in `playground/android/build/generated/autolinking/`
+> and `app/build/generated/autolinking/`, and the generated
+> `ReactNativeApplicationEntryPoint.java` then fails with
+> `package com.castexample does not exist`. Neither `assembleDebug` nor deleting
+> one of the two directories fixes it — delete **both**, or run
+> `./gradlew clean`. A fresh checkout (CI) never sees this.
+
 ---
 
 ## Run log — 2026-08-02, Android (partial)
@@ -41,7 +64,7 @@ g05, Android 15 (API 35)**, `ZY32KXN6T3`. Receiver: **"Office TV"** (`md=Chromec
 ### Fixed during the pass
 
 1. **Google's `gtv-videos-bucket` sample assets are dead (HTTP 403).** See the
-   banner in `example/probeFixtures.ts`. Symptom is a `loadMedia` that RESOLVES
+   banner in `playground/probeFixtures.ts`. Symptom is a `loadMedia` that RESOLVES
    then `idleReason: error` — reads exactly like a wrapper bug. Replaced with
    four fixtures on four independent hosts, durations measured with `ffprobe`.
 2. **The harness had no working safe area.** It used react-native's deprecated
@@ -79,9 +102,12 @@ useMediaStatus: idle pos=0 dur=30 vol=1 muted=false items=0 idle=finished
 clip played to completion. **G3 media load/play is confirmed working on
 Android.**
 
-The probe is now gated behind `CHANNEL_PROBE_ENABLED` in
-`example/probeFixtures.ts`, default `false`, with the reason written down. Turn
-it on only once T1's receiver is registered.
+The probe is gated behind `CHANNEL_PROBE_ENABLED` in
+`playground/probeFixtures.ts`, with the reason written down. It was `false` for
+the rest of the 08-02/08-03 pass; **it is `true` as of 2026-08-04**, now that
+T1's receiver is deployed and the app launches it (`EA48D3FC`). The flag is
+coupled to the app id — point the app back at the Default Media Receiver and
+this goes back to `false` in the same change, or the session dies again.
 
 **This generalises to consumers and belongs in the Phase 7 docs:** a custom
 channel requires a custom receiver that declares the namespace. Pointed at the
@@ -494,21 +520,21 @@ plays, the fault is in the Android `loadMedia` path.
 
 ## Evidence header — fill in before S1.1
 
-| Field                                   | Value                                                               |
-| --------------------------------------- | ------------------------------------------------------------------- |
-| Commit SHA under test                   |                                                                     |
-| Date                                    |                                                                     |
-| iOS GCK SDK                             | `google-cast-sdk 4.8.4` (Podfile.lock) — confirm unchanged          |
-| Android GCK SDK                         | `play-services-cast-framework 22.0.0` — confirm unchanged           |
-| Android device + OS                     |                                                                     |
-| iPhone + iOS (S3 only)                  |                                                                     |
-| Simulator + iOS (S1.2/1.3)              |                                                                     |
-| Chromecast model                        |                                                                     |
-| Chromecast firmware                     |                                                                     |
-| Network (SSID, band, AP isolation off?) |                                                                     |
-| Media fixture used                      | see `example/probeFixtures.ts` — record which one, and any fallback |
-| Custom receiver app id                  | T1; `—` until registered                                            |
-| Raw logs                                | path/gist of `adb logcat \| grep SPIKE` and the iOS console         |
+| Field                                   | Value                                                                  |
+| --------------------------------------- | ---------------------------------------------------------------------- |
+| Commit SHA under test                   |                                                                        |
+| Date                                    |                                                                        |
+| iOS GCK SDK                             | `google-cast-sdk 4.8.4` (Podfile.lock) — confirm unchanged             |
+| Android GCK SDK                         | `play-services-cast-framework 22.0.0` — confirm unchanged              |
+| Android device + OS                     |                                                                        |
+| iPhone + iOS (S3 only)                  |                                                                        |
+| Simulator + iOS (S1.2/1.3)              |                                                                        |
+| Chromecast model                        |                                                                        |
+| Chromecast firmware                     |                                                                        |
+| Network (SSID, band, AP isolation off?) |                                                                        |
+| Media fixture used                      | see `playground/probeFixtures.ts` — record which one, and any fallback |
+| Custom receiver app id                  | T1; `—` until registered                                               |
+| Raw logs                                | path/gist of `adb logcat \| grep SPIKE` and the iOS console            |
 
 ---
 
@@ -550,14 +576,14 @@ discovery observability is not added · reconnect-generation edge cases.
 
 ## S1 — no signing, no harness changes
 
-Runs against `example/App.tsx` with the **probes section collapsed** — i.e. the
+Runs against `playground/App.tsx` with the **probes section collapsed** — i.e. the
 app exactly as tier-1 Maestro sees it.
 
 ```bash
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 export ANDROID_HOME="$HOME/Library/Android/sdk"
-yarn example start                    # Metro, own terminal
-adb uninstall com.castexample && yarn example android
+yarn playground start                    # Metro, own terminal
+adb uninstall com.reactnative.googlecast.playground && yarn playground android
 adb logcat | grep SPIKE
 ```
 
@@ -580,12 +606,12 @@ is not a blocker here. Only the LNA-prompt rows need real hardware (S3), because
 Apple's simulators never present that prompt.
 
 ```bash
-cd example && bundle install && cd ios && bundle exec pod install
-yarn example ios
+cd playground && bundle install && cd ios && bundle exec pod install
+yarn playground ios
 ```
 
 > `pod install` may rewrite the `hermes-engine` line under `SPEC CHECKSUMS` in
-> `example/ios/Podfile.lock`. That checksum is environment-dependent (it differs
+> `playground/ios/Podfile.lock`. That checksum is environment-dependent (it differs
 > between CI and at least one dev machine) — **do not commit it**; revert that
 > one line and keep the rest.
 
@@ -601,9 +627,9 @@ yarn example ios
 Build B is a **build configuration**, not a source edit:
 
 ```bash
-cp example/ios/local.xcconfig.example example/ios/local.xcconfig
-cd example/ios && bundle exec pod install     # relinks the optional #include
-yarn example ios
+cp playground/ios/local.xcconfig.example playground/ios/local.xcconfig
+cd playground/ios && bundle exec pod install     # relinks the optional #include
+yarn playground ios
 ```
 
 `local.xcconfig` is gitignored and every setting it feeds is referenced from
@@ -617,7 +643,7 @@ are measuring build A**.
 | 1.3.1 | `[SPIKE] build B:` line present at launch                             |        |          |
 | 1.3.2 | `DiscoveryManager.isRunning()` true immediately after init (no tap)   |        |          |
 | 1.3.3 | Custom-picker path: an explicit `startDiscovery()` populates the list |        |          |
-| 1.3.4 | `rm example/ios/local.xcconfig && pod install` restores build A       |        |          |
+| 1.3.4 | `rm playground/ios/local.xcconfig && pod install` restores build A    |        |          |
 
 ### S1.4 — steady state, both platforms
 
@@ -758,7 +784,7 @@ CI.
 
 After T4. External prerequisites, named honestly: an available development team,
 provisioning capability, a compatible bundle id, and a successful device install
-— not a 15-minute code task. `example/ios/local.xcconfig` carries
+— not a 15-minute code task. `playground/ios/local.xcconfig` carries
 `DEVELOPMENT_TEAM` / `RNGC_BUNDLE_ID_PREFIX` / `CODE_SIGN_STYLE` so none of it
 lands in the tracked `project.pbxproj`.
 

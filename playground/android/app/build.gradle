@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.castexample"
+    namespace "com.reactnative.googlecast.playground"
     defaultConfig {
-        applicationId "com.castexample"
+        applicationId "com.reactnative.googlecast.playground"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

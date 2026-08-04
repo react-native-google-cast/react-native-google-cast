@@ -17,10 +17,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) -> Bool {
     // Initialize the Google Cast context at launch (required before any
     // GCKCastContext.sharedInstance() access). v5 will inject this for consumers
-    // via the Expo config plugin; the example sets it up manually.
-    let criteria = GCKDiscoveryCriteria(
-      applicationID: kGCKDefaultMediaReceiverApplicationID
-    )
+    // via the Expo config plugin; the playground sets it up manually.
+    //
+    // EA48D3FC is the project's own PUBLISHED custom receiver, hosted from this
+    // repo — see docs/internal/cast-receiver/README.md. The playground needs it
+    // because the Default Media Receiver (kGCKDefaultMediaReceiverApplicationID)
+    // structurally cannot answer a custom namespace, so the CastChannel rows
+    // have nothing to test against. Being published, it launches on any
+    // Chromecast with no device registration.
+    //
+    // This is a PLAYGROUND choice, not the one to copy: a consumer app should
+    // use kGCKDefaultMediaReceiverApplicationID unless it owns a receiver.
+    let criteria = GCKDiscoveryCriteria(applicationID: "EA48D3FC")
     let options = GCKCastOptions(discoveryCriteria: criteria)
     // Build B (Phase 6 device pass, S1.3): flip discovery autostart from an
     // untracked ios/local.xcconfig rather than by editing this file — an

@@ -44,7 +44,7 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      # --- JS deps (Yarn Berry 4 via corepack; example is a workspace of the repo root) ---
+      # --- JS deps (Yarn Berry 4 via corepack; playground is a workspace of the repo root) ---
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -64,28 +64,28 @@ jobs:
       - name: Install JS dependencies
         run: yarn install --immutable
 
-      # --- Ruby / CocoaPods (Gemfile lives in example/, pinned via bundler) ---
+      # --- Ruby / CocoaPods (Gemfile lives in playground/, pinned via bundler) ---
       - name: Setup Ruby + Bundler
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
           bundler-cache: true
-          working-directory: example
+          working-directory: playground
 
       - name: Cache Pods
         uses: actions/cache@v4
         with:
-          path: example/ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('example/ios/Podfile.lock') }}
+          path: playground/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('playground/ios/Podfile.lock') }}
           restore-keys: ${{ runner.os }}-pods-
 
       # --deployment fails the build if a fresh install would mutate Podfile.lock, so the
       # committed lockfile must match what bundler-resolved CocoaPods (1.15.2, pinned via the
-      # example/Gemfile xcodeproj < 1.26 constraint) produces. Keep the two in sync.
+      # playground/Gemfile xcodeproj < 1.26 constraint) produces. Keep the two in sync.
       - name: Pod install
-        working-directory: example/ios
+        working-directory: playground/ios
         env:
-          BUNDLE_GEMFILE: ${{ github.workspace }}/example/Gemfile
+          BUNDLE_GEMFILE: ${{ github.workspace }}/playground/Gemfile
         run: bundle exec pod install --deployment
 
       # Device names differ by Xcode/runner image, so resolve a concrete simulator at runtime
@@ -108,7 +108,7 @@ jobs:
           echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
 
       - name: Run XCTest converter parity suite
-        working-directory: example/ios
+        working-directory: playground/ios
         run: |
           xcodebuild test \
             -workspace CastExample.xcworkspace \

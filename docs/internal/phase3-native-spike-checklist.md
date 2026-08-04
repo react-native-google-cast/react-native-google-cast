@@ -27,7 +27,7 @@ T4 integration tests from the plan.
 | Spike 0.3 — listener attach/detach/teardown clean | ⬜ (not explicitly exercised; `dispose()` not wired to UI)             | ⬜ (not explicitly exercised; `dispose()` not wired to UI)               |
 
 **Both platforms verified end-to-end** against a real "Office TV" Chromecast via
-the example spike harness (`example/App.tsx`):
+the spike harness (then `example/App.tsx`, now `playground/App.tsx`):
 
 - **Critical-gap #12 CLOSED.** Errors cross the Nitro bridge carrying `code`
   (thrown-error JSON channel, both platforms) and `nativeCode` (Android `ended`

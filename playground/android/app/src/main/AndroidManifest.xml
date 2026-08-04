@@ -7,7 +7,7 @@
          NotificationManager (no foreground service), so this is the permission
          that actually gates the Cast media notification. The example has no
          runtime prompt — grant it with
-         `adb shell pm grant com.castexample android.permission.POST_NOTIFICATIONS`
+         `adb shell pm grant com.reactnative.googlecast.playground android.permission.POST_NOTIFICATIONS`
          before the Phase 6 notification rows. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -35,15 +35,25 @@
 
       <!-- Google Cast: the library OptionsProvider (v4-parity notifications,
            image picker, expanded controller). Mirrors the Expo plugin output
-           for receiverAppId "CC1AD845" (explicit here to exercise the
-           meta-data read path); NitroExpandedControllerActivity is
-           auto-registered by the library manifest — no manual <activity>
-           needed. -->
+           (explicit here to exercise the meta-data read path);
+           NitroExpandedControllerActivity is auto-registered by the library
+           manifest — no manual <activity> needed.
+
+           EA48D3FC is the project's own PUBLISHED custom receiver, hosted from
+           this repo — see docs/internal/cast-receiver/README.md. The playground
+           needs it because the Default Media Receiver (CC1AD845) structurally
+           cannot answer a custom namespace, so the CastChannel rows have
+           nothing to test against; being published, it launches on any
+           Chromecast with no device registration.
+
+           This is a PLAYGROUND choice, not the one to copy: a consumer app
+           should use CC1AD845 unless it owns a receiver. Keep example/ (when
+           it exists) on the Default Media Receiver. -->
       <meta-data
         android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
         android:value="com.margelo.nitro.googlecast.NitroCastOptionsProvider" />
       <meta-data
         android:name="com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID"
-        android:value="CC1AD845" />
+        android:value="EA48D3FC" />
     </application>
 </manifest>

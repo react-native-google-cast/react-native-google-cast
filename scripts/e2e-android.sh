@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tier-1 Maestro E2E (T3) — Android, local runner.
 #
-# Builds the example DEBUG APK with the JS bundle baked in (-PbundleInDebug=true,
+# Builds the playground DEBUG APK with the JS bundle baked in (-PbundleInDebug=true,
 # so no Metro server is needed), installs it on the connected emulator/device,
 # and runs the tier-1 Maestro flow against the debug-only native fake seam.
 #
@@ -20,8 +20,8 @@ if [ -n "${REACT_NATIVE_ARCHITECTURES:-}" ]; then
   gradle_args+=("-PreactNativeArchitectures=${REACT_NATIVE_ARCHITECTURES}")
 fi
 
-(cd "$root/example/android" && ./gradlew "${gradle_args[@]}")
+(cd "$root/playground/android" && ./gradlew "${gradle_args[@]}")
 
-adb install -r "$root/example/android/app/build/outputs/apk/debug/app-debug.apk"
+adb install -r "$root/playground/android/app/build/outputs/apk/debug/app-debug.apk"
 
 maestro test "$root/.maestro/tier1-fake-session.yml"

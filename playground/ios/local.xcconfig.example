@@ -1,9 +1,9 @@
-// Local, UNTRACKED iOS build overrides for the example app.
+// Local, UNTRACKED iOS build overrides for the playground app.
 //
 //   cp local.xcconfig.example local.xcconfig
 //   bundle exec pod install          # re-runs the post_install that links it
 //
-// `example/.gitignore` ignores `local.xcconfig`, and every setting below is
+// `playground/.gitignore` ignores `local.xcconfig`, and every setting below is
 // referenced from tracked files rather than written into them — so `git status`
 // stays clean no matter what you put here. That is the point: the Xcode GUI
 // writes signing changes straight into the tracked `project.pbxproj`, and
@@ -31,15 +31,17 @@ RNGC_START_DISCOVERY_AFTER_FIRST_TAP = NO
 // ---------------------------------------------------------------------------
 // Session 3 — physical-device signing
 // ---------------------------------------------------------------------------
-// Only needed for `yarn example ios --device`. The Simulator needs none of it.
+// Only needed for `yarn playground ios --device`. The Simulator needs none of it.
 // Find the team id in Xcode ▸ Settings ▸ Accounts, or:
 //   security find-identity -v -p codesigning
 //
 // DEVELOPMENT_TEAM = ABCDE12345
 //
 // A free personal team cannot reuse a bundle id someone else has provisioned.
-// This prefix is substituted into PRODUCT_BUNDLE_IDENTIFIER; the default when
-// unset is `org.reactjs.native.example`.
-// RNGC_BUNDLE_ID_PREFIX = com.yourcompany.castexample
+// This prefix is substituted into PRODUCT_BUNDLE_IDENTIFIER, which is
+// `<prefix>.playground`; the default when unset is `com.reactnative.googlecast`,
+// i.e. `com.reactnative.googlecast.playground` — the same id as the Android
+// applicationId and the Cast console's Sender Details entry.
+// RNGC_BUNDLE_ID_PREFIX = com.yourcompany
 //
 // CODE_SIGN_STYLE = Automatic

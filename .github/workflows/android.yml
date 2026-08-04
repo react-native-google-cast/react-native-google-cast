@@ -56,7 +56,7 @@ jobs:
           predicate-quantifier: 'every'
           filters: |
             android:
-              - '{android/**,fixtures/converters/**,nitrogen/generated/android/**,example/android/**,.github/workflows/android.yml}'
+              - '{android/**,fixtures/converters/**,nitrogen/generated/android/**,playground/android/**,.github/workflows/android.yml}'
               - '!**/*.md'
 
   unit-tests:
@@ -88,7 +88,7 @@ jobs:
         run: sdkmanager "ndk;27.1.12297006" "cmake;3.22.1"
 
       - name: Robolectric converter parity suite
-        working-directory: example/android
+        working-directory: playground/android
         run: ./gradlew :react-native-google-cast:testDebugUnitTest
 
       - name: Upload test report
@@ -157,7 +157,7 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          working-directory: example/android
+          working-directory: playground/android
           script: ./gradlew :react-native-google-cast:connectedDebugAndroidTest -PreactNativeArchitectures=x86_64
 
       - name: Run instrumented parity suite (retry after flaky boot)
@@ -172,7 +172,7 @@ jobs:
           emulator-boot-timeout: 900
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          working-directory: example/android
+          working-directory: playground/android
           script: ./gradlew :react-native-google-cast:connectedDebugAndroidTest -PreactNativeArchitectures=x86_64
 
       - name: Upload instrumented report

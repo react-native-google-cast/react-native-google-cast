@@ -148,27 +148,36 @@ export const LAN_QUEUE_FIXTURES: readonly MediaFixture[] = [
 export const BLACKHOLE_URL = 'http://10.255.255.1/never-settles.mp4';
 
 /**
- * Namespace for the custom-receiver channel rows (T1). Inert until an app id
- * is registered in the Cast Developer Console and the receiver at
- * `docs/internal/cast-receiver/receiver.html` is hosted and configured — the
- * default Media Receiver structurally cannot answer a custom namespace.
+ * Namespace for the custom-receiver channel rows (T1).
+ *
+ * Must stay identical to `NAMESPACE` in
+ * `docs/internal/cast-receiver/receiver.html` — change them together or not at
+ * all. That receiver declares this namespace and is deployed to
+ * https://react-native-google-cast.github.io/react-native-google-cast/cast-receiver/
+ * as app id `EA48D3FC`, which is what this app now launches.
  */
 export const PROBE_NAMESPACE = 'urn:x-cast:com.reactnative.googlecast.probe';
 
 /**
- * Whether to mount the custom-channel probe. **Leave this `false` until a
- * custom receiver (T1) is registered and the app is pointed at its app id.**
+ * Whether to mount the custom-channel probe.
  *
- * This is not cosmetic. Registering a namespace the receiver does not declare
- * makes the **Default Media Receiver tear the whole session down** — observed
- * on 2026-08-02 as `ended: failed / nativeCode 2055` a few seconds after
- * connecting, which then cascaded into `startSession` rejecting `appNotFound`
- * and every `loadMedia` reporting `idleReason: error`. It cost most of a device
- * pass and looked for all the world like a broken media pipeline. With the
- * probe unmounted, the very same build played media first try.
+ * `true` since 2026-08-04: the playground points at `EA48D3FC` (Android
+ * manifest meta-data, iOS `GCKDiscoveryCriteria`), whose receiver declares
+ * {@link PROBE_NAMESPACE}. **It is only safe while those two agree.** Point
+ * this app back at the Default Media Receiver and this must go back to `false`
+ * in the same change.
+ *
+ * That coupling is not cosmetic. Registering a namespace the receiver does not
+ * declare makes the **Default Media Receiver tear the whole session down** —
+ * observed on 2026-08-02 as `ended: failed / nativeCode 2055` a few seconds
+ * after connecting, which then cascaded into `startSession` rejecting
+ * `appNotFound` and every `loadMedia` reporting `idleReason: error`. It cost
+ * most of a device pass and looked for all the world like a broken media
+ * pipeline. With the probe unmounted, the very same build played media first
+ * try.
  *
  * The lesson generalises to consumers, and belongs in the docs: a custom
  * channel requires a custom receiver that declares the namespace. There is
  * nothing to test against the Default Media Receiver.
  */
-export const CHANNEL_PROBE_ENABLED = false;
+export const CHANNEL_PROBE_ENABLED = true;

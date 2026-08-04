@@ -6,11 +6,11 @@ const pkg = require('../package.json');
 const root = path.resolve(__dirname, '..');
 
 /**
- * Metro configuration for the monorepo example app.
+ * Metro configuration for the monorepo playground app.
  *
  * Uses react-native-builder-bob's helper to resolve the local library
  * (`react-native-google-cast`) from the repo-root source, watch it, and dedupe
- * peer dependencies (React, React Native) against the example's copies — needed
+ * peer dependencies (React, React Native) against the playground's copies — needed
  * because Yarn does not self-symlink the root workspace into node_modules.
  *
  * @type {import('@react-native/metro-config').MetroConfig}

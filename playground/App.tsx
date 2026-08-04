@@ -1,5 +1,5 @@
 /**
- * react-native-google-cast v5 — example app + device-pass harness.
+ * react-native-google-cast v5 — playground + device-pass harness.
  *
  * Exercises the v5 façades over the central state machine and makes the
  * device-gated assertions observable. Phase 3 spike rows:
