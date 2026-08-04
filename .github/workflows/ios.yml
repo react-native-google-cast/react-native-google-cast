@@ -111,7 +111,7 @@ jobs:
         working-directory: playground/ios
         run: |
           xcodebuild test \
-            -workspace CastExample.xcworkspace \
+            -workspace CastPlayground.xcworkspace \
             -scheme NitroGoogleCastTests \
             -destination "id=$SIMULATOR_UDID" \
             -resultBundlePath "$GITHUB_WORKSPACE/NitroGoogleCastTests.xcresult"

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C80B921A6F3F58F76C31292 /* libPods-CastExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-CastExample.a */; };
+		0C80B921A6F3F58F76C31292 /* libPods-CastPlayground.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-CastPlayground.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1534DD70E88D289C03DD052A /* MediaLoadRequestConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 583CB3F35308A8AD015326C6 /* MediaLoadRequestConverterTests.swift */; };
 		1668586AFE5EA5F6F2E7AE4C /* mediaInfo.json in Resources */ = {isa = PBXBuildFile; fileRef = 56207C6DECEBF951ADFC44D5 /* mediaInfo.json */; };
@@ -55,7 +55,7 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = CastExample;
+			remoteInfo = CastPlayground;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -63,33 +63,33 @@
 		006789989A684E4E7B35A906 /* mediaStatus.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaStatus.json; path = ../../fixtures/converters/mediaStatus.json; sourceTree = "<group>"; };
 		09C61447F6A35CD6496D7D33 /* videoInfo.json */ = {isa = PBXFileReference; includeInIndex = 1; name = videoInfo.json; path = ../../fixtures/converters/videoInfo.json; sourceTree = "<group>"; };
 		0EAE69B317C350F01C826A60 /* MediaStatusConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaStatusConverterTests.swift; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* CastExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CastExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CastExample/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CastExample/Info.plist; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = CastExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* CastPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CastPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CastPlayground/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CastPlayground/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = CastPlayground/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1C5C9BA0346A86D31EE8E1B0 /* WebImageConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WebImageConverterTests.swift; sourceTree = "<group>"; };
 		2636BABBD6C616B444D45799 /* mediaLoadRequest.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaLoadRequest.json; path = ../../fixtures/converters/mediaLoadRequest.json; sourceTree = "<group>"; };
 		2ECD13393927F54CD7574E81 /* StateEnumConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StateEnumConverterTests.swift; sourceTree = "<group>"; };
 		31AE1FB39451C5BD98524B0E /* ConverterAssertions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConverterAssertions.swift; sourceTree = "<group>"; };
-		3B4392A12AC88292D35C810B /* Pods-CastExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastExample.debug.xcconfig"; path = "Target Support Files/Pods-CastExample/Pods-CastExample.debug.xcconfig"; sourceTree = "<group>"; };
+		3B4392A12AC88292D35C810B /* Pods-CastPlayground.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastPlayground.debug.xcconfig"; path = "Target Support Files/Pods-CastPlayground/Pods-CastPlayground.debug.xcconfig"; sourceTree = "<group>"; };
 		47941F2BF4B53247F926F608 /* mediaQueueContainerMetadata.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaQueueContainerMetadata.json; path = ../../fixtures/converters/mediaQueueContainerMetadata.json; sourceTree = "<group>"; };
 		48720271A19CCCCA05701D16 /* ConverterFixtures.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConverterFixtures.swift; sourceTree = "<group>"; };
 		4FFF977ABAE74AED162B9770 /* MediaTrackConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaTrackConverterTests.swift; sourceTree = "<group>"; };
 		52ADC9DB9B632A6362839214 /* mediaQueueData.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaQueueData.json; path = ../../fixtures/converters/mediaQueueData.json; sourceTree = "<group>"; };
 		56207C6DECEBF951ADFC44D5 /* mediaInfo.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaInfo.json; path = ../../fixtures/converters/mediaInfo.json; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-CastExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastExample.release.xcconfig"; path = "Target Support Files/Pods-CastExample/Pods-CastExample.release.xcconfig"; sourceTree = "<group>"; };
+		5709B34CF0A7D63546082F79 /* Pods-CastPlayground.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CastPlayground.release.xcconfig"; path = "Target Support Files/Pods-CastPlayground/Pods-CastPlayground.release.xcconfig"; sourceTree = "<group>"; };
 		583CB3F35308A8AD015326C6 /* MediaLoadRequestConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaLoadRequestConverterTests.swift; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-CastExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CastExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DCACB8F33CDC322A6C60F78 /* libPods-CastPlayground.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CastPlayground.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F6AC5B7F5FF4768DB12274F /* MediaLiveSeekableRangeConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaLiveSeekableRangeConverterTests.swift; sourceTree = "<group>"; };
 		601A25E393D5E717271FDB47 /* MediaMetadataConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaMetadataConverterTests.swift; sourceTree = "<group>"; };
 		734165D8F6B0CBDB199B2153 /* libPods-NitroGoogleCastTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NitroGoogleCastTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CastExample/AppDelegate.swift; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CastPlayground/AppDelegate.swift; sourceTree = "<group>"; };
 		779854B72D9EB90F8D75DE24 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		7935594327519A50496169CA /* MediaQueueItemConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaQueueItemConverterTests.swift; sourceTree = "<group>"; };
 		7C37CF92849D5D9E5E03D509 /* Pods-NitroGoogleCastTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NitroGoogleCastTests.release.xcconfig"; path = "Target Support Files/Pods-NitroGoogleCastTests/Pods-NitroGoogleCastTests.release.xcconfig"; sourceTree = "<group>"; };
 		7D25EEE635499F84B57C657F /* Pods-NitroGoogleCastTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NitroGoogleCastTests.debug.xcconfig"; path = "Target Support Files/Pods-NitroGoogleCastTests/Pods-NitroGoogleCastTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7D58987ED68359BA12F4902B /* mediaTrack.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaTrack.json; path = ../../fixtures/converters/mediaTrack.json; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CastExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CastPlayground/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		83AC4B1FE313398578441B61 /* NitroGoogleCastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NitroGoogleCastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B925CDDC0A51A5FCC1282EE /* MediaQueueDataConverterTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MediaQueueDataConverterTests.swift; sourceTree = "<group>"; };
 		9DA9A7DE70569F6FEDC83EE4 /* mediaSeekOptions.json */ = {isa = PBXFileReference; includeInIndex = 1; name = mediaSeekOptions.json; path = ../../fixtures/converters/mediaSeekOptions.json; sourceTree = "<group>"; };
@@ -126,14 +126,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-CastExample.a in Frameworks */,
+				0C80B921A6F3F58F76C31292 /* libPods-CastPlayground.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* CastExample */ = {
+		13B07FAE1A68108700A75B9A /* CastPlayground */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -142,14 +142,14 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = CastExample;
+			name = CastPlayground;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-CastExample.a */,
+				5DCACB8F33CDC322A6C60F78 /* libPods-CastPlayground.a */,
 				EC4DC40F9F33A8183BB74389 /* iOS */,
 				734165D8F6B0CBDB199B2153 /* libPods-NitroGoogleCastTests.a */,
 			);
@@ -216,7 +216,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* CastExample */,
+				13B07FAE1A68108700A75B9A /* CastPlayground */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -232,7 +232,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* CastExample.app */,
+				13B07F961A680F5B00A75B9A /* CastPlayground.app */,
 				83AC4B1FE313398578441B61 /* NitroGoogleCastTests.xctest */,
 			);
 			name = Products;
@@ -241,8 +241,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-CastExample.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-CastExample.release.xcconfig */,
+				3B4392A12AC88292D35C810B /* Pods-CastPlayground.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-CastPlayground.release.xcconfig */,
 				7C37CF92849D5D9E5E03D509 /* Pods-NitroGoogleCastTests.release.xcconfig */,
 				7D25EEE635499F84B57C657F /* Pods-NitroGoogleCastTests.debug.xcconfig */,
 			);
@@ -260,9 +260,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* CastExample */ = {
+		13B07F861A680F5B00A75B9A /* CastPlayground */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CastExample" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CastPlayground" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -276,9 +276,9 @@
 			);
 			dependencies = (
 			);
-			name = CastExample;
-			productName = CastExample;
-			productReference = 13B07F961A680F5B00A75B9A /* CastExample.app */;
+			name = CastPlayground;
+			productName = CastPlayground;
+			productReference = 13B07F961A680F5B00A75B9A /* CastPlayground.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D94ACC29FB65856A890F09E5 /* NitroGoogleCastTests */ = {
@@ -313,7 +313,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "CastExample" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "CastPlayground" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -326,7 +326,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* CastExample */,
+				13B07F861A680F5B00A75B9A /* CastPlayground */,
 				D94ACC29FB65856A890F09E5 /* NitroGoogleCastTests */,
 			);
 		};
@@ -388,15 +388,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CastPlayground/Pods-CastPlayground-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CastPlayground/Pods-CastPlayground-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CastPlayground/Pods-CastPlayground-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7ADD61745F870984A6C66848 /* [CP] Check Pods Manifest.lock */ = {
@@ -436,7 +436,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CastExample-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-CastPlayground-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -449,15 +449,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CastPlayground/Pods-CastPlayground-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CastPlayground/Pods-CastPlayground-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CastExample/Pods-CastExample-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CastPlayground/Pods-CastPlayground-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -503,8 +503,8 @@
 /* Begin PBXTargetDependency section */
 		8275B91540AF57AC58CE7F42 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = CastExample;
-			target = 13B07F861A680F5B00A75B9A /* CastExample */;
+			name = CastPlayground;
+			target = 13B07F861A680F5B00A75B9A /* CastPlayground */;
 			targetProxy = 5CFDB66DF11F803F637A118F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -512,13 +512,13 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-CastExample.debug.xcconfig */;
+			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-CastPlayground.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = CastExample/Info.plist;
+				INFOPLIST_FILE = CastPlayground/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -531,7 +531,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(RNGC_BUNDLE_ID_PREFIX:default=com.reactnative.googlecast).playground";
-				PRODUCT_NAME = CastExample;
+				PRODUCT_NAME = CastPlayground;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -542,12 +542,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-CastExample.release.xcconfig */;
+			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-CastPlayground.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = CastExample/Info.plist;
+				INFOPLIST_FILE = CastPlayground/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -560,7 +560,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(RNGC_BUNDLE_ID_PREFIX:default=com.reactnative.googlecast).playground";
-				PRODUCT_NAME = CastExample;
+				PRODUCT_NAME = CastPlayground;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -597,7 +597,7 @@
 				SWIFT_OBJC_INTEROP_HEADER_NAME = "";
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CastExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CastExample";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CastPlayground.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CastPlayground";
 			};
 			name = Debug;
 		};
@@ -788,7 +788,7 @@
 				SWIFT_OBJC_INTEROP_HEADER_NAME = "";
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CastExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CastExample";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CastPlayground.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CastPlayground";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -796,7 +796,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CastExample" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CastPlayground" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -814,7 +814,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "CastExample" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "CastPlayground" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

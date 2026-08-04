@@ -423,8 +423,11 @@ immediately. Worth remembering when a device pass drives both platforms at once
 **Tooling note that saves the next session an hour:** Maestro **does** drive the
 iOS Simulator (`maestro test --platform ios <flow>`), even though it cannot see
 the physically-attached Android phone on this machine. Two gotchas: the flow's
-`appId` must be the iOS bundle id (`org.reactjs.native.example.CastExample`, not
-`com.castexample`), and `tapOn:` by text was unreliable against this RN tree —
+`appId` must be the **iOS bundle id**, which on 08-04 was
+`org.reactjs.native.example.CastExample` and not the Android
+`com.castexample` — the 08-04 rename made both platforms
+`com.reactnative.googlecast.playground`, so this particular trap is now gone,
+but check rather than assume. And `tapOn:` by text was unreliable against this RN tree —
 `tapOn: { point: "27%,54%" }` worked every time. Read _values_ off
 `xcrun simctl io <udid> screenshot`, not off the view hierarchy. AppleScript /
 System Events is a dead end: it blocks on an accessibility-permission prompt.
@@ -434,7 +437,7 @@ System Events is a dead end: it blocks on an accessibility-permission prompt.
 - **S1.4 one-shots** — overlay once/∞ persistence, no-anchor → false,
   PlayServices dialog, and spike 0.3 (Fast Refresh + forced reconnect).
 - **S2.3 notifications** — needs
-  `adb shell pm grant com.castexample android.permission.POST_NOTIFICATIONS`
+  `adb shell pm grant com.reactnative.googlecast.playground android.permission.POST_NOTIFICATIONS`
   first (see the S2.3 block below).
 
 Handy: the device-pass driver used for these runs is disposable and lives in the
@@ -714,15 +717,15 @@ device time on a non-issue:
 
 **The real API 33+ concern is `POST_NOTIFICATIONS`**, and its failure mode is
 silent, which makes it much easier to misdiagnose as "our notification code is
-broken": neither the AAR nor the app declared it, and the example targets SDK
-36, so on Android 13+ the notification is simply suppressed. The example
+broken": neither the AAR nor the app declared it, and the playground targets SDK
+36, so on Android 13+ the notification is simply suppressed. The playground
 manifest now declares it; **the permission must still be granted at runtime** —
-the example has no runtime-permission prompt, so grant it explicitly before
+the playground has no runtime-permission prompt, so grant it explicitly before
 running these rows:
 
 ```bash
-adb shell pm grant com.castexample android.permission.POST_NOTIFICATIONS
-adb shell dumpsys notification_manager | grep -A2 castexample   # confirm
+adb shell pm grant com.reactnative.googlecast.playground android.permission.POST_NOTIFICATIONS
+adb shell dumpsys notification_manager | grep -A2 googlecast.playground   # confirm
 ```
 
 If a row fails, check the grant first. Whether the library should request this

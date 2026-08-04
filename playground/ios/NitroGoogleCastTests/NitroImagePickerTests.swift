@@ -164,7 +164,7 @@ final class NitroImagePickerTests: XCTestCase {
       GCKCastContext.setSharedInstanceWith(GCKCastOptions(discoveryCriteria: criteria))
     }
     let unset = GCKCastContext.sharedInstance().imagePicker
-    // The test host is the real CastExample app: if its JS bundle happened to
+    // The test host is the real CastPlayground app: if its JS bundle happened to
     // load during this run, the transport's install point already replaced the
     // SDK default with our picker — that's the install path *working*, not a
     // semantics change. Only a third, unknown class means GCK changed.

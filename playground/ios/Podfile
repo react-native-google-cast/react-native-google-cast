@@ -14,7 +14,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'CastExample' do
+target 'CastPlayground' do
   config = use_native_modules!
 
   use_react_native!(
@@ -46,7 +46,7 @@ target 'CastExample' do
     # `#include?` is the optional form: absent file → build unchanged (build A,
     # what CI and the Simulator gate compile). Appended last so local values win
     # over the CocoaPods defaults.
-    Dir.glob(File.join(__dir__, 'Pods', 'Target Support Files', 'Pods-CastExample', '*.xcconfig')).each do |xcconfig|
+    Dir.glob(File.join(__dir__, 'Pods', 'Target Support Files', 'Pods-CastPlayground', '*.xcconfig')).each do |xcconfig|
       contents = File.read(xcconfig)
       next if contents.include?('local.xcconfig')
       File.write(xcconfig, contents + <<~INCLUDE)

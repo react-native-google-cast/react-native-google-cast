@@ -10,7 +10,7 @@
 // "remember not to commit it" is not a control.
 //
 // The Podfile's post_install appends `#include? "../../../local.xcconfig"` to
-// the generated `Pods-CastExample.*.xcconfig`. The `?` makes it optional: with
+// the generated `Pods-CastPlayground.*.xcconfig`. The `?` makes it optional: with
 // no local.xcconfig present the build is unchanged (that is build A, and it is
 // what CI and the Simulator gate compile).
 
