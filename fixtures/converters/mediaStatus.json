@@ -14,7 +14,7 @@
         "queueRepeatMode": "all"
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/v.mp4", "streamType": "buffered", "streamDuration": 300 },
+        "mediaInfo": { "contentUrl": "https://example.com/v.mp4", "contentId": "https://example.com/v.mp4", "streamType": "buffered", "streamDuration": 300 },
         "playerState": "playing",
         "streamPosition": 42.5,
         "playbackRate": 1,
@@ -38,7 +38,7 @@
         "isMuted": true
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 },
+        "mediaInfo": { "contentUrl": "https://example.com/a.mp3", "contentId": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 },
         "playerState": "idle",
         "idleReason": "finished",
         "streamPosition": 0,
@@ -64,7 +64,7 @@
         "currentItemId": 3
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/live.m3u8", "streamType": "live", "streamDuration": 0 },
+        "mediaInfo": { "contentUrl": "https://example.com/live.m3u8", "contentId": "https://example.com/live.m3u8", "streamType": "live", "streamDuration": 0 },
         "playerState": "buffering",
         "streamPosition": 10,
         "playbackRate": 1,
@@ -72,7 +72,7 @@
         "isMuted": false,
         "liveSeekableRange": { "startTime": 0, "endTime": 120, "isMovingWindow": true, "isLiveDone": false },
         "queueItems": [
-          { "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 60 }, "autoplay": true, "preloadTime": 0 }
+          { "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "contentId": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 60 }, "autoplay": true, "preloadTime": 0 }
         ],
         "currentItemId": 3
       }

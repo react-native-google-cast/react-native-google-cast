@@ -1,4 +1,5 @@
 {
+  "$comment": "contentId is expected to echo contentUrl wherever the input omits it. That is the documented default on MediaInfo.contentId and is forced by the platform: GCK Android's MediaInfo.Builder takes contentId as a required constructor argument, so 'unset' cannot be represented, and iOS matches it for parity (see MediaInfo+toGckMediaInfo.kt / MediaInfo+toGckMediaInformation.swift). The round trip is therefore lossy in one direction only -- an omitted contentId is indistinguishable from one explicitly set to contentUrl -- which is the receiver-visible behaviour v4 also had. Same applies to every nested mediaInfo in the other fixture files.",
   "fixtures": [
     {
       "name": "full",
@@ -42,6 +43,7 @@
       },
       "expectedRoundTrip": {
         "contentUrl": "https://example.com/live.m3u8",
+        "contentId": "https://example.com/live.m3u8",
         "streamType": "live",
         "streamDuration": 0
       }
@@ -50,7 +52,7 @@
       "name": "minimal",
       "$comment": "streamType is non-optional in GCK; the GCKMediaInformationBuilder default is Buffered (pinned from observed output), not None. streamDuration default observed as 0.",
       "input": { "contentUrl": "https://example.com/a.mp3" },
-      "expectedRoundTrip": { "contentUrl": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 }
+      "expectedRoundTrip": { "contentUrl": "https://example.com/a.mp3", "contentId": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 }
     }
   ]
 }

@@ -14,7 +14,7 @@
         "customData": { "tag": "queued" }
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 120 },
+        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "contentId": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 120 },
         "activeTrackIds": [1, 2],
         "autoplay": false,
         "playbackDuration": 90,
@@ -30,7 +30,7 @@
         "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 0 }
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 0 },
+        "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "contentId": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 0 },
         "autoplay": false
       }
     }

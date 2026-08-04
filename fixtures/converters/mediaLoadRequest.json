@@ -12,7 +12,7 @@
         "customData": { "session": "abc" }
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 200 },
+        "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "contentId": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 200 },
         "autoplay": true,
         "startTime": 15,
         "playbackRate": 1.5,
@@ -38,7 +38,7 @@
           "type": "playlist",
           "startIndex": 0,
           "items": [
-            { "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 50 }, "autoplay": true, "preloadTime": 0 }
+            { "mediaInfo": { "contentUrl": "https://example.com/2.mp4", "contentId": "https://example.com/2.mp4", "streamType": "buffered", "streamDuration": 50 }, "autoplay": true, "preloadTime": 0 }
           ]
         },
         "autoplay": false,
@@ -52,7 +52,7 @@
         "mediaInfo": { "contentUrl": "https://example.com/3.mp4", "streamType": "buffered", "streamDuration": 0 }
       },
       "expectedRoundTrip": {
-        "mediaInfo": { "contentUrl": "https://example.com/3.mp4", "streamType": "buffered", "streamDuration": 0 },
+        "mediaInfo": { "contentUrl": "https://example.com/3.mp4", "contentId": "https://example.com/3.mp4", "streamType": "buffered", "streamDuration": 0 },
         "autoplay": true,
         "playbackRate": 1
       }

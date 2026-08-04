@@ -617,6 +617,17 @@ yarn playground ios
 > `playground/ios/Podfile.lock`. That checksum is environment-dependent (it differs
 > between CI and at least one dev machine) — **do not commit it**; revert that
 > one line and keep the rest.
+>
+> Reverting it does, however, desync the lock from CocoaPods' own copy, and the
+> next local build fails with **"The sandbox is not in sync with the
+> Podfile.lock"** — which reads like a missing `pod install` and is not one.
+> Re-point CocoaPods at the committed lock instead of re-running the install:
+>
+> ```bash
+> cp playground/ios/Podfile.lock playground/ios/Pods/Manifest.lock
+> ```
+>
+> `Pods/` is untracked, so this changes nothing in git.
 
 | #     | Row                                                                                                                                                                          | Status | Evidence |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- |

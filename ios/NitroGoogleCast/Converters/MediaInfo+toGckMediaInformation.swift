@@ -6,9 +6,11 @@ import NitroModules
 /// `GCKMediaInformationBuilder` (the non-deprecated construction path).
 ///
 /// Reverse lives in `GCKMediaInformation+toMediaInfo.swift`. Notes:
-/// - `contentUrl` seeds the builder; `contentId`/`entity` are independent optional fields.
-/// - `streamType` is non-optional in GCK; when absent the builder default (`None`) is used,
-///   which the reverse maps to `other` (so absent `streamType` normalizes to `other`).
+/// - `contentUrl` seeds the builder; `entity` is an independent optional field. `contentId`
+///   is not independent — an omitted one defaults to `contentUrl` (see below).
+/// - `streamType` is non-optional in GCK. An omitted one defaults to `buffered` rather than
+///   the builder's `None`, so the same `MediaLoadRequest` behaves identically on all three
+///   platforms. Both defaults are pinned by `fixtures/converters/mediaInfo.json`.
 /// - Nested structs use their own converters; enums map by value.
 extension MediaInfo {
   func toGckMediaInformation() -> GCKMediaInformation {

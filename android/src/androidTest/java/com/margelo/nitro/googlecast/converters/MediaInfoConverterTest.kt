@@ -21,11 +21,15 @@ import org.junit.runner.RunWith
  * Requires a connected emulator or device: customData AnyMap is JNI-backed.
  *
  * ANDROID DIVERGENCE — "minimal" fixture:
- *   streamType absent in input. The iOS-pinned corpus pins "buffered" (iOS GCK default), but
- *   GCK Android leaves an unset streamType as INVALID, which the converter maps to null. The
- *   streamType assertion below handles this per-platform (explicit value round-trips; an unset
- *   one stays null). streamDuration behaves the same way: GCK Android maps an unset duration to
- *   UNKNOWN_DURATION (-> null), while the iOS-pinned corpus has 0.
+ *   streamDuration absent in input. GCK Android maps an unset duration to UNKNOWN_DURATION
+ *   (-> null), while the iOS-pinned corpus has 0. The assertion below handles this
+ *   per-platform: an explicit value round-trips, an unset one stays null.
+ *
+ *   streamType USED to diverge the same way — GCK Android left an unset streamType INVALID
+ *   (-> null) where iOS defaulted to BUFFERED. 61aecc6 closed that gap: both converters now
+ *   default an omitted streamType to BUFFERED, matching the Chrome sender SDK so the same
+ *   MediaLoadRequest behaves identically on all three platforms. streamType is therefore
+ *   asserted against the shared corpus like any other field, with no platform branch.
  *
  * NOTE: blocked on emulator (emulator-5554 was offline at time of authoring — 2026-06-28).
  */
@@ -68,12 +72,9 @@ class MediaInfoConverterTest {
       assertEquals("[$name] contentId", expected.contentId, actual.contentId)
       assertEquals("[$name] contentType", expected.contentType, actual.contentType)
       assertEquals("[$name] entity", expected.entity, actual.entity)
-      // ANDROID DIVERGENCE (see class note): unset streamType -> null on Android, BUFFERED on iOS.
-      if (input.streamType != null) {
-        assertEquals("[$name] streamType", input.streamType, actual.streamType)
-      } else {
-        assertNull("[$name] streamType (android: unset -> null, not BUFFERED)", actual.streamType)
-      }
+      // No platform branch since 61aecc6 — an omitted streamType defaults to BUFFERED on both
+      // native platforms, so the shared corpus is the expectation (see class note).
+      assertEquals("[$name] streamType", expected.streamType, actual.streamType)
       // ANDROID DIVERGENCE — streamDuration: GCK Android maps an unset duration to
       // UNKNOWN_DURATION (-> null); iOS pins 0. Explicit value round-trips; unset stays null.
       if (input.streamDuration != null) {

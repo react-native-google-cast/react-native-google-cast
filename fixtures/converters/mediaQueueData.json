@@ -23,7 +23,7 @@
         "repeatMode": "all",
         "containerMetadata": { "containerType": "generic", "title": "Album X" },
         "items": [
-          { "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 100 }, "autoplay": true, "preloadTime": 0 }
+          { "mediaInfo": { "contentUrl": "https://example.com/1.mp4", "contentId": "https://example.com/1.mp4", "streamType": "buffered", "streamDuration": 100 }, "autoplay": true, "preloadTime": 0 }
         ],
         "startIndex": 2,
         "startTime": 5
