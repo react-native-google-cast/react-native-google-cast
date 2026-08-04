@@ -18,16 +18,48 @@ The public roadmap is the GitHub **`v5` milestone**.
 
 ## Build & test
 
-Current commands (v4 tooling; v5 will move to RN 0.78+, Nitrogen codegen, and a new example app):
-
 ```bash
-yarn                 # install
+yarn                 # install (there is no `yarn bootstrap`)
 yarn typescript      # tsc --noEmit
 yarn lint            # eslint
 yarn test            # jest
 yarn prepare         # bob build (library output)
-yarn bootstrap       # set up example + playground apps (incl. pods)
+yarn specs           # nitrogen — only when a .nitro.ts spec changes (then re-run pod install)
+
+yarn playground start          # Metro for the playground app (playground/)
+yarn playground android|ios
 ```
+
+### The two gates that need a device, and when they are not optional
+
+`yarn test` does **not** cover the struct↔GCK converters. Those are pinned by the
+shared golden corpus in `fixtures/converters/**`, which **both** native suites
+assert against — that corpus exists precisely to catch cross-platform drift:
+
+```bash
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+cd playground/android && ./gradlew :react-native-google-cast:connectedDebugAndroidTest   # needs a device/emulator
+cd playground/ios && xcodebuild test -workspace CastPlayground.xcworkspace \
+  -scheme NitroGoogleCastTests -destination "id=<simulator-udid>"
+```
+
+**A converter change is a corpus change.** If you touch anything under
+`ios/NitroGoogleCast/Converters/` or
+`android/src/main/java/com/margelo/nitro/googlecast/converters/`, update
+`fixtures/converters/**` in the same commit and run both suites — JS gates stay
+green either way, so nothing else will tell you. (This is not hypothetical: it
+left both native gates red on `v5` for two days. See bead `v5-eb4`.)
+
+Two traps when reading a failure:
+
+- JUnit aborts a test at its first failing assertion, so CI can be hiding a
+  second stale expectation behind the one it reports.
+- Some expectations live in test **code**, not the corpus — genuine per-platform
+  divergences are asserted with an explicit branch and an `ANDROID DIVERGENCE`
+  comment. Closing a divergence means deleting its branch.
+
+The corpus is deliberately **not** prettier-formatted (compact hand style). Edit
+it structurally; do not run prettier over it.
 
 ## Conventions
 
