@@ -12,8 +12,11 @@
       during registration must still reach the listener. A receiver that only
       replies to what it is sent can never prove that.
 
-  It also keeps the media namespace working (the CAF PlayerManager is left
-  untouched), so the same receiver serves the media and queue rows.
+  And a third job that is not about channels at all: it acts as an ORACLE for
+  the media rows, reporting back over the custom namespace exactly what arrived
+  on the reserved media namespace. See "Job 3" below. Playback itself is
+  untouched — every interceptor returns its request unmodified — so the same
+  receiver serves the media and queue rows as well.
 -->
 <html>
   <head>
@@ -25,7 +28,10 @@
         margin: 0;
         background: #101010;
         color: #eee;
-        font: 14px/1.5 ui-monospace, Menlo, monospace;
+        font:
+          14px/1.5 ui-monospace,
+          Menlo,
+          monospace;
       }
       #log {
         position: fixed;
@@ -85,15 +91,91 @@
             note: 'sent on SENDER_CONNECTED, before the sender finished addChannel',
             at: Date.now(),
           })
-        },
+        }
       )
 
       context.addEventListener(
         cast.framework.system.EventType.SENDER_DISCONNECTED,
         function (event) {
           log('sender disconnected: ' + event.senderId)
-        },
+        }
       )
+
+      // Job 3 — the ORACLE. Report back, over our own namespace, exactly what
+      // arrived on the reserved media namespace.
+      //
+      // The media namespace (urn:x-cast:com.google.cast.media) cannot be
+      // observed with addCustomMessageListener — Google reserves it, and
+      // `PlayerManager.setMessageInterceptor` is the documented way in:
+      // https://developers.google.com/cast/docs/web_receiver/core_features
+      // The message shapes themselves are at
+      // https://developers.google.com/cast/docs/media/messages
+      //
+      // This closes the assertion loop without a debugger. Until now a media
+      // row could only be checked by looking at the TV: "it played, so
+      // presumably we sent the right thing." Now the receiver states what it
+      // received and the sender logs it, so a row asserts on the actual wire
+      // payload. Both converter bugs found on 2026-08-02 (contentId not
+      // defaulting to contentUrl, streamType unset) were exactly this shape —
+      // media played anyway, and only a v4 side-by-side caught them. With this
+      // in place they would have been visible in the event log immediately.
+      //
+      // Defensive on purpose: a throw inside a LOAD interceptor would break
+      // playback, and an unknown/renamed MessageType would break the whole
+      // receiver at startup. So every relay is wrapped, every interceptor
+      // returns its request unmodified, and unknown type names are skipped.
+      var playerManager = context.getPlayerManager()
+      var MessageType = cast.framework.messages.MessageType
+
+      // The inbound commands the probe panel can produce. Deliberately not
+      // "every type": these are the ones a device-pass row actually asserts on.
+      var OBSERVED = [
+        'LOAD',
+        'PLAY',
+        'PAUSE',
+        'SEEK',
+        'STOP',
+        'SET_VOLUME',
+        'SET_PLAYBACK_RATE',
+        'QUEUE_LOAD',
+        'QUEUE_INSERT',
+        'QUEUE_REMOVE',
+        'QUEUE_REORDER',
+        'QUEUE_UPDATE',
+      ]
+
+      function relay(kind, request) {
+        try {
+          var json = JSON.stringify(request)
+          if (json.length > 8192) json = json.slice(0, 8192) + '…[truncated]'
+          log('⇢ ' + kind + ' ' + json)
+          // `request` is sent as a STRING, not an object: it keeps the payload
+          // one predictable field for substring assertions (Maestro can match
+          // on it) and keeps us clear of the 64 KB custom-message limit.
+          context.sendCustomMessage(NAMESPACE, undefined, {
+            type: 'observed',
+            message: kind,
+            request: json,
+            at: Date.now(),
+          })
+        } catch (e) {
+          log('relay failed for ' + kind + ': ' + e)
+        }
+      }
+
+      OBSERVED.forEach(function (name) {
+        var type = MessageType[name]
+        if (type == null) {
+          log('skipping unknown MessageType ' + name)
+          return
+        }
+        playerManager.setMessageInterceptor(type, function (request) {
+          relay(name, request)
+          // MUST return the request: returning null would reject the command
+          // and the receiver would stop responding to the sender entirely.
+          return request
+        })
+      })
 
       var options = new cast.framework.CastReceiverOptions()
       // Keep the receiver up while the pass runs rather than shutting down the

@@ -75,6 +75,17 @@ The app id is per-platform config, not something the library reads at runtime.
 | Android  | `example/android/app/src/main/AndroidManifest.xml` — the `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID` meta-data read by `NitroCastOptionsProvider` (currently `CC1AD845` → `EA48D3FC`) |
 | Web      | `window.__RNGoogleCastOptions = { receiverAppId: 'EA48D3FC' }` before the sender loader (see `docs/getting-started/web.md`)                                                                      |
 
+### Which app gets which receiver
+
+| App                            | Receiver                 | Why                                                                                                                                                                                                                                       |
+| ------------------------------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **playground** (this harness)  | `EA48D3FC` custom        | Needs a custom namespace for the channel rows, and gets the media oracle below for free.                                                                                                                                                  |
+| **example** (CastVideos-style) | `CC1AD845` Default Media | **Must stay on the DMR.** A custom receiver only launches on Chromecasts registered _in the owning console account_, so an example pointed at `EA48D3FC` would fail for every reader who copies it. The DMR needs no registration at all. |
+
+That split is the whole reason for having two apps, and it is worth stating in
+the Phase 7 docs too: "use the Default Media Receiver unless you need a custom
+namespace" is the advice for consumers, and the example should model it.
+
 ⚠️ **Switching the app id switches every row**, not just the channel ones —
 `EA48D3FC` replaces the Default Media Receiver, so the media and queue rows then
 run against this receiver too. That is fine (it leaves the CAF `PlayerManager`
@@ -98,6 +109,43 @@ all.
 | **Registration handshake (#614)** | A `{"type":"hello"}` line appears in the event log **without any send** — the receiver posts it on `SENDER_CONNECTED`, while `addChannel` is still in flight. This is the row the default receiver cannot produce. |
 | Echo round trip                   | "Send ping" → `channel → ping sent`, then `channel ← {"type":"echo",…}`                                                                                                                                            |
 | Session-scoped teardown           | End the session; the channel handle goes stale and `sendMessage` rejects `noSession`                                                                                                                               |
+
+## The oracle — asserting on the wire payload, with no debugger
+
+The receiver also reports back what arrived on the **reserved media namespace**,
+which is the thing that turns "the TV played something, so presumably we sent
+the right bytes" into an actual assertion.
+
+`urn:x-cast:com.google.cast.media` cannot be observed with
+`addCustomMessageListener` — Google reserves it. The documented way in is
+[`PlayerManager.setMessageInterceptor`](https://developers.google.com/cast/docs/web_receiver/core_features),
+which sees `LOAD` / `PLAY` / `PAUSE` / `SEEK` / `STOP` / `SET_VOLUME` /
+`QUEUE_*` ([message shapes](https://developers.google.com/cast/docs/media/messages)).
+The receiver relays each one straight back over our own namespace:
+
+```json
+{ "type": "observed", "message": "LOAD", "request": "{…}", "at": 1754… }
+```
+
+`request` is a **string** on purpose — one predictable field to substring-match
+on (Maestro can assert against it) and safely clear of the 64 KB
+custom-message limit.
+
+**No `chrome://inspect` needed.** The debugger and the Cast Debug Logger are for
+a human reading logs on a second screen; an oracle wants the data back _in band_,
+where the test runner already is. That is the whole trick — and it is why this
+costs one interceptor loop rather than a debugging setup.
+
+Why it is worth having: both converter bugs found on 2026-08-02 — `contentId`
+not defaulting to `contentUrl`, and `streamType` left unset — were invisible
+exactly because **media played anyway**. Only a side-by-side against the v4
+playground caught them. With the oracle in place they would have shown up in the
+event log on the first load.
+
+Every interceptor returns its request unmodified, so playback is untouched; a
+relay failure is caught and logged rather than propagated (a throw inside a
+`LOAD` interceptor would break playback, and returning `null` would reject the
+command outright).
 
 The receiver logs every message it sees on-screen, so a failure can be localised
 to the sender or the receiver without guessing. `chrome://inspect` against the
