@@ -521,10 +521,48 @@ plays, the fault is in the Android `loadMedia` path.
 
 ---
 
-## Run log — 2026-08-04, iOS Simulator (G7 attempt) — 🔴 BLOCKED
+## Run log — 2026-08-04, iOS Simulator — **G7 ✅ PASSED**
 
-**G7 could not be run: the Chromecast will not launch `EA48D3FC`.**
-`startSession` reports `startFailed: cancelled / native 5`
+**Cause of the block below: the Receiver Application URL had not been saved in
+the Cast Developer Console.** Once it was saved and the Chromecast restarted,
+every G7 row passed on the first attempt. The investigation is kept in full
+because localising it took three eliminations, and the same failure will look
+identical next time.
+
+### G7 — CastChannel rows against the custom receiver (bead `v5-8hq.6`, #614)
+
+Session `b258587a-5e77-405a-b4ed-f789716084cb`, event-log line numbers in
+brackets. **Ordering is load-bearing:** the probes panel must be expanded
+_before_ connecting — `useCastChannel` can only call `addChannel` once a session
+exists, and the receiver sends `hello` exactly once, on `SENDER_CONNECTED`.
+
+| Row                               | Status | Evidence                                                                                                                                                                                                                                                 |
+| --------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Channel registers                 | ✅     | `channel=registered status=connected=true writable=true` on `urn:x-cast:com.reactnative.googlecast.probe`                                                                                                                                                |
+| **Registration handshake (#614)** | ✅     | `[8] channel ← {"type":"hello","note":"sent on SENDER_CONNECTED, before the sender finished addChannel",…}` — immediately after `[7] started`, **with no send having occurred**. This is the row the Default Media Receiver structurally cannot produce. |
+| Echo round trip                   | ✅     | `[10] channel → ping sent` → `[11] channel ← {"type":"echo","received":{"type":"ping","at":1785868656210},"at":1785868656400}` — 190 ms, payload echoed intact                                                                                           |
+| Session-scoped teardown           | ✅     | `[12] ending` → `[14] ended`; panel flips to `channel=null status=null`, and a subsequent tap logs `channel: send SKIPPED — no channel`                                                                                                                  |
+
+⚠️ **The teardown row's original wording was wrong** and has been corrected. It
+said "the channel handle goes stale and `sendMessage` rejects `noSession`". That
+is unreachable through this harness, and by design: `useCastChannel` nulls the
+handle when the session ends, so a send after teardown never reaches the
+transport at all. That is the better behaviour — there is no stale handle to
+misuse — and the `noSession` rejection stays a unit-test concern
+(`src/api/__tests__/channels.test.ts`). A device row cannot test it.
+
+Confirmed in passing, same session: `1.2.1` cold-launch seed; `1.2.3` chooser →
+connect → ordered `starting`/`connected`/`started`; `1.4.3` controller dialog
+while connected (GCK's "Office TV / No media selected / volume / Stop casting"
+sheet); and `client ready` in the media panel, i.e. `RemoteMediaClient` is
+available against the custom receiver.
+
+---
+
+### The block, and how it was localised (kept for the next occurrence)
+
+**Symptom: the Chromecast would not launch `EA48D3FC`.**
+`startSession` reported `startFailed: cancelled / native 5`
 (`GCKErrorCodeCancelled`) every time, ~2 s after `starting (—)`.
 
 Setup: iPhone 17 Pro Simulator (iOS 26.5), commit `bd51f21` + the App.tsx panel
@@ -563,26 +601,32 @@ not the Simulator, the network, the transport, or the session code.
    55 000 s → 31 s) and retried. **Identical failure.** So the remedy this
    repo's own receiver README recommends for a URL change does not apply here.
 
-### What is left, and it needs the console
+### ✅ Cause: the Receiver Application URL was never saved in the console
 
-The device is discovered and listed while the discovery criteria carry
-`EA48D3FC`, but the launch itself is cancelled — the shape of "the app id is
-known, the receiver behind it will not come up". Nothing further can be
-determined from this side; the Cast Developer Console entry for `EA48D3FC` is
-the only remaining variable. Check, in this order:
+Everything above eliminated the sender, the network, the device state and the
+receiver page, which left exactly one variable: the Cast Developer Console entry
+for `EA48D3FC`. It was that — the URL edit had not been saved. Saving it and
+restarting the Chromecast fixed it outright.
 
-- **Application type is Custom Receiver.** A Styled Media Receiver ignores a
-  Receiver Application URL entirely — and could never serve a custom namespace,
-  so the channel rows would be unrunnable regardless.
-- **Receiver Application URL** is exactly
-  `https://react-native-google-cast.github.io/react-native-google-cast/cast-receiver/`
-  and was actually saved. `EA48D3FC` was the **v4** playground's id, so it may
-  still carry that app's URL, which is long dead — that would produce exactly
-  this failure.
-- **Status is Published**, and the app still exists in the account.
+**So the diagnostic signature is worth remembering: an unreachable or unset
+Receiver Application URL surfaces on the sender as `cancelled` / `native 5`, not
+as `appNotFound` / `21`.** Nothing in the error names the receiver URL, and the
+device is still discovered and listed while the discovery criteria carry the app
+id — the id is registered, so discovery is satisfied; only the launch fails. If
+a custom receiver ever stops launching again, check the console URL **first**,
+before suspecting the sender.
 
-Until that is resolved, `EA48D3FC` blocks **G7 and the re-runs of G3/G4**, since
-all three now target it.
+Two corrections this forces on our own docs:
+
+- `docs/internal/cast-receiver/README.md` says that if a Chromecast still loads
+  the old receiver after a URL change, waiting and rebooting is the remedy. That
+  is true for a _propagation delay_ but reads as the general fix, and here the
+  reboot proved nothing — it eliminated a hypothesis rather than solving
+  anything. The URL being **saved** is the thing to verify first.
+- Nothing in the harness surfaces which receiver actually launched. Worth
+  considering for tier-2: the receiver already reports over the custom namespace
+  on `SENDER_CONNECTED`, so the `hello` message doubles as proof that _our_
+  receiver — not some other build — is the one running.
 
 ---
 
@@ -618,7 +662,7 @@ all three now target it.
 | G4  | ~~#626 null-clear~~ → **#626 idle-clear** (see note)        | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ✅ 08-04 Simulator, same result   |
 | G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ✅ 08-04 @64 ms, settle count 1   |
 | G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                               |
-| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ blocked on T1 (custom receiver)                            | ⬜ open                           |
+| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ open (iOS covers the row; Android parity re-run pending)   | ✅ 08-04 Simulator, all 4 rows    |
 | G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                   |
 
 > **G4 — the row's acceptance criterion was wrong and has been amended.** It
@@ -752,21 +796,21 @@ so tier-1 Maestro's visible surface is unchanged; expanding it is a manual step.
 
 ### S2.2 — run the rows
 
-| #      | Row                                                                                                                                                                                                                                                                                                                                                                         | Status | Evidence |
-| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- |
-| 2.2.1  | **G3** `loadMedia` with the primary fixture → plays on the TV; `useMediaStatus` reports a `streamDuration` matching `expectedDuration`                                                                                                                                                                                                                                      |        |          |
-| 2.2.2  | play / pause / seek +30 / seek 0 each resolve and are visible on the TV                                                                                                                                                                                                                                                                                                     |        |          |
-| 2.2.3  | `setStreamVolume` / `setStreamMuted` round-trip into `useMediaStatus`                                                                                                                                                                                                                                                                                                       |        |          |
-| 2.2.4  | **G4a** `stop()` → media status goes null in the UI **and** `useMediaStatus` (`mediaStatus is NULL`), while `Session:` still shows a live id — this is the premise `v5-82w` asserts in the reducer                                                                                                                                                                          |        |          |
-| 2.2.5  | `queueLoad ×3` → three items; `queueJumpToItem` / `queueNext` / `queuePrev` / repeat-mode behave                                                                                                                                                                                                                                                                            |        |          |
-| 2.2.6  | **G4b** Remove-last-queue-item → media status goes null, session stays alive                                                                                                                                                                                                                                                                                                |        |          |
-| 2.2.7  | **G5** "Run flush race" → `pending confirmed`, then exactly one settlement, rejected `interrupted`, within 5 s of teardown. A line reading `INVALID` means the request settled before the teardown raced it — **re-run, do not tick**. Known limit: this proves the JS façade settles once, not that native fired one callback (that is `TrackedCastRequestTest.kt`'s job). |        |          |
-| 2.2.8  | **G7** Channel registers: panel shows `channel=registered` with a status                                                                                                                                                                                                                                                                                                    |        |          |
-| 2.2.9  | **G7, the load-bearing half (#614)** A `{"type":"hello"}` line appears in the event log **with no send** — the receiver posts it on `SENDER_CONNECTED`, while `addChannel` is still in flight. The default Media Receiver structurally cannot produce this row.                                                                                                             |        |          |
-| 2.2.10 | Channel echo: "Send ping" → `channel → ping sent` then `channel ← {"type":"echo",…}`                                                                                                                                                                                                                                                                                        |        |          |
-| 2.2.11 | End the session → the channel handle goes stale; `sendMessage` rejects `noSession`                                                                                                                                                                                                                                                                                          |        |          |
-| 2.2.12 | Raw hooks readout shows plausible shapes for every hook against real GCK (this is what T2's boundary exists to survive)                                                                                                                                                                                                                                                     |        |          |
-| 2.2.13 | _May defer_ — `resumeFailed`: kill the app mid-session, relaunch with the receiver unreachable                                                                                                                                                                                                                                                                              |        |          |
+| #      | Row                                                                                                                                                                                                                                                                                                                                                                         | Status       | Evidence                                                              |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------------------------------------------------------------------- |
+| 2.2.1  | **G3** `loadMedia` with the primary fixture → plays on the TV; `useMediaStatus` reports a `streamDuration` matching `expectedDuration`                                                                                                                                                                                                                                      |              |                                                                       |
+| 2.2.2  | play / pause / seek +30 / seek 0 each resolve and are visible on the TV                                                                                                                                                                                                                                                                                                     |              |                                                                       |
+| 2.2.3  | `setStreamVolume` / `setStreamMuted` round-trip into `useMediaStatus`                                                                                                                                                                                                                                                                                                       |              |                                                                       |
+| 2.2.4  | **G4a** `stop()` → media status goes null in the UI **and** `useMediaStatus` (`mediaStatus is NULL`), while `Session:` still shows a live id — this is the premise `v5-82w` asserts in the reducer                                                                                                                                                                          |              |                                                                       |
+| 2.2.5  | `queueLoad ×3` → three items; `queueJumpToItem` / `queueNext` / `queuePrev` / repeat-mode behave                                                                                                                                                                                                                                                                            |              |                                                                       |
+| 2.2.6  | **G4b** Remove-last-queue-item → media status goes null, session stays alive                                                                                                                                                                                                                                                                                                |              |                                                                       |
+| 2.2.7  | **G5** "Run flush race" → `pending confirmed`, then exactly one settlement, rejected `interrupted`, within 5 s of teardown. A line reading `INVALID` means the request settled before the teardown raced it — **re-run, do not tick**. Known limit: this proves the JS façade settles once, not that native fired one callback (that is `TrackedCastRequestTest.kt`'s job). |              |                                                                       |
+| 2.2.8  | **G7** Channel registers: panel shows `channel=registered` with a status                                                                                                                                                                                                                                                                                                    | ✅ iOS 08-04 | `channel=registered status=connected=true writable=true`              |
+| 2.2.9  | **G7, the load-bearing half (#614)** A `{"type":"hello"}` line appears in the event log **with no send** — the receiver posts it on `SENDER_CONNECTED`, while `addChannel` is still in flight. The default Media Receiver structurally cannot produce this row.                                                                                                             | ✅ iOS 08-04 | log line `[8]`, directly after `[7] started`, no send made            |
+| 2.2.10 | Channel echo: "Send ping" → `channel → ping sent` then `channel ← {"type":"echo",…}`                                                                                                                                                                                                                                                                                        | ✅ iOS 08-04 | `[10]`→`[11]`, 190 ms, payload echoed intact                          |
+| 2.2.11 | End the session → the hook nulls the channel (`channel=null status=null`) and a later send is a no-op. **Not** "`sendMessage` rejects `noSession`" — that is unreachable by design, since there is no stale handle to send on; it stays a unit-test row.                                                                                                                    | ✅ iOS 08-04 | `[12] ending`→`[14] ended`, then `channel: send SKIPPED — no channel` |
+| 2.2.12 | Raw hooks readout shows plausible shapes for every hook against real GCK (this is what T2's boundary exists to survive)                                                                                                                                                                                                                                                     |              |                                                                       |
+| 2.2.13 | _May defer_ — `resumeFailed`: kill the app mid-session, relaunch with the receiver unreachable                                                                                                                                                                                                                                                                              |              |                                                                       |
 
 ### S2.3 — Android notifications (6.2), with a stated matrix
 
