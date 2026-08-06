@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>react-native-google-cast — web harness</title>
+    <title>react-native-google-cast — playground (web)</title>
     <style>
       html,
       body,
@@ -11,21 +11,21 @@
         height: 100%;
         margin: 0;
       }
-      body {
-        background: #0f0f0f;
-        color: #eee;
-        font-family: ui-monospace, Menlo, monospace;
-      }
     </style>
 
     <!--
       Optional custom receiver, exactly as docs/getting-started/web.md documents
-      it: set the options global BEFORE the loader script. Left commented so the
-      default run uses the Default Media Receiver.
+      it: set the options global BEFORE the loader script.
+
+      The native playground points at EA48D3FC (this project's own published
+      custom receiver) because the channel rows need a custom namespace. Web is
+      left on the Default Media Receiver so the two are not silently coupled —
+      uncomment to run the web channel rows against the same receiver the native
+      side uses.
     -->
     <!--
     <script>
-      window.__RNGoogleCastOptions = { receiverAppId: 'ABCD1234' }
+      window.__RNGoogleCastOptions = { receiverAppId: 'EA48D3FC' }
     </script>
     -->
 
@@ -38,6 +38,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/index.web.tsx"></script>
   </body>
 </html>

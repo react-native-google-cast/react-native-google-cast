@@ -4283,19 +4283,25 @@ __metadata:
     "@react-native/metro-config": "npm:0.86.0"
     "@react-native/new-app-screen": "npm:0.86.0"
     "@react-native/typescript-config": "npm:0.86.0"
+    "@types/chromecast-caf-sender": "npm:^1.0.11"
     "@types/jest": "npm:^29.5.13"
     "@types/react": "npm:^19.2.0"
+    "@types/react-dom": "npm:^19.2.0"
     "@types/react-test-renderer": "npm:^19.1.0"
+    "@vitejs/plugin-react": "npm:^4.3.4"
     eslint: "npm:^8.19.0"
     jest: "npm:^29.6.3"
     prettier: "npm:2.8.8"
     react: "npm:19.2.3"
+    react-dom: "npm:19.2.3"
     react-native: "npm:0.86.0"
     react-native-google-cast: "workspace:*"
     react-native-nitro-modules: "npm:0.35.10"
     react-native-safe-area-context: "npm:^5.5.2"
+    react-native-web: "npm:^0.21.1"
     react-test-renderer: "npm:19.2.3"
     typescript: "npm:^5.8.3"
+    vite: "npm:^6.0.7"
   languageName: unknown
   linkType: soft
 
@@ -14871,23 +14877,6 @@ __metadata:
   checksum: 10c0/5b61ca583a95e2dd85d7078400190efd452e05751a64accb8c06ce4db65d7e0b0cde9917d705e826a2e05cc2548f61efde115ffa374c3e436d04be45c889e5b4
   languageName: node
   linkType: hard
-
-"web-example@workspace:web-example":
-  version: 0.0.0-use.local
-  resolution: "web-example@workspace:web-example"
-  dependencies:
-    "@types/chromecast-caf-sender": "npm:^1.0.11"
-    "@types/react": "npm:^19.2.0"
-    "@types/react-dom": "npm:^19.2.0"
-    "@vitejs/plugin-react": "npm:^4.3.4"
-    react: "npm:19.2.3"
-    react-dom: "npm:19.2.3"
-    react-native-google-cast: "workspace:*"
-    react-native-web: "npm:^0.21.1"
-    typescript: "npm:^5.8.3"
-    vite: "npm:^6.0.7"
-  languageName: unknown
-  linkType: soft
 
 "webidl-conversions@npm:^3.0.0":
   version: 3.0.1

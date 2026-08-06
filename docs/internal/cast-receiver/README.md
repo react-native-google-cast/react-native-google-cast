@@ -83,7 +83,7 @@ table is where to look when that needs changing.
 
 | Platform | Where                                                                                                                                                           |
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| iOS      | `playground/ios/CastPlayground/AppDelegate.swift` — the `GCKDiscoveryCriteria` application id                                                                      |
+| iOS      | `playground/ios/CastPlayground/AppDelegate.swift` — the `GCKDiscoveryCriteria` application id                                                                   |
 | Android  | `playground/android/app/src/main/AndroidManifest.xml` — the `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID` meta-data read by `NitroCastOptionsProvider` |
 | Web      | `window.__RNGoogleCastOptions = { receiverAppId: 'EA48D3FC' }` before the sender loader (see `docs/getting-started/web.md`)                                     |
 

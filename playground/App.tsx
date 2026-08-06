@@ -41,6 +41,7 @@ import {
   type ReactNode,
 } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   StatusBar,
@@ -93,6 +94,40 @@ import {
 } from './probeFixtures';
 
 type Append = (line: string) => void;
+
+const IS_WEB = Platform.OS === 'web';
+
+/**
+ * The web platform gaps, rendered where they can be checked against the app
+ * rather than only read in a table.
+ *
+ * **Deliberately a caveat banner and not a set of hidden rows.** Bead v5-5tx
+ * originally proposed branching on `Platform.OS` to *hide* the native-only
+ * probes on web. That is worse: `docs/getting-started/web.md` claims things
+ * like "`showExpandedControls()` resolves `false` on web" — which is a
+ * falsifiable claim about our transport, and hiding the button deletes the only
+ * thing that could falsify it. Every row stays pressable on web; this banner
+ * says what the expected answer is, so a wrong answer is visible instead of
+ * invisible.
+ *
+ * Keep in step with the support table in `docs/getting-started/web.md`.
+ */
+function WebCaveats() {
+  return (
+    <View style={styles.webCaveats}>
+      <Text style={styles.webCaveatsTitle}>web — expected differences</Text>
+      <Text style={styles.webCaveatsText}>
+        Device list always empty; discovery controls are no-ops; startSession
+        ignores deviceId and opens the browser picker. showExpandedControls /
+        showIntroductoryOverlay / showPlayServicesErrorDialog resolve false.
+        setPlaybackRate and queueInsertAndPlayItem reject notSupported. Standby
+        is always unknown; suspended/resuming/resumeFailed are never emitted.
+        Fake start/end report delivered=false — there is no native boundary to
+        drive here, and saying otherwise would make the seam lie.
+      </Text>
+    </View>
+  );
+}
 
 const delay = (ms: number) =>
   new Promise<void>(resolve => {
@@ -943,7 +978,11 @@ function App() {
           Cast state: {state}
         </Text>
         <Text style={text}>Play Services: {playServices}</Text>
-        <Text style={text}>Devices: {devices.length}</Text>
+        <Text style={text}>
+          Devices: {devices.length}
+          {IS_WEB ? ' (web: always 0 — the browser owns the picker)' : ''}
+        </Text>
+        {IS_WEB && <WebCaveats />}
         <Text testID="sessionStateText" style={text}>
           Session: {sessionId ?? 'none'}
         </Text>
@@ -1165,6 +1204,17 @@ const styles = StyleSheet.create({
   panelBody: { marginTop: 4 },
   panelNote: { fontFamily: 'Courier', fontSize: 11, color: '#888' },
   readout: { fontFamily: 'Courier', fontSize: 11, color: '#888' },
+  webCaveats: {
+    backgroundColor: '#f0a02022',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#f0a020',
+    padding: 8,
+    marginTop: 6,
+    gap: 4,
+  },
+  webCaveatsTitle: { fontSize: 12, fontWeight: '600', color: '#f0a020' },
+  webCaveatsText: { fontFamily: 'Courier', fontSize: 11, color: '#c08010' },
   panelError: {
     backgroundColor: '#d9303022',
     borderRadius: 6,

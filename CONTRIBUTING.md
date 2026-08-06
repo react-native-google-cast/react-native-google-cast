@@ -83,6 +83,9 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn lint`: lint files with ESLint.
 - `yarn test`: run unit tests with Jest.
 - `yarn playground start`: start the Metro server for the playground app.
+- `yarn playground web`: serve the same playground in a browser (Vite +
+  react-native-web) — one codebase for all three platforms, so native/web parity
+  cannot silently drift.
 - `yarn playground android`: run the playground app on Android.
 - `yarn playground ios`: run the playground app on iOS.
 

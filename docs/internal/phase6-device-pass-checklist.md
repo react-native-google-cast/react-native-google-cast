@@ -483,7 +483,8 @@ cross-platform parity gap and deserves its own decision.
 
 ### 🔵 Still open — web transport
 
-The owner reproduced the same media failure through `web-example/` in Chrome.
+The owner reproduced the same media failure through the web harness (then
+`web-example/`, now `yarn playground web`) in Chrome.
 The web harness has no channel probe, so it is **not** the 2055 cause — but the
 receiver may simply have been in the state the phone had put it in. Re-test web
 now that the channel probe is gated. (Chrome on the dev Mac also intermittently
@@ -515,7 +516,7 @@ Also unexplained and possibly the same root cause:
   investigation.
 - Sessions sometimes drop ~10–60 s in with `ended: failed / native 2155` / `2055`.
 
-**Next decisive test:** load the same URL through `web-example/` (Chrome sender
+**Next decisive test:** load the same URL through the web harness (Chrome sender
 SDK → same receiver). If it also fails, the receiver/asset is the problem; if it
 plays, the fault is in the Android `loadMedia` path.
 
@@ -1079,9 +1080,39 @@ CastButton that have never run in a browser — only jest against
 `src/transport/__fakes__/fakeWebCastSdk.ts`, while `docs/getting-started/web.md`
 already documents the setup.
 
-The harness is `web-example/` (`yarn workspace web-example dev`). W1 and W2 were
-verified in Chrome with **no Cast device on the network**; the rest need one.
-See [`web-example/README.md`](../../web-example/README.md) for the detail.
+**The harness is now the playground itself** — `yarn playground web`, serving
+`playground/index.html` + `index.web.tsx` through Vite alongside Metro
+(bead `v5-5tx`, 2026-08-06). The separate `web-example/` package is gone. Same
+`App.tsx` on all three platforms: what differs lives in the library's `.web.*`
+files and a `Platform.OS` caveat banner, not in a second harness. Two rigs
+existed to verify cross-platform parity, so letting them drift would have
+undermined the thing they check.
+
+W1 and W2 were verified in Chrome with **no Cast device on the network**, first
+against `web-example/` and re-confirmed against the merged playground; the rest
+need a device.
+
+Re-confirmed after the merge (2026-08-06): the `.web.*` swap works —
+`fakeSession.web.ts`, `CastButton.web.tsx` and `CastTransport.web.ts` are the
+modules Vite actually serves — and two rows behave exactly as
+`docs/getting-started/web.md` claims: `showExpandedControls → false`, and the
+debug seam reports `fake session started delivered=false`.
+
+> That `delivered=false` is deliberate and load-bearing. The tier-1 Maestro flow
+> asserts on `fake session started delivered=true`, which is only meaningful
+> because a `true` means the event crossed the native boundary twice. A web stub
+> returning `true` would turn that assertion into decoration, so the web seam
+> returns `false` — the same thing the native seam's contract already means by
+> it: _the seam is inactive_.
+
+**To finish W3–W6** put a Chromecast on this machine's network, reload, then:
+the launcher becomes visible and `useCastState` moves to `notConnected`; click
+it (or "Dialog") → Chrome's picker → choose the device; "Load LAN" plays;
+play/pause/seek/volume/stop each land; "End session" gives `ending` → `ended`.
+
+⚠️ **W3–W6 cannot be driven by browser automation.** Chrome's Cast picker is
+browser-native UI, not page DOM, so the click that chooses a device has to be
+made by hand. Plan for that rather than discovering it mid-run.
 
 | #   | Row                                                                               | Status | Evidence                                                                                                                                                                                                                                                             |
 | --- | --------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

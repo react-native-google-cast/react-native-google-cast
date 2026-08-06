@@ -8,8 +8,7 @@
   "types": "lib/typescript/src/index.d.ts",
   "source": "src/index",
   "workspaces": [
-    "playground",
-    "web-example"
+    "playground"
   ],
   "files": [
     "src",
@@ -182,7 +181,7 @@
     "lib/",
     "nitrogen/generated/",
     "node_modules/",
-    "web-example/dist/",
+    "playground/dist/",
     "**/build/"
   ],
   "prettier": {
