@@ -540,29 +540,32 @@ as the 08-04 iOS run — so the two are directly comparable.
 Both are wire-level observations, i.e. things no unit test in this repo can see:
 the golden corpus covers struct↔GCK, not the serialized cast-protocol JSON.
 
-**1. `duration` for an unset `streamDuration` — `null` on Android, `0` on iOS.**
-Identical `loadMedia` call, byte-compared `LOAD` payloads:
+**1. ~~`duration` for an unset `streamDuration` — `null` on Android, `0` on
+iOS.~~ FIXED 2026-08-06 (`v5-3mg`).** Identical `loadMedia` call, byte-compared
+`LOAD` payloads:
 
 ```
 Android  …,"metadata":{…},"duration":null,"mediaCategory":"VIDEO"}
-iOS      …,"contentUrl":"…","duration":0,"mediaCategory":"VIDEO"}
+iOS      …,"contentUrl":"…","duration":0,"mediaCategory":"VIDEO"}     ← before
+iOS      …,"contentUrl":"…","duration":null,"mediaCategory":"VIDEO"}  ← after
 ```
 
-Everything else matches exactly — `contentId` defaulted from `contentUrl`,
-`streamType":"BUFFERED"`, `contentType`, `metadata`, `autoplay`, `playbackRate`.
-So this is the **only** divergence in what the two platforms put on the wire for
-the same call, and `0` is the semantically wrong one: for a BUFFERED stream the
-receiver measures the real duration, and `null`/absent means "unknown" where `0`
-means "zero-length". It caused no harm on this receiver — playback and the
-reported duration were correct on both — but a receiver that trusts `duration`
-would see a lie from iOS. Cause: iOS leaves `GCKMediaInformationBuilder`'s
-default (0) when `streamDuration` is nil, rather than setting
-`kGCKInvalidTimeInterval`. Tracked as its own bead; **not** fixed during the
-device pass, since touching a converter means re-running both native suites.
+Everything else already matched exactly — `contentId` defaulted from
+`contentUrl`, `streamType":"BUFFERED"`, `contentType`, `metadata`, `autoplay`,
+`playbackRate` — so this was the **only** divergence in what the two platforms
+put on the wire for the same call, and `0` was the wrong one: for a BUFFERED
+stream the receiver measures the real duration, so `null` means "unknown" while
+`0` claims "zero-length". It caused no harm on this receiver, but a receiver
+that trusts `duration` would have been misled by iOS.
 
-This is already half-known: `MediaInfoConverterTest.kt` carries an
-`ANDROID DIVERGENCE` branch for exactly this field at the struct level. What is
-new is that it reaches the wire.
+Cause and fix: iOS left `GCKMediaInformationBuilder`'s default of 0 when
+`streamDuration` was nil; it now writes `kGCKInvalidTimeInterval` explicitly.
+**Verified on the wire, not inferred** — that `kGCKInvalidTimeInterval`
+serializes as `null` rather than being coerced or omitted was an open question
+until the oracle answered it, and playback still works (`playing pos=38.7`).
+Both native suites re-run green (iOS 28/28, Android 10/10), and the Android
+test's `streamDuration` platform branch is gone along with the class-level
+`ANDROID DIVERGENCE` note — both fields it covered are now closed.
 
 **2. After the queue is emptied: Android reports `idle`, iOS reports `null`.**
 Same fixture, same receiver, same three `queueRemoveItems(last)` calls.
@@ -648,14 +651,13 @@ what was **sent** rather than inferring it from what the TV did.
    the three removals — so "remove last" really is removing the tail, and the
    `MediaStatus.queueItems` window shifted `[2,3]` → `[2,4]` → empty exactly as
    the windowing note on `MediaStatus.queueItems` describes.
-4. ⚠️ **Open question — iOS sends `"duration":0` for an unset
-   `streamDuration`.** Visible in every `LOAD` above. Android's converter uses
-   `streamDuration?.let { … }`, so it should omit the field entirely. If that is
-   right it is a cross-platform difference the golden corpus does not cover
-   (the corpus tests struct↔GCK, not the serialized cast-protocol JSON). It did
-   no harm here — playback and duration were correct, the receiver measures the
-   real duration itself — but **compare an Android `LOAD` against this before
-   assuming they match.** Not yet verified either way.
+4. ~~⚠️ **Open question — iOS sends `"duration":0` for an unset
+   `streamDuration`.**~~ **Confirmed as a real difference on 2026-08-06 and
+   fixed** (`v5-3mg`): Android sent `"duration":null`, iOS `"duration":0`, on
+   otherwise byte-identical payloads. iOS now writes `kGCKInvalidTimeInterval`
+   instead of leaving the builder's default of 0. This is the oracle finding a
+   bug that no test in the repo could have: the golden corpus covers
+   struct↔GCK, not the serialized cast-protocol JSON.
 
 ---
 

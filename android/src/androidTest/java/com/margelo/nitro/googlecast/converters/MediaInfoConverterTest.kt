@@ -20,18 +20,24 @@ import org.junit.runner.RunWith
  *
  * Requires a connected emulator or device: customData AnyMap is JNI-backed.
  *
- * ANDROID DIVERGENCE — "minimal" fixture:
- *   streamDuration absent in input. GCK Android maps an unset duration to UNKNOWN_DURATION
- *   (-> null), while the iOS-pinned corpus has 0. The assertion below handles this
- *   per-platform: an explicit value round-trips, an unset one stays null.
+ * NO PLATFORM BRANCHES. Every field is asserted against the shared corpus. Two fields used
+ * to need one, and both gaps were closed by making the converters agree rather than by
+ * teaching the test to accept a difference:
  *
- *   streamType USED to diverge the same way — GCK Android left an unset streamType INVALID
- *   (-> null) where iOS defaulted to BUFFERED. 61aecc6 closed that gap: both converters now
- *   default an omitted streamType to BUFFERED, matching the Chrome sender SDK so the same
- *   MediaLoadRequest behaves identically on all three platforms. streamType is therefore
- *   asserted against the shared corpus like any other field, with no platform branch.
+ *   streamType — GCK Android left an unset streamType INVALID (-> null) where iOS defaulted
+ *   to BUFFERED. 61aecc6 defaults an omitted one to BUFFERED on both, matching the Chrome
+ *   sender SDK so the same MediaLoadRequest behaves identically on all three platforms.
  *
- * NOTE: blocked on emulator (emulator-5554 was offline at time of authoring — 2026-06-28).
+ *   streamDuration — GCK Android maps an unset duration to UNKNOWN_DURATION (-> null), while
+ *   iOS left GCKMediaInformationBuilder's default of 0. v5-3mg makes iOS write
+ *   kGCKInvalidTimeInterval instead, so an omitted duration stays omitted on both. That one
+ *   was found on the WIRE (`"duration":0` vs `"duration":null`) by the device-pass media
+ *   oracle, not by this test — struct-level parity is necessary but not sufficient.
+ *
+ * If a future divergence looks like it needs a branch here, prefer closing it in the
+ * converters: a branch encodes the difference permanently and outlives the reason for it.
+ *
+ * Requires a connected emulator or device: customData AnyMap is JNI-backed.
  */
 @RunWith(AndroidJUnit4::class)
 class MediaInfoConverterTest {
@@ -75,13 +81,9 @@ class MediaInfoConverterTest {
       // No platform branch since 61aecc6 — an omitted streamType defaults to BUFFERED on both
       // native platforms, so the shared corpus is the expectation (see class note).
       assertEquals("[$name] streamType", expected.streamType, actual.streamType)
-      // ANDROID DIVERGENCE — streamDuration: GCK Android maps an unset duration to
-      // UNKNOWN_DURATION (-> null); iOS pins 0. Explicit value round-trips; unset stays null.
-      if (input.streamDuration != null) {
-        assertEquals("[$name] streamDuration", input.streamDuration, actual.streamDuration)
-      } else {
-        assertNull("[$name] streamDuration (android: unset -> null, not 0)", actual.streamDuration)
-      }
+      // No platform branch since v5-3mg — an omitted streamDuration stays omitted on both
+      // native platforms, so the shared corpus is the expectation (see class note).
+      assertEquals("[$name] streamDuration", expected.streamDuration, actual.streamDuration)
       assertEquals("[$name] hlsSegmentFormat", expected.hlsSegmentFormat, actual.hlsSegmentFormat)
       assertEquals("[$name] hlsVideoSegmentFormat", expected.hlsVideoSegmentFormat, actual.hlsVideoSegmentFormat)
 

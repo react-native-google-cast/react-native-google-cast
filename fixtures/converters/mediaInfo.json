@@ -50,9 +50,9 @@
     },
     {
       "name": "minimal",
-      "$comment": "streamType is non-optional in GCK; the GCKMediaInformationBuilder default is Buffered (pinned from observed output), not None. streamDuration default observed as 0.",
+      "$comment": "streamType is non-optional in GCK; the GCKMediaInformationBuilder default is Buffered (pinned from observed output), not None. An omitted streamDuration stays omitted on BOTH platforms: Android never sets it (GCK maps that to UNKNOWN_DURATION), and iOS explicitly writes kGCKInvalidTimeInterval rather than leaving the builder default of 0 -- see v5-3mg, where the 0 was observed reaching the wire as \"duration\":0 against Android's \"duration\":null.",
       "input": { "contentUrl": "https://example.com/a.mp3" },
-      "expectedRoundTrip": { "contentUrl": "https://example.com/a.mp3", "contentId": "https://example.com/a.mp3", "streamType": "buffered", "streamDuration": 0 }
+      "expectedRoundTrip": { "contentUrl": "https://example.com/a.mp3", "contentId": "https://example.com/a.mp3", "streamType": "buffered" }
     }
   ]
 }

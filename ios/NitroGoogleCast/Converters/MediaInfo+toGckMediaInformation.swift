@@ -28,7 +28,14 @@ extension MediaInfo {
     // three platforms behaviourally identical for the same MediaLoadRequest.
     builder.streamType = (streamType ?? .buffered).toGckStreamType()
     if let metadata { builder.metadata = metadata.toGckMediaMetadata() }
-    if let streamDuration { builder.streamDuration = streamDuration }
+    // An omitted streamDuration must stay omitted, not become 0.
+    // `GCKMediaInformationBuilder` defaults it to 0, and GCK then puts
+    // `"duration":0` on the wire — where Android sends `"duration":null`.
+    // For a BUFFERED stream the receiver measures the real duration, so `null`
+    // means "unknown" and `0` claims "zero-length": a receiver that trusts the
+    // field would be misled. Observed as an actual wire difference on
+    // 2026-08-06 via the device-pass media oracle (bead v5-3mg).
+    builder.streamDuration = streamDuration ?? kGCKInvalidTimeInterval
     if let mediaTracks { builder.mediaTracks = mediaTracks.map { $0.toGckMediaTrack() } }
     if let textTrackStyle { builder.textTrackStyle = textTrackStyle.toGckTextTrackStyle() }
     if let hlsSegmentFormat {
