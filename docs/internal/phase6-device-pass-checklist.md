@@ -521,6 +521,72 @@ plays, the fault is in the Android `loadMedia` path.
 
 ---
 
+## Run log — 2026-08-06, Android — **G7 parity + G3/G4 on the custom receiver**
+
+moto g05 / Android 15 (`ZY32KXN6T3`), `EA48D3FC`, session
+`128f78a9-2fa9-4aea-bdba-ca49e4380725`, same `LAN_FIXTURE` and same Chromecast
+as the 08-04 iOS run — so the two are directly comparable.
+
+| Row                     | Status | Evidence                                                                               |
+| ----------------------- | ------ | -------------------------------------------------------------------------------------- |
+| **G7 handshake (#614)** | ✅     | `[8] channel ← {"type":"hello",…}` directly after `[7] started`, no send. Same as iOS. |
+| G3 load / play          | ✅     | `[10] loadMedia(LAN) resolved`, `[11] façade getMediaStatus: playing pos=0.559`        |
+| G4 `stop()`             | ✅     | `[13] stop resolved`, `[14] façade getMediaStatus: idle pos=0` — **same as iOS**       |
+| Queue load + 3 × remove | ✅     | `[19] [22] [24]` all resolved, no crash                                                |
+| G4b queue emptied       | ⚠️     | `[25] façade getMediaStatus: **idle** pos=0` — **iOS gave `null` here.** See below.    |
+
+### ⚠️ Two cross-platform differences the oracle surfaced
+
+Both are wire-level observations, i.e. things no unit test in this repo can see:
+the golden corpus covers struct↔GCK, not the serialized cast-protocol JSON.
+
+**1. `duration` for an unset `streamDuration` — `null` on Android, `0` on iOS.**
+Identical `loadMedia` call, byte-compared `LOAD` payloads:
+
+```
+Android  …,"metadata":{…},"duration":null,"mediaCategory":"VIDEO"}
+iOS      …,"contentUrl":"…","duration":0,"mediaCategory":"VIDEO"}
+```
+
+Everything else matches exactly — `contentId` defaulted from `contentUrl`,
+`streamType":"BUFFERED"`, `contentType`, `metadata`, `autoplay`, `playbackRate`.
+So this is the **only** divergence in what the two platforms put on the wire for
+the same call, and `0` is the semantically wrong one: for a BUFFERED stream the
+receiver measures the real duration, and `null`/absent means "unknown" where `0`
+means "zero-length". It caused no harm on this receiver — playback and the
+reported duration were correct on both — but a receiver that trusts `duration`
+would see a lie from iOS. Cause: iOS leaves `GCKMediaInformationBuilder`'s
+default (0) when `streamDuration` is nil, rather than setting
+`kGCKInvalidTimeInterval`. Tracked as its own bead; **not** fixed during the
+device pass, since touching a converter means re-running both native suites.
+
+This is already half-known: `MediaInfoConverterTest.kt` carries an
+`ANDROID DIVERGENCE` branch for exactly this field at the struct level. What is
+new is that it reaches the wire.
+
+**2. After the queue is emptied: Android reports `idle`, iOS reports `null`.**
+Same fixture, same receiver, same three `queueRemoveItems(last)` calls.
+
+The wrapper is symmetric — both platforms push `status?.toMediaStatus()`
+(`HybridCastTransport.kt:848`, `HybridCastTransport.swift:685`) — so neither
+side is swallowing or inventing a null. The difference is in GCK itself: iOS's
+`GCKRemoteMediaClient.mediaStatus` went nil, Android's `RemoteMediaClient`
+returned a status object with `playerState: IDLE`.
+
+⚠️ **Not a controlled comparison, and it must not be written up as one.** The
+Android removals were not the same sequence: after the second removal CAF
+auto-issued a `LOAD` for the next item (`[21]`, `test3.mp4`), which the iOS run
+did not show. So "platform difference" is the leading explanation, not a
+established one — the confound is real. To settle it, remove items in an
+identical order on both and compare.
+
+**Consumer takeaway either way, and it is already the documented guidance:**
+treat "nothing is playing" as `status === null || playerState === 'idle'`, never
+as `status === null` alone. `useMediaStatus`'s doc comment says this; this run is
+the evidence for why it has to.
+
+---
+
 ## Run log — 2026-08-04, iOS Simulator — **G3/G4 re-run on the custom receiver**
 
 Session `34afb6e3-7c85-472b-bbb9-c3b4c8bf6e52`, `EA48D3FC`, `LAN_FIXTURE`
@@ -730,11 +796,11 @@ Two corrections this forces on our own docs:
 | --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- |
 | G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator                                             |
 | G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator (single entry)                              |
-| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-03 (DMR)                                                | ✅ 08-04 Simulator, **re-run on EA48D3FC**                     |
-| G4  | #626 clear-on-stop **and** clear-on-empty-queue (see note)  | S2.2                                   | ✅ 08-03 _against the amended definition_                     | ✅ 08-04 on EA48D3FC — `stop()`→`idle`, **empty queue→`null`** |
+| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-06 re-run on EA48D3FC                                   | ✅ 08-04 Simulator, re-run on EA48D3FC                         |
+| G4  | #626 clear-on-stop **and** clear-on-empty-queue (see note)  | S2.2                                   | ✅ 08-06 on EA48D3FC — `stop()`→`idle`, empty queue→`idle`    | ✅ 08-04 on EA48D3FC — `stop()`→`idle`, **empty queue→`null`** |
 | G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ✅ 08-04 @64 ms, settle count 1                                |
 | G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                                                            |
-| G7  | CastChannel registration-time handshake                     | S2.2                                   | ⬜ open (iOS covers the row; Android parity re-run pending)   | ✅ 08-04 Simulator, all 4 rows                                 |
+| G7  | CastChannel registration-time handshake                     | S2.2                                   | ✅ 08-06 handshake confirmed                                  | ✅ 08-04 Simulator, all 4 rows                                 |
 | G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                                                |
 
 > **G4 — the criterion was amended on 08-03, and 08-04 shows the amendment was
