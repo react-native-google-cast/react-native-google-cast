@@ -14,20 +14,27 @@
     </style>
 
     <!--
-      Optional custom receiver, exactly as docs/getting-started/web.md documents
-      it: set the options global BEFORE the loader script.
+      Custom receiver, exactly as docs/getting-started/web.md documents it: set
+      the options global BEFORE the loader script.
 
-      The native playground points at EA48D3FC (this project's own published
-      custom receiver) because the channel rows need a custom namespace. Web is
-      left on the Default Media Receiver so the two are not silently coupled —
-      uncomment to run the web channel rows against the same receiver the native
-      side uses.
+      This MUST match the native playground's receiver (EA48D3FC — the project's
+      own published custom receiver; see the Android manifest meta-data and the
+      iOS GCKDiscoveryCriteria). It is not a nicety:
+
+      `CHANNEL_PROBE_ENABLED` in probeFixtures.ts is true, so the app registers
+      `urn:x-cast:com.reactnative.googlecast.probe` as soon as a session exists.
+      A receiver that does not declare that namespace responds by tearing the
+      session down. Pointed at the Default Media Receiver, this page reproduced
+      the 2026-08-02 native finding exactly: both `loadMedia` calls RESOLVED and
+      then the receiver went `idle / idleReason: error`, which reads as a broken
+      media pipeline and is not one.
+
+      So: receiver app id and CHANNEL_PROBE_ENABLED move together, on every
+      platform. If you point this back at CC1AD845, set that flag false too.
     -->
-    <!--
     <script>
       window.__RNGoogleCastOptions = { receiverAppId: 'EA48D3FC' }
     </script>
-    -->
 
     <!--
       The Cast Web Sender loader. The library completes the SDK's

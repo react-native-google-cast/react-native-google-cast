@@ -1114,15 +1114,107 @@ play/pause/seek/volume/stop each land; "End session" gives `ending` → `ended`.
 browser-native UI, not page DOM, so the click that chooses a device has to be
 made by hand. Plan for that rather than discovering it mid-run.
 
-| #   | Row                                                                               | Status | Evidence                                                                                                                                                                                                                                                             |
-| --- | --------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| W1  | Harness builds and serves; the Cast Sender SDK loads                              | ✅     | `vite build` clean; `SDK: ready`; `cast.framework` + `chrome.cast.isAvailable` true; `useCastState` → real `noDevicesAvailable`; zero console errors/warnings on load                                                                                                |
-| W2  | `<google-cast-launcher>` renders once the SDK is available                        | ✅¹    | element created, custom element defined, wrapper 32×32, `tintColor` → `--connected-color`/`--disconnected-color`. CAF sets `display:none` itself while no devices exist (our code sets `display:block`) — **not a bug**; re-confirm visibility with a device present |
-| W3  | Clicking it opens Chrome's device picker; connecting starts a session             |        |                                                                                                                                                                                                                                                                      |
-| W4  | `loadMedia` plays on the TV                                                       |        |                                                                                                                                                                                                                                                                      |
-| W5  | Media status + `useCastState` stream into the UI                                  |        |                                                                                                                                                                                                                                                                      |
-| W6  | Disconnect ends the session cleanly                                               |        |                                                                                                                                                                                                                                                                      |
-| W7  | A non-Chromium browser degrades gracefully (`noDevicesAvailable`, `notSupported`) |        | manual — not reachable through Chrome automation                                                                                                                                                                                                                     |
+| #   | Row                                                                               | Status | Evidence                                                                                                                                                                                                                |
+| --- | --------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W1  | Harness builds and serves; the Cast Sender SDK loads                              | ✅     | `SDK: ready`; `cast.framework` + `chrome.cast.isAvailable` true; zero console errors on load. Re-confirmed 08-07 against the merged playground.                                                                         |
+| W2  | `<google-cast-launcher>` renders once the SDK is available                        | ✅     | **Caveat resolved 08-07 with a device present**: launcher in the DOM, `display: block`, 28×28, `castState → NOT_CONNECTED`. The earlier `display:none` was CAF hiding it while no device existed — confirmed not a bug. |
+| W3  | Clicking it opens the device picker; connecting starts a session                  | ✅     | 08-07: the **page-initiated** picker (in-page launcher, NOT Chrome's tab-mirroring menu) → `starting (—)` → `connecting` → `connected` → `started (89a076f8-e33a-4243-af9e-245cb470c801)`                               |
+| W4  | `loadMedia` plays on the TV                                                       | ✅     | 08-07: `loadMedia(LAN) resolved`, `playing pos=0.55 dur=600 items=1` — `dur` is the receiver's own measurement and matches the fixture exactly                                                                          |
+| W5  | Media status + `useCastState` stream into the UI                                  | ✅     | 08-07: `useMediaStatus` and `useStreamPosition` both stream (`useStreamPosition: 20.55`, advancing); `useCastState` / `useCastSession` / `useCastDevice: Office TV` all populate                                        |
+| W6  | Disconnect ends the session cleanly                                               | ✅     | 08-07: `endCurrentSession accepted` → `ended` → `castState → notConnected`, `Session: none`                                                                                                                             |
+| W7  | A non-Chromium browser degrades gracefully (`noDevicesAvailable`, `notSupported`) | ⬜     | manual — needs Firefox/Safari, not reachable through Chrome automation. A DX defect was found while answering this row — bead `v5-7zm`; see below.                                                                      |
+
+### Run log — 2026-08-07, Chrome (W1–W6 ✅ — **G8 closed**)
+
+Merged playground (`yarn playground web`), receiver `EA48D3FC`, `LAN_FIXTURE`,
+session `89a076f8-e33a-4243-af9e-245cb470c801`.
+
+**⚠️ Use the page's own Cast button, never Chrome's ⋮ → Cast.** The browser menu
+offers "Cast tab" / "Cast screen", which is Chrome's tab **mirroring** — a
+different feature that never touches our transport, so casting that way would
+produce a green-looking run that verified nothing. The row needs the picker the
+page opens (`<google-cast-launcher>`, or our `showCastDialog()` →
+`requestSession()`), which is what YouTube does.
+
+The device-selection click inside that picker **cannot be automated** — it is
+browser-native UI, not page DOM. Everything either side of it can be.
+
+#### ⭐ Three-way wire comparison — the first time all three senders were diffed
+
+The oracle relays the reserved media namespace back over our own, so the same
+`loadMedia` call can now be compared as **actual bytes** across every platform:
+
+| Field                                     | Android | iOS     | Web         |
+| ----------------------------------------- | ------- | ------- | ----------- |
+| `contentId` (defaulted from `contentUrl`) | ✅      | ✅      | ✅          |
+| `contentUrl`                              | ✅      | ✅      | ✅          |
+| `contentType`                             | ✅      | ✅      | ✅          |
+| `streamType` (defaulted `BUFFERED`)       | ✅      | ✅      | ✅          |
+| `metadata`                                | ✅      | ✅      | ✅          |
+| `mediaCategory`                           | `VIDEO` | `VIDEO` | `VIDEO`     |
+| `autoplay`                                | `true`  | `true`  | `true`      |
+| `duration` (unset)                        | `null`  | `null`¹ | **omitted** |
+| `playbackRate`                            | `1`     | `1`     | **omitted** |
+| `sessionId` in payload                    | —       | —       | present     |
+
+¹ `null` since `v5-3mg`; it was `0` before that, which is how the bug was found.
+
+**Every field that carries user intent agrees on all three platforms.** The
+three remaining differences are all benign and are _sender-SDK_ behaviour rather
+than ours: an omitted `duration` and an omitted `playbackRate: 1` mean exactly
+what `null` and `1` mean, and `sessionId` is added by the Chrome sender SDK's
+own envelope. No action — recorded so the next person diffing payloads does not
+mistake them for defects.
+
+#### 🐛 Found and fixed: web was on the Default Media Receiver with the channel probe on
+
+The `v5-5tx` fold-in left `playground/index.html` pointed at `CC1AD845` while
+`CHANNEL_PROBE_ENABLED` was `true`. That is the documented session-killer, and
+it reproduced on web exactly as it did natively on 08-02: **both `loadMedia`
+calls RESOLVED**, then the receiver went `idle / idleReason: error`, with
+`channel=registered` in the panel. Reads as a broken media pipeline; is not one.
+
+Fixed by pointing web at `EA48D3FC` too. The rule generalises and is now written
+into `index.html`: **receiver app id and `CHANNEL_PROBE_ENABLED` move together,
+on every platform.**
+
+#### ⚠️ The LAN fixtures are not durable
+
+`test.mp4` / `test2.mp4` / `test3.mp4` live in the session scratchpad, which is
+cleaned periodically — they vanished overnight, and the first symptom was a
+`loadMedia` that resolved and then went `idle=error`, i.e. **the same signature
+as the bug above**. Before diagnosing anything about media, check the fixture
+server actually serves them:
+
+```bash
+curl -sI http://<mac>:8000/test.mp4 | head -1     # expect 200, not 404
+```
+
+Regenerate with the `ffmpeg` recipe in `probeFixtures.ts` (durations must come
+back 600 / 15 / 20 s). Worth moving somewhere durable if this recurs.
+
+#### 🐛 W7 — the non-Chromium message is misleading (found while answering the row)
+
+Behaviour that is already right: `CastButton.web.tsx` does `if (!sdkReady)
+return null`, so in Firefox/Safari **no cast button appears at all** — the same
+thing YouTube does, and the correct default. Nothing crashes; mutations reject
+`notSupported`.
+
+The defect is the message. `SDK_UNAVAILABLE` in `CastTransport.web.ts` reads:
+
+> The Google Cast Web Sender SDK is not available. Include `<script src="…cast_sender.js…">` in your page
+
+In a non-Chromium browser that is **wrong advice** — the script _is_ included;
+the browser simply cannot cast. It sends a developer to fix a non-problem. The
+library already knows the difference: `__onGCastApiAvailable(available, reason)`
+supplies a reason, and the transport maps `extension_not_compatible` /
+`extension_missing` to `notSupported`. The information exists and is discarded.
+
+Related, and a design question rather than a bug: `castState` seeds to
+`noDevicesAvailable` in both cases, so an app cannot distinguish "Chrome, no
+Chromecast on the network" from "Firefox, casting impossible" — there is no
+signal to branch on if you want to hide a whole section of UI. Left as bead `v5-7zm`
+rather than guessed at, since it touches public surface.
 
 ¹ verified as far as is possible without a Chromecast on the network.
 
