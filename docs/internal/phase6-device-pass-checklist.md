@@ -1297,10 +1297,77 @@ provisioning capability, a compatible bundle id, and a successful device install
 `DEVELOPMENT_TEAM` / `RNGC_BUNDLE_ID_PREFIX` / `CODE_SIGN_STYLE` so none of it
 lands in the tracked `project.pbxproj`.
 
-| #   | Row                                                                                     | Status | Evidence |
-| --- | --------------------------------------------------------------------------------------- | ------ | -------- |
-| 3.1 | Build A: first CastButton tap → LNA prompt → grant → devices populate (#627 acceptance) |        |          |
-| 3.2 | Build B: the LNA prompt appears **at launch** rather than on first tap                  |        |          |
+| #   | Row                                                                                     | Status   | Evidence                                                                                                                       |
+| --- | --------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 3.1 | Build A: first CastButton tap → LNA prompt → grant → devices populate (#627 acceptance) | ✅ 08-09 | no prompt at launch; `noDevicesAvailable`/0 until the tap; tap → GCK explainer → OK → **OS prompt** → Allow → `notConnected`/1 |
+| 3.2 | Build B: the LNA prompt appears **at launch** rather than on first tap                  | ✅ 08-09 | prompt at launch with nothing touched → Allow → `notConnected`/1; GCK's explainer **never appeared**                           |
+
+### Run log — 2026-08-09, iPhone 13 mini / iOS 26.5 (`00008110-0014…`), **S3 ✅**
+
+Free personal team, bundle id `com.petrbela.playground`, receiver `EA48D3FC`,
+Chromecast "Office TV". A controlled A/B: same binary, same phone, same
+fresh-install state, only `local.xcconfig` differing.
+
+| Moment                          | Build A                                     | Build B                      |
+| ------------------------------- | ------------------------------------------- | ---------------------------- |
+| At launch, nothing touched      | **no** OS prompt; `noDevicesAvailable`, 0   | **OS prompt**                |
+| GCK's own LNA explainer overlay | shown, on the first Cast-button tap         | **never shown**              |
+| OS prompt                       | after the explainer's OK                    | at launch, before any UI     |
+| After granting                  | `notConnected`, `Devices: 1`, `[Office TV]` | `notConnected`, `Devices: 1` |
+
+**The ordering is the part no Simulator could show:** GCK presents its own
+rationale screen _first_, and the OS prompt follows it. They are two different
+dialogs, and the 08-04 Simulator note ("GCK's own LNA explainer, **not** the OS
+prompt") was right that only the first is Simulator-observable.
+
+**⚠️ Consumer-facing consequence of build B, and it is a real trade-off:
+turning `startDiscoveryAfterFirstTapOnCastButton` off loses GCK's explainer.**
+The user's first experience of the app becomes a bare system permission dialog
+before any UI has explained why. An app that opts into build B (typically to
+drive a custom device picker) should show its own rationale first, or accept a
+worse grant rate. Worth stating wherever build B is documented.
+
+### 🔴 The trap that makes S3 unmeasurable in the usual build
+
+**A Debug build cannot measure either row.** RN connects to Metro over the LAN at
+launch, which triggers the local-network prompt before any Cast code runs — so
+build A and build B look identical, and the first attempt here duly showed "the
+prompt at launch" in a build A that was gating discovery correctly. Both rows
+must be run with `--mode Release` (bundled JS, no packager). Recorded in
+`local.xcconfig.example` too, since that is where the next person will be.
+
+**Delete the app between rows.** The LNA grant _and_ GCK's discovery gate both
+persist per installation (see the 08-09 S1.3 log), so reinstalling over the top
+invalidates the next row. Deleting also drops the developer-profile trust, so
+expect to re-trust in Settings ▸ General ▸ VPN & Device Management each time.
+
+### Device-build traps, each of which cost a cycle
+
+1. **`-allowProvisioningUpdates` is required and the RN CLI does not pass it** —
+   without it: `No profiles for 'com.petrbela.playground' were found … Automatic
+signing is disabled and unable to generate a profile`. Use
+   `yarn playground ios --udid <id> --extra-params "-allowProvisioningUpdates"`.
+2. **The phone must be unlocked**, or the build fails much earlier with `The
+developer disk image could not be mounted on this device` — which reads like a
+   Developer Mode or pairing fault and is neither. `xcrun devicectl list devices`
+   shows `connected (no DDI)`; `devicectl device info lockState` shows
+   `passcodeRequired: true`.
+3. **First install of a signing identity needs a manual trust** before iOS will
+   launch it (`invalid code signature, inadequate entitlements or its profile has
+not been explicitly trusted`).
+
+### Tooling reality on a physical iPhone
+
+Unlike the Simulator and the Android phone, this device could not be driven from
+the host: Maestro's `list-devices` shows simulators only (its iOS runner needs a
+signed XCUITest host), `devicectl` has no tap or screenshot verb, and
+`log stream --device-name` is gone in this macOS. **S3's taps are manual by
+necessity** — build, install and launch are scripted; the four observations are
+read off the phone. Plan for that rather than discovering it mid-run.
+
+Also confirmed in passing, and it upgrades an existing row: **1.2.2's gate holds
+on physical hardware, not just the Simulator** — build A sat at
+`noDevicesAvailable` / `Devices: 0` until the first Cast-button tap.
 
 ---
 

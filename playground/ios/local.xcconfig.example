@@ -45,3 +45,23 @@ RNGC_START_DISCOVERY_AFTER_FIRST_TAP = NO
 // RNGC_BUNDLE_ID_PREFIX = com.yourcompany
 //
 // CODE_SIGN_STYLE = Automatic
+//
+// Three things that each cost a build cycle on a physical device (2026-08-09):
+//
+// 1. Automatic signing needs a flag the RN CLI does not pass. Without it the
+//    build fails with "No profiles for '<id>' were found ... Automatic signing
+//    is disabled and unable to generate a profile":
+//      yarn playground ios --udid <id> --extra-params "-allowProvisioningUpdates"
+// 2. The device must be UNLOCKED, or the build dies earlier with "The developer
+//    disk image could not be mounted on this device" — which reads like a
+//    Developer Mode or pairing problem and is not one. Check with
+//    `xcrun devicectl list devices` ("connected (no DDI)") and
+//    `xcrun devicectl device info lockState --device <id>`.
+// 3. First install only: iOS refuses to launch until the profile is trusted in
+//    Settings ▸ General ▸ VPN & Device Management.
+//
+// ⚠️ The S3 rows (LNA prompt timing) CANNOT be measured in a Debug build. A
+// Debug build connects to Metro over the LAN at launch, which triggers the
+// local-network prompt before any Cast code runs — so build A and build B look
+// identical. Use `--mode Release` (bundled JS, no packager) and delete the app
+// between rows: the grant AND GCK's discovery gate both persist per install.
