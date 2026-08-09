@@ -25,11 +25,17 @@
  * log box.
  *
  * Confirmed safe on device 2026-08-03 (moto g05): all seven of the flow's
- * assertions render without scrolling after Fake start / Fake end. Verified by
- * hand rather than by `scripts/e2e-android.sh`, because Maestro on this machine
- * reports "0 devices connected" for a physically-attached phone that `adb
- * devices` lists — a local runner problem, not a repo one. CI still runs the
- * flow on an emulator, which is the authoritative gate.
+ * assertions render without scrolling after Fake start / Fake end.
+ *
+ * The earlier note here — "Maestro on this machine reports 0 devices connected
+ * for a physically-attached phone" — was wrong about the cause and is fixed
+ * (2026-08-09): an unrelated local service listening on TCP 5555 made `adb`
+ * register a phantom `emulator-5554 offline`, and Maestro refuses to pick a
+ * device while a dead entry is listed. Start the adb server with the emulator
+ * port scan clipped below it and the phone is driven normally:
+ *
+ *   adb kill-server && ADB_LOCAL_TRANSPORT_MAX_PORT=5554 adb start-server
+ *   JAVA_HOME=... maestro test --platform android .maestro/tier1-fake-session.yml
  */
 
 import {
@@ -204,6 +210,71 @@ function Btn({ label, onPress }: { label: string; onPress: () => void }) {
 // than sharing one: the duplication is the point until the device pass has
 // told us what the real data shapes are (T6 collapses them afterwards).
 // ---------------------------------------------------------------------------
+
+/**
+ * Discovery readout (S1.3) — the only observability for `isRunning()` /
+ * `startDiscovery()`, which are documented **iOS-only** public API that no
+ * device row has ever executed. It is deliberately inside the probes pane:
+ * expanding the pane is not a CastButton tap, so reading it does not perturb
+ * what build A gates on (`startDiscoveryAfterFirstTapOnCastButton`).
+ *
+ * The Android/web values are labelled rather than hidden — the framework owns
+ * discovery there, so `isRunning()` reads a constant `false` and the buttons
+ * are no-ops. An unlabelled `false` on Android would read as a measurement.
+ */
+function DiscoveryProbe({ append }: { append: Append }) {
+  const discoveryManager = GoogleCast.getDiscoveryManager();
+  const read = useCallback(
+    () => ({
+      running: discoveryManager.isRunning(),
+      passive: discoveryManager.isPassiveScan(),
+      devices: discoveryManager.getDevices().length,
+    }),
+    [discoveryManager],
+  );
+  // Sampled at mount, i.e. when the pane is expanded — for 1.3.2 that is
+  // "after init, before any CastButton tap".
+  const [reading, setReading] = useState(read);
+  const sample = useCallback(
+    (label: string) => {
+      const next = read();
+      setReading(next);
+      append(
+        `discovery: ${label} isRunning=${next.running} passive=${next.passive} devices=${next.devices}`,
+      );
+    },
+    [append, read],
+  );
+
+  return (
+    <>
+      <Text style={styles.panelNote}>
+        isRunning={String(reading.running)} passive={String(reading.passive)}{' '}
+        devices={reading.devices}
+        {Platform.OS === 'ios'
+          ? ''
+          : `\n(${Platform.OS}: iOS-only API — always false, buttons are no-ops)`}
+      </Text>
+      <View style={styles.probeRow}>
+        <Btn label="Read" onPress={() => sample('read')} />
+        <Btn
+          label="startDiscovery"
+          onPress={() => {
+            discoveryManager.startDiscovery();
+            sample('after startDiscovery');
+          }}
+        />
+        <Btn
+          label="stopDiscovery"
+          onPress={() => {
+            discoveryManager.stopDiscovery();
+            sample('after stopDiscovery');
+          }}
+        />
+      </View>
+    </>
+  );
+}
 
 function MediaProbes({ append }: { append: Append }) {
   const client = useRemoteMediaClient();
@@ -829,9 +900,21 @@ function App() {
     discoveryManager.getDevices(),
   );
   const [log, setLog] = useState<string[]>([]);
-  // Live session id, driven purely by the session-lifecycle stream — the
-  // tier-1 Maestro flow asserts on this line after injecting fake events.
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  // Live session id, driven by the session-lifecycle stream — the tier-1
+  // Maestro flow asserts on this line after injecting fake events.
+  //
+  // SEEDED, not started at null. It used to start at null, and that produced
+  // the whole `v5-3ll` "JS reload loses the session" signature: after a Fast
+  // Refresh this line read `Session: none` beside `Cast state: connected`,
+  // which looks like the store disagreeing with itself. It is not — measured
+  // on device 2026-08-09, the store still held the session at that instant
+  // (`session=true sid=… gen=1`). The events that carry a session id had
+  // simply already fired before this component remounted, and nothing here
+  // ever read the current one. A display fed only by events cannot show state
+  // that predates it.
+  const [sessionId, setSessionId] = useState<string | null>(
+    () => sessionManager.getCurrentCastSession()?.id ?? null,
+  );
   // Device-pass toggle: unmounting the CastButton exercises the overlay's
   // no-anchor → false path (and, on Android, stops the ACTIVE scan trigger).
   const [showCastButton, setShowCastButton] = useState(true);
@@ -965,19 +1048,24 @@ function App() {
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={[styles.title, isDarkMode && styles.textLight]}>
-            react-native-google-cast v5 — spike
-          </Text>
+          {/* The unmount long-press lives on the TITLE, not on the button.
+              Wrapped around the CastButton it never fired on Android: the
+              native MediaRouteButton consumes the touch (its own long-press
+              tooltip wins), so rows 1.1.6 / 1.4.6 — which need the anchor
+              gone — were undrivable. Found on device 2026-08-09. */}
           <Pressable onLongPress={() => setShowCastButton(v => !v)}>
-            {showCastButton ? (
-              <CastButton
-                style={styles.castButton}
-                tintColor={isDarkMode ? '#fff' : '#1a73e8'}
-              />
-            ) : (
-              <Text style={text}>⌫</Text>
-            )}
+            <Text style={[styles.title, isDarkMode && styles.textLight]}>
+              react-native-google-cast v5 — spike
+            </Text>
           </Pressable>
+          {showCastButton ? (
+            <CastButton
+              style={styles.castButton}
+              tintColor={isDarkMode ? '#fff' : '#1a73e8'}
+            />
+          ) : (
+            <Text style={text}>⌫</Text>
+          )}
         </View>
         <Text testID="castStateText" style={text}>
           Cast state: {state}
@@ -1119,6 +1207,13 @@ function App() {
             panel and never the evidence. */}
         {showProbes && (
           <ScrollView style={styles.probesBox}>
+            {/* First, because the pane clips at ~400px: the S1.3 readout has
+                to be legible in a screenshot without scrolling. */}
+            <Panel title="Discovery (S1.3, iOS)">
+              <PanelBoundary name="Discovery" append={append}>
+                <DiscoveryProbe append={append} />
+              </PanelBoundary>
+            </Panel>
             <Panel title="Media">
               <PanelBoundary name="Media" append={append}>
                 <MediaProbes append={append} />
@@ -1181,7 +1276,10 @@ const styles = StyleSheet.create({
   castButton: { width: 28, height: 28 },
   text: { fontSize: 15, color: '#000' },
   textLight: { color: '#fff' },
-  buttons: { flexDirection: 'row', gap: 8, marginTop: 8 },
+  // `wrap` is load-bearing, not cosmetic: on a 720px-wide phone the five-button
+  // row ran off the right edge and "PlayServices dialog" (row 1.4.7) could not
+  // be tapped at all — a checklist row unreachable by a layout accident.
+  buttons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   button: {
     backgroundColor: '#1a73e8',
     paddingVertical: 10,

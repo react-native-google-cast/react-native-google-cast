@@ -434,8 +434,7 @@ System Events is a dead end: it blocks on an accessibility-permission prompt.
 
 ### Still to run on Android
 
-- **S1.4 one-shots** — overlay once/∞ persistence, no-anchor → false,
-  PlayServices dialog, and spike 0.3 (Fast Refresh + forced reconnect).
+- ~~**S1.4 one-shots**~~ — done 2026-08-09, both platforms; see that run log.
 - **S2.3 notifications** — needs
   `adb shell pm grant com.reactnative.googlecast.playground android.permission.POST_NOTIFICATIONS`
   first (see the S2.3 block below).
@@ -771,6 +770,227 @@ Two corrections this forces on our own docs:
 
 ---
 
+## Run log — 2026-08-09 — **S1.4 one-shots (both platforms), S1.3 build B, spike 0.3**
+
+Commit `74b9a15` + the harness changes in this change. Android: moto g05 / 15
+(`ZY32KXN6T3`), driven over `adb`. iOS: **iPhone 17 Simulator / iOS 26.5**,
+driven with `maestro test --platform ios`. Receiver `EA48D3FC` ("Office TV",
+fw 1.56.291998). The Android app was force-stopped before the iOS run, so the
+two-senders-join-one-session trap from 08-04 could not fire.
+
+### S1.4 — the overlay one-shots, run in order from a virgin flag
+
+Android's flag was verified virgin first (`shared_prefs/nitro_googlecast.xml`
+did not exist), which matters: run out of order and every later row passes for
+the wrong reason.
+
+| #     | Android                                                                     | iOS                                                      |
+| ----- | --------------------------------------------------------------------------- | -------------------------------------------------------- |
+| 1.4.4 | ✅ `showIntroductoryOverlay → true`, dismiss, `→ false`                     | ✅ `[13] → true`, dismiss via "OK", `[14] → false`       |
+| 1.4.5 | ⚠️ `overlay(once:false) → true` — but the flag is **not** reset. See below. | ⚠️ `[15] → true`, then `[16] → false`. Same outcome.     |
+| 1.4.6 | ✅ no anchor → `overlay(once:false) → false`                                | ✅ `[17] overlay(once:false) → false`                    |
+| 1.4.7 | ✅ `showPlayServicesErrorDialog → false` (`success` needs no dialog)        | ✅ `[18] → false` (documented Android-only, never shown) |
+| 1.4.8 | ✅ `probe: rejected code=appNotFound native=undefined`                      | ✅ `[19]` identical                                      |
+| 1.4.3 | ✅ `showExpandedControls → true`, focus = `NitroExpandedControllerActivity` | ✅ 08-04                                                 |
+
+**1.4.6 has to be run with `once: false`.** With the once-flag already set, an
+`{once: true}` call returns `false` whether or not an anchor exists — the row
+would pass without ever reaching the no-anchor guard. `{once: false}` skips the
+flag check (Android) / clears it (iOS), so a `false` can only come from the
+anchor.
+
+### ⚠️ Row 1.4.5's criterion is wrong on **both** platforms — amended
+
+The row asked for `once: false` to "reset the persisted flag on both platforms
+so 1.4.4 is re-runnable inside one install". Measured, it does not, and the
+mechanisms differ while the observable outcome is identical:
+
+| Platform | What `once: false` does                                                                   | Then `once: true`                                      |
+| -------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Android  | Bypasses the `SharedPreferences` check; **never writes or clears it**. Dismiss re-sets it | `→ false` — flag still `true`                          |
+| iOS      | `clearCastInstructionsShownFlag()`, then GCK **re-sets its own flag on presentation**     | `→ false` — `gck_castInstructionsShown` back to `true` |
+
+Android's pref was read between every step: absent → (show) still absent →
+(dismiss) `nitro_googlecast_intro_overlay_shown=true` → (once:false show +
+dismiss) still `true`. iOS's `gck_castInstructionsShown = true` was read out of
+the simulator's app container.
+
+**Amended criterion:** `{once: false}` shows the overlay regardless of the
+persisted flag; it does **not** make `{once: true}` show again. To re-run 1.4.4
+inside one install, delete the flag — `adb shell run-as <id> rm
+shared_prefs/nitro_googlecast.xml` (Android) or erase the app data (iOS). The
+amendment is to the _criterion_, on device evidence, and both platforms agree —
+so this is not a platform difference and must not be written up as one.
+
+### 🎨 Android's introductory overlay renders unreadably — and v4 does too
+
+Same call, same session, side by side: **iOS** draws the full overlay (dimmed
+scrim, highlight circle on the button, "Touch to cast media to your TV and
+Speakers", an "OK" button). **Android** draws a near-white scrim with no legible
+title and no dismiss affordance — it is dismissible (tap anywhere, and the
+dismiss listener fires, so the promise and flag behave correctly), but a user
+would not know what it is.
+
+Cause is a missing style, not a v5 bug: `IntroductoryOverlay.Builder` is used
+with no `setTitleText()` / `setOverlayColor()`, and neither the library
+(`android/src/main/res/values/styles.xml` defines only
+`NitroCastExpandedController`) nor the playground theme supplies the Cast intro
+attributes. **v4 does exactly the same** (`RNGCCastContext.java:160`), so this is
+inherited behaviour at parity, not a regression. Phase 7 docs decision: either
+document that consumers must theme the overlay, or give the builder a default
+title. Screenshots of both platforms are in the session scratchpad.
+
+### S1.3 — iOS build B, and the mechanism that also carries S3's signing
+
+| #     | Status | Evidence                                                                                                                        |
+| ----- | ------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| 1.3.1 | ✅     | `[SPIKE] build B: startDiscoveryAfterFirstTapOnCastButton=false` at launch — so the rows below are build B, not build A         |
+| 1.3.2 | ✅     | Probes pane opened with **no CastButton tap**: `isRunning=true passive=false devices=1`; `devices → [Office TV]` before any tap |
+| 1.3.3 | ✅     | CastButton unmounted, `stopDiscovery` → `isRunning=false`, then `startDiscovery` → `devices → [Office TV]` and `isRunning=true` |
+| 1.3.4 | ✅     | `rm local.xcconfig` + `pod install` + rebuild → **no** `build B:` line in the launch log (1298 process log lines in the window) |
+
+`local.xcconfig` never appeared in `git status`, which is the point of the
+mechanism. Two documented cycle-eaters both fired exactly as written: each
+`pod install` rewrote the `hermes-engine` line under `SPEC CHECKSUMS` (reverted,
+not committed), and re-pointing `Pods/Manifest.lock` at the committed lock
+avoided the "sandbox is not in sync" false alarm.
+
+### ⭐ The iOS first-tap gate is **per installation, not per launch** — and the first explanation for it was wrong
+
+Build A, rebuilt after removing the xcconfig, discovered `Office TV` at launch
+with no tap, apparently contradicting 1.2.2. The app container had:
+
+```
+$ plutil -p "<container>/Library/Preferences/com.reactnative.googlecast.playground.plist"
+  "gck_castInstructionsShown" => true
+  "kGCKDiscoveryEverStarted" => true
+```
+
+A suggestively-named flag next to the symptom is not the cause, and this doc's
+own rule about uncontrolled comparisons applies. Tested, in this order:
+
+| Run                                                        | Result                                                       |
+| ---------------------------------------------------------- | ------------------------------------------------------------ |
+| Build A, install that had run build B                      | discovers at launch, no tap — `devices → [Office TV]`        |
+| Same, after terminating and **deleting the prefs plist**   | **still discovers at launch**; no GCK keys written back      |
+| Same binary, after `simctl uninstall` + `install` + launch | ✅ gate holds — `Devices: 0`, `noDevicesAvailable`, for 30 s |
+
+So the first explanation is **refuted**: `kGCKDiscoveryEverStarted` is a symptom,
+not the switch — whatever GCK actually keys off survives deleting
+`Library/Preferences/<bundle>.plist` and lives elsewhere in the container. What
+_is_ established is the behaviour: the gate is one-time per **installation**, so
+**1.2.2 is only measurable on a fresh install**, and a build-A/build-B
+comparison must run A first or reinstall in between. That is what
+`DiscoveryManager`'s doc now says — deliberately without naming a mechanism.
+
+(This does not put 1.2.2's existing ✅ in doubt: a run where the list _stayed_
+empty is itself evidence the install had not yet discovered.)
+
+### `DiscoveryManager.isRunning()` is a tick behind start/stopDiscovery
+
+`[7] after startDiscovery isRunning=false` then `[10] read isRunning=true`, with
+`devices → [Office TV]` in between: the transport hops to the main thread before
+touching GCK, so the cached flag refreshes a tick later and a same-tick read
+returns the pre-call value. Not a defect, but it reads as one. Documented on
+`isRunning()`.
+
+### 1.4.9 / spike 0.3 — two stimuli, and only one of them is the documented path
+
+Both runs used a real stimulus (connect → Fast Refresh → forced end + reconnect),
+and the refresh was confirmed to have landed rather than assumed.
+
+**A. Editing `playground/App.tsx` — the documented developer path. ✅ clean.**
+Baseline (pre-refresh) and post-refresh reconnects produced **exactly one event
+per transition**: `ending` ×1, `ended` ×1, `startSession accepted` ×1,
+`connecting` ×1, `starting` ×1, `connected` ×1, `started` ×1, with a new id
+(`9a9b5c11…` → `2b7e30a7…`). No duplicates, no leaked listeners.
+
+**B. Editing a library module (`src/state/CastStore.ts`) — not a consumer path.**
+The session-lifecycle stream goes silent for the rest of the process: a full
+end + reconnect logged `castState → notConnected` / `endCurrentSession accepted`
+/ `startSession accepted` / `connecting` / `connected` and **no** `ending`,
+`ended`, `starting` or `started` at all, while cast-state events kept flowing.
+The store was fine throughout (`session=true sid=4dd716aa… gen=3`), and the
+Media panel still read `client ready`. So this is a **dropped subscription after
+module re-evaluation**, not a leak and not native — worth a bead, but it needs a
+library-source edit to reproduce, so no consumer can hit it.
+
+### ⭐ `v5-3ll` — the visible signature was the harness. The snapshot claim is untested.
+
+The signature (`castState=connected` beside `Session: none` after a Fast
+Refresh) reproduced immediately. A "Dump store" taken at that same moment says:
+
+```
+store: pushes=10 live=true session=true sid=4dd716aa-… gen=1 castState=connected
+```
+
+The store **had** the session. What did not was `App.tsx`, whose `sessionId`
+state started at `null` and was fed only by session-lifecycle events — events
+that had already fired before the component remounted. A display driven purely
+by events cannot show state that predates it. The doc's standing suspect
+(`toSessionInfo()` returning null because `castDevice == null`) is not what this
+run shows.
+
+Fixed in the harness by seeding from `sessionManager.getCurrentCastSession()`.
+Re-tested: connect → Fast Refresh now renders `Cast state: connected` **and**
+`Session: ac786b75-…`.
+
+⚠️ **Scope, so the bead is not closed on this.** The dump was taken _after_ the
+refresh, and `pushes` moved 7 → 10 across it — so "the native `InitialSnapshot`
+carried a null session and a later push repaired it" is still consistent with
+everything above. What is established is that the **visible signature** was a
+harness artifact; whether the snapshot itself ever disagrees with `castState`
+was not measured and needs the native-side log the bead already proposes.
+
+### `startSession(deviceId)` rejecting `appNotFound` — the 08-02 open item
+
+It works on this build (`startSession(Office TV) accepted` → `started`,
+repeatedly). It rejects `appNotFound` in one specific state: after
+`castState → noDevicesAvailable`, i.e. GCK's live route list has emptied while
+our cached `devices` array still shows the device (no `devices → []` was
+emitted), so the green device button is still on screen and native cannot
+resolve the id. Reproduced twice. That is a stale-cache disagreement worth its
+own bead, not a broken API.
+
+### 🔧 Harness fixes this session (all four were blocking a row)
+
+1. **The long-press that unmounts the CastButton was on the button.** On Android
+   the native `MediaRouteButton` consumes the touch (its own tooltip wins), so
+   `onLongPress` never fired and rows 1.1.6 / 1.4.6 were undrivable. Moved to
+   the title.
+2. **`styles.buttons` had no `flexWrap`.** On a 720px phone "PlayServices
+   dialog" ran off the right edge and could not be tapped at all — row 1.4.7 was
+   unreachable by layout accident.
+3. **A Discovery panel** (`isRunning` / `startDiscovery` / `stopDiscovery`),
+   first in the probes pane so it is legible in a screenshot without scrolling.
+   It is the only observability for S1.3, and those are iOS-only APIs that had
+   never executed on a device. The Android/web reading is labelled in the UI so
+   a constant `false` is never mistaken for a measurement.
+4. **`sessionId` seeded** — see the `v5-3ll` entry above.
+
+### 🛠 Tooling: Maestro **can** drive the physical Android phone on this machine
+
+The standing note — "Maestro reports 0 devices connected for a physically
+attached phone" — was wrong about the cause. An unrelated local service
+listening on TCP **5555** made `adb` register a phantom `emulator-5554 offline`,
+and Maestro refuses to pick a device while a dead entry is listed. `adb
+disconnect` and a server restart do not clear it, because the port really is
+answering. Clipping the emulator port scan below it does:
+
+```bash
+adb kill-server && ADB_LOCAL_TRANSPORT_MAX_PORT=5554 adb start-server
+```
+
+Maestro also needs `JAVA_HOME` (it reports "Unable to locate a Java Runtime"
+otherwise, which looks nothing like a device problem).
+
+**Consequence: `scripts/e2e-android.sh` ran locally, on the phone, and is
+green** — all seven tier-1 assertions pass with this change's layout edits
+(wrapped button rows, restructured header, extra panel, seeded session line).
+That gate no longer has to be taken on CI's word alone.
+
+---
+
 ## Evidence header — fill in before S1.1
 
 | Field                                   | Value                                                                  |
@@ -856,14 +1076,14 @@ adb logcat | grep SPIKE
 
 ### S1.1 — Android, virgin install (**run first — perishable**)
 
-| #     | Row                                                                                                                                                                                                                                                                                 | Status | Evidence |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- |
-| 1.1.1 | Cold launch: `init seed:` line shows `castState`, `playServices`, `devices=N`                                                                                                                                                                                                       |        |          |
-| 1.1.2 | CastButton mount triggers ACTIVE scan; the real Chromecast appears in the device list                                                                                                                                                                                               |        |          |
-| 1.1.3 | **Phase 3 finding #2**: `readDevices()` / `CastDevice.getFromBundle(route.extras)` populates on real hardware (the emulator showed `devices=0` while `castState` reached `notConnected`)                                                                                            |        |          |
-| 1.1.4 | Tap the device → ordered `starting → started`; `Session:` shows a real id                                                                                                                                                                                                           |        |          |
-| 1.1.5 | End session → ordered `ending → ended`; `ended` carries a numeric `nativeCode`                                                                                                                                                                                                      |        |          |
-| 1.1.6 | ⚠️ **Scan-stop.** Long-press the header unmounts the CastButton (App.tsx). A frozen device list looks identical whether the scan stopped or the UI went stale. **Do not tick this row without discovery-state observability.** Defer with a reason, or add the observability first. |        |          |
+| #     | Row                                                                                                                                                                                                                                                                                                                                                                                    | Status      | Evidence                                                                                                                                                                                                                                                                                                          |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1.1 | Cold launch: `init seed:` line shows `castState`, `playServices`, `devices=N`                                                                                                                                                                                                                                                                                                          |             |                                                                                                                                                                                                                                                                                                                   |
+| 1.1.2 | CastButton mount triggers ACTIVE scan; the real Chromecast appears in the device list                                                                                                                                                                                                                                                                                                  |             |                                                                                                                                                                                                                                                                                                                   |
+| 1.1.3 | **Phase 3 finding #2**: `readDevices()` / `CastDevice.getFromBundle(route.extras)` populates on real hardware (the emulator showed `devices=0` while `castState` reached `notConnected`)                                                                                                                                                                                               |             |                                                                                                                                                                                                                                                                                                                   |
+| 1.1.4 | Tap the device → ordered `starting → started`; `Session:` shows a real id                                                                                                                                                                                                                                                                                                              |             |                                                                                                                                                                                                                                                                                                                   |
+| 1.1.5 | End session → ordered `ending → ended`; `ended` carries a numeric `nativeCode`                                                                                                                                                                                                                                                                                                         |             |                                                                                                                                                                                                                                                                                                                   |
+| 1.1.6 | ⚠️ **Scan-stop.** Long-press the **title** unmounts the CastButton (App.tsx — it used to be a long-press on the button, which Android's native `MediaRouteButton` swallowed). A frozen device list looks identical whether the scan stopped or the UI went stale. **Do not tick this row without discovery-state observability.** Defer with a reason, or add the observability first. | ⬜ deferred | 08-09: with the button unmounted the list stayed at `Devices: 1` — exactly the ambiguity the row warns about. The Discovery panel added for S1.3 does **not** help here: `isRunning()` is iOS-only, and on Android the framework owns discovery with no public read. Deferred for want of an Android-side signal. |
 
 ### S1.2 — iOS Simulator, build A (default `GCKCastOptions`)
 
@@ -916,26 +1136,37 @@ Confirm `[SPIKE] build B: startDiscoveryAfterFirstTapOnCastButton=false` in the
 console — its absence means the xcconfig was not picked up and **the rows below
 are measuring build A**.
 
-| #     | Row                                                                   | Status | Evidence |
-| ----- | --------------------------------------------------------------------- | ------ | -------- |
-| 1.3.1 | `[SPIKE] build B:` line present at launch                             |        |          |
-| 1.3.2 | `DiscoveryManager.isRunning()` true immediately after init (no tap)   |        |          |
-| 1.3.3 | Custom-picker path: an explicit `startDiscovery()` populates the list |        |          |
-| 1.3.4 | `rm playground/ios/local.xcconfig && pod install` restores build A    |        |          |
+| #     | Row                                                                   | Status   | Evidence                                                                                        |
+| ----- | --------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| 1.3.1 | `[SPIKE] build B:` line present at launch                             | ✅ 08-09 | `[SPIKE] build B: startDiscoveryAfterFirstTapOnCastButton=false`                                |
+| 1.3.2 | `DiscoveryManager.isRunning()` true immediately after init (no tap)   | ✅ 08-09 | `isRunning=true passive=false devices=1`, probes opened without touching the CastButton         |
+| 1.3.3 | Custom-picker path: an explicit `startDiscovery()` populates the list | ✅ 08-09 | button unmounted; `stopDiscovery` → `false`, `startDiscovery` → `devices → [Office TV]`, `true` |
+| 1.3.4 | `rm playground/ios/local.xcconfig && pod install` restores build A    | ✅ 08-09 | no `build B:` line at launch; `git status` clean throughout                                     |
+
+See the 08-09 run log for two things this row taught: the first-tap gate is
+persisted per installation (`kGCKDiscoveryEverStarted`), so 1.2.2 is only
+measurable on a fresh install; and `isRunning()` is a tick behind
+`start`/`stopDiscovery`.
 
 ### S1.4 — steady state, both platforms
 
-| #     | Row                                                                                                                                                                                                                                                                                                | Status | Evidence |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- |
-| 1.4.1 | Chooser opens from the CastButton                                                                                                                                                                                                                                                                  |        |          |
-| 1.4.2 | Chooser opens from `showCastDialog()` with **no** button mounted (long-press first)                                                                                                                                                                                                                |        |          |
-| 1.4.3 | `showExpandedControls()` opens the controller dialog while connected                                                                                                                                                                                                                               |        |          |
-| 1.4.4 | Overlay: first "Overlay" → `true`; dismiss; "Overlay" again → `false` (`once: true` persisted)                                                                                                                                                                                                     |        |          |
-| 1.4.5 | "Overlay∞" (`once: false`) → `true`, and resets the persisted flag on both platforms so 1.4.4 is re-runnable inside one install                                                                                                                                                                    |        |          |
-| 1.4.6 | Overlay with the CastButton unmounted (no anchor) → `false`                                                                                                                                                                                                                                        |        |          |
-| 1.4.7 | `showPlayServicesErrorDialog(...)` behaves per platform                                                                                                                                                                                                                                            |        |          |
-| 1.4.8 | "Probe error (#12)" → rejected with `code` (and `nativeCode` where the platform supplies one)                                                                                                                                                                                                      |        |          |
-| 1.4.9 | **Spike 0.3, with a real stimulus.** Connect → Fast Refresh → then _force state changes_: reconnect at least once and compare event identity/generation. "No obvious duplicates while idle" proves nothing. There is deliberately no `dispose()` button — Fast Refresh **is** the documented path. |        |          |
+| #     | Row                                                                                                                                                                                                                                                                                                | Status               | Evidence                                                                                                                                              |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.4.1 | Chooser opens from the CastButton                                                                                                                                                                                                                                                                  | ✅ A 08-02 / i 08-04 | GCK chooser lists "Office TV" on both                                                                                                                 |
+| 1.4.2 | Chooser opens from `showCastDialog()` with **no** button mounted (long-press first)                                                                                                                                                                                                                | ✅ A 08-02 / i 08-04 | `showCastDialog → true`, sheet opens                                                                                                                  |
+| 1.4.3 | `showExpandedControls()` opens the controller dialog while connected                                                                                                                                                                                                                               | ✅ A 08-09 / i 08-04 | Android: `→ true`, focus = `NitroExpandedControllerActivity`                                                                                          |
+| 1.4.4 | Overlay: first "Overlay" → `true`; dismiss; "Overlay" again → `false` (`once: true` persisted)                                                                                                                                                                                                     | ✅ 08-09 both        | Android pref absent → (dismiss) `…_intro_overlay_shown=true` → `→ false`; iOS `[13] true` → `[14] false`                                              |
+| 1.4.5 | ~~"Overlay∞" (`once: false`) → `true`, and resets the persisted flag~~ **Amended 08-09**: `→ true` regardless of the flag, but it does **not** make a later `{once: true}` show again — on either platform                                                                                         | ✅ amended, 08-09    | Android `[4] true` then `[5] false`, pref still `true`; iOS `[15] true` then `[16] false`, `gck_castInstructionsShown=true`                           |
+| 1.4.6 | Overlay with the CastButton unmounted (no anchor) → `false` — **run it with `once: false`**, or the flag answers instead of the anchor                                                                                                                                                             | ✅ 08-09 both        | Android `overlay(once:false) → false`; iOS `[17] → false`                                                                                             |
+| 1.4.7 | `showPlayServicesErrorDialog(...)` behaves per platform                                                                                                                                                                                                                                            | ✅ 08-09 both        | Android `→ false` (`success` needs no dialog); iOS `→ false` (no counterpart). The dialog-shown path needs broken Play Services — deferred, see below |
+| 1.4.8 | "Probe error (#12)" → rejected with `code` (and `nativeCode` where the platform supplies one)                                                                                                                                                                                                      | ✅ 08-09 both        | `rejected code=appNotFound native=undefined` — the lookup fails before GCK, so no native code exists to carry                                         |
+| 1.4.9 | **Spike 0.3, with a real stimulus.** Connect → Fast Refresh → then _force state changes_: reconnect at least once and compare event identity/generation. "No obvious duplicates while idle" proves nothing. There is deliberately no `dispose()` button — Fast Refresh **is** the documented path. | ✅ 08-09 (Android)   | App.tsx refresh + forced end/reconnect: exactly one event per transition, new id. Library-module refresh drops the session stream — see the run log   |
+
+> **1.4.7 deferral, stated:** only the "no dialog needed" branch is reachable on
+> healthy hardware. Exercising the branch that _shows_ a resolution dialog needs
+> a device with Play Services missing/outdated/disabled, which this rig does not
+> have. Deferred with that reason; the code path is `GoogleApiAvailability`'s
+> own, and our wrapper returns its boolean unchanged.
 
 ---
 

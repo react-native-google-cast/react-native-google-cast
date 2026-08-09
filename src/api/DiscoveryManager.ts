@@ -19,6 +19,18 @@ import type { EventSubscription } from './subscribeSelector'
  *   app's foreground lifecycle. Until that first tap the device list is empty
  *   and `castState` stays `noDevicesAvailable` — expected, not a bug.
  *
+ * ⚠️ **The iOS gate is one-time per _installation_, not per launch.** Once
+ * discovery has ever started — a Cast-button tap, or a {@link startDiscovery}
+ * call — later launches of that install discover at startup regardless of
+ * `startDiscoveryAfterFirstTapOnCastButton`. Measured on the Simulator
+ * 2026-08-09: a reinstalled app held the gate (`devices` stayed empty for 30 s),
+ * while the same binary on an install that had previously discovered did not.
+ * So treat "the list is empty until the first tap" as a first-run UX behaviour,
+ * not an invariant you can branch on — and to re-test it, reinstall. (GCK does
+ * persist `kGCKDiscoveryEverStarted` in `NSUserDefaults`, but deleting that
+ * plist did **not** restore the gate, so the state that matters lives elsewhere
+ * in the app container. The flag is a symptom, not the switch.)
+ *
  * If you build a **custom device picker** (no `CastButton` on screen), call
  * {@link startDiscovery} on iOS — Google's documented requirement
  * (https://developers.google.com/cast/docs/ios_sender/permissions_and_discovery);
@@ -80,7 +92,17 @@ export class DiscoveryManager {
     return this.transport.isPassiveScan
   }
 
-  /** *(iOS only)* Whether discovery is currently running. Synchronous (v4: Promise). */
+  /**
+   * *(iOS only)* Whether discovery is currently running. Synchronous (v4:
+   * Promise), and a **cached** read.
+   *
+   * ⚠️ Do not read it in the same tick as {@link startDiscovery} /
+   * {@link stopDiscovery}: those hop to the main thread before touching GCK, so
+   * the cache is refreshed a tick later and an immediate read returns the
+   * *pre-call* value. Measured on device 2026-08-09 — `startDiscovery()` then
+   * an immediate `isRunning()` read `false`, while the next read (and the
+   * device list) said `true`.
+   */
   isRunning(): boolean {
     return this.transport.isDiscovering
   }
