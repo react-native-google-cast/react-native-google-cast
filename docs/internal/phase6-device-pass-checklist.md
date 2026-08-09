@@ -1254,11 +1254,45 @@ itself (or just document it) is a Phase 7 docs decision — record what you find
 Deliberately **after** the rows: collapsing the probes before they have run
 would give every failed row two suspects.
 
-- Collapse the per-panel `run` wrappers into one `probe(label, fn)` (T6).
-- Split high-frequency streams out of `append()` into live text lines — `append()`
-  re-renders per event against a ≥1 Hz `progressTicker` (T6).
-- Split the debug rig from a clean example screen (T7) so Phase 7 inherits an
-  artifact instead of opening with a rewrite; update the App.tsx header.
+- ✅ **T6 — 2026-08-09.** Both bullets below turned out to be partly wrong about
+  the code, so they are recorded as run rather than as written.
+- ✅ ~~Collapse the per-panel `run` wrappers into one `probe(label, fn)`~~ — done,
+  but it was **two** sites, not "per-panel". Only `MediaProbes.run` and
+  `QueueProbes.run` were genuinely identical (modulo a `media: `/`queue: `
+  prefix); they now share `makeProbe` in `playground/probeHelpers.ts` (−24 lines).
+  Four things that look like wrappers were deliberately left alone, each because
+  its output string _is_ recorded evidence: `FlushProbe.run`/`runTight` are probe
+  bodies with their own settle counters (row 2.2.7), `fakeSeam` is asserted
+  verbatim by tier-1 Maestro, `probeShow` carries the S1.4 rows' format, and the
+  channel probe's inline send carries rows 2.2.10/2.2.11. A refactor that greps
+  `const run =` and collapses all four would still typecheck.
+- ✅ ~~Split high-frequency streams out of `append()` … against a ≥1 Hz
+  `progressTicker`~~ — **the premise was inverted.** No high-frequency stream
+  feeds `append` at all, and the ticker (`useStreamPosition`) is already scoped to
+  `HooksReadout`. The real coupling ran the other way: `log` is `App` state, so
+  every `append` re-rendered every mounted panel. Fixed by `memo`ing the six
+  panels and keying the log by line instead of index (entries are _prepended_, so
+  an index key re-rendered all 60 rows on every append).
+  - Rejected: hoisting the log to a module store behind `useSyncExternalStore`. It
+    would make the log survive Fast Refresh, silently changing what spike row
+    0.3 measures, and buys nothing on the tier-1 path where no panel is mounted.
+  - Not done: deleting the `castState →` / `devices →` appends as "duplicating the
+    live status lines". They renumber the `N ·` sequence, and this document cites
+    evidence _by_ that number (`[8]`, `[10]→[11]`) — it would quietly invalidate
+    already-ticked rows.
+- ⏸️ **T7 — postponed** with bead `v5-a7n` (2026-08-09, owner's call). The debug
+  rig is still `App.tsx`; Phase 7 inherits the harness, not a clean example
+  screen. The App.tsx header says so.
+
+**A gate hole this uncovered, now fixed.** The root `yarn typescript`
+(`"include": ["src"]`) and root `yarn test` (`testPathIgnorePatterns:
+["<rootDir>/playground/"]`) **never see `playground/`** — so every harness change
+in this pass was made under gates that could not fail. Two suites were red on
+arrival and nobody could have known: `playground/tsconfig.json` was missing the
+DOM lib (`index.web.tsx` failed from the day the web harness landed — now fixed,
+plus a `yarn playground typescript` script), and the smoke test cannot resolve
+the workspace library or the Nitro native module (bead `v5-35y`; the real
+behavioural gate is `scripts/e2e-android.sh`).
 
 > **CRITICAL — regression requirement.** `.maestro/tier1-fake-session.yml`
 > asserts on exact log text: `.*fake session started delivered=true.*` and
@@ -1277,7 +1311,22 @@ would give every failed row two suspects.
 >   with `lsof -i :8081` first.
 > - **Maestro needs a clean `adb devices`.** A stale `offline` emulator entry
 >   makes it report "0 devices connected" even with a healthy device attached,
->   and `--device` does not override it. Clear the dead entries first.
+>   and `--device` does not override it. Clear the dead entries first — and note
+>   that a _live_ local service inside adb's emulator port range invents such an
+>   entry that cannot be cleared (see the 08-09 run log:
+>   `ADB_LOCAL_TRANSPORT_MAX_PORT=5554`). Maestro also needs `JAVA_HOME`.
+> - **The phone must be awake and UNLOCKED.** `launchApp` does not dismiss the
+>   keyguard, so a phone that has locked itself since the last run fails on the
+>   very first `assertVisible` with "Assertion is false" — which reads exactly
+>   like a text regression. The failure screenshot in `~/.maestro/tests/<run>/`
+>   settles it in seconds: a black frame means the screen is off, a lockscreen
+>   means the keyguard ate the launch. This cost two runs on 2026-08-09.
+>
+>   ```bash
+>   adb shell input keyevent KEYCODE_WAKEUP
+>   adb shell input swipe 360 1200 360 300 150   # dismiss the keyguard
+>   adb shell svc power stayon true              # keep it awake for the run
+>   ```
 
 ### S2.5 — tier-2 Maestro (T8), labelled honestly
 

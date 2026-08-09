@@ -28,7 +28,18 @@ yarn specs           # nitrogen — only when a .nitro.ts spec changes (then re-
 
 yarn playground start          # Metro for the playground app (playground/)
 yarn playground android|ios
+yarn playground typescript     # the ONLY typecheck that sees playground/ — see below
 ```
+
+**The root gates do not cover `playground/`.** Root `tsconfig.json` is
+`"include": ["src"]` and the root jest config ignores `<rootDir>/playground/`, so
+`yarn typescript` and `yarn test` both report green no matter what the harness
+does. That is not hypothetical: `playground/tsconfig.json` was missing the DOM
+lib and had been failing on `index.web.tsx` since the web harness landed, unseen.
+If you touch `playground/`, run `yarn playground typescript` and `yarn lint`
+(root lint _does_ reach it, resolving `playground/.eslintrc.js`), and treat
+`scripts/e2e-android.sh` as the real behavioural gate —
+`playground/__tests__/App.test.tsx` cannot currently run at all (bead `v5-35y`).
 
 ### The two gates that need a device, and when they are not optional
 

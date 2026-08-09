@@ -2,6 +2,14 @@
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "types": ["jest"],
+    // The playground is a THREE-platform harness: `index.web.tsx` mounts the
+    // same App through react-dom, so it touches `document`. React Native's
+    // shared tsconfig omits the DOM lib, which made `tsc --noEmit` here fail on
+    // `Cannot find name 'document'` from the day the web harness was folded in
+    // (bead v5-5tx) — unnoticed, because the ROOT `yarn typescript` is
+    // `"include": ["src"]` and never sees this directory. See `yarn playground
+    // typescript`, added alongside this.
+    "lib": ["ESNext", "DOM"],
     // Deep (non-barrel) imports of the workspace library, e.g. the debug-only
     // fake seam `react-native-google-cast/src/debug/fakeSession`. Metro
     // resolves these via react-native-builder-bob's monorepo config; this

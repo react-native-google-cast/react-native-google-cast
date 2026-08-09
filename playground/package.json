@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "typescript": "tsc --noEmit",
     "web": "vite",
     "web:build": "vite build",
     "web:preview": "vite preview"

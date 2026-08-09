@@ -13,9 +13,12 @@
  * Phase 6 device pass adds the "Probes" section (collapsed by default): media,
  * queue, hooks, custom channel, and the request-flush race. Those probes are
  * DISPOSABLE — crude on purpose, one button per real API call, so a failed
- * checklist row has exactly one suspect. They get collapsed into a shared
- * helper and split out of this file only after the device pass has run
- * (v5-8hq.6 T6/T7).
+ * checklist row has exactly one suspect.
+ *
+ * T6 (2026-08-09) collapsed the duplication that was worth collapsing — see
+ * `probeHelpers.ts` for what did *not* move and why. **T7 — splitting a clean
+ * example screen out of this rig — is postponed** along with bead `v5-a7n`, so
+ * this file is still the harness and not an example to copy.
  *
  * ⚠️ `.maestro/tier1-fake-session.yml` asserts on the text of the status lines,
  * the two "Fake start"/"Fake end" buttons, and the `fake session
@@ -40,6 +43,7 @@
 
 import {
   Component,
+  memo,
   useCallback,
   useEffect,
   useRef,
@@ -99,8 +103,7 @@ import {
   QUEUE_FIXTURES,
   type MediaFixture,
 } from './probeFixtures';
-
-type Append = (line: string) => void;
+import { makeProbe, type Append } from './probeHelpers';
 
 const IS_WEB = Platform.OS === 'web';
 
@@ -206,9 +209,11 @@ function Btn({ label, onPress }: { label: string; onPress: () => void }) {
 }
 
 // ---------------------------------------------------------------------------
-// Disposable probes (T3). Each panel keeps its own crude `run` wrapper rather
-// than sharing one: the duplication is the point until the device pass has
-// told us what the real data shapes are (T6 collapses them afterwards).
+// Disposable probes (T3). The duplication was the point while the device pass
+// was still discovering the real data shapes; T6 has since folded the only two
+// genuinely identical wrappers into `makeProbe` (probeHelpers.ts). The panels
+// are `memo`ed because the event log lives in `App` state, so without it every
+// `append` re-rendered every mounted panel.
 // ---------------------------------------------------------------------------
 
 /**
@@ -222,7 +227,11 @@ function Btn({ label, onPress }: { label: string; onPress: () => void }) {
  * discovery there, so `isRunning()` reads a constant `false` and the buttons
  * are no-ops. An unlabelled `false` on Android would read as a measurement.
  */
-function DiscoveryProbe({ append }: { append: Append }) {
+const DiscoveryProbe = memo(function DiscoveryProbePanel({
+  append,
+}: {
+  append: Append;
+}) {
   const discoveryManager = GoogleCast.getDiscoveryManager();
   const read = useCallback(
     () => ({
@@ -274,26 +283,18 @@ function DiscoveryProbe({ append }: { append: Append }) {
       </View>
     </>
   );
-}
+});
 
-function MediaProbes({ append }: { append: Append }) {
+const MediaProbes = memo(function MediaProbesPanel({
+  append,
+}: {
+  append: Append;
+}) {
   const client = useRemoteMediaClient();
   const [fixtureIndex, setFixtureIndex] = useState(0);
   const fixture: MediaFixture = MEDIA_FIXTURES[fixtureIndex]!;
 
-  const run = (label: string, fn: () => Promise<unknown>) => {
-    if (!client) {
-      append(`media: ${label} SKIPPED — no client (connect first)`);
-      return;
-    }
-    fn().then(
-      () => append(`media: ${label} resolved`),
-      (e: CastError) =>
-        append(
-          `media: ${label} rejected code=${e.code} native=${e.nativeCode}`,
-        ),
-    );
-  };
+  const run = makeProbe('media: ', append, client);
 
   return (
     <>
@@ -468,26 +469,18 @@ function MediaProbes({ append }: { append: Append }) {
       </View>
     </>
   );
-}
+});
 
-function QueueProbes({ append }: { append: Append }) {
+const QueueProbes = memo(function QueueProbesPanel({
+  append,
+}: {
+  append: Append;
+}) {
   const client = useRemoteMediaClient();
   const status = useMediaStatus();
   const items = status?.queueItems ?? [];
 
-  const run = (label: string, fn: () => Promise<unknown>) => {
-    if (!client) {
-      append(`queue: ${label} SKIPPED — no client (connect first)`);
-      return;
-    }
-    fn().then(
-      () => append(`queue: ${label} resolved`),
-      (e: CastError) =>
-        append(
-          `queue: ${label} rejected code=${e.code} native=${e.nativeCode}`,
-        ),
-    );
-  };
+  const run = makeProbe('queue: ', append, client);
 
   const lastItemId = items.length ? items[items.length - 1]!.itemId : undefined;
   const secondItemId = items.length > 1 ? items[1]!.itemId : undefined;
@@ -583,14 +576,14 @@ function QueueProbes({ append }: { append: Append }) {
       </View>
     </>
   );
-}
+});
 
 /**
  * Raw hooks readout — deliberately unformatted. This is the first time these
  * hooks render against real GCK payloads rather than the jest fake, so the
  * point is to see the shape, not to present it. "Boom" verifies T2.
  */
-function HooksReadout() {
+const HooksReadout = memo(function HooksReadoutPanel() {
   const castState = useCastState();
   const devices = useDevices();
   const session = useCastSession();
@@ -628,7 +621,7 @@ function HooksReadout() {
       </View>
     </>
   );
-}
+});
 
 /**
  * Custom-channel probe (#614). INERT until T1 lands: the default Media
@@ -638,7 +631,11 @@ function HooksReadout() {
  * below is installed at addChannel time by `useCastChannel`, so a message that
  * arrives before the channel is even returned must still land.
  */
-function ChannelProbe({ append }: { append: Append }) {
+const ChannelProbe = memo(function ChannelProbePanel({
+  append,
+}: {
+  append: Append;
+}) {
   const onMessage = useCallback(
     (message: string) => append(`channel ← ${message}`),
     [append],
@@ -678,7 +675,7 @@ function ChannelProbe({ append }: { append: Append }) {
       </View>
     </>
   );
-}
+});
 
 const PENDING_CONFIRM_MS = 1500;
 const FLUSH_TIMEOUT_MS = 5000;
@@ -714,7 +711,11 @@ const LATE_WATCH_MS = 3000;
  * covered by `TrackedCastRequestTest.kt` / the iOS delegate tests; what is
  * device-gated here is settle-promptly-with-interrupted and no crash after.
  */
-function FlushProbe({ append }: { append: Append }) {
+const FlushProbe = memo(function FlushProbePanel({
+  append,
+}: {
+  append: Append;
+}) {
   const client = useRemoteMediaClient();
   const [busy, setBusy] = useState(false);
 
@@ -881,7 +882,7 @@ function FlushProbe({ append }: { append: Append }) {
       </View>
     </>
   );
-}
+});
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -1251,9 +1252,16 @@ function App() {
         <Text style={[styles.logTitle, isDarkMode && styles.textLight]}>
           Event log
         </Text>
+        {/* Keyed by the line, not the index (T6). Entries are PREPENDED, so an
+            index key shifts every row's content on every append and re-renders
+            all 60 `Text`s. The `${n} · ` sequence prefix makes each line unique
+            by construction, and `seq` only resets when `log` does. Order is
+            unaffected — React renders children in array order regardless of
+            keys — so the newest entry stays at offset 0, which is what the
+            tier-1 `.*delivered=true.*` regexes read. */}
         <ScrollView style={[styles.logBox, showProbes && styles.logBoxSmall]}>
-          {log.map((line, i) => (
-            <Text key={i} style={styles.logLine}>
+          {log.map(line => (
+            <Text key={line} style={styles.logLine}>
               {line}
             </Text>
           ))}
