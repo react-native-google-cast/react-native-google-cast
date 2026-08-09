@@ -17,6 +17,7 @@ import {
   buildCastOptions,
   getCastFramework,
   getChromeCast,
+  isLoaderScriptPresent,
   isSdkPresent,
   onSdkAvailable,
   toCastError,
@@ -98,18 +99,50 @@ import {
  *   listener-attachment trackers used for symmetric detach.
  */
 
+/**
+ * The snapshot served before the SDK announces itself — and, in a browser that
+ * cannot cast, forever.
+ *
+ * `playServicesState: 'success'` is not a claim about the browser: that field is
+ * Android-only and documented as always `'success'` elsewhere. It is precisely
+ * why `playServicesState === 'success'` must NOT be used as a cross-platform
+ * "can I cast?" check — it reads healthy on Safari. `CastContext.isSupported()`
+ * / `useCastSupported()` answer that question honestly on every platform.
+ */
 const UNAVAILABLE_SNAPSHOT: InitialSnapshot = {
   castState: 'noDevicesAvailable',
   playServicesState: 'success',
   devices: [],
 }
 
-const SDK_UNAVAILABLE: CastError = {
-  code: 'notSupported',
-  message:
-    'The Google Cast Web Sender SDK is not available. Include ' +
-    '<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script> ' +
-    'in your page (see the "Web support" guide).',
+/**
+ * Why the SDK is unusable — and it matters which, because the two have opposite
+ * fixes.
+ *
+ * If the loader script is in the document but never announced itself, the page
+ * is set up correctly and the **browser** cannot cast (only Chromium-based
+ * browsers can). Telling that developer to "include the script" sends them to
+ * fix a non-problem; it is already there.
+ *
+ * Built per-throw rather than as a module constant because the answer changes:
+ * the SDK announces itself asynchronously (~50 ms on a warm localhost load in
+ * Chrome), so a message frozen at module-eval time would describe the wrong
+ * cause for anything thrown during that window.
+ */
+function sdkUnavailable(): CastError {
+  return {
+    code: 'notSupported',
+    message: isLoaderScriptPresent()
+      ? 'The Google Cast Web Sender SDK did not load. The loader script is ' +
+        'present, so this is normally a browser that does not support ' +
+        'casting — only Chromium-based browsers (Chrome, Edge) do. If this ' +
+        'IS Chrome, the SDK may still be initializing: it announces itself ' +
+        'asynchronously, so check `useCastSupported()` before issuing ' +
+        'commands (see the "Web support" guide).'
+      : 'The Google Cast Web Sender SDK is not available. Include ' +
+        '<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script> ' +
+        'in your page (see the "Web support" guide).',
+  }
 }
 
 const NO_SESSION: CastError = {
@@ -592,7 +625,7 @@ class WebCastTransport implements CastTransportApi {
 
   private requireChromeCast(): ChromeCastNamespace {
     const chromeCast = getChromeCast()
-    if (!this.sdkReady || !chromeCast) throw SDK_UNAVAILABLE
+    if (!this.sdkReady || !chromeCast) throw sdkUnavailable()
     return chromeCast
   }
 
@@ -681,7 +714,7 @@ class WebCastTransport implements CastTransportApi {
     try {
       this.requireChromeCast()
       const context = this.context
-      if (!context) throw SDK_UNAVAILABLE
+      if (!context) throw sdkUnavailable()
       return this.track<void>(this.pendingGlobal, (resolve, reject) => {
         context.requestSession().then((errorCode) => {
           if (errorCode) reject(errorCode)

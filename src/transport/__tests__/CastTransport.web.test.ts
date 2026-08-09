@@ -74,6 +74,48 @@ afterEach(() => {
   clearWebSdkGlobals()
 })
 
+describe('CastTransport.web — why the SDK is unavailable', () => {
+  // Two failures with opposite fixes, and the library must not confuse them.
+  // Telling a Firefox developer to "include the loader script" sends them to
+  // fix a non-problem — the script is right there. This is the W7 row
+  // (non-Chromium degradation) as a unit test, which is where it belongs: an
+  // environment with no Cast SDK IS an unsupported browser.
+  //
+  // `document` is stubbed rather than pulling in jest-environment-jsdom: the
+  // transport only ever calls `querySelector`, so a real DOM would add a
+  // dependency without adding coverage.
+  type DocStub = { querySelector(sel: string): unknown }
+  const g = globalThis as { document?: DocStub }
+  const original = g.document
+
+  function setLoaderScript(present: boolean) {
+    g.document = { querySelector: () => (present ? {} : null) }
+  }
+
+  afterEach(() => {
+    if (original === undefined) delete g.document
+    else g.document = original
+  })
+
+  it('tells you to add the loader script only when it is genuinely missing', async () => {
+    setLoaderScript(false)
+    const { transport } = await init()
+    const error = await expectCastError(transport.play(), 'notSupported')
+    expect(error.message).toContain('Include')
+    expect(error.message).toContain('cast_sender.js')
+  })
+
+  it('blames the browser, not the page, when the script is present but never announced', async () => {
+    setLoaderScript(true)
+    const { transport } = await init()
+    const error = await expectCastError(transport.play(), 'notSupported')
+    // The actionable half: do not send them to add a script they already have.
+    expect(error.message).not.toContain('Include <script')
+    expect(error.message).toContain('Chromium')
+    expect(error.message).toContain('useCastSupported')
+  })
+})
+
 describe('CastTransport.web — SDK unavailable', () => {
   it('resolves the safe snapshot and stays gracefully inert', async () => {
     const { transport, snapshot, events } = await init()

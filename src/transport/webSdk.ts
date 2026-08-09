@@ -61,6 +61,13 @@ interface CastGlobal {
   cast?: { framework?: CastFrameworkNamespace }
   __onGCastApiAvailable?: (available: boolean, reason?: string) => void
   __RNGoogleCastOptions?: WebCastOptions
+  /**
+   * Structurally typed rather than pulled in via the DOM lib: this package is a
+   * React Native library and its tsconfig deliberately omits `dom`, so that
+   * `document`/`window` cannot be referenced from code that also runs on
+   * native. Only the one method needed is declared.
+   */
+  document?: { querySelector(selectors: string): unknown }
 }
 
 const castGlobal = (): CastGlobal => globalThis as CastGlobal
@@ -83,6 +90,24 @@ export function getCastFramework(): CastFrameworkNamespace | undefined {
 export function isSdkPresent(): boolean {
   const chromeCast = getChromeCast()
   return chromeCast?.isAvailable === true && getCastFramework() !== undefined
+}
+
+/**
+ * Whether the Cast Web Sender loader script is present in the document.
+ *
+ * Used only to tell two very different failures apart when the SDK is not
+ * usable: **the page forgot the script** (fixable — add it) versus **the
+ * browser cannot cast** (not fixable, and telling the developer to add a script
+ * they already have sends them the wrong way entirely).
+ *
+ * Deliberately a DOM check rather than a `chrome.cast` check: in a non-Chromium
+ * browser the script is fetched and simply never announces itself, so the
+ * globals look identical to the script being absent.
+ */
+export function isLoaderScriptPresent(): boolean {
+  const doc = castGlobal().document
+  if (doc === undefined) return false
+  return doc.querySelector('script[src*="cast_sender.js"]') != null
 }
 
 /**

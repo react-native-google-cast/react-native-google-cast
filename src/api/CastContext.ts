@@ -1,5 +1,6 @@
 import type { CastState, PlayServicesState } from '../transport/types'
 import { castStore, castTransport } from '../state/castStore.singleton'
+import { getCastSupported } from './castSupport'
 import { DiscoveryManager } from './DiscoveryManager'
 import { SessionManager } from './SessionManager'
 import { subscribeSelector } from './subscribeSelector'
@@ -46,8 +47,30 @@ export class CastContext {
   }
 
   /**
+   * Whether casting is possible on this platform **at all**, as opposed to
+   * whether a receiver happens to be nearby. See {@link useCastSupported} for
+   * the per-platform table and for why this is observable rather than constant
+   * (on web it flips from `false` to `true` when the Cast SDK finishes
+   * loading — reading it once at startup would be `false` forever).
+   *
+   * Prefer {@link useCastSupported} in components; this is the imperative
+   * escape hatch, and it is only meaningful once the web SDK has settled.
+   */
+  static isSupported(): boolean {
+    return getCastSupported()
+  }
+
+  /**
    * *(Android)* Google Play Services / Cast-framework availability — the
-   * diagnostic for why casting may be unavailable. Synchronous (v4: Promise).
+   * diagnostic for **why** casting is unavailable, and the input to
+   * {@link CastContext.showPlayServicesErrorDialog}. Synchronous (v4: Promise).
+   *
+   * ⚠️ **Android-only. This is always `'success'` on iOS and web**, including
+   * in browsers that cannot cast at all — so `getPlayServicesState() ===
+   * 'success'` is *not* a cross-platform "can I cast?" check, and reads as
+   * healthy on Safari. Use {@link CastContext.isSupported} /
+   * {@link useCastSupported} for that question and keep this for the Android
+   * detail behind it.
    */
   static getPlayServicesState(): PlayServicesState {
     return castStore.getSnapshot().playServicesState

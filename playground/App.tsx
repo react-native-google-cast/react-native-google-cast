@@ -61,6 +61,7 @@ import GoogleCast, {
   useCastDevice,
   useCastSession,
   useCastState,
+  useCastSupported,
   useChannelStatus,
   useCastChannel,
   useDevices,
@@ -820,6 +821,10 @@ function App() {
     GoogleCast.getCastState(),
   );
   const [playServices] = useState(() => GoogleCast.getPlayServicesState());
+  // Cross-platform "can this device cast at all?". Deliberately shown next to
+  // playServices: on web the latter reads `success` even in a browser that
+  // cannot cast, which is exactly the trap this hook exists to remove.
+  const supported = useCastSupported();
   const [devices, setDevices] = useState<readonly Device[]>(() =>
     discoveryManager.getDevices(),
   );
@@ -977,7 +982,11 @@ function App() {
         <Text testID="castStateText" style={text}>
           Cast state: {state}
         </Text>
-        <Text style={text}>Play Services: {playServices}</Text>
+        <Text style={text}>
+          Supported: {String(supported)}
+          {'  ·  '}Play Services: {playServices}
+          {IS_WEB ? ' (android-only — always success here)' : ''}
+        </Text>
         <Text style={text}>
           Devices: {devices.length}
           {IS_WEB ? ' (web: always 0 — the browser owns the picker)' : ''}
