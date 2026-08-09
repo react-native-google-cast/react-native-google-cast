@@ -1345,15 +1345,15 @@ play/pause/seek/volume/stop each land; "End session" gives `ending` → `ended`.
 browser-native UI, not page DOM, so the click that chooses a device has to be
 made by hand. Plan for that rather than discovering it mid-run.
 
-| #   | Row                                                                               | Status | Evidence                                                                                                                                                                                                                |
-| --- | --------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| W1  | Harness builds and serves; the Cast Sender SDK loads                              | ✅     | `SDK: ready`; `cast.framework` + `chrome.cast.isAvailable` true; zero console errors on load. Re-confirmed 08-07 against the merged playground.                                                                         |
-| W2  | `<google-cast-launcher>` renders once the SDK is available                        | ✅     | **Caveat resolved 08-07 with a device present**: launcher in the DOM, `display: block`, 28×28, `castState → NOT_CONNECTED`. The earlier `display:none` was CAF hiding it while no device existed — confirmed not a bug. |
-| W3  | Clicking it opens the device picker; connecting starts a session                  | ✅     | 08-07: the **page-initiated** picker (in-page launcher, NOT Chrome's tab-mirroring menu) → `starting (—)` → `connecting` → `connected` → `started (89a076f8-e33a-4243-af9e-245cb470c801)`                               |
-| W4  | `loadMedia` plays on the TV                                                       | ✅     | 08-07: `loadMedia(LAN) resolved`, `playing pos=0.55 dur=600 items=1` — `dur` is the receiver's own measurement and matches the fixture exactly                                                                          |
-| W5  | Media status + `useCastState` stream into the UI                                  | ✅     | 08-07: `useMediaStatus` and `useStreamPosition` both stream (`useStreamPosition: 20.55`, advancing); `useCastState` / `useCastSession` / `useCastDevice: Office TV` all populate                                        |
-| W6  | Disconnect ends the session cleanly                                               | ✅     | 08-07: `endCurrentSession accepted` → `ended` → `castState → notConnected`, `Session: none`                                                                                                                             |
-| W7  | A non-Chromium browser degrades gracefully (`noDevicesAvailable`, `notSupported`) | ⬜     | manual — needs Firefox/Safari, not reachable through Chrome automation. A DX defect was found while answering this row — bead `v5-7zm`; see below.                                                                      |
+| #   | Row                                                                               | Status   | Evidence                                                                                                                                                                                                                |
+| --- | --------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W1  | Harness builds and serves; the Cast Sender SDK loads                              | ✅       | `SDK: ready`; `cast.framework` + `chrome.cast.isAvailable` true; zero console errors on load. Re-confirmed 08-07 against the merged playground.                                                                         |
+| W2  | `<google-cast-launcher>` renders once the SDK is available                        | ✅       | **Caveat resolved 08-07 with a device present**: launcher in the DOM, `display: block`, 28×28, `castState → NOT_CONNECTED`. The earlier `display:none` was CAF hiding it while no device existed — confirmed not a bug. |
+| W3  | Clicking it opens the device picker; connecting starts a session                  | ✅       | 08-07: the **page-initiated** picker (in-page launcher, NOT Chrome's tab-mirroring menu) → `starting (—)` → `connecting` → `connected` → `started (89a076f8-e33a-4243-af9e-245cb470c801)`                               |
+| W4  | `loadMedia` plays on the TV                                                       | ✅       | 08-07: `loadMedia(LAN) resolved`, `playing pos=0.55 dur=600 items=1` — `dur` is the receiver's own measurement and matches the fixture exactly                                                                          |
+| W5  | Media status + `useCastState` stream into the UI                                  | ✅       | 08-07: `useMediaStatus` and `useStreamPosition` both stream (`useStreamPosition: 20.55`, advancing); `useCastState` / `useCastSession` / `useCastDevice: Office TV` all populate                                        |
+| W6  | Disconnect ends the session cleanly                                               | ✅       | 08-07: `endCurrentSession accepted` → `ended` → `castState → notConnected`, `Session: none`                                                                                                                             |
+| W7  | A non-Chromium browser degrades gracefully (`noDevicesAvailable`, `notSupported`) | ✅ 08-09 | Safari 26 / macOS: no launcher rendered, `Supported: false`, all four `show*` → `false`, mutations reject `notSupported`, nothing thrown. The `v5-7zm` DX defect is fixed — see the 08-09 Safari log below.             |
 
 ### Run log — 2026-08-07, Chrome (W1–W6 ✅ — **G8 closed**)
 
@@ -1446,6 +1446,39 @@ Related, and a design question rather than a bug: `castState` seeds to
 Chromecast on the network" from "Firefox, casting impossible" — there is no
 signal to branch on if you want to hide a whole section of UI. Left as bead `v5-7zm`
 rather than guessed at, since it touches public surface.
+
+#### ✅ W7 run — Safari 26 / macOS, 2026-08-09 — **row closed, and both defects above are fixed**
+
+`yarn playground web`, no Cast device involvement needed. Driven through Safari's
+own JS bridge (Develop ▸ Developer Settings ▸ "Allow JavaScript from Apple
+Events", then `osascript … do JavaScript … in document 1`) — which is how a
+non-Chromium browser _can_ be automated after all, since the blocker was never
+the browser, only Chrome-based tooling. Turn the setting back off afterwards.
+
+| Assertion                     | Result                                                                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| No launcher rendered          | ✅ nothing in the header — `CastButton.web`'s `if (!sdkReady) return null`                                                                 |
+| A branchable "can I cast?"    | ✅ **`Supported: false`** in Safari, `true` in Chrome                                                                                      |
+| Seeded state                  | ✅ `castState=noDevicesAvailable`, `Devices: 0`, `Session: none`, no exceptions                                                            |
+| `show*` helpers resolve false | ✅ `showCastDialog`, `showExpandedControls`, `showIntroductoryOverlay` (both once flavours), `showPlayServicesErrorDialog` — all `→ false` |
+| Mutations reject              | ✅ `probe: rejected code=notSupported`, `endCurrentSession rejected: notSupported`                                                         |
+
+**Both halves of the `v5-7zm` finding are closed by what shipped.** The
+`castState`-only ambiguity is gone — `useCastSupported()` / `isSupported()`
+answer it directly, and Safari is the first place that has been checked against a
+browser that genuinely cannot cast. And the misleading message is gone; the
+rejection now reads:
+
+> The Google Cast Web Sender SDK did not load. The loader script is present, so
+> this is normally a browser that does not support casting — only Chromium-based
+> browsers (Chrome, Edge) do. If this IS Chrome, the SDK may still be
+> initializing: it announces itself asynchronously, so check `useCastSupported()`
+> before issuing commands (see the "Web support" guide).
+
+No developer is sent to fix a `<script>` tag that is already there.
+
+**G8 and the whole web table are now ✅**, so the web prerequisite on the
+5.0.0-beta tag is satisfied.
 
 ¹ verified as far as is possible without a Chromecast on the network.
 
