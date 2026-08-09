@@ -1015,16 +1015,16 @@ That gate no longer has to be taken on CI's word alone.
 
 ### Non-deferrable — each backs a documented public API
 
-| #   | Row                                                         | Where                                  | Android                                                       | iOS                                                            |
-| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------- |
-| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator                                             |
-| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                      | ✅ 08-04 Simulator (single entry)                              |
-| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-06 re-run on EA48D3FC                                   | ✅ 08-04 Simulator, re-run on EA48D3FC                         |
-| G4  | #626 clear-on-stop **and** clear-on-empty-queue (see note)  | S2.2                                   | ✅ 08-06 on EA48D3FC — `stop()`→`idle`, empty queue→`idle`    | ✅ 08-04 on EA48D3FC — `stop()`→`idle`, **empty queue→`null`** |
-| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                 | ✅ 08-04 @64 ms, settle count 1                                |
-| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred) | n/a                                                            |
-| G7  | CastChannel registration-time handshake                     | S2.2                                   | ✅ 08-06 handshake confirmed                                  | ✅ 08-04 Simulator, all 4 rows                                 |
-| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ⬜ open                                                       |                                                                |
+| #   | Row                                                         | Where                                  | Android                                                             | iOS                                                            |
+| --- | ----------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------- |
+| G1  | Session lifecycle, ordered, both platforms                  | S1.1, S1.2                             | ✅ 08-02                                                            | ✅ 08-04 Simulator                                             |
+| G2  | Discovery — real device appears in the list                 | S1.1, S1.2                             | ✅ 08-02                                                            | ✅ 08-04 Simulator (single entry)                              |
+| G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-06 re-run on EA48D3FC                                         | ✅ 08-04 Simulator, re-run on EA48D3FC                         |
+| G4  | #626 clear-on-stop **and** clear-on-empty-queue (see note)  | S2.2                                   | ✅ 08-06 on EA48D3FC — `stop()`→`idle`, empty queue→`idle`          | ✅ 08-04 on EA48D3FC — `stop()`→`idle`, **empty queue→`null`** |
+| G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                       | ✅ 08-04 @64 ms, settle count 1                                |
+| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred)       | n/a                                                            |
+| G7  | CastChannel registration-time handshake                     | S2.2                                   | ✅ 08-06 handshake confirmed                                        | ✅ 08-04 Simulator, all 4 rows                                 |
+| G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ✅ 08-07 Chrome (W1–W6); W7 ✅ 08-09 Safari — whole web table green |                                                                |
 
 > **G4 — the criterion was amended on 08-03, and 08-04 shows the amendment was
 > only half right.** The row originally asked for `useMediaStatus` to go **null**
