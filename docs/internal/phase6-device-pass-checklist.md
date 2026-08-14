@@ -1668,10 +1668,28 @@ No developer is sent to fix a `<script>` tag that is already there.
 
 `v5-8hq.6` closes when every **non-deferrable** row above is ✅ with recorded
 evidence; deferrals appear only in the may-defer list, each with a written
-reason; harness changes pass `yarn typescript`, `yarn test`,
-`prettier --check`, `compileDebugKotlin`, the iOS `xcodebuild` gate, **and
-`scripts/e2e-android.sh`**; the integration/retest pass runs; and it ships as one
-squashed PR to `v5`.
+reason; harness changes pass the gates below; and the integration/retest pass
+runs.
+
+> **Gate commands.** `yarn typescript`, `yarn test`, `prettier --check`,
+> `compileDebugKotlin`, the iOS `xcodebuild` gate, **and
+> `scripts/e2e-android.sh`** — plus **`yarn playground typescript`**, because the
+> root gates do not see `playground/` at all (see the T6 note in S2.4).
+
+> **On "ships as one squashed PR to `v5`" — that clause is SATISFIED, and this
+> line used to imply otherwise.** It came from the design spec
+> (`docs/superpowers/specs/2026-07-12-castbutton-ui-design.md:290-293`), which
+> scopes it to the _integration_ half: "branch `petrbela/phase6.1`: `--no-ff`
+> merge the 3 lanes; … single squashed PR to v5 (driver approves merge); **then
+> the device pass above**". That PR is **#611**, squash-merged as `e387460` on
+> 2026-07-12 for `v5-8hq.2/.3/.4/.5/.6`; the bead's own note twelve days later
+> ("all non-device work for 6.1 is merged; this bead is now device-pass-only")
+> says the same thing. The device pass always came _after_ it.
+>
+> The device-pass commits therefore landed directly on `v5`, which is this
+> repo's **integration** branch — `main` carries the v4 maintenance line. The
+> underlying rule is the ordinary one, and it binds when `v5` becomes the
+> default branch: changes land through a PR, not by committing to the mainline.
 
 Then `bd close v5-8hq.6` → `v5-8hq` → **`v5-hw6` (Phase 7) becomes ready**.
 
