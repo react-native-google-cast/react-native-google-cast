@@ -341,9 +341,9 @@ The harness gained a **"Load LAN bare"** button so the pair stays runnable.
 | Actions come from our provider | ✅ skip-next present with a 3-item queue — `NitroNotificationActionsProvider`'s queue-aware set (Decision 4)         |
 | Tap → expanded controller      | ✅ focus = `com.castexample/com.margelo.nitro.googlecast.NitroExpandedControllerActivity`, live progress 01:16/10:00 |
 | Android 14+ FGS hazard         | ✅ **does not apply to GCK 22.0.0** — see below                                                                      |
-| Artwork on the widget          | ⬜ deferred — LAN fixture carries no image                                                                           |
-| Theme override                 | ⬜ deferred (may-defer list: "exotic notification permutations")                                                     |
-| Lock screen                    | ⬜ deferred — renders in the same MediaSession surface, which is confirmed                                           |
+| Artwork on the widget          | ✅ 08-14 — the fixture now carries one; see the 08-14 run log                                                        |
+| Theme override                 | ✅ 08-14 — the app's `NitroCastExpandedController` wins the resource merge; see the 08-14 run log                    |
+| Lock screen                    | ✅ 08-14 — confirmed directly rather than inferred from the MediaSession surface                                     |
 
 **Prior learning corrected.** The note "targetSdk 34+ needs `FOREGROUND_SERVICE`
 
@@ -1022,7 +1022,7 @@ That gate no longer has to be taken on CI's word alone.
 | G3  | Media load / play / stop                                    | S2.2                                   | ✅ 08-06 re-run on EA48D3FC                                         | ✅ 08-04 Simulator, re-run on EA48D3FC                         |
 | G4  | #626 clear-on-stop **and** clear-on-empty-queue (see note)  | S2.2                                   | ✅ 08-06 on EA48D3FC — `stop()`→`idle`, empty queue→`idle`          | ✅ 08-04 on EA48D3FC — `stop()`→`idle`, **empty queue→`null`** |
 | G5  | #624 request interruption (flush race)                      | S2.2                                   | ✅ 08-03 `interrupted` @65 ms, settle count 1                       | ✅ 08-04 @64 ms, settle count 1                                |
-| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36 (artwork/theme/lock-screen deferred)       | n/a                                                            |
+| G6  | Android notifications, **incl. Android 14+**                | S2.3                                   | ✅ 08-04 on targetSdk 36; artwork/theme/lock-screen closed 08-14    | n/a                                                            |
 | G7  | CastChannel registration-time handshake                     | S2.2                                   | ✅ 08-06 handshake confirmed                                        | ✅ 08-04 Simulator, all 4 rows                                 |
 | G8  | Web smoke — launcher → connect → load → status → disconnect | Web (gates the **tag**, not this bead) | ✅ 08-07 Chrome (W1–W6); W7 ✅ 08-09 Safari — whole web table green |                                                                |
 
@@ -1144,9 +1144,11 @@ are measuring build A**.
 | 1.3.4 | `rm playground/ios/local.xcconfig && pod install` restores build A    | ✅ 08-09 | no `build B:` line at launch; `git status` clean throughout                                     |
 
 See the 08-09 run log for two things this row taught: the first-tap gate is
-persisted per installation (`kGCKDiscoveryEverStarted`), so 1.2.2 is only
-measurable on a fresh install; and `isRunning()` is a tick behind
-`start`/`stopDiscovery`.
+scoped **per installation** — by some mechanism this pass did not identify, so
+1.2.2 is only measurable on a fresh install — and `isRunning()` is a tick behind
+`start`/`stopDiscovery`. (The obvious suspect, GCK's persisted
+`kGCKDiscoveryEverStarted`, was tested and **refuted**: deleting that plist did
+not restore the gate; a reinstall did. Do not repeat the guess.)
 
 ### S1.4 — steady state, both platforms
 
@@ -1237,17 +1239,79 @@ adb shell dumpsys notification_manager | grep -A2 googlecast.playground   # conf
 If a row fails, check the grant first. Whether the library should request this
 itself (or just document it) is a Phase 7 docs decision — record what you find.
 
-| #     | Row                                                                                         | ≤ A13 | A14+ | Evidence |
-| ----- | ------------------------------------------------------------------------------------------- | ----- | ---- | -------- |
-| 2.3.1 | **G6** Cast start on Android 14+ does not crash                                             | n/a   |      |          |
-| 2.3.2 | Notification renders while casting                                                          |       |      |          |
-| 2.3.3 | Lock-screen rendering                                                                       |       |      |          |
-| 2.3.4 | Actions work: play/pause, skip prev/next, stop casting                                      |       |      |          |
-| 2.3.5 | Action set changes with content: single item vs queue (>1) vs photo (`CastOptionsDefaults`) |       |      |          |
-| 2.3.6 | Tapping the notification opens the expanded controller                                      |       |      |          |
-| 2.3.7 | Artwork appears on the real widget                                                          |       |      |          |
-| 2.3.8 | Theme override (`@style/NitroCastExpandedController`) applies                               |       |      |          |
-| 2.3.9 | _May defer_ — exotic permutations (live streams, no-artwork, RTL)                           |       |      |          |
+Rig for every row below: **moto g05 / Android 15 (API 35)** — i.e. an Android
+14+ device, so the `≤ A13` column is `n/a` throughout. This pass had no
+Android-13-or-below hardware; that half of the matrix is **not** claimed.
+
+| #     | Row                                                                                         | ≤ A13 | A14+        | Evidence                                                                                                                                     |
+| ----- | ------------------------------------------------------------------------------------------- | ----- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.3.1 | **G6** Cast start on Android 14+ does not crash                                             | n/a   | ✅ 08-04    | targetSdk 36, API 35 device; cast start never crashed. The FGS hazard does not apply to CAF 22.0.0 — see the analysis above.                 |
+| 2.3.2 | Notification renders while casting                                                          | n/a   | ✅ 08-04    | `0\|…\|1\|castMediaNotification\|10243`; title from metadata, "Casting to Office TV", pause + skip-next, seek bar                            |
+| 2.3.3 | Lock-screen rendering                                                                       | n/a   | ✅ 08-14    | full media widget on the lock screen — artwork, title, "Casting to Office TV", pause, seek, ±10 s (`vis=PUBLIC` in dumpsys)                  |
+| 2.3.4 | Actions work: play/pause, skip prev/next, stop casting                                      | n/a   | ✅ 08-04    | actions present and functional from our provider                                                                                             |
+| 2.3.5 | Action set changes with content: single item vs queue (>1) vs photo (`CastOptionsDefaults`) | n/a   | ⚠️ partial  | skip-next appears with a 3-item queue (`NitroNotificationActionsProvider`'s queue-aware set, Decision 4). The **photo** variant was not run. |
+| 2.3.6 | Tapping the notification opens the expanded controller                                      | n/a   | ✅ 08-04    | focus = `…/com.margelo.nitro.googlecast.NitroExpandedControllerActivity`, live progress 01:16/10:00                                          |
+| 2.3.7 | Artwork appears on the real widget                                                          | n/a   | ✅ 08-14    | `testsrc` pattern fills the widget; the relayed `LOAD` carries `images:[{url:…/artwork.jpg,480,270}]` — verified on the wire                 |
+| 2.3.8 | Theme override (`@style/NitroCastExpandedController`) applies                               | n/a   | ✅ 08-14    | playground redefines the style; the expanded controller picks up the app's copy at resource-merge time                                       |
+| 2.3.9 | _May defer_ — exotic permutations (live streams, no-artwork, RTL)                           | n/a   | ⬜ deferred | on the may-defer list, with no consumer-facing claim resting on them                                                                         |
+
+### Run log — 2026-08-14, Android — **the last three G6 sub-rows**
+
+moto g05 / Android 15, receiver `EA48D3FC`, session
+`d59efef7-194c-494f-9ee5-807bf983d47b`, `LAN_FIXTURE` + the new `artwork.jpg`.
+These three were deferred on 08-04; all three now have direct evidence, so G6 is
+✅ without qualification.
+
+**2.3.7 artwork — and the wire says so too.** The `Load LAN` payload now carries
+`images`, and the oracle relayed it back:
+
+```
+channel ← {"type":"observed","message":"LOAD","request":"{…,"metadata":{"metadataType":1,
+  "images":[{"url":"http://192.168.1.40:8000/artwork.jpg","width":480,"height":270}],
+  "title":"LAN test pattern"},…}"}
+```
+
+The widget then renders it: the `testsrc` colour bars fill the notification
+behind "LAN test pattern" / "Casting to Office TV", with pause, seek bar and
+±10 s. Sending and rendering are therefore separately confirmed — a payload
+check alone would not have caught a receiver that ignored the field.
+
+**2.3.3 lock screen — confirmed directly, not inferred.** The 08-04 deferral
+reasoned "it renders in the same MediaSession surface, which is confirmed". That
+inference happens to hold, but it is not evidence: the full media widget —
+artwork, title, transport, seek — renders on the lock screen, consistent with
+`vis=PUBLIC` in `dumpsys notification`.
+
+**2.3.8 theme override — the only one of the three that tests a public feature,
+and it works.** The playground redefines `NitroCastExpandedController` in its own
+`res/values/styles.xml`; that is the _only_ seam a consumer has (no prop, no
+runtime API). Verified at both levels:
+
+- **Runtime:** the expanded controller's title renders in the override's yellow
+  (`#FFEB3B`) rather than the default white, over live playback (03:26 / 10:00).
+- **Resource merge:** `aapt2 dump resources` on the built APK shows
+  `style/NitroCastExpandedController` carrying exactly the app's four items
+  (`0x01010036=#ffffeb3b`, `#ff6a1b9a` ×3) — the app's copy replaced the
+  library's, which is the mechanism the row is really about.
+
+**⚠️ The LAN fixtures were lost again** (second time — 08-07, then 08-14), taking
+the whole directory with them. Regenerated and now served from a **durable**
+`~/.cache/rngc-fixtures`, and `probeFixtures.ts` says so. The first symptom both
+times is a `loadMedia` that resolves and then goes `idle=error` — identical to a
+real wrapper bug, which is why the `curl -sI` check comes before any diagnosis.
+
+**Harness trap worth recording:** an `adb kill-server` (needed for the phantom
+emulator fix) drops `adb reverse tcp:8081`, and the app then fails with
+"Unable to load script … loadJSBundleFromAssets" — which reads like a broken
+bundled build, not a missing tunnel. Re-run `adb reverse tcp:8081 tcp:8081` and
+check Metro is actually up (`curl -s localhost:8081/status`; note `adb reverse`
+prints `8081` itself, which is easy to misread as a status response).
+
+> **Two honest gaps in this table**, both stated rather than papered over:
+> the **≤ A13 column was never exercised** (no such device on the rig), and
+> **2.3.5's photo variant** was not run. Neither blocks G6, whose acceptance is
+> "cast start on Android 14+ does not crash" plus a notification that renders and
+> acts — but neither should be read as passed.
 
 ### S2.4 — cleanup, informed by what S2.2/S2.3 showed
 

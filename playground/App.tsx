@@ -96,6 +96,7 @@ import {
 import {
   BLACKHOLE_URL,
   CHANNEL_PROBE_ENABLED,
+  LAN_ARTWORK_URL,
   LAN_FIXTURE,
   LAN_QUEUE_FIXTURES,
   MEDIA_FIXTURES,
@@ -383,7 +384,16 @@ const MediaProbes = memo(function MediaProbesPanel({
                   contentUrl: LAN_FIXTURE.contentUrl,
                   contentType: LAN_FIXTURE.contentType,
                   streamType: 'buffered',
-                  metadata: { type: 'movie', title: LAN_FIXTURE.title },
+                  metadata: {
+                    type: 'movie',
+                    title: LAN_FIXTURE.title,
+                    // Row 2.3.7: artwork on the real notification widget. GCK
+                    // renders whatever `images[0]` points at; without it the
+                    // widget shows a generic Cast icon, which is why the row
+                    // could not be answered while the fixtures were bare
+                    // ffmpeg patterns.
+                    images: [{ url: LAN_ARTWORK_URL, width: 480, height: 270 }],
+                  },
                 },
               }),
             )

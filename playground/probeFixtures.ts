@@ -93,13 +93,22 @@ export const QUEUE_FIXTURES: readonly MediaFixture[] = [PRIMARY, FALLBACK, HLS];
  * "the wrapper sent a bad payload" — especially with older Chromecast firmware,
  * whose TLS stack and root-CA bundle can fail on modern HTTPS hosts.
  *
- * Set the IP to your machine, then serve something next to it:
+ * Set the IP to your machine, then serve something next to it. **Serve from a
+ * durable directory, not a session scratchpad** — these files were lost twice
+ * (2026-08-07 and 2026-08-09) to scratchpad cleanup, and both times the first
+ * symptom was a `loadMedia` that RESOLVED and then went `idle=error`, i.e. the
+ * exact signature of a real wrapper bug. `~/.cache/rngc-fixtures` works:
  *
+ *   mkdir -p ~/.cache/rngc-fixtures && cd ~/.cache/rngc-fixtures
  *   ffmpeg -f lavfi -i testsrc=size=640x360:rate=25:duration=600 \
  *          -f lavfi -i sine=frequency=440:duration=600 \
  *          -c:v libx264 -profile:v baseline -level 3.0 -pix_fmt yuv420p \
  *          -c:a aac -movflags +faststart test.mp4
  *   python3 -m http.server 8000 --bind 0.0.0.0
+ *
+ * Before diagnosing ANY media failure, check the server is still up and still
+ * has the files — `curl -sI http://<ip>:8000/test.mp4 | head -1` — and confirm
+ * the durations with `ffprobe` (600 / 15 / 20 s).
  *
  * Baseline/L3.0 + yuv420p + faststart is the most broadly decodable H.264 a
  * Cast device will accept, so a failure here is not a codec-support question.
@@ -113,6 +122,26 @@ export const LAN_FIXTURE: MediaFixture = {
   expectedDuration: 600,
   title: 'LAN test pattern',
 };
+
+/**
+ * Artwork for the LAN fixture, served from the same directory (row 2.3.7).
+ *
+ * The notification row was deferred on 08-04 for want of exactly this — the
+ * fixtures are `ffmpeg` test patterns with no embedded image, and GCK will not
+ * invent one. Generate it next to the video files:
+ *
+ * ```bash
+ * ffmpeg -f lavfi -i "testsrc=size=480x270:rate=1" -frames:v 1 artwork.jpg
+ * ```
+ *
+ * A `testsrc` pattern rather than a flat colour on purpose: on a notification
+ * widget it is unmistakable, so "the artwork rendered" cannot be confused with
+ * a placeholder or a tinted background.
+ */
+export const LAN_ARTWORK_URL = LAN_FIXTURE.contentUrl.replace(
+  'test.mp4',
+  'artwork.jpg',
+);
 
 /**
  * Three distinct LAN items (30 s / 15 s / 20 s, so the queue order is readable

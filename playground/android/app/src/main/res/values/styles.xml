@@ -6,4 +6,25 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     </style>
 
+    <!--
+      Row 2.3.8 — the consumer-side theme override for the expanded controller.
+
+      The library declares `NitroCastExpandedController` in its OWN resources
+      (android/src/main/res/values/styles.xml) and points
+      NitroExpandedControllerActivity at it in the library manifest. Redefining
+      the same style name here makes the app's copy win at resource-merge time,
+      which is the documented way a consumer restyles the controller — there is
+      no prop, no runtime API, and no other seam.
+
+      Deliberately garish. A subtle override cannot be told apart from the
+      default in a screenshot, and this row exists to prove the merge actually
+      happens, not to look good.
+    -->
+    <style name="NitroCastExpandedController" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:colorPrimary">#6A1B9A</item>
+        <item name="colorPrimary">#6A1B9A</item>
+        <item name="android:windowBackground">#6A1B9A</item>
+        <item name="android:textColorPrimary">#FFEB3B</item>
+    </style>
+
 </resources>
