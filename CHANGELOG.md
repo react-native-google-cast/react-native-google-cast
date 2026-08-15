@@ -1,3 +1,24 @@
+# [5.0.0-beta.0](https://github.com/react-native-google-cast/react-native-google-cast/compare/4.9.1...5.0.0-beta.0) (2026-08-15)
+
+Ground-up rewrite for React Native's New Architecture on [Nitro Modules](https://nitro.margelo.com) ([#583](https://github.com/react-native-google-cast/react-native-google-cast/issues/583)). Install with `npm install react-native-google-cast@next react-native-nitro-modules`.
+
+### ⚠ Breaking Changes
+
+* New Architecture only; requires React Native 0.78+ and the `react-native-nitro-modules` peer dependency ([#584](https://github.com/react-native-google-cast/react-native-google-cast/issues/584))
+* read getters (`getCastState`, `getDevices`, `getCurrentCastSession`, session detail, …) are now synchronous — they return values, not Promises
+* mutations reject a typed `CastError` (`{ code, message?, nativeCode? }`) instead of an opaque string; stale session/channel handles reject `noSession` instead of crashing
+* Android manifest renames: receiver-id meta-data key is `com.margelo.nitro.googlecast.RECEIVER_APPLICATION_ID`, options provider is `com.margelo.nitro.googlecast.NitroCastOptionsProvider`; the `MainActivity` init call is removed (Expo prebuild handles all of this)
+* `CastButton` tint moves from `style.tintColor` to the `tintColor` prop
+
+See the [v4 → v5 migration guide](https://github.com/react-native-google-cast/react-native-google-cast/blob/v5/docs/guides/migrating-v4-to-v5.md) for the complete list.
+
+### Features
+
+* web support (react-native-web) via the Cast Web Sender SDK — same API, Chromium browsers, graceful degradation elsewhere
+* `useCastSupported()` / `CastContext.isSupported()` — one cross-platform "can I cast?" check
+* library-shipped `NitroCastOptionsProvider` with v4-parity notifications, artwork heuristic, and expanded controller (no app-side provider needed)
+* `customData` on every SDK call that accepts one, including queue mutations v4 never exposed
+
 ## [4.9.1](https://github.com/react-native-google-cast/react-native-google-cast/compare/4.9.0...4.9.1) (2025-07-26)
 
 
