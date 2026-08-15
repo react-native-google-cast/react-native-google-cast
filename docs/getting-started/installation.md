@@ -4,11 +4,17 @@ title: Installation
 sidebar_label: Installation
 ---
 
-`$ npm install react-native-google-cast --save`
+`$ npm install react-native-google-cast react-native-nitro-modules --save`
 
 or
 
-`$ yarn add react-native-google-cast`
+`$ yarn add react-native-google-cast react-native-nitro-modules`
+
+> v5 requires **React Native 0.78+ with the New Architecture enabled** and the
+> [`react-native-nitro-modules`](https://nitro.margelo.com) peer dependency shown
+> above. While v5 is in beta, install it with the `next` tag:
+> `npm install react-native-google-cast@next`. Upgrading from v4? Read the
+> [migration guide](../guides/migrating-v4-to-v5).
 
 ## Expo
 

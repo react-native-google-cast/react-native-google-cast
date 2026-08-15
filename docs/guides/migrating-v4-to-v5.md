@@ -5,9 +5,31 @@ sidebar_label: Migrating v4 → v5
 ---
 
 > **Status:** v5 is a ground-up rewrite onto the React Native New Architecture
-> (Nitro Modules). This page is the running migration log; it is finalized in the
-> Phase 7 migration guide. It currently covers the Phase 3–6.2 changes (context,
-> discovery, sessions, media, channels, Cast UI + hooks, setup/notifications).
+> (Nitro Modules), available as `5.0.0-beta` on the `next` npm tag. This guide
+> covers every breaking change shipped so far (context, discovery, sessions,
+> media, channels, Cast UI + hooks, setup/notifications, web); it is polished
+> further during the beta. Known beta issues are tracked in the
+> [v5 milestone](https://github.com/react-native-google-cast/react-native-google-cast/milestone/2).
+
+## Requirements (breaking)
+
+v5 drops the old architecture entirely — there is no Paper/compat path:
+
+- **React Native 0.78+** with the **New Architecture enabled** (0.78 is the
+  floor for Nitro Views, which power `CastButton`). Old-arch apps stay on the
+  v4 maintenance line.
+- **`react-native-nitro-modules`** is a new peer dependency — install it
+  alongside the library.
+- Platform floors are unchanged from late v4: iOS 15.1+, Android minSdk 24.
+- Expo: custom builds only (no Expo Go), same as v4 — the config plugin is
+  included and handles the v5 renames (see
+  [Android setup shrinks](#android-setup-shrinks)).
+
+```sh
+npm install react-native-google-cast@next react-native-nitro-modules
+# or
+yarn add react-native-google-cast@next react-native-nitro-modules
+```
 
 ## Read getters are now synchronous
 
@@ -260,8 +282,13 @@ when the dialog was shown and `false` when it can't or needn't be — including
 the state is `success`, or when there's no foreground Activity. Genuine
 native failures reject a typed `CastError`.
 
-## Deferred to later phases
+## New in v5: web support
+
+The same API now runs in the browser (react-native-web) on top of the Google
+Cast Web Sender SDK — nothing to migrate, everything to gain. See
+[Web support](../../getting-started/web).
+
+## Deferred to a later v5 release
 
 - Expanded-controller UI customization (beyond the Android theme override) and
-  mini-controller integration — later v5 release.
-- Web / Chrome sender support — **Phase 8**.
+  mini-controller integration.
