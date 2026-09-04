@@ -10,6 +10,8 @@ Claude Code reads `CLAUDE.md`, which just points here, so the two never drift.
 - **`main`** carries the stable **v4** line (old-architecture `RCTBridgeModule`). v4 is in
   maintenance mode — bug fixes only.
 - **`v5`** is a ground-up rewrite onto the React Native **New Architecture** using **Nitro Modules**.
+  Shipped as `5.0.0-beta.0` on the npm **`next`** dist-tag (2026-09-04); `latest` stays on v4 until
+  5.0.0 GA, when the branches swap (see [Releasing](#releasing)).
 
 v5 architecture in one line: **thin Nitro bridge + fat TypeScript** — a single native transport with
 thin TS façades (`CastSession`/`RemoteMediaClient`/`CastChannel`) over a central session-state machine
@@ -71,6 +73,39 @@ Two traps when reading a failure:
 
 The corpus is deliberately **not** prettier-formatted (compact hand style). Edit
 it structurally; do not run prettier over it.
+
+## Releasing
+
+Publishing is **manual and local** — there is no npm-publish CI workflow, and
+`release-it` is configured with `npm.publish: false`, so it only handles the
+version bump, changelog, git tag and GitHub release. Tags carry **no `v`
+prefix** (`5.0.0-beta.0`, `4.9.1`).
+
+Pre-releases must go out under a dist-tag so they never become the default
+install:
+
+```bash
+npm version 5.0.0-beta.1 --no-git-tag-version   # bump + CHANGELOG entry, commit
+npm publish --tag next                          # `prepare` (bob build) runs automatically
+npm dist-tag ls react-native-google-cast        # verify: next → beta, latest → v4
+git tag -a 5.0.0-beta.1 -m "..." && git push origin 5.0.0-beta.1
+gh release create 5.0.0-beta.1 --prerelease --verify-tag --notes-file <notes>
+```
+
+**Publishing without `--tag next` overwrites `latest`** and pushes an unfinished
+v5 to every `npm install react-native-google-cast`. During the whole v5 beta,
+`latest` stays on the v4 line.
+
+Before any v5 publish, smoke-test the **package**, not the workspace: `npm pack`,
+install the tarball plus `react-native-nitro-modules` into a fresh RN app, and
+build both platforms. The playground consumes the library through the workspace
+root, so it cannot catch a missing `files` entry, a broken `podspec`, or an
+autolinking failure — a real consumer install is the only thing that does.
+
+At **5.0.0 GA**: branch `v4` off `main` for maintenance, make the v5 line
+`main`, flip the GitHub default branch, update README badges and doc links, then
+publish `5.0.0` as `latest` — the branch swap and the dist-tag flip belong in the
+same change so the default branch always matches what `latest` installs.
 
 ## Conventions
 
