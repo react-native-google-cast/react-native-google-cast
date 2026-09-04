@@ -1,4 +1,4 @@
-# [5.0.0-beta.0](https://github.com/react-native-google-cast/react-native-google-cast/compare/4.9.1...5.0.0-beta.0) (2026-08-15)
+# [5.0.0-beta.0](https://github.com/react-native-google-cast/react-native-google-cast/compare/4.9.1...5.0.0-beta.0) (2026-09-04)
 
 Ground-up rewrite for React Native's New Architecture on [Nitro Modules](https://nitro.margelo.com) ([#583](https://github.com/react-native-google-cast/react-native-google-cast/issues/583)). Install with `npm install react-native-google-cast@next react-native-nitro-modules`.
 
